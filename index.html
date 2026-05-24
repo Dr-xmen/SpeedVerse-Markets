@@ -4,783 +4,387 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>SpeedVerse Markets – Ultimate Trading Machine</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-:root{--or:#E8530A;--or2:#c94508;--dark:#1a1a1a;--gray:#f5f5f5;--border:#e5e5e5;--mid:#666;}
-body{font-family:'Inter',sans-serif;color:var(--dark);background:#fff;overflow-x:hidden;}
+body{font-family:'Inter',sans-serif;color:#1a1a1a;background:#fff;overflow-x:hidden;}
 a{text-decoration:none;color:inherit;}
 
-/* ════ NAVBAR ════ */
+/* ══════════════════════════════════
+   NAVBAR
+══════════════════════════════════ */
 nav{
   position:sticky;top:0;z-index:500;
-  background:#fff;border-bottom:1px solid var(--border);
-  height:60px;display:flex;align-items:center;padding:0 40px;gap:32px;
+  background:#fff;
+  border-bottom:1px solid #eee;
+  height:70px;
+  display:flex;align-items:center;
+  padding:0 32px;
+  gap:0;
 }
-.logo{display:flex;align-items:center;gap:8px;flex-shrink:0;}
-.logo-icon{width:28px;height:28px;background:var(--or);border-radius:4px;display:flex;align-items:center;justify-content:center;}
-.logo-icon svg{width:16px;height:16px;fill:white;}
-.logo-name{font-size:18px;font-weight:800;color:#1a1a1a;letter-spacing:-.3px;}
-.nav-menu{display:flex;list-style:none;gap:2px;flex:1;}
-.nav-menu a{font-size:13px;font-weight:500;color:#333;padding:6px 10px;border-radius:4px;white-space:nowrap;display:flex;align-items:center;gap:4px;}
-.nav-menu a:hover{color:var(--or);}
-.nav-sponsorship{color:var(--or)!important;font-weight:700!important;}
-.nav-actions{display:flex;align-items:center;gap:8px;}
-.btn-reg{background:var(--or);color:#fff;padding:8px 18px;border-radius:5px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:6px;transition:background .15s;}
-.btn-reg:hover{background:var(--or2);}
-.btn-log{font-size:13px;font-weight:500;color:#333;padding:8px 12px;display:flex;align-items:center;gap:5px;}
-.btn-log:hover{color:var(--or);}
-.nav-ico{width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#888;font-size:15px;border-radius:4px;}
-.nav-ico:hover{background:#f5f5f5;}
 
-/* ════ HERO ════ */
-.hero{
-  background:#0c0c0c;
-  background-image:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Cdefs%3E%3CradialGradient id='a' cx='20%25' cy='50%25' r='60%25'%3E%3Cstop offset='0' stop-color='%23150a02' stop-opacity='.9'/%3E%3Cstop offset='1' stop-color='transparent'/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='url(%23a)'/%3E%3C/svg%3E");
-  position:relative;overflow:hidden;
+/* Logo */
+.logo{display:flex;align-items:center;gap:0;margin-right:40px;flex-shrink:0;}
+.logo-svg{width:44px;height:44px;}
+.logo-wordmark{font-size:22px;font-weight:800;color:#1a1a1a;letter-spacing:-.5px;margin-left:2px;}
+
+/* Nav links */
+.nav-links{display:flex;align-items:center;list-style:none;gap:0;flex:1;}
+.nav-links li a{
+  font-size:14px;font-weight:500;color:#222;
+  padding:8px 12px;border-radius:4px;
+  white-space:nowrap;display:block;
+  transition:color .15s;
 }
-.hero-overlay{
+.nav-links li a:hover{color:#E8530A;}
+.nav-links .sponsorship a{
+  color:#E8530A;font-weight:600;
+  display:flex;align-items:center;gap:5px;
+}
+
+/* Nav right */
+.nav-right{display:flex;align-items:center;gap:6px;margin-left:16px;}
+.btn-register{
+  display:flex;align-items:center;gap:7px;
+  background:#E8530A;color:#fff;
+  padding:9px 20px;border-radius:6px;
+  font-size:14px;font-weight:700;
+  transition:background .15s;
+  white-space:nowrap;
+}
+.btn-register:hover{background:#c94508;}
+.btn-login{
+  display:flex;align-items:center;gap:6px;
+  font-size:14px;font-weight:500;color:#222;
+  padding:9px 12px;
+  white-space:nowrap;
+}
+.btn-login:hover{color:#E8530A;}
+.nav-icon{
+  width:34px;height:34px;display:flex;align-items:center;justify-content:center;
+  border-radius:4px;cursor:pointer;color:#555;font-size:16px;
+}
+.nav-icon:hover{background:#f5f5f5;}
+
+/* ══════════════════════════════════
+   HERO
+══════════════════════════════════ */
+.hero{
+  position:relative;
+  width:100%;
+  height:440px;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  padding-bottom:60px;
+}
+
+/* dark atmospheric background — simulates the 3D bull scene */
+.hero-bg{
   position:absolute;inset:0;
   background:
-    radial-gradient(ellipse 55% 90% at 18% 50%, rgba(15,8,3,.92) 0%, transparent 60%),
-    radial-gradient(ellipse 50% 70% at 70% 40%, rgba(5,15,35,.6) 0%, transparent 65%);
+    /* dark base */
+    linear-gradient(180deg, #0a0c0a 0%, #111410 40%, #0d0f0c 100%);
 }
-/* bokeh blobs */
-.hero::before{
+/* green ambient glow (candles / environment) */
+.hero-bg::before{
   content:'';position:absolute;inset:0;
   background:
-    radial-gradient(circle 180px at 55% 25%, rgba(255,140,50,.07) 0%,transparent 70%),
-    radial-gradient(circle 250px at 80% 65%, rgba(20,60,120,.12) 0%,transparent 70%),
-    radial-gradient(circle 120px at 40% 75%, rgba(200,80,10,.05) 0%,transparent 70%);
+    radial-gradient(ellipse 40% 60% at 65% 40%, rgba(60,120,30,.18) 0%, transparent 60%),
+    radial-gradient(ellipse 25% 40% at 75% 55%, rgba(80,160,40,.12) 0%, transparent 55%),
+    radial-gradient(ellipse 20% 30% at 55% 30%, rgba(100,180,50,.08) 0%, transparent 50%),
+    radial-gradient(ellipse 30% 50% at 82% 45%, rgba(40,100,20,.15) 0%, transparent 55%);
 }
-.hero-inner{
+/* orange/fire glow (bull) */
+.hero-bg::after{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 30% 40% at 58% 35%, rgba(200,80,10,.2) 0%, transparent 55%),
+    radial-gradient(ellipse 20% 30% at 52% 45%, rgba(180,60,5,.15) 0%, transparent 50%),
+    radial-gradient(ellipse 15% 20% at 63% 30%, rgba(220,100,20,.12) 0%, transparent 45%);
+}
+/* dark gradient overlay on left for text readability */
+.hero-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(90deg,
+    rgba(0,0,0,.72) 0%,
+    rgba(0,0,0,.55) 30%,
+    rgba(0,0,0,.2) 60%,
+    rgba(0,0,0,.05) 100%
+  );
+}
+/* subtle candle shapes */
+.hero-candles{
+  position:absolute;inset:0;
+  background:
+    /* tall thin candle shapes using gradients */
+    repeating-linear-gradient(180deg,
+      transparent 0%,transparent 30%,
+      rgba(60,120,30,.04) 30%,rgba(60,120,30,.04) 32%,
+      transparent 32%
+    );
+}
+
+.hero-content{
   position:relative;z-index:2;
-  max-width:1200px;margin:0 auto;
-  padding:58px 40px 0;
-  display:grid;grid-template-columns:1fr 380px;gap:32px;
-  align-items:center;min-height:370px;
+  padding:0 40px;
+  max-width:680px;
 }
-.hero-pre{font-size:11px;font-weight:600;letter-spacing:1.3px;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:14px;}
-.hero-h1{font-size:clamp(28px,3.8vw,50px);font-weight:900;color:#fff;line-height:1.06;letter-spacing:-1px;margin-bottom:10px;}
-.hero-h1 span{color:var(--or);}
-.hero-sup{font-size:.45em;vertical-align:super;color:rgba(255,255,255,.5);font-weight:700;}
-.hero-p{font-size:14px;color:rgba(255,255,255,.58);margin-bottom:22px;line-height:1.6;}
-.hero-form{
-  display:flex;align-items:center;gap:8px;
-  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);
-  border-radius:6px;padding:5px 5px 5px 14px;max-width:490px;margin-bottom:14px;
+
+.hero-title{
+  font-size:50px;font-weight:900;
+  line-height:1.05;letter-spacing:-1px;
+  margin-bottom:14px;color:#fff;
 }
-.hero-form input{flex:1;background:transparent;border:none;outline:none;color:#fff;font-size:13.5px;font-family:inherit;}
-.hero-form input::placeholder{color:rgba(255,255,255,.35);}
-.hero-form .env{color:rgba(255,255,255,.3);font-size:15px;}
-.btn-sign{background:var(--or);color:#fff;border:none;padding:10px 18px;border-radius:4px;font-size:12px;font-weight:800;letter-spacing:.8px;cursor:pointer;font-family:inherit;white-space:nowrap;transition:background .15s;}
-.btn-sign:hover{background:var(--or2);}
-.hero-qr{width:38px;height:38px;flex-shrink:0;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:4px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:rgba(255,255,255,.45);}
-.hero-note{font-size:11.5px;color:rgba(255,255,255,.38);display:flex;align-items:flex-start;gap:6px;line-height:1.5;}
-/* hero cards */
-.hcards{display:flex;flex-direction:column;gap:7px;position:relative;}
-.hcard{display:flex;align-items:center;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.08);border-radius:8px;overflow:hidden;height:68px;cursor:pointer;transition:background .2s;}
-.hcard:hover{background:rgba(255,255,255,.1);}
-.hcard-thumb{width:88px;height:68px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:28px;}
-.hcard-body{padding:8px 12px;}
-.hcard-tag{font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.38);margin-bottom:3px;}
-.hcard-ttl{font-size:12.5px;font-weight:700;color:#fff;line-height:1.3;}
-/* strip below hero */
-.hero-strip{
-  position:relative;z-index:2;
-  background:rgba(0,0,0,.5);border-top:1px solid rgba(255,255,255,.07);
-  padding:9px 40px;display:flex;align-items:center;justify-content:space-between;
+.hero-title .orange{color:#E8530A;}
+
+.hero-sub{
+  font-size:15px;color:rgba(255,255,255,.78);
+  margin-bottom:28px;font-weight:400;
+  line-height:1.5;
 }
-.hero-strip p{font-size:11.5px;color:rgba(255,255,255,.5);display:flex;align-items:center;gap:6px;}
-.hero-strip .vm{font-size:12px;font-weight:700;color:rgba(255,255,255,.45);letter-spacing:.3px;}
-.hero-strip .vm:hover{color:rgba(255,255,255,.7);}
 
-/* ════ PROMO ROW ════ */
-.promos{background:#fff;padding:24px 40px;border-bottom:1px solid var(--border);}
-.promos-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:14px;position:relative;}
-.pcard{border:1px solid var(--border);border-radius:8px;overflow:hidden;cursor:pointer;transition:box-shadow .2s;}
-.pcard:hover{box-shadow:0 4px 20px rgba(0,0,0,.09);}
-.pcard-img{height:120px;display:flex;align-items:center;justify-content:center;font-size:40px;}
-.pcard-body{padding:12px 14px;}
-.pcard-tag{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--or);margin-bottom:4px;}
-.pcard-title{font-size:13.5px;font-weight:700;color:#1a1a1a;line-height:1.35;}
-
-/* ════ SPREADS ════ */
-.spreads{padding:60px 40px;background:#fff;}
-.spreads-inner{max-width:1100px;margin:0 auto;}
-.spreads h2{font-size:clamp(22px,3vw,34px);font-weight:900;color:#1a1a1a;margin-bottom:32px;letter-spacing:-.4px;}
-.spreads h2 em{font-style:normal;color:var(--or);}
-.stable{width:100%;border-collapse:separate;border-spacing:0;border:1px solid #ddd;border-radius:8px;overflow:hidden;margin-bottom:18px;}
-.stable thead th{padding:15px 24px;font-size:14px;font-weight:700;text-align:center;}
-.stable thead th.bh{text-align:left;background:#f8f8f8;color:#888;font-weight:600;font-size:13px;}
-.stable thead th.vh{background:var(--or);color:#fff;}
-.stable thead th.mh{background:#999;color:#fff;}
-.stable tbody tr:hover td{background:#fffaf8;}
-.stable tbody tr:hover td:first-child{background:#fdf5f0;}
-.stable td{padding:15px 24px;border-top:1px solid #eee;text-align:center;font-size:15px;background:#fff;}
-.stable td:first-child{text-align:left;background:#fafafa;}
-.pair-name{font-size:15px;font-weight:700;color:#1a1a1a;}
-.pair-cat{font-size:11px;color:#bbb;margin-top:1px;}
-.sv{font-size:18px;font-weight:800;color:#1a1a1a;}
-.mv{font-size:15px;font-weight:600;color:#999;}
-.cr{font-size:12px;margin-right:3px;}
-.snotes{margin-bottom:28px;}
-.snotes li{font-size:12px;color:#888;margin-left:18px;margin-bottom:3px;list-style:disc;}
-.btn-pill{display:inline-flex;align-items:center;background:var(--or);color:#fff;padding:13px 34px;border-radius:50px;font-size:13.5px;font-weight:800;letter-spacing:.5px;transition:background .15s;}
-.btn-pill:hover{background:var(--or2);}
-
-/* ════ AWARD ════ */
-.award{background:#efefef;padding:64px 40px;text-align:center;}
-.award-inner{max-width:940px;margin:0 auto;}
-.award-brand{font-size:20px;font-weight:900;color:var(--or);margin-bottom:4px;}
-.award-title{font-size:clamp(24px,3.5vw,38px);font-weight:900;color:#1a1a1a;margin-bottom:48px;letter-spacing:-.5px;}
-.award-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-bottom:52px;}
-.astat{display:flex;flex-direction:column;align-items:center;gap:10px;}
-.aicon{width:68px;height:68px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:30px;margin-bottom:2px;}
-.aicon.o{background:linear-gradient(145deg,#ffab6e,#e8530a);}
-.aicon.t{background:linear-gradient(145deg,#5de6d0,#14b8a6);}
-.aicon.r{background:linear-gradient(145deg,#ff8080,#ef4444);}
-.aicon.b{background:linear-gradient(145deg,#93c5fd,#3b82f6);}
-.anum{font-size:27px;font-weight:900;color:#1a1a1a;letter-spacing:-.3px;}
-.anum s{text-decoration:none;color:var(--or);}
-.albl{font-size:12.5px;color:#777;font-weight:500;}
-.award-features{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;text-align:left;padding-top:36px;border-top:1px solid #ddd;}
-.af-h{font-size:10.5px;font-weight:900;letter-spacing:2px;text-transform:uppercase;color:#222;margin-bottom:11px;}
-.af-p{font-size:12.5px;color:#777;line-height:1.8;}
-
-/* ════ TRUST ════ */
-.trust{background:#fff;padding:64px 40px;}
-.trust-inner{max-width:1100px;margin:0 auto;}
-.trust h2{font-size:clamp(24px,3vw,34px);font-weight:900;color:#1a1a1a;text-align:center;margin-bottom:44px;letter-spacing:-.4px;}
-.trust h2 em{font-style:normal;color:var(--or);}
-.tgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:44px;}
-.tcard{border:1px solid var(--border);border-radius:8px;padding:18px;display:flex;flex-direction:column;gap:6px;transition:box-shadow .2s;cursor:pointer;}
-.tcard:hover{box-shadow:0 3px 14px rgba(0,0,0,.08);}
-.tlogo{font-size:15px;font-weight:800;display:flex;align-items:center;gap:6px;}
-.tstars{font-size:18px;letter-spacing:1px;}
-.y{color:#FFC107;}
-.g{color:#00B67A;}
-/* media logos */
-.media{display:flex;align-items:center;justify-content:center;gap:40px;flex-wrap:wrap;padding-top:32px;border-top:1px solid var(--border);}
-.ml{font-weight:900;color:#555;opacity:.6;transition:opacity .2s;font-size:13px;white-space:nowrap;}
-.ml:hover{opacity:1;}
-
-/* ════ TRADE ANYTIME ════ */
-.trade{overflow:hidden;background:#fff;}
-.trade-wrap{max-width:100%;display:grid;grid-template-columns:1fr 1fr;}
-.trade-left{
-  background:linear-gradient(140deg,#111827 0%,#1e3a5f 100%);
-  padding:60px 5% 60px 10%;
-  clip-path:polygon(0 0,95% 0,100% 50%,95% 100%,0 100%);
-  display:flex;flex-direction:column;justify-content:center;
+/* email + buttons row */
+.hero-form-row{
+  display:flex;align-items:center;gap:10px;
+  flex-wrap:wrap;
 }
-.trade-h{font-size:clamp(24px,3vw,34px);font-weight:900;color:#fff;line-height:1.2;margin-bottom:16px;letter-spacing:-.4px;}
-.trade-h em{font-style:normal;color:var(--or);}
-.trade-p{font-size:13.5px;color:rgba(255,255,255,.62);line-height:1.78;margin-bottom:12px;}
-.trade-right{background:#f2f4f7;display:flex;align-items:center;justify-content:center;padding:48px 5%;position:relative;min-height:400px;}
-.earn-card{position:absolute;top:48px;right:10%;background:#fff;border-radius:12px;padding:14px 18px;box-shadow:0 8px 32px rgba(0,0,0,.13);min-width:175px;}
-.ec-label{font-size:10px;color:#aaa;font-weight:500;margin-bottom:2px;}
-.ec-val{font-size:21px;font-weight:900;color:#1a1a1a;}
-.ec-chg{font-size:12px;color:#22c55e;font-weight:700;margin-top:2px;}
-.ec-chart{height:36px;margin-top:10px;width:100%;}
-.person-block{width:220px;height:300px;background:linear-gradient(160deg,#c5d5e5,#dce6f0);border-radius:18px;position:relative;overflow:hidden;display:flex;align-items:flex-end;justify-content:center;}
-.person-block::before{content:'🧑‍💼';font-size:110px;position:absolute;bottom:-12px;opacity:.22;}
-.appbtns{display:flex;gap:9px;margin-top:22px;}
-.abtn{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);border-radius:8px;padding:7px 13px;cursor:pointer;}
-.abtn:hover{background:rgba(255,255,255,.12);}
-.abtn-i{font-size:20px;}
-.abtn-s{font-size:9px;color:rgba(255,255,255,.5);display:block;}
-.abtn-n{font-size:13px;font-weight:700;color:#fff;display:block;}
 
-/* ════ EXCELLENCE ════ */
-.ex{padding:64px 40px;background:#fff;}
-.ex-inner{max-width:1200px;margin:0 auto;}
-.ex-title{font-size:clamp(22px,3vw,34px);font-weight:900;color:#1a1a1a;line-height:1.2;margin-bottom:34px;letter-spacing:-.4px;}
-.ex-title em{font-style:normal;color:var(--or);}
-.ex-tabs{display:flex;border-bottom:2px solid #e5e5e5;margin-bottom:44px;overflow-x:auto;gap:0;}
-.ex-tab{padding:10px 16px;font-size:12px;font-weight:800;color:#aaa;cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;margin-bottom:-2px;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit;letter-spacing:.5px;text-transform:uppercase;transition:all .15s;}
-.ex-tab.on{color:var(--or);border-bottom-color:var(--or);}
-.ex-tab:hover:not(.on){color:#555;}
-.ex-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;}
-.ex-sub{font-size:22px;font-weight:900;color:#1a1a1a;margin-bottom:14px;}
-.ex-p{font-size:13.5px;color:#666;line-height:1.8;margin-bottom:26px;}
-.btn-or-out{display:inline-flex;align-items:center;border:2px solid var(--or);color:var(--or);padding:10px 22px;border-radius:4px;font-size:12px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;transition:all .15s;}
-.btn-or-out:hover{background:var(--or);color:#fff;}
-/* coins */
-.coins{position:relative;height:280px;display:flex;align-items:center;justify-content:center;}
-.coin{position:absolute;border-radius:16px;width:70px;height:70px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:#fff;box-shadow:0 10px 28px rgba(0,0,0,.18);}
-
-/* ════ SUPPORT ════ */
-.support{background:#f7f7f7;padding:64px 40px;}
-.support-inner{max-width:960px;margin:0 auto;text-align:center;}
-.support h2{font-size:clamp(22px,3vw,32px);font-weight:900;color:#1a1a1a;margin-bottom:10px;letter-spacing:-.3px;}
-.support-sub{font-size:14px;color:#777;margin-bottom:50px;line-height:1.6;}
-.sup-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:40px;text-align:left;}
-.sup-ico{width:56px;height:56px;border-radius:50%;border:2px solid var(--or);display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--or);margin-bottom:18px;}
-.sup-h{font-size:16px;font-weight:900;color:#1a1a1a;margin-bottom:10px;}
-.sup-p{font-size:12.5px;color:#777;line-height:1.78;margin-bottom:16px;}
-.sup-link{font-size:12px;font-weight:800;color:var(--or);letter-spacing:.7px;text-transform:uppercase;}
-.sup-link:hover{text-decoration:underline;}
-
-/* ════ START NOW ════ */
-.start{
-  padding:72px 40px;text-align:center;
-  background:linear-gradient(135deg,#0a1929 0%,#0f3d25 35%,#7b2d0d 75%,#b84010 100%);
+.hero-input-wrap{
+  display:flex;align-items:center;
+  background:#fff;
+  border-radius:50px;
+  padding:0 18px 0 20px;
+  height:52px;
+  width:320px;
+  gap:10px;
 }
-.start-inner{max-width:840px;margin:0 auto;}
-.start h2{font-size:clamp(24px,3.5vw,38px);font-weight:900;color:#fff;margin-bottom:48px;letter-spacing:-.4px;}
-.start-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:48px;}
-.st-num{font-size:clamp(20px,2.5vw,30px);font-weight:900;color:#fff;letter-spacing:-.3px;}
-.st-lbl{font-size:12px;color:rgba(255,255,255,.6);margin-top:4px;}
-.st-sub{font-size:10px;color:rgba(255,255,255,.38);margin-top:2px;}
-.btn-start{display:inline-flex;align-items:center;gap:12px;background:var(--or);color:#fff;padding:14px 38px;border-radius:50px;font-size:15px;font-weight:800;letter-spacing:.4px;transition:background .15s;}
-.btn-start:hover{background:var(--or2);}
-.bsa{width:30px;height:30px;background:rgba(255,255,255,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;}
-
-/* ════ FOOTER ════ */
-footer{background:#fff;border-top:1px solid var(--border);}
-.foot-top{max-width:1200px;margin:0 auto;padding:44px 40px 32px;display:grid;grid-template-columns:260px 1fr;gap:48px;border-bottom:1px solid var(--border);}
-.foot-brand .logo{margin-bottom:10px;}
-.foot-email{font-size:13px;color:var(--or);margin:10px 0 4px;font-weight:500;}
-.foot-addr{font-size:12px;color:#aaa;line-height:1.6;margin-bottom:16px;}
-.foot-soc{display:flex;gap:8px;}
-.soc{width:32px;height:32px;border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;color:#777;cursor:pointer;transition:all .15s;}
-.soc:hover{border-color:var(--or);color:var(--or);}
-.foot-cols{display:grid;grid-template-columns:repeat(4,1fr);gap:28px;}
-.foot-col h4{font-size:13px;font-weight:800;color:#1a1a1a;margin-bottom:14px;}
-.foot-col ul{list-style:none;display:flex;flex-direction:column;gap:8px;}
-.foot-col a{font-size:12.5px;color:#777;transition:color .15s;}
-.foot-col a:hover{color:var(--or);}
-.foot-bottom{max-width:1200px;margin:0 auto;padding:22px 40px 28px;}
-.ql{display:flex;gap:6px;flex-wrap:wrap;font-size:11.5px;color:#bbb;margin-bottom:20px;align-items:center;}
-.ql a{color:#bbb;transition:color .15s;}
-.ql a:hover{color:var(--or);}
-.ql span{color:#ddd;}
-.risk{font-size:11px;color:#bbb;line-height:1.9;margin-bottom:20px;}
-.foot-legal{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;padding-top:16px;border-top:1px solid var(--border);font-size:11.5px;color:#ccc;}
-.rbadges{display:flex;gap:7px;}
-.rb{font-size:10px;font-weight:700;color:#999;background:#f5f5f5;padding:4px 9px;border-radius:3px;border:1px solid #e0e0e0;}
-
-/* ════ FLOATING ELEMENTS ════ */
-.side-cta{position:fixed;right:0;top:50%;transform:translateY(-50%);z-index:300;background:var(--or);color:#fff;font-size:10.5px;font-weight:800;letter-spacing:.8px;padding:8px 14px;writing-mode:vertical-rl;text-orientation:mixed;transform:translateY(-50%) rotate(180deg);border-radius:0 0 6px 6px;cursor:pointer;}
-.chat{position:fixed;bottom:22px;right:22px;width:46px;height:46px;background:var(--or);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;cursor:pointer;box-shadow:0 4px 20px rgba(232,83,10,.45);z-index:300;}
-
-/* ════ RESPONSIVE ════ */
-@media(max-width:1024px){
-  .hero-inner{grid-template-columns:1fr;}
-  .hcards{display:none;}
-  .award-stats{grid-template-columns:repeat(2,1fr);}
-  .award-features{grid-template-columns:1fr 1fr;}
-  .tgrid{grid-template-columns:repeat(2,1fr);}
-  .trade-wrap{grid-template-columns:1fr;}
-  .trade-left{clip-path:none;padding:48px 40px;}
-  .trade-right{min-height:280px;}
-  .ex-grid{grid-template-columns:1fr;}
-  .coins{display:none;}
-  .sup-grid{grid-template-columns:1fr;}
-  .start-stats{grid-template-columns:repeat(2,1fr);}
-  .foot-top{grid-template-columns:1fr;}
-  .foot-cols{grid-template-columns:repeat(2,1fr);}
-  .promos-inner{grid-template-columns:1fr;}
+.hero-input-wrap input{
+  flex:1;border:none;outline:none;
+  font-size:14px;color:#333;
+  font-family:inherit;background:transparent;
 }
-@media(max-width:768px){
-  nav{padding:0 16px;}
-  .nav-menu{display:none;}
-  .hero-inner,.spreads,.award,.trust,.ex,.support,.start{padding-left:16px;padding-right:16px;}
-  .spreads-inner{overflow-x:auto;}
-  .stable{min-width:560px;}
-  .award-features{grid-template-columns:1fr;}
-  .tgrid{grid-template-columns:repeat(2,1fr);}
-  .start-stats{grid-template-columns:repeat(2,1fr);}
-  .foot-top,.foot-bottom{padding-left:16px;padding-right:16px;}
-  .foot-cols{grid-template-columns:1fr 1fr;}
-  .promos{padding:16px;}
+.hero-input-wrap input::placeholder{color:#aaa;}
+.hero-env{color:#aaa;font-size:18px;flex-shrink:0;}
+
+.btn-signup{
+  height:52px;padding:0 28px;
+  background:#E8530A;color:#fff;border:none;
+  border-radius:50px;font-size:14px;font-weight:800;
+  letter-spacing:.5px;cursor:pointer;font-family:inherit;
+  transition:background .15s;white-space:nowrap;
+}
+.btn-signup:hover{background:#c94508;}
+
+.btn-qr{
+  width:52px;height:52px;flex-shrink:0;
+  background:#E8530A;color:#fff;
+  border-radius:50%;display:flex;
+  align-items:center;justify-content:center;
+  cursor:pointer;font-size:20px;
+  transition:background .15s;border:none;
+}
+.btn-qr:hover{background:#c94508;}
+.btn-qr svg{width:22px;height:22px;fill:#fff;}
+
+/* ══════════════════════════════════
+   PROMO CARDS ROW
+══════════════════════════════════ */
+.promos{
+  background:#fff;
+  padding:0;
+  border-bottom:1px solid #eee;
+  position:relative;
+}
+.promos-slider{
+  display:flex;overflow:hidden;position:relative;
+}
+.promos-track{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  width:100%;
+}
+.pcard{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 28px;
+  border-right:1px solid #eee;
+  cursor:pointer;background:#fff;
+  transition:background .2s;
+  min-height:110px;
+  position:relative;overflow:hidden;
+}
+.pcard:last-child{border-right:none;}
+.pcard:hover{background:#fafafa;}
+
+.pcard-left{}
+.pcard-badge{
+  display:inline-block;
+  background:#f0f0f0;color:#555;
+  font-size:10px;font-weight:600;
+  padding:3px 10px;border-radius:50px;
+  margin-bottom:8px;letter-spacing:.2px;
+}
+.pcard-title{font-size:15px;font-weight:800;color:#1a1a1a;line-height:1.3;max-width:200px;}
+.pcard-title em{font-style:normal;color:#E8530A;}
+
+.pcard-img{
+  flex-shrink:0;
+  width:110px;height:80px;
+  object-fit:contain;
+  display:flex;align-items:center;justify-content:center;
+  font-size:44px;
+}
+
+/* arrows */
+.arrow{
+  position:absolute;top:50%;transform:translateY(-50%);
+  width:32px;height:32px;background:#fff;
+  border:1px solid #ddd;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;z-index:10;font-size:15px;color:#555;
+  box-shadow:0 2px 8px rgba(0,0,0,.08);
+  transition:box-shadow .15s;
+}
+.arrow:hover{box-shadow:0 4px 14px rgba(0,0,0,.12);}
+.arrow-l{left:-16px;}
+.arrow-r{right:-16px;}
+
+/* chat bubble */
+.chat-btn{
+  position:fixed;bottom:22px;right:22px;
+  width:48px;height:48px;
+  background:#E8530A;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:22px;cursor:pointer;
+  box-shadow:0 4px 20px rgba(232,83,10,.45);
+  z-index:300;
 }
 </style>
 </head>
 <body>
 
-<div class="side-cta">Time To Make Your Move?</div>
-<div class="chat">💬</div>
+<div class="chat-btn">💬</div>
 
 <!-- ══ NAVBAR ══ -->
 <nav>
+  <!-- Logo -->
   <a href="#" class="logo">
-    <div class="logo-icon">
-      <svg viewBox="0 0 20 20"><path d="M2 3l6 14 2-4 2 4 6-14h-4L10 11 6 3z"/></svg>
-    </div>
-    <span class="logo-name">speedverse</span>
+    <svg class="logo-svg" viewBox="0 0 44 44" fill="none">
+      <!-- V shape: left leg teal/dark, right leg has orange tip -->
+      <path d="M4 8 L18 36 L22 28 L26 36 L40 8 L33 8 L22 26 L11 8 Z" fill="#1a2f2a"/>
+      <path d="M22 26 L26 36 L40 8 L33 8 Z" fill="#E8530A"/>
+    </svg>
+    <span class="logo-wordmark">vantage</span>
   </a>
 
-  <ul class="nav-menu">
-    <li><a href="#" class="nav-sponsorship">🏎️ Sponsorship</a></li>
-    <li><a href="#spreads">Trading</a></li>
-    <li><a href="#ex">Platforms</a></li>
+  <!-- Nav links -->
+  <ul class="nav-links">
+    <li class="sponsorship"><a href="#">🏁 Sponsorship</a></li>
+    <li><a href="#">Trading</a></li>
+    <li><a href="#">Platforms</a></li>
     <li><a href="#">Academy</a></li>
     <li><a href="#">Market Analysis</a></li>
     <li><a href="#">Partner Program</a></li>
     <li><a href="#">Promotions</a></li>
   </ul>
 
-  <div class="nav-actions">
-    <div class="nav-ico">🔍</div>
-    <a href="#" class="btn-reg">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="white"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" fill="white"/></svg>
+  <!-- Right actions -->
+  <div class="nav-right">
+    <a href="#" class="btn-register">
+      <!-- person icon -->
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="white"><circle cx="12" cy="7" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>
       Register
     </a>
-    <a href="#" class="btn-log">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/><polyline points="10,17 15,12 10,7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+    <a href="#" class="btn-login">
+      <!-- login icon -->
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/><polyline points="10,17 15,12 10,7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
       Login
     </a>
-    <div class="nav-ico">☰</div>
+    <div class="nav-icon">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    </div>
+    <div class="nav-icon">
+      <svg width="20" height="14" viewBox="0 0 20 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="0" y1="1" x2="20" y2="1"/><line x1="0" y1="7" x2="20" y2="7"/><line x1="0" y1="13" x2="20" y2="13"/></svg>
+    </div>
   </div>
 </nav>
 
 <!-- ══ HERO ══ -->
 <div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-candles"></div>
   <div class="hero-overlay"></div>
-  <div class="hero-inner">
-    <!-- left -->
-    <div>
-      <div class="hero-pre">Award-winning CFD platform</div>
-      <h1 class="hero-h1">SpeedVerse <span>Ultimate Trading Machine<span class="hero-sup">*</span></span></h1>
-      <p class="hero-p">An award-winning CFD platform trusted by 5,000,000+ traders.</p>
-      <div class="hero-form">
-        <span class="env">✉</span>
+
+  <div class="hero-content">
+    <h1 class="hero-title">
+      SpeedVerse <span class="orange">Ultimate Trading Machine*</span>
+    </h1>
+    <p class="hero-sub">An award-winning CFD platform trusted by 5,000,000+ traders.</p>
+
+    <div class="hero-form-row">
+      <!-- email input -->
+      <div class="hero-input-wrap">
         <input type="email" placeholder="Enter Your Email"/>
-        <button class="btn-sign">SIGN UP NOW</button>
-        <div class="hero-qr">⊞</div>
+        <span class="hero-env">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="2,4 12,13 22,4"/></svg>
+        </span>
       </div>
-      <div class="hero-note">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="9,12 12,15 16,9"/></svg>
-        Turn your trades into cashback. Earn USD2 cashback for every USD100,000 traded on eligible CFDs. *T&Cs apply.
-      </div>
-    </div>
-    <!-- right: cards -->
-    <div class="hcards">
-      <div class="hcard">
-        <div class="hcard-thumb" style="background:linear-gradient(135deg,#1a2840,#243550);">📰</div>
-        <div class="hcard-body">
-          <div class="hcard-tag">News</div>
-          <div class="hcard-ttl">Latest on Trump's Tariffs</div>
-        </div>
-      </div>
-      <div class="hcard">
-        <div class="hcard-thumb" style="background:linear-gradient(135deg,#0d1f38,#162b50);">💻</div>
-        <div class="hcard-body">
-          <div class="hcard-tag">Platform</div>
-          <div class="hcard-ttl">Trade Smarter on SpeedVerse Web Trading</div>
-        </div>
-      </div>
-      <div class="hcard">
-        <div class="hcard-thumb" style="background:linear-gradient(135deg,#2a1500,#3d2000);">💰</div>
-        <div class="hcard-body">
-          <div class="hcard-tag">Promotion</div>
-          <div class="hcard-ttl">Deposit Bonus</div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="hero-strip">
-    <p>
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="2"><polyline points="9,12 12,15 16,9"/><circle cx="12" cy="12" r="10"/></svg>
-      Turn your trades into cashback. Earn USD2 cashback for every USD100,000 traded on eligible CFDs. *T&Cs apply.
-    </p>
-    <a href="#" class="vm">VIEW MORE ›</a>
-  </div>
-</div>
-
-<!-- ══ PROMOS ══ -->
-<div class="promos">
-  <div class="promos-inner">
-    <div class="pcard">
-      <div class="pcard-img" style="background:linear-gradient(135deg,#fff3e0,#ffcc80);">💵</div>
-      <div class="pcard-body"><div class="pcard-tag">Promotion</div><div class="pcard-title">Deposit Bonus</div></div>
-    </div>
-    <div class="pcard">
-      <div class="pcard-img" style="background:linear-gradient(135deg,#e8f5e9,#a5d6a7);">📊</div>
-      <div class="pcard-body"><div class="pcard-tag">Promotion</div><div class="pcard-title">Cashback Prime Promotion</div></div>
-    </div>
-    <div class="pcard">
-      <div class="pcard-img" style="background:linear-gradient(135deg,#fce4ec,#f48fb1);">🏆</div>
-      <div class="pcard-body"><div class="pcard-tag">Promotion</div><div class="pcard-title">SpeedVerse Glory 2026: Pre-Game Draw</div></div>
-    </div>
-  </div>
-</div>
-
-<!-- ══ SPREADS ══ -->
-<section class="spreads" id="spreads">
-  <div class="spreads-inner">
-    <h2>See Our <em>Competitive Spreads</em></h2>
-    <table class="stable">
-      <thead>
-        <tr>
-          <th class="bh">Broker</th>
-          <th class="vh">
-            <span style="display:inline-flex;align-items:center;gap:7px;">
-              <span style="width:20px;height:20px;background:rgba(255,255,255,.25);border-radius:3px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;">S</span>
-              speedverse
-            </span>
-          </th>
-          <th class="mh">Market Average</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><div class="pair-name">XAUUSD</div><div class="pair-cat">Gold</div></td>
-          <td><span class="cr">👑</span><span class="sv">0.75</span></td>
-          <td><span class="mv">0.89</span></td>
-        </tr>
-        <tr>
-          <td><div class="pair-name">GBP/CHF</div><div class="pair-cat">Forex</div></td>
-          <td><span class="cr">👑</span><span class="sv">0.90</span></td>
-          <td><span class="mv">1.30</span></td>
-        </tr>
-        <tr>
-          <td><div class="pair-name">GBP/NZD</div><div class="pair-cat">Forex</div></td>
-          <td><span class="cr">👑</span><span class="sv">2.65</span></td>
-          <td><span class="mv">3.31</span></td>
-        </tr>
-        <tr>
-          <td><div class="pair-name">HK50</div><div class="pair-cat">Indices</div></td>
-          <td><span class="cr">👑</span><span class="sv">0.41</span></td>
-          <td><span class="mv">1.99</span></td>
-        </tr>
-        <tr>
-          <td><div class="pair-name">UKOUSD</div><div class="pair-cat">Energy</div></td>
-          <td><span class="cr">👑</span><span class="sv">2.30</span></td>
-          <td><span class="mv">3.34</span></td>
-        </tr>
-      </tbody>
-    </table>
-    <ul class="snotes">
-      <li>Spreads are in pips.</li>
-      <li>Last updated on 11 July 2025.</li>
-      <li>All spreads (in pips) are for indicative purposes only as net costs may differ at any time of the day.</li>
-    </ul>
-    <a href="#" class="btn-pill">SIGN UP NOW</a>
-  </div>
-</section>
-
-<!-- ══ AWARD ══ -->
-<section class="award">
-  <div class="award-inner">
-    <div class="award-brand">SpeedVerse</div>
-    <h2 class="award-title">An Award-Winning Broker</h2>
-    <div class="award-stats">
-      <div class="astat">
-        <div class="aicon o">🎓</div>
-        <div class="anum">5,000,000<s>+</s></div>
-        <div class="albl">Registered Users</div>
-      </div>
-      <div class="astat">
-        <div class="aicon t">🔍</div>
-        <div class="anum">1,000<s>+</s></div>
-        <div class="albl">Products</div>
-      </div>
-      <div class="astat">
-        <div class="aicon r">📈</div>
-        <div class="anum" style="font-size:22px;">From 0.0 pips</div>
-        <div class="albl">Spreads</div>
-      </div>
-      <div class="astat">
-        <div class="aicon b">💰</div>
-        <div class="anum">$0</div>
-        <div class="albl">Deposit Fees*</div>
-      </div>
-    </div>
-    <div class="award-features">
-      <div>
-        <div class="af-h">Trusted CFD Broker</div>
-        <div class="af-p">With over 15 years of experience, SpeedVerse has built a reputation as a trusted, award-winning CFD broker. Trade 1000+ CFD products backed by seamless execution and 24/7 support. Our commitment to transparency, rigorous security measures, and industry-leading practices provides a secure and reliable trading platform.<br/><br/><span style="color:#bbb;font-size:11px;">*Other fees may apply</span></div>
-      </div>
-      <div>
-        <div class="af-h">Secure Funds</div>
-        <div class="af-p">Client funds at SpeedVerse are held in segregated trust accounts with top-tier banks, separate from our operational capital. For added protection, clients will benefit from an additional insurance arrangement at no extra cost.</div>
-      </div>
-      <div>
-        <div class="af-h">Competitive Spreads</div>
-        <div class="af-p">Trade smarter with SpeedVerse's ultra-tight spreads, designed to help you manage trading costs effectively. Enjoy competitive pricing across all products to optimise your trading costs.</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══ TRUST ══ -->
-<section class="trust">
-  <div class="trust-inner">
-    <h2><em>Trust</em> We Have Earned</h2>
-    <div class="tgrid">
-      <div class="tcard">
-        <div class="tlogo">
-          <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-          Google
-        </div>
-        <div class="tstars y">★★★★<span style="opacity:.4;">★</span></div>
-      </div>
-      <div class="tcard">
-        <div class="tlogo" style="color:#01875f;font-weight:900;font-size:13px;">▶ Google Play</div>
-        <div class="tstars y">★★★★<span style="opacity:.4;">★</span></div>
-      </div>
-      <div class="tcard">
-        <div class="tlogo" style="color:#555;font-size:13px;">🍎 App Store</div>
-        <div class="tstars y">★★★★★</div>
-      </div>
-      <div class="tcard">
-        <div class="tlogo g">★ Trustpilot</div>
-        <div class="tstars g">★★★★<span style="opacity:.4;">★</span></div>
-      </div>
-      <div class="tcard">
-        <div class="tlogo" style="color:#1a5dad;font-size:12px;font-weight:900;">ForexBrokers.com</div>
-        <div class="tstars y">★★★★<span style="opacity:.4;">★</span></div>
-      </div>
-      <div class="tcard">
-        <div class="tlogo" style="color:#f59e0b;">😊 WikiFX</div>
-        <div class="tstars y">★★★★★</div>
-      </div>
-      <div class="tcard">
-        <div class="tlogo" style="font-size:11px;font-weight:900;color:#1a1a1a;letter-spacing:-.3px;">DAYTRADING.COM</div>
-        <div class="tstars y">★★★★★</div>
-      </div>
-      <div class="tcard">
-        <div class="tlogo" style="font-size:20px;font-weight:900;color:#c0392b;letter-spacing:-1px;">FR</div>
-        <div class="tstars y">★★★★★</div>
-      </div>
-    </div>
-    <!-- media logos -->
-    <div class="media">
-      <span class="ml" style="font-size:12px;letter-spacing:-.5px;">BUSINESS INSIDER</span>
-      <span class="ml" style="font-style:italic;color:#7B0099;font-size:16px;font-weight:900;">yahoo!</span>
-      <span class="ml" style="font-size:20px;font-weight:900;color:#000;">AP</span>
-      <span class="ml" style="font-size:15px;color:#000;">Bloomberg</span>
-      <span class="ml" style="display:flex;align-items:center;gap:3px;">
-        <span style="color:#0070d1;font-size:16px;font-weight:900;">nbc</span><span style="color:#555;font-size:14px;font-weight:900;">CNBC</span>
-      </span>
-      <span class="ml" style="color:#FF8000;font-size:13px;">REUTERS</span>
-    </div>
-  </div>
-</section>
-
-<!-- ══ TRADE ANYTIME ══ -->
-<div class="trade">
-  <div class="trade-wrap">
-    <div class="trade-left">
-      <h2 class="trade-h">Trade <em>Anytime, Anywhere</em></h2>
-      <p class="trade-p">One of the world's leading CFD brokers with over 15 years of market experience, SpeedVerse provides traders with access to 1,000+ CFD products, including forex, indices, commodities, shares, ETFs, and even bonds.</p>
-      <p class="trade-p">Trade CFDs with ease on desktop or mobile using our variety of advanced trading tools and features from your home country, whether you are from South Africa, Kenya, Botswana or Nigeria.</p>
-      <a href="#" class="btn-pill" style="margin-bottom:24px;margin-top:6px;">SIGN UP NOW</a>
-      <div class="appbtns">
-        <div class="abtn">
-          <div class="abtn-i">▶</div>
-          <div><span class="abtn-s">GET IT ON</span><span class="abtn-n">Google Play</span></div>
-        </div>
-        <div class="abtn">
-          <div class="abtn-i">🍎</div>
-          <div><span class="abtn-s">DOWNLOAD ON THE</span><span class="abtn-n">App Store</span></div>
-        </div>
-      </div>
-    </div>
-    <div class="trade-right">
-      <div class="earn-card">
-        <div class="ec-label">Earnings</div>
-        <div class="ec-val">$1,324.23 <span style="font-size:12px;color:#aaa;font-weight:500;">USD</span></div>
-        <div class="ec-chg">▲ +12.4% this month</div>
-        <svg class="ec-chart" viewBox="0 0 160 36" preserveAspectRatio="none">
-          <defs><linearGradient id="eg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#22c55e" stop-opacity=".25"/><stop offset="100%" stop-color="#22c55e" stop-opacity="0"/></linearGradient></defs>
-          <path d="M0,30 L20,26 L45,28 L70,18 L95,14 L120,10 L145,5 L160,2 L160,36 L0,36Z" fill="url(#eg)"/>
-          <path d="M0,30 L20,26 L45,28 L70,18 L95,14 L120,10 L145,5 L160,2" fill="none" stroke="#22c55e" stroke-width="1.5" stroke-linecap="round"/>
+      <!-- sign up button -->
+      <button class="btn-signup">SIGN UP NOW</button>
+      <!-- QR button -->
+      <button class="btn-qr">
+        <svg viewBox="0 0 24 24" fill="white">
+          <rect x="3" y="3" width="7" height="7" rx="1" fill="none" stroke="white" stroke-width="2"/>
+          <rect x="5" y="5" width="3" height="3" fill="white"/>
+          <rect x="14" y="3" width="7" height="7" rx="1" fill="none" stroke="white" stroke-width="2"/>
+          <rect x="16" y="5" width="3" height="3" fill="white"/>
+          <rect x="3" y="14" width="7" height="7" rx="1" fill="none" stroke="white" stroke-width="2"/>
+          <rect x="5" y="16" width="3" height="3" fill="white"/>
+          <line x1="14" y1="14" x2="14" y2="14" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          <line x1="14" y1="17" x2="14" y2="21" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          <line x1="17" y1="14" x2="21" y2="14" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          <line x1="21" y1="17" x2="21" y2="21" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          <line x1="17" y1="21" x2="18" y2="21" stroke="white" stroke-width="2" stroke-linecap="round"/>
         </svg>
-      </div>
-      <div class="person-block">
-        <div style="position:absolute;bottom:-8px;font-size:120px;opacity:.18;">🧑‍💼</div>
-      </div>
+      </button>
     </div>
   </div>
 </div>
 
-<!-- ══ DRIVING EXCELLENCE ══ -->
-<section class="ex" id="ex">
-  <div class="ex-inner">
-    <h2 class="ex-title">Driving <em>Excellence</em> with a Leading CFD Broker</h2>
-    <div class="ex-tabs">
-      <button class="ex-tab on" onclick="exTab(this,'forex')">FOREX</button>
-      <button class="ex-tab" onclick="exTab(this,'indices')">INDICES</button>
-      <button class="ex-tab" onclick="exTab(this,'gold')">GOLD &amp; SILVER</button>
-      <button class="ex-tab" onclick="exTab(this,'energy')">ENERGY</button>
-      <button class="ex-tab" onclick="exTab(this,'etfs')">ETFS</button>
-      <button class="ex-tab" onclick="exTab(this,'soft')">SOFT COMMODITIES</button>
-      <button class="ex-tab" onclick="exTab(this,'shares')">SHARES</button>
-    </div>
-    <div class="ex-grid">
-      <div>
-        <div class="ex-sub" id="exSub">FOREX</div>
-        <p class="ex-p" id="exP">Trade the world's most popular forex and currency pairs with a trusted forex broker whether you are from South Africa, Kenya, Botswana or Nigeria.<br/><br/>Access 40+ major, minor, and exotic forex pairs with low spreads from 0.0. Start trading the world's leading currencies including EUR/USD, GBP/USD, and USD/JPY.</p>
-        <a href="#" class="btn-or-out" id="exBtn">LEARN FOREX</a>
-      </div>
-      <div class="coins">
-        <div class="coin" style="background:linear-gradient(135deg,#FF9A3C,#E8530A);top:20px;left:60px;transform:rotate(-10deg);">€$</div>
-        <div class="coin" style="background:linear-gradient(135deg,#C8C8C8,#909090);top:10px;right:50px;transform:rotate(8deg);border-radius:50%;width:62px;height:62px;font-size:20px;">Au</div>
-        <div class="coin" style="background:linear-gradient(135deg,#222,#555);top:100px;left:30px;transform:rotate(4deg);border-radius:50%;width:64px;height:64px;">¥</div>
-        <div class="coin" style="background:linear-gradient(135deg,#34d399,#059669);top:108px;right:70px;transform:rotate(-7deg);">£€</div>
-        <div class="coin" style="background:linear-gradient(135deg,#fb923c,#ea580c);bottom:18px;left:100px;transform:rotate(9deg);width:62px;height:62px;font-size:20px;">↑3</div>
-        <div class="coin" style="background:linear-gradient(135deg,#f87171,#dc2626);bottom:24px;right:40px;transform:rotate(-5deg);width:58px;height:58px;font-size:20px;">$</div>
-      </div>
-    </div>
-  </div>
-</section>
+<!-- ══ PROMO CARDS ══ -->
+<div class="promos">
+  <div style="max-width:1400px;margin:0 auto;position:relative;padding:0 24px;">
+    <div class="arrow arrow-l">‹</div>
+    <div class="promos-track">
 
-<!-- ══ SUPPORT ══ -->
-<section class="support">
-  <div class="support-inner">
-    <h2>Support &amp; Resources</h2>
-    <p class="support-sub">Get the answers, assistance, and education you need to support your trading journey.</p>
-    <div class="sup-grid">
-      <div>
-        <div class="sup-ico">🕐</div>
-        <div class="sup-h">24/7 Customer Support</div>
-        <p class="sup-p">We provide support and account assistance at every stage of your journey. Our dedicated customer support team is available 24/7 to assist with any trading-related inquiries.</p>
-        <a href="#" class="sup-link">CHAT NOW</a>
+      <div class="pcard">
+        <div class="pcard-left">
+          <div class="pcard-badge">Promotion</div>
+          <div class="pcard-title">Deposit Bonus</div>
+        </div>
+        <div class="pcard-img">💰</div>
       </div>
-      <div>
-        <div class="sup-ico">🎧</div>
-        <div class="sup-h">Help Center</div>
-        <p class="sup-p">Find answers to your questions quickly with our comprehensive Help Center. From account setup to trading strategies, our resources provide clear and detailed guidance to support your trading journey.</p>
-        <a href="#" class="sup-link">VIEW MORE</a>
-      </div>
-      <div>
-        <div class="sup-ico">🎓</div>
-        <div class="sup-h">Learn</div>
-        <p class="sup-p">Access free educational resources to expand your trading knowledge. Whether you're a beginner or an experienced trader, we have articles, webinars, videos, and courses to support your learning.</p>
-        <a href="#" class="sup-link">VIEW MORE</a>
-      </div>
-    </div>
-  </div>
-</section>
 
-<!-- ══ START NOW ══ -->
-<section class="start">
-  <div class="start-inner">
-    <h2>Start Your Trading Now</h2>
-    <div class="start-stats">
-      <div><div class="st-num">5,000,000+</div><div class="st-lbl">Registered Users</div></div>
-      <div><div class="st-num">1,000+</div><div class="st-lbl">Products</div></div>
-      <div><div class="st-num">From 0.0 pips</div><div class="st-lbl">Spreads</div></div>
-      <div><div class="st-num">$0</div><div class="st-lbl">Deposit Fees*</div><div class="st-sub">*Other fees may apply</div></div>
-    </div>
-    <a href="#" class="btn-start">START NOW <div class="bsa">↗</div></a>
-  </div>
-</section>
+      <div class="pcard">
+        <div class="pcard-left">
+          <div class="pcard-badge">Promotion</div>
+          <div class="pcard-title">Cashback <em>Prime</em><br/>Promotion</div>
+        </div>
+        <div class="pcard-img">📊</div>
+      </div>
 
-<!-- ══ FOOTER ══ -->
-<footer>
-  <div class="foot-top">
-    <div class="foot-brand">
-      <a href="#" class="logo" style="margin-bottom:0">
-        <div class="logo-icon"><svg viewBox="0 0 20 20" fill="white"><path d="M2 3l6 14 2-4 2 4 6-14h-4L10 11 6 3z"/></svg></div>
-        <span class="logo-name">speedverse</span>
-      </a>
-      <div class="foot-email">support@speedversemarkets.com</div>
-      <div class="foot-addr">iCount Building, Kumul Highway,<br/>Port Vila, Vanuatu</div>
-      <div class="foot-soc">
-        <div class="soc">f</div>
-        <div class="soc">📷</div>
-        <div class="soc">𝕏</div>
-        <div class="soc">in</div>
-        <div class="soc">▶</div>
-        <div class="soc">♪</div>
+      <div class="pcard">
+        <div class="pcard-left">
+          <div class="pcard-badge">Promotion</div>
+          <div class="pcard-title">SpeedVerse Glory 2026:<br/>Pre-Game Draw</div>
+        </div>
+        <div class="pcard-img">🏆</div>
       </div>
-    </div>
-    <div class="foot-cols">
-      <div class="foot-col">
-        <h4>Sponsorship</h4>
-        <ul><li><a href="#">Trump Tariffs</a></li></ul>
-      </div>
-      <div class="foot-col">
-        <h4>Trading</h4>
-        <ul>
-          <li><a href="#">Overview</a></li>
-          <li><a href="#">All Trading Products</a></li>
-          <li><a href="#">Markets</a></li>
-          <li><a href="#">Trading Accounts</a></li>
-          <li><a href="#">Trading Fees</a></li>
-          <li><a href="#">Deposit and Withdrawal</a></li>
-        </ul>
-      </div>
-      <div class="foot-col">
-        <h4>Platforms</h4>
-        <ul>
-          <li><a href="#">Overview</a></li>
-          <li><a href="#">SpeedVerse App</a></li>
-          <li><a href="#">SpeedVerse Web Trading</a></li>
-          <li><a href="#">MetaTrader 5</a></li>
-          <li><a href="#">MetaTrader 4</a></li>
-          <li><a href="#">TradingView</a></li>
-          <li><a href="#">Copy Trading</a></li>
-          <li><a href="#">Demo Trading</a></li>
-        </ul>
-      </div>
-      <div class="foot-col">
-        <h4>Academy</h4>
-        <ul>
-          <li><a href="#">Overview</a></li>
-          <li><a href="#">Trump Tariffs</a></li>
-          <li><a href="#">All Articles</a></li>
-          <li><a href="#">Courses</a></li>
-          <li><a href="#">Webinars</a></li>
-          <li><a href="#">eBooks</a></li>
-          <li><a href="#">Terminology</a></li>
-          <li><a href="#">Live</a></li>
-          <li><a href="#">The SpeedVerse View</a></li>
-        </ul>
-      </div>
-    </div>
-  </div>
-  <div class="foot-bottom">
-    <div class="ql">
-      <span>All CFD Trading Products</span><span>|</span>
-      <a href="#">Forex Trading</a><span>|</span>
-      <a href="#">Indices Trading</a><span>|</span>
-      <a href="#">Commodity Trading</a><span>|</span>
-      <a href="#">Shares Trading</a><span>|</span>
-      <a href="#">ETFs Trading</a><span>|</span>
-      <a href="#">Bond Trading</a>
-    </div>
-    <p class="risk">SpeedVerse Markets Pty Ltd is regulated by the Australian Securities and Investments Commission (ASIC), AFSL no. 428901. SpeedVerse Markets Ltd is authorised and regulated by the Financial Conduct Authority (FCA), FRN 590299. SpeedVerse Financial Services (Pty) Ltd is regulated by the Financial Sector Conduct Authority (FSCA) of South Africa, FSP No. 51268. SpeedVerse International Group Limited is licensed and regulated by the Cayman Islands Monetary Authority (CIMA), Securities Investment Business Law no. 1383491.<br/><br/>
-    Risk Warning: Derivative products are leveraged products and can result in losses that exceed your deposits. Please ensure that you fully understand the risks involved. Trading derivatives may not be suitable for all investors. The information on this site is not directed at residents in any country or jurisdiction where such distribution or use would be contrary to local law or regulation. © 2026 SpeedVerse Markets Ltd. All Rights Reserved.</p>
-    <div class="foot-legal">
-      <div style="font-size:11.5px;color:#ccc;">© 2026 SpeedVerse Markets Ltd. All rights reserved.</div>
-      <div class="rbadges">
-        <span class="rb">ASIC</span>
-        <span class="rb">FCA</span>
-        <span class="rb">FSCA</span>
-        <span class="rb">CIMA</span>
-      </div>
-    </div>
-  </div>
-</footer>
 
-<script>
-const tabData={
-  forex:{sub:'FOREX',p:'Trade the world\'s most popular forex and currency pairs with a trusted forex broker whether you are from South Africa, Kenya, Botswana or Nigeria.<br/><br/>Access 40+ major, minor, and exotic forex pairs with low spreads from 0.0. Start trading the world\'s leading currencies including EUR/USD, GBP/USD, and USD/JPY.',btn:'LEARN FOREX'},
-  indices:{sub:'INDICES',p:'Open positions and diversify your portfolio with global indices. Leverage on the volatility of the largest stock market indices in the world like SP500, DAX, NAS100, and DJ30.<br/><br/>Access major global stock indices with competitive spreads and fast execution.',btn:'LEARN INDICES'},
-  gold:{sub:'GOLD & SILVER',p:'Buy or sell the world\'s most highly traded precious metals — gold (XAUUSD) and silver (XAGUSD).<br/><br/>Access live precious metals pricing with spreads from 0.2 pips and competitive margin rates.',btn:'LEARN GOLD & SILVER'},
-  energy:{sub:'ENERGY',p:'Trade crude oil, natural gas, and other energy CFDs with competitive spreads.<br/><br/>Energy markets offer significant trading opportunities driven by global supply and demand, geopolitical events, and macroeconomic factors.',btn:'LEARN ENERGY'},
-  etfs:{sub:'ETFs',p:'Trade 57 Exchange-Traded Fund (ETF) CFDs including the Invesco QQQ Trust Series 1 and the SPDR S&P 500 ETF Trust.<br/><br/>ETF CFDs let you gain exposure to diversified baskets of assets without owning the underlying securities.',btn:'LEARN ETFs'},
-  soft:{sub:'SOFT COMMODITIES',p:'Access 13 soft commodity CFDs including sugar, cocoa, cotton, coffee, and more.<br/><br/>Soft commodities provide unique diversification opportunities, driven by weather patterns, crop reports, and global consumption trends.',btn:'LEARN SOFT COMMODITIES'},
-  shares:{sub:'SHARES',p:'Trade 825+ stock CFDs from global markets including TESLA, NVIDIA, Apple, Amazon, and hundreds more.<br/><br/>Trade US share CFDs with $0 commissions and access shares from major exchanges including NYSE, NASDAQ, LSE, and ASX.',btn:'LEARN SHARES'}
-};
-function exTab(el,k){
-  document.querySelectorAll('.ex-tab').forEach(t=>t.classList.remove('on'));
-  el.classList.add('on');
-  const d=tabData[k];
-  document.getElementById('exSub').textContent=d.sub;
-  document.getElementById('exP').innerHTML=d.p;
-  document.getElementById('exBtn').textContent=d.btn;
-}
-window.addEventListener('scroll',()=>{
-  document.querySelector('nav').style.boxShadow=window.scrollY>4?'0 2px 12px rgba(0,0,0,.07)':'none';
-});
-</script>
+    </div>
+    <div class="arrow arrow-r">›</div>
+  </div>
+</div>
+
 </body>
 </html>
