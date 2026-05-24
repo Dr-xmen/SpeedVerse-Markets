@@ -1,2093 +1,873 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Trade 1000+ CFDs with Trusted CFD Broker | SpeedVerse Markets</title>
-  <meta name="description" content="SpeedVerse Markets — Award-winning CFD broker trusted by 5,000,000+ traders. Trade Forex, Indices, Commodities, Shares, ETFs and more with spreads from 0.0." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --navy: #060B18;
-      --navy2: #0D1526;
-      --navy3: #111E35;
-      --card: #0F1A2E;
-      --orange: #F7941D;
-      --orange2: #FF6B00;
-      --orange-light: #FFA940;
-      --green: #00C896;
-      --red: #FF4B55;
-      --text: #FFFFFF;
-      --text2: #A8B5CC;
-      --text3: #6B7FA3;
-      --border: rgba(255,255,255,0.07);
-      --glow: rgba(247,148,29,0.15);
-    }
-
-    html { scroll-behavior: smooth; }
-
-    body {
-      font-family: 'Inter', sans-serif;
-      background: var(--navy);
-      color: var(--text);
-      overflow-x: hidden;
-      line-height: 1.6;
-    }
-
-    /* ─── NAVBAR ─── */
-    nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 1000;
-      background: rgba(6,11,24,0.92);
-      backdrop-filter: blur(20px);
-      border-bottom: 1px solid var(--border);
-      padding: 0 5%;
-      height: 68px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      transition: background 0.3s;
-    }
-
-    .nav-logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      text-decoration: none;
-    }
-
-    .logo-icon {
-      width: 36px; height: 36px;
-      background: linear-gradient(135deg, var(--orange), var(--orange2));
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 900;
-      font-size: 18px;
-      color: white;
-      flex-shrink: 0;
-    }
-
-    .logo-text {
-      font-size: 20px;
-      font-weight: 800;
-      color: var(--text);
-      letter-spacing: -0.5px;
-    }
-
-    .logo-text span { color: var(--orange); }
-
-    .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      list-style: none;
-    }
-
-    .nav-links a {
-      color: var(--text2);
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 500;
-      padding: 8px 14px;
-      border-radius: 6px;
-      transition: all 0.2s;
-    }
-
-    .nav-links a:hover { color: var(--text); background: rgba(255,255,255,0.06); }
-
-    .nav-actions { display: flex; align-items: center; gap: 12px; }
-
-    .btn-login {
-      color: var(--text2);
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 500;
-      padding: 8px 16px;
-      border-radius: 6px;
-      border: 1px solid var(--border);
-      transition: all 0.2s;
-    }
-
-    .btn-login:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
-
-    .btn-primary {
-      background: linear-gradient(135deg, var(--orange), var(--orange2));
-      color: white;
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 600;
-      padding: 9px 20px;
-      border-radius: 6px;
-      border: none;
-      cursor: pointer;
-      transition: all 0.2s;
-      white-space: nowrap;
-      display: inline-block;
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 8px 24px rgba(247,148,29,0.35);
-    }
-
-    .hamburger {
-      display: none;
-      flex-direction: column;
-      gap: 5px;
-      cursor: pointer;
-      padding: 4px;
-    }
-
-    .hamburger span {
-      display: block;
-      width: 24px;
-      height: 2px;
-      background: var(--text2);
-      border-radius: 2px;
-      transition: all 0.3s;
-    }
-
-    /* ─── HERO ─── */
-    .hero {
-      min-height: 100vh;
-      padding: 120px 5% 80px;
-      position: relative;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-    }
-
-    .hero-bg {
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(ellipse 80% 60% at 60% 30%, rgba(247,148,29,0.08) 0%, transparent 60%),
-        radial-gradient(ellipse 60% 50% at 10% 70%, rgba(0,100,200,0.08) 0%, transparent 60%),
-        linear-gradient(180deg, var(--navy) 0%, var(--navy2) 100%);
-    }
-
-    .hero-grid {
-      position: absolute;
-      inset: 0;
-      background-image:
-        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
-      background-size: 60px 60px;
-      mask-image: radial-gradient(ellipse 80% 70% at 60% 30%, black 30%, transparent 80%);
-    }
-
-    .hero-inner {
-      position: relative;
-      z-index: 2;
-      max-width: 1200px;
-      margin: 0 auto;
-      width: 100%;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 60px;
-      align-items: center;
-    }
-
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(247,148,29,0.1);
-      border: 1px solid rgba(247,148,29,0.25);
-      color: var(--orange-light);
-      font-size: 13px;
-      font-weight: 600;
-      padding: 6px 14px;
-      border-radius: 100px;
-      margin-bottom: 24px;
-      letter-spacing: 0.3px;
-    }
-
-    .badge-dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: var(--orange);
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.5; transform: scale(0.8); }
-    }
-
-    .hero-title {
-      font-size: clamp(36px, 5vw, 60px);
-      font-weight: 900;
-      line-height: 1.1;
-      letter-spacing: -1.5px;
-      margin-bottom: 20px;
-    }
-
-    .hero-title .highlight {
-      background: linear-gradient(135deg, var(--orange), var(--orange-light));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .hero-sub {
-      font-size: 17px;
-      color: var(--text2);
-      line-height: 1.7;
-      margin-bottom: 36px;
-      max-width: 480px;
-    }
-
-    .hero-ctas {
-      display: flex;
-      gap: 14px;
-      flex-wrap: wrap;
-      margin-bottom: 48px;
-    }
-
-    .btn-lg {
-      font-size: 15px;
-      padding: 14px 28px;
-      border-radius: 8px;
-    }
-
-    .btn-outline {
-      color: var(--text);
-      border: 1px solid rgba(255,255,255,0.15);
-      padding: 14px 28px;
-      border-radius: 8px;
-      font-size: 15px;
-      font-weight: 600;
-      text-decoration: none;
-      transition: all 0.2s;
-      display: inline-block;
-    }
-
-    .btn-outline:hover {
-      border-color: rgba(255,255,255,0.35);
-      background: rgba(255,255,255,0.04);
-    }
-
-    .hero-trust {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
-
-    .trust-item {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      font-size: 13px;
-      color: var(--text3);
-    }
-
-    .trust-icon {
-      width: 18px; height: 18px;
-      border-radius: 50%;
-      background: rgba(0,200,150,0.15);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 10px;
-      color: var(--green);
-      flex-shrink: 0;
-    }
-
-    /* ─── HERO CHART ─── */
-    .hero-visual {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .chart-card {
-      background: rgba(13,21,38,0.8);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 20px;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 24px 60px rgba(0,0,0,0.4);
-    }
-
-    .chart-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-    }
-
-    .chart-pair {
-      font-size: 15px;
-      font-weight: 700;
-      color: var(--text);
-    }
-
-    .chart-price {
-      font-size: 24px;
-      font-weight: 800;
-      color: var(--text);
-    }
-
-    .price-change { color: var(--green); font-size: 13px; font-weight: 600; }
-    .price-change.down { color: var(--red); }
-
-    .chart-svg { width: 100%; height: 90px; }
-
-    .mini-cards {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-    }
-
-    .mini-card {
-      background: rgba(13,21,38,0.8);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 14px;
-      backdrop-filter: blur(10px);
-    }
-
-    .mini-label { font-size: 11px; color: var(--text3); margin-bottom: 6px; font-weight: 500; }
-    .mini-val { font-size: 16px; font-weight: 700; color: var(--text); }
-    .mini-sub { font-size: 11px; margin-top: 2px; font-weight: 500; }
-
-    /* floating notification */
-    .float-notif {
-      position: absolute;
-      top: -20px; right: -20px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 12px 16px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      box-shadow: 0 16px 40px rgba(0,0,0,0.4);
-      animation: float 4s ease-in-out infinite;
-      z-index: 5;
-    }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-8px); }
-    }
-
-    .notif-icon {
-      width: 36px; height: 36px;
-      background: rgba(0,200,150,0.15);
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-    }
-
-    .notif-text { font-size: 12px; color: var(--text2); }
-    .notif-text strong { display: block; color: var(--green); font-size: 14px; }
-
-    /* ─── STATS STRIP ─── */
-    .stats-strip {
-      background: var(--navy3);
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-      padding: 40px 5%;
-    }
-
-    .stats-inner {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 20px;
-      text-align: center;
-    }
-
-    .stat-item { padding: 10px; }
-
-    .stat-num {
-      font-size: clamp(28px, 4vw, 42px);
-      font-weight: 900;
-      color: var(--text);
-      letter-spacing: -1px;
-      line-height: 1;
-    }
-
-    .stat-num span { color: var(--orange); }
-
-    .stat-label {
-      font-size: 14px;
-      color: var(--text3);
-      margin-top: 6px;
-      font-weight: 500;
-    }
-
-    .stat-divider {
-      border-right: 1px solid var(--border);
-    }
-
-    /* ─── SECTION COMMON ─── */
-    section { padding: 100px 5%; }
-
-    .section-inner { max-width: 1200px; margin: 0 auto; }
-
-    .section-tag {
-      display: inline-block;
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: var(--orange);
-      margin-bottom: 14px;
-    }
-
-    .section-title {
-      font-size: clamp(28px, 4vw, 44px);
-      font-weight: 800;
-      line-height: 1.15;
-      letter-spacing: -0.8px;
-      margin-bottom: 16px;
-    }
-
-    .section-sub {
-      font-size: 17px;
-      color: var(--text2);
-      max-width: 520px;
-      line-height: 1.7;
-      margin-bottom: 56px;
-    }
-
-    /* ─── MARKETS ─── */
-    .markets-section { background: var(--navy2); }
-
-    .markets-tabs {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-bottom: 32px;
-    }
-
-    .tab-btn {
-      padding: 9px 20px;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      background: transparent;
-      color: var(--text3);
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-family: inherit;
-    }
-
-    .tab-btn.active, .tab-btn:hover {
-      background: rgba(247,148,29,0.1);
-      border-color: rgba(247,148,29,0.3);
-      color: var(--orange-light);
-    }
-
-    .markets-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-    }
-
-    .market-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 22px;
-      transition: all 0.25s;
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .market-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, var(--orange), transparent);
-      opacity: 0;
-      transition: opacity 0.25s;
-    }
-
-    .market-card:hover {
-      border-color: rgba(247,148,29,0.2);
-      transform: translateY(-3px);
-      box-shadow: 0 16px 40px rgba(0,0,0,0.3);
-    }
-
-    .market-card:hover::before { opacity: 1; }
-
-    .market-icon {
-      font-size: 28px;
-      margin-bottom: 14px;
-      display: block;
-    }
-
-    .market-pair {
-      font-size: 16px;
-      font-weight: 700;
-      margin-bottom: 4px;
-    }
-
-    .market-name {
-      font-size: 12px;
-      color: var(--text3);
-      margin-bottom: 16px;
-    }
-
-    .market-price-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-    }
-
-    .market-price { font-size: 20px; font-weight: 800; }
-    .market-change {
-      font-size: 13px;
-      font-weight: 600;
-      padding: 3px 8px;
-      border-radius: 5px;
-    }
-
-    .green { color: var(--green); background: rgba(0,200,150,0.1); }
-    .red { color: var(--red); background: rgba(255,75,85,0.1); }
-
-    .market-spread { font-size: 11px; color: var(--text3); margin-top: 8px; }
-
-    .markets-cta { text-align: center; margin-top: 40px; }
-
-    /* ─── PLATFORMS ─── */
-    .platforms-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 60px;
-      align-items: center;
-    }
-
-    .platform-list { display: flex; flex-direction: column; gap: 16px; }
-
-    .platform-item {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 20px 24px;
-      display: flex;
-      align-items: center;
-      gap: 18px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .platform-item.active,
-    .platform-item:hover {
-      border-color: rgba(247,148,29,0.3);
-      background: rgba(247,148,29,0.05);
-    }
-
-    .platform-logo {
-      width: 48px; height: 48px;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 22px;
-      font-weight: 900;
-      flex-shrink: 0;
-    }
-
-    .platform-info { flex: 1; }
-    .platform-name { font-size: 16px; font-weight: 700; margin-bottom: 3px; }
-    .platform-desc { font-size: 13px; color: var(--text3); }
-
-    .platform-arrow { color: var(--text3); font-size: 18px; }
-
-    .platform-visual {
-      position: relative;
-    }
-
-    .platform-mockup {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 24px;
-      box-shadow: 0 40px 80px rgba(0,0,0,0.5);
-    }
-
-    .mockup-header {
-      display: flex;
-      gap: 6px;
-      margin-bottom: 20px;
-    }
-
-    .dot { width: 10px; height: 10px; border-radius: 50%; }
-    .dot-r { background: #FF5F57; }
-    .dot-y { background: #FEBC2E; }
-    .dot-g { background: #28C840; }
-
-    .mockup-toolbar {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .toolbar-btn {
-      font-size: 12px;
-      color: var(--text3);
-      padding: 5px 10px;
-      border-radius: 5px;
-      background: rgba(255,255,255,0.04);
-      font-family: inherit;
-    }
-
-    .toolbar-btn.active {
-      color: var(--orange);
-      background: rgba(247,148,29,0.1);
-    }
-
-    .mockup-chart { height: 160px; position: relative; overflow: hidden; }
-
-    .candle-row {
-      display: flex;
-      align-items: flex-end;
-      gap: 4px;
-      height: 100%;
-      padding: 10px 0;
-    }
-
-    .candle {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-end;
-      height: 100%;
-      gap: 1px;
-    }
-
-    .candle-body {
-      width: 70%;
-      border-radius: 2px;
-    }
-
-    .candle-wick {
-      width: 1px;
-      background: currentColor;
-      opacity: 0.4;
-    }
-
-    .c-green { color: var(--green); }
-    .c-red { color: var(--red); }
-    .candle-body.c-green { background: var(--green); }
-    .candle-body.c-red { background: var(--red); }
-
-    .mockup-stats {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-top: 16px;
-    }
-
-    .mstat {
-      background: rgba(255,255,255,0.03);
-      border-radius: 8px;
-      padding: 10px;
-      text-align: center;
-    }
-
-    .mstat-val { font-size: 15px; font-weight: 700; }
-    .mstat-key { font-size: 11px; color: var(--text3); margin-top: 2px; }
-
-    /* ─── WHY US ─── */
-    .why-section { background: var(--navy2); }
-
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
-    }
-
-    .feature-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 30px;
-      transition: all 0.25s;
-    }
-
-    .feature-card:hover {
-      border-color: rgba(247,148,29,0.2);
-      transform: translateY(-3px);
-      box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-    }
-
-    .feature-icon {
-      width: 52px; height: 52px;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 24px;
-      margin-bottom: 20px;
-    }
-
-    .icon-orange { background: rgba(247,148,29,0.12); }
-    .icon-blue { background: rgba(59,130,246,0.12); }
-    .icon-green { background: rgba(0,200,150,0.12); }
-    .icon-purple { background: rgba(139,92,246,0.12); }
-    .icon-cyan { background: rgba(6,182,212,0.12); }
-    .icon-red { background: rgba(239,68,68,0.12); }
-
-    .feature-title { font-size: 18px; font-weight: 700; margin-bottom: 10px; }
-    .feature-text { font-size: 14px; color: var(--text3); line-height: 1.7; }
-
-    /* ─── ACCOUNTS ─── */
-    .accounts-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
-      margin-top: 20px;
-    }
-
-    .account-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 36px 30px;
-      position: relative;
-      overflow: hidden;
-      transition: all 0.25s;
-    }
-
-    .account-card.featured {
-      border-color: rgba(247,148,29,0.4);
-      background: linear-gradient(160deg, rgba(247,148,29,0.07) 0%, var(--card) 60%);
-    }
-
-    .account-card.featured::before {
-      content: 'MOST POPULAR';
-      position: absolute;
-      top: 18px; right: -28px;
-      background: linear-gradient(135deg, var(--orange), var(--orange2));
-      color: white;
-      font-size: 10px;
-      font-weight: 800;
-      letter-spacing: 1px;
-      padding: 5px 36px;
-      transform: rotate(45deg);
-    }
-
-    .account-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 24px 60px rgba(0,0,0,0.4);
-    }
-
-    .account-type {
-      font-size: 13px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: var(--orange);
-      margin-bottom: 8px;
-    }
-
-    .account-name {
-      font-size: 26px;
-      font-weight: 800;
-      margin-bottom: 6px;
-    }
-
-    .account-desc {
-      font-size: 14px;
-      color: var(--text3);
-      margin-bottom: 28px;
-      line-height: 1.6;
-    }
-
-    .account-specs { display: flex; flex-direction: column; gap: 14px; margin-bottom: 32px; }
-
-    .spec-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding-bottom: 14px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .spec-row:last-child { border-bottom: none; padding-bottom: 0; }
-    .spec-key { font-size: 13px; color: var(--text3); }
-    .spec-val { font-size: 14px; font-weight: 700; color: var(--text); }
-
-    .btn-account {
-      display: block;
-      text-align: center;
-      padding: 13px;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 700;
-      text-decoration: none;
-      transition: all 0.2s;
-      border: 1px solid var(--border);
-      color: var(--text2);
-    }
-
-    .btn-account.featured {
-      background: linear-gradient(135deg, var(--orange), var(--orange2));
-      border-color: transparent;
-      color: white;
-    }
-
-    .btn-account.featured:hover {
-      box-shadow: 0 8px 24px rgba(247,148,29,0.4);
-      transform: translateY(-1px);
-    }
-
-    .btn-account:not(.featured):hover {
-      border-color: rgba(255,255,255,0.2);
-      color: var(--text);
-    }
-
-    /* ─── BONUS BANNER ─── */
-    .bonus-section {
-      padding: 0 5% 100px;
-    }
-
-    .bonus-card {
-      max-width: 1200px;
-      margin: 0 auto;
-      background: linear-gradient(135deg, rgba(247,148,29,0.12) 0%, rgba(255,107,0,0.06) 100%);
-      border: 1px solid rgba(247,148,29,0.25);
-      border-radius: 24px;
-      padding: 60px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 40px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .bonus-card::before {
-      content: '50%';
-      position: absolute;
-      right: -20px; top: -40px;
-      font-size: 200px;
-      font-weight: 900;
-      color: rgba(247,148,29,0.05);
-      line-height: 1;
-      pointer-events: none;
-    }
-
-    .bonus-label {
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: var(--orange);
-      margin-bottom: 10px;
-    }
-
-    .bonus-title {
-      font-size: clamp(24px, 3.5vw, 38px);
-      font-weight: 900;
-      line-height: 1.15;
-      letter-spacing: -0.5px;
-      margin-bottom: 12px;
-    }
-
-    .bonus-desc { font-size: 15px; color: var(--text2); line-height: 1.6; max-width: 500px; }
-
-    .bonus-actions { display: flex; gap: 14px; align-items: center; flex-shrink: 0; }
-
-    /* ─── REGULATION ─── */
-    .reg-section { background: var(--navy2); }
-
-    .reg-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 20px;
-      margin-top: 20px;
-    }
-
-    .reg-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 24px;
-      text-align: center;
-      transition: all 0.2s;
-    }
-
-    .reg-card:hover {
-      border-color: rgba(247,148,29,0.2);
-      transform: translateY(-2px);
-    }
-
-    .reg-flag { font-size: 36px; margin-bottom: 14px; }
-    .reg-authority { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
-    .reg-country { font-size: 13px; color: var(--text3); margin-bottom: 10px; }
-    .reg-num { font-size: 11px; color: var(--text3); padding: 4px 10px; background: rgba(255,255,255,0.04); border-radius: 4px; display: inline-block; }
-
-    /* ─── AWARDS ─── */
-    .awards-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      justify-content: center;
-      margin-top: 20px;
-    }
-
-    .award-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 24px 30px;
-      text-align: center;
-      min-width: 200px;
-      flex: 1;
-      max-width: 240px;
-      transition: all 0.2s;
-    }
-
-    .award-card:hover {
-      border-color: rgba(247,148,29,0.25);
-      transform: translateY(-2px);
-    }
-
-    .award-icon { font-size: 32px; margin-bottom: 10px; }
-    .award-name { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
-    .award-year { font-size: 12px; color: var(--orange); font-weight: 600; }
-    .award-org { font-size: 11px; color: var(--text3); margin-top: 4px; }
-
-    /* ─── TESTIMONIALS ─── */
-    .testimonials-section { background: var(--navy2); }
-
-    .testimonials-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
-    }
-
-    .testimonial-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 28px;
-      transition: all 0.2s;
-    }
-
-    .testimonial-card:hover {
-      border-color: rgba(247,148,29,0.15);
-      transform: translateY(-2px);
-    }
-
-    .stars { color: var(--orange); font-size: 16px; margin-bottom: 14px; letter-spacing: 2px; }
-    .testimonial-text { font-size: 14px; color: var(--text2); line-height: 1.75; margin-bottom: 20px; }
-
-    .testimonial-author { display: flex; align-items: center; gap: 12px; }
-    .author-avatar {
-      width: 40px; height: 40px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 16px;
-      font-weight: 700;
-      flex-shrink: 0;
-    }
-
-    .author-name { font-size: 14px; font-weight: 700; }
-    .author-info { font-size: 12px; color: var(--text3); }
-
-    /* ─── CTA SECTION ─── */
-    .cta-section {
-      background: linear-gradient(160deg, #0D1526 0%, #060B18 100%);
-      text-align: center;
-      padding: 120px 5%;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .cta-section::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(ellipse 70% 70% at 50% 50%, rgba(247,148,29,0.07) 0%, transparent 70%);
-    }
-
-    .cta-inner { position: relative; z-index: 2; max-width: 700px; margin: 0 auto; }
-
-    .cta-title {
-      font-size: clamp(32px, 5vw, 56px);
-      font-weight: 900;
-      letter-spacing: -1px;
-      margin-bottom: 16px;
-      line-height: 1.1;
-    }
-
-    .cta-sub {
-      font-size: 17px;
-      color: var(--text2);
-      margin-bottom: 40px;
-      line-height: 1.7;
-    }
-
-    .cta-btns { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
-
-    .cta-note { font-size: 13px; color: var(--text3); margin-top: 20px; }
-
-    /* ─── FOOTER ─── */
-    footer {
-      background: #04080F;
-      border-top: 1px solid var(--border);
-      padding: 60px 5% 40px;
-    }
-
-    .footer-top {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
-      gap: 40px;
-      padding-bottom: 48px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .footer-brand p {
-      font-size: 14px;
-      color: var(--text3);
-      line-height: 1.7;
-      margin-top: 14px;
-      margin-bottom: 20px;
-    }
-
-    .footer-socials { display: flex; gap: 10px; }
-
-    .social-btn {
-      width: 36px; height: 36px;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 15px;
-      text-decoration: none;
-      transition: all 0.2s;
-    }
-
-    .social-btn:hover {
-      border-color: rgba(247,148,29,0.3);
-      background: rgba(247,148,29,0.05);
-    }
-
-    .footer-col h4 {
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      color: var(--text);
-      margin-bottom: 16px;
-    }
-
-    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
-
-    .footer-col a {
-      color: var(--text3);
-      text-decoration: none;
-      font-size: 13px;
-      transition: color 0.2s;
-    }
-
-    .footer-col a:hover { color: var(--text); }
-
-    .footer-bottom {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding-top: 32px;
-    }
-
-    .risk-warning {
-      background: rgba(255,75,85,0.05);
-      border: 1px solid rgba(255,75,85,0.15);
-      border-radius: 10px;
-      padding: 16px 20px;
-      font-size: 12px;
-      color: var(--text3);
-      line-height: 1.7;
-      margin-bottom: 24px;
-    }
-
-    .risk-warning strong { color: rgba(255,75,85,0.8); }
-
-    .footer-meta {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 12px;
-      font-size: 12px;
-      color: var(--text3);
-    }
-
-    .footer-legal { display: flex; gap: 20px; flex-wrap: wrap; }
-    .footer-legal a { color: var(--text3); text-decoration: none; transition: color 0.2s; }
-    .footer-legal a:hover { color: var(--text); }
-
-    /* ─── TICKER STRIP ─── */
-    .ticker-strip {
-      background: var(--navy3);
-      border-bottom: 1px solid var(--border);
-      padding: 10px 0;
-      overflow: hidden;
-      white-space: nowrap;
-    }
-
-    .ticker-track {
-      display: inline-flex;
-      animation: scroll-left 30s linear infinite;
-    }
-
-    @keyframes scroll-left {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
-    }
-
-    .ticker-item {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 0 28px;
-      font-size: 13px;
-      font-weight: 500;
-      border-right: 1px solid var(--border);
-    }
-
-    .ticker-symbol { color: var(--text); font-weight: 700; }
-    .ticker-price { color: var(--text2); }
-    .ticker-chg.up { color: var(--green); }
-    .ticker-chg.dn { color: var(--red); }
-
-    /* ─── SCROLLBAR ─── */
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: var(--navy); }
-    ::-webkit-scrollbar-thumb { background: var(--navy3); border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: var(--text3); }
-
-    /* ─── RESPONSIVE ─── */
-    @media (max-width: 1024px) {
-      .hero-inner { grid-template-columns: 1fr; gap: 40px; }
-      .hero-visual { display: none; }
-      .stats-inner { grid-template-columns: repeat(2, 1fr); }
-      .markets-grid { grid-template-columns: repeat(2, 1fr); }
-      .platforms-grid { grid-template-columns: 1fr; }
-      .platform-visual { display: none; }
-      .features-grid { grid-template-columns: repeat(2, 1fr); }
-      .accounts-grid { grid-template-columns: 1fr; max-width: 480px; margin-left: auto; margin-right: auto; }
-      .reg-grid { grid-template-columns: repeat(2, 1fr); }
-      .testimonials-grid { grid-template-columns: repeat(2, 1fr); }
-      .footer-top { grid-template-columns: 1fr 1fr; }
-      .bonus-card { flex-direction: column; text-align: center; }
-      .bonus-card::before { display: none; }
-    }
-
-    @media (max-width: 768px) {
-      nav { padding: 0 4%; }
-      .nav-links { display: none; }
-      .hamburger { display: flex; }
-      .hero { padding: 100px 4% 60px; }
-      section { padding: 70px 4%; }
-      .stats-inner { grid-template-columns: repeat(2, 1fr); }
-      .stat-divider { border-right: none; }
-      .markets-grid { grid-template-columns: 1fr; }
-      .features-grid { grid-template-columns: 1fr; }
-      .testimonials-grid { grid-template-columns: 1fr; }
-      .reg-grid { grid-template-columns: repeat(2, 1fr); }
-      .bonus-card { padding: 36px 28px; }
-      .footer-top { grid-template-columns: 1fr; }
-    }
-  </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>SpeedVerse Markets – Ultimate Trading Machine</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{--orange:#E8530A;--orange2:#c94508;--dark:#1a1a1a;--mid:#555;--light:#f5f5f5;--border:#e5e5e5;--white:#fff;}
+html{scroll-behavior:smooth;}
+body{font-family:'Inter',sans-serif;color:var(--dark);background:#fff;overflow-x:hidden;}
+a{text-decoration:none;color:inherit;}
+img{max-width:100%;display:block;}
+
+/* ── NAVBAR ── */
+nav{position:sticky;top:0;z-index:200;background:#fff;border-bottom:1px solid var(--border);height:60px;display:flex;align-items:center;padding:0 28px;gap:0;}
+.nav-logo{display:flex;align-items:center;gap:7px;margin-right:28px;flex-shrink:0;}
+.nav-logo svg{width:30px;height:30px;}
+.nav-logo-text{font-size:17px;font-weight:800;color:#1a1a1a;letter-spacing:-0.3px;}
+.nav-links{display:flex;align-items:center;gap:0;list-style:none;flex:1;}
+.nav-links li a{font-size:13px;font-weight:500;color:#333;padding:6px 10px;border-radius:4px;white-space:nowrap;display:block;transition:color .15s;}
+.nav-links li a:hover{color:var(--orange);}
+.nav-sponsorship{display:flex;align-items:center;gap:5px;color:var(--orange)!important;font-weight:600!important;}
+.nav-f1{font-size:15px;}
+.nav-right{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.btn-register{display:flex;align-items:center;gap:6px;background:var(--orange);color:#fff;padding:8px 16px;border-radius:5px;font-size:13px;font-weight:700;transition:background .15s;}
+.btn-register:hover{background:var(--orange2);}
+.btn-login{display:flex;align-items:center;gap:5px;font-size:13px;font-weight:500;color:#333;padding:8px 10px;}
+.btn-login:hover{color:var(--orange);}
+.nav-icon{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:4px;cursor:pointer;color:#666;font-size:15px;}
+.nav-icon:hover{background:#f5f5f5;}
+
+/* ── HERO ── */
+.hero{background:#0d0d0d;min-height:400px;display:grid;grid-template-rows:1fr auto;position:relative;overflow:hidden;}
+.hero-bg{position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 70% 100% at 15% 50%,rgba(20,10,5,.85) 0%,transparent 65%),
+    radial-gradient(ellipse 60% 80% at 75% 40%,rgba(10,20,40,.7) 0%,transparent 70%),
+    radial-gradient(circle 400px at 60% 30%,rgba(30,50,80,.4) 0%,transparent 60%),
+    radial-gradient(circle 200px at 80% 70%,rgba(60,30,10,.3) 0%,transparent 60%);}
+.hero-bokeh{position:absolute;inset:0;overflow:hidden;}
+.bokeh-dot{position:absolute;border-radius:50%;filter:blur(40px);opacity:.15;}
+.hero-inner{position:relative;z-index:2;max-width:1200px;margin:0 auto;width:100%;padding:52px 28px 40px;display:grid;grid-template-columns:1fr 360px;gap:36px;align-items:center;}
+.hero-eyebrow{font-size:11px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:12px;}
+.hero-title{font-size:clamp(30px,4vw,50px);font-weight:900;color:#fff;line-height:1.08;letter-spacing:-1px;margin-bottom:10px;}
+.hero-title .hl{color:var(--orange);}
+.hero-asterisk{font-size:.55em;vertical-align:super;color:rgba(255,255,255,.5);}
+.hero-sub{font-size:14px;color:rgba(255,255,255,.6);margin-bottom:24px;line-height:1.6;}
+.hero-form{display:flex;align-items:center;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:6px;padding:5px 5px 5px 14px;max-width:480px;gap:8px;margin-bottom:10px;}
+.hero-form input{flex:1;background:transparent;border:none;outline:none;color:#fff;font-size:13.5px;font-family:inherit;}
+.hero-form input::placeholder{color:rgba(255,255,255,.38);}
+.hero-form .fi{color:rgba(255,255,255,.35);font-size:15px;flex-shrink:0;}
+.btn-hero{background:var(--orange);color:#fff;border:none;padding:10px 20px;border-radius:4px;font-size:12.5px;font-weight:800;letter-spacing:.8px;cursor:pointer;white-space:nowrap;font-family:inherit;transition:background .15s;}
+.btn-hero:hover{background:var(--orange2);}
+.hero-qr{width:38px;height:38px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.18);border-radius:4px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;font-size:17px;color:rgba(255,255,255,.5);}
+.hero-cashback{font-size:11.5px;color:rgba(255,255,255,.45);display:flex;align-items:center;gap:6px;}
+.hero-cashback svg{flex-shrink:0;}
+
+/* hero promo cards */
+.hero-cards{display:flex;flex-direction:column;gap:8px;}
+.hcard{display:flex;align-items:center;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09);border-radius:8px;overflow:hidden;height:70px;cursor:pointer;transition:background .2s;}
+.hcard:hover{background:rgba(255,255,255,.1);}
+.hcard-img{width:90px;height:70px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:26px;}
+.hcard-body{padding:8px 12px;}
+.hcard-tag{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:rgba(255,255,255,.4);margin-bottom:3px;}
+.hcard-title{font-size:12.5px;font-weight:700;color:#fff;line-height:1.3;}
+
+/* cashback strip */
+.hero-strip{position:relative;z-index:2;background:rgba(0,0,0,.45);border-top:1px solid rgba(255,255,255,.07);padding:9px 28px;display:flex;align-items:center;justify-content:space-between;}
+.hero-strip p{font-size:12px;color:rgba(255,255,255,.55);}
+.hero-strip a{color:var(--orange);font-weight:600;}
+.hero-strip .view-more{font-size:12px;font-weight:700;color:rgba(255,255,255,.5);letter-spacing:.5px;}
+
+/* slider arrows */
+.slider-arrow{position:absolute;top:50%;transform:translateY(-50%);width:32px;height:32px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:rgba(255,255,255,.6);font-size:16px;z-index:3;transition:background .2s;}
+.slider-arrow:hover{background:rgba(255,255,255,.2);}
+.arrow-left{left:8px;}
+.arrow-right{right:8px;}
+
+/* ── PROMOTIONS ROW ── */
+.promos{background:#fff;padding:28px 28px;border-bottom:1px solid var(--border);}
+.promos-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:14px;position:relative;}
+.promo-card{border:1px solid var(--border);border-radius:8px;overflow:hidden;cursor:pointer;transition:box-shadow .2s;}
+.promo-card:hover{box-shadow:0 4px 18px rgba(0,0,0,.1);}
+.promo-card-img{height:130px;display:flex;align-items:center;justify-content:center;font-size:36px;position:relative;}
+.promo-card-body{padding:14px 16px;}
+.promo-tag{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--orange);margin-bottom:5px;}
+.promo-title{font-size:14px;font-weight:700;color:#1a1a1a;line-height:1.35;}
+
+/* ── SPREADS ── */
+.spreads{padding:56px 28px 48px;background:#fff;}
+.spreads-inner{max-width:1100px;margin:0 auto;}
+.spreads h2{font-size:clamp(24px,3vw,34px);font-weight:800;color:#1a1a1a;margin-bottom:32px;letter-spacing:-.5px;}
+.spreads h2 em{font-style:normal;color:var(--orange);}
+.s-table{width:100%;border-collapse:collapse;border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:16px;}
+.s-table th{padding:14px 24px;font-size:13.5px;font-weight:700;text-align:center;}
+.s-table th.broker-h{text-align:left;background:#f8f8f8;color:#777;font-weight:600;}
+.s-table th.vantage-h{background:var(--orange);color:#fff;}
+.s-table th.market-h{background:#888;color:#fff;}
+.s-table td{padding:14px 24px;border-top:1px solid var(--border);text-align:center;font-size:15px;}
+.s-table td:first-child{text-align:left;background:#fafafa;}
+.s-table tr:hover td{background:#fefbf9;}
+.s-table tr:hover td:first-child{background:#fdf6f2;}
+.td-pair{font-size:15px;font-weight:700;color:#1a1a1a;}
+.td-cat{font-size:11.5px;color:#999;margin-top:1px;}
+.td-v{font-size:17px;font-weight:800;color:#1a1a1a;}
+.td-m{font-size:15px;font-weight:600;color:#888;}
+.crown{font-size:13px;margin-right:3px;}
+.s-notes{margin-bottom:28px;}
+.s-notes li{font-size:12px;color:#777;margin-left:18px;margin-bottom:3px;list-style:disc;}
+.btn-pill{display:inline-flex;align-items:center;gap:8px;background:var(--orange);color:#fff;padding:13px 34px;border-radius:50px;font-size:13.5px;font-weight:800;letter-spacing:.5px;transition:background .15s;}
+.btn-pill:hover{background:var(--orange2);}
+
+/* ── AWARD WINNING ── */
+.award{background:#efefef;padding:60px 28px;text-align:center;}
+.award-inner{max-width:960px;margin:0 auto;}
+.award-brand{font-size:21px;font-weight:900;color:var(--orange);margin-bottom:4px;}
+.award-title{font-size:clamp(26px,3.5vw,38px);font-weight:900;color:#1a1a1a;margin-bottom:44px;letter-spacing:-.5px;}
+.award-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-bottom:50px;}
+.award-stat{display:flex;flex-direction:column;align-items:center;gap:10px;}
+.a-icon{width:66px;height:66px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:30px;}
+.a-icon.og{background:linear-gradient(135deg,#ff9a56,#e8530a);}
+.a-icon.tl{background:linear-gradient(135deg,#4dd9c0,#14a89a);}
+.a-icon.rd{background:linear-gradient(135deg,#ff7070,#e53e3e);}
+.a-icon.bl{background:linear-gradient(135deg,#60a5fa,#2563eb);}
+.a-num{font-size:28px;font-weight:900;color:#1a1a1a;letter-spacing:-.5px;}
+.a-num span{color:var(--orange);}
+.a-lbl{font-size:12.5px;color:#666;font-weight:500;}
+.award-features{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;text-align:left;padding-top:36px;border-top:1px solid #ddd;}
+.af-title{font-size:11px;font-weight:900;letter-spacing:1.8px;text-transform:uppercase;color:#222;margin-bottom:11px;}
+.af-text{font-size:12.5px;color:#666;line-height:1.75;}
+
+/* ── TRUST ── */
+.trust{background:#fff;padding:60px 28px;}
+.trust-inner{max-width:1100px;margin:0 auto;}
+.trust h2{font-size:clamp(26px,3vw,34px);font-weight:900;color:#1a1a1a;text-align:center;margin-bottom:40px;letter-spacing:-.5px;}
+.trust h2 em{font-style:normal;color:var(--orange);}
+.trust-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:40px;}
+.trust-card{border:1px solid var(--border);border-radius:8px;padding:18px 20px;display:flex;flex-direction:column;gap:6px;transition:box-shadow .2s;}
+.trust-card:hover{box-shadow:0 4px 14px rgba(0,0,0,.08);}
+.t-logo{font-size:16px;font-weight:900;color:#1a1a1a;display:flex;align-items:center;gap:5px;}
+.t-logo.google{color:#4285F4;}
+.t-logo.trustpilot{color:#00B67A;}
+.t-logo.daytrading{color:#1a1a1a;}
+.t-stars{font-size:17px;letter-spacing:1.5px;}
+.t-stars.yellow{color:#FFC107;}
+.t-stars.green{color:#00B67A;}
+.media-strip{display:flex;align-items:center;justify-content:center;gap:36px;flex-wrap:wrap;padding-top:32px;border-top:1px solid var(--border);}
+.media-logo{font-size:13px;font-weight:900;color:#555;opacity:.65;letter-spacing:-.2px;transition:opacity .2s;white-space:nowrap;}
+.media-logo:hover{opacity:1;}
+.media-logo.yahoo{font-style:italic;color:#7B0099;}
+.media-logo.ap{color:#000;}
+.media-logo.bloomberg{color:#000;}
+.media-logo.cnbc{color:#007DB8;display:flex;align-items:center;gap:3px;}
+.media-logo.reuters{color:#FF8000;}
+.media-logo.bi{color:#1a1a1a;}
+
+/* ── TRADE ANYTIME ── */
+.trade{background:#fff;}
+.trade-wrap{max-width:100%;display:grid;grid-template-columns:1fr 1fr;min-height:420px;}
+.trade-left{background:linear-gradient(140deg,#12192b 0%,#1a2540 60%,#0f3060 100%);padding:56px 60px 56px 10%;display:flex;flex-direction:column;justify-content:center;position:relative;clip-path:polygon(0 0,96% 0,100% 50%,96% 100%,0 100%);}
+.trade-title{font-size:clamp(26px,3vw,36px);font-weight:900;color:#fff;line-height:1.15;margin-bottom:16px;letter-spacing:-.5px;}
+.trade-title em{font-style:normal;color:var(--orange);}
+.trade-text{font-size:13.5px;color:rgba(255,255,255,.65);line-height:1.75;margin-bottom:12px;}
+.trade-right{background:#f0f0f0;display:flex;align-items:center;justify-content:center;padding:40px 60px;position:relative;}
+.person-placeholder{width:220px;height:280px;background:linear-gradient(160deg,#c8d8e8,#e0e8f0);border-radius:16px;display:flex;align-items:flex-end;justify-content:center;overflow:hidden;position:relative;}
+.person-placeholder::after{content:'👤';font-size:100px;position:absolute;bottom:-10px;opacity:.3;}
+.earnings-float{position:absolute;top:50px;right:80px;background:#fff;border-radius:12px;padding:14px 18px;box-shadow:0 8px 32px rgba(0,0,0,.14);min-width:170px;}
+.ef-label{font-size:10px;color:#888;margin-bottom:3px;font-weight:500;}
+.ef-pair{font-size:12px;font-weight:600;color:#333;margin-bottom:5px;}
+.ef-val{font-size:20px;font-weight:900;color:#1a1a1a;}
+.ef-chg{font-size:12px;color:#22c55e;font-weight:700;margin-top:2px;}
+.ef-spark{height:36px;margin-top:8px;}
+.app-btns{display:flex;gap:10px;margin-top:22px;}
+.app-btn{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:8px;padding:7px 14px;cursor:pointer;transition:background .15s;}
+.app-btn:hover{background:rgba(255,255,255,.14);}
+.app-btn-i{font-size:20px;}
+.app-btn-t{text-align:left;}
+.app-btn-s{font-size:9px;color:rgba(255,255,255,.55);display:block;}
+.app-btn-n{font-size:13px;font-weight:700;color:#fff;display:block;}
+
+/* ── DRIVING EXCELLENCE ── */
+.excellence{padding:60px 28px;background:#fff;}
+.excellence-inner{max-width:1200px;margin:0 auto;}
+.ex-title{font-size:clamp(24px,3vw,34px);font-weight:900;color:#1a1a1a;line-height:1.2;margin-bottom:32px;letter-spacing:-.5px;}
+.ex-title em{font-style:normal;color:var(--orange);}
+.ex-tabs{display:flex;gap:0;border-bottom:2px solid #e5e5e5;margin-bottom:40px;overflow-x:auto;}
+.ex-tab{padding:10px 16px;font-size:12.5px;font-weight:700;color:#999;cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;margin-bottom:-2px;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit;transition:all .15s;text-transform:uppercase;letter-spacing:.5px;}
+.ex-tab.active{color:var(--orange);border-bottom-color:var(--orange);}
+.ex-tab:hover:not(.active){color:#555;}
+.ex-content{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;}
+.ex-subtitle{font-size:22px;font-weight:900;color:#1a1a1a;margin-bottom:14px;}
+.ex-text{font-size:13.5px;color:#666;line-height:1.8;margin-bottom:26px;}
+.btn-outline-orange{display:inline-flex;align-items:center;gap:6px;border:2px solid var(--orange);color:var(--orange);padding:10px 24px;border-radius:4px;font-size:12.5px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;transition:all .15s;}
+.btn-outline-orange:hover{background:var(--orange);color:#fff;}
+.coins-wrap{display:flex;align-items:center;justify-content:center;height:280px;position:relative;}
+.coin-chip{position:absolute;border-radius:16px;width:72px;height:72px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;color:#fff;box-shadow:0 10px 30px rgba(0,0,0,.2);transform-origin:center;}
+
+/* ── SUPPORT ── */
+.support{background:#f8f8f8;padding:60px 28px;}
+.support-inner{max-width:960px;margin:0 auto;text-align:center;}
+.support h2{font-size:clamp(24px,3vw,32px);font-weight:900;color:#1a1a1a;margin-bottom:10px;letter-spacing:-.3px;}
+.support-sub{font-size:14.5px;color:#666;margin-bottom:48px;line-height:1.6;}
+.support-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:36px;text-align:left;}
+.sup-icon{width:58px;height:58px;border-radius:50%;border:2px solid var(--orange);display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:18px;color:var(--orange);}
+.sup-title{font-size:16px;font-weight:900;color:#1a1a1a;margin-bottom:10px;}
+.sup-text{font-size:12.5px;color:#666;line-height:1.75;margin-bottom:16px;}
+.sup-link{font-size:12.5px;font-weight:800;color:var(--orange);letter-spacing:.6px;text-transform:uppercase;}
+.sup-link:hover{text-decoration:underline;}
+
+/* ── START NOW ── */
+.start{padding:70px 28px;text-align:center;background:linear-gradient(135deg,#0f1f30 0%,#1a3a25 40%,#8b3a12 80%,#c44a10 100%);}
+.start-inner{max-width:860px;margin:0 auto;}
+.start h2{font-size:clamp(26px,4vw,38px);font-weight:900;color:#fff;margin-bottom:44px;letter-spacing:-.5px;}
+.start-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:44px;}
+.ss-num{font-size:clamp(22px,3vw,30px);font-weight:900;color:#fff;letter-spacing:-.5px;}
+.ss-lbl{font-size:12px;color:rgba(255,255,255,.65);margin-top:4px;font-weight:500;}
+.ss-sub{font-size:10.5px;color:rgba(255,255,255,.4);margin-top:2px;}
+.btn-start{display:inline-flex;align-items:center;gap:12px;background:var(--orange);color:#fff;padding:14px 36px;border-radius:50px;font-size:15px;font-weight:800;letter-spacing:.5px;transition:background .15s;}
+.btn-start:hover{background:var(--orange2);}
+.btn-start-arrow{width:30px;height:30px;background:rgba(255,255,255,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;}
+
+/* ── FOOTER ── */
+footer{background:#fff;border-top:1px solid var(--border);}
+.footer-main{max-width:1200px;margin:0 auto;padding:44px 28px 32px;display:grid;grid-template-columns:260px 1fr;gap:48px;}
+.footer-brand .nav-logo{margin-bottom:10px;}
+.footer-contact{font-size:13px;color:var(--orange);margin:10px 0 4px;font-weight:500;}
+.footer-addr{font-size:12px;color:#999;line-height:1.5;margin-bottom:18px;}
+.footer-socials{display:flex;gap:8px;}
+.soc-btn{width:32px;height:32px;border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;color:#666;cursor:pointer;transition:all .15s;}
+.soc-btn:hover{border-color:var(--orange);color:var(--orange);}
+.footer-cols{display:grid;grid-template-columns:repeat(4,1fr);gap:32px;}
+.footer-col h4{font-size:13px;font-weight:800;color:#1a1a1a;margin-bottom:14px;}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:8px;}
+.footer-col a{font-size:12.5px;color:#666;transition:color .15s;}
+.footer-col a:hover{color:var(--orange);}
+.footer-bottom{border-top:1px solid var(--border);padding:24px 28px;max-width:1200px;margin:0 auto;}
+.quick-links{display:flex;gap:6px;flex-wrap:wrap;font-size:11.5px;color:#999;margin-bottom:20px;align-items:center;}
+.quick-links a{color:#999;transition:color .15s;}
+.quick-links a:hover{color:var(--orange);}
+.quick-links span{color:#ccc;}
+.risk{font-size:11px;color:#999;line-height:1.85;margin-bottom:20px;}
+.footer-legal{display:flex;align-items:center;justify-content:space-between;padding-top:16px;border-top:1px solid var(--border);flex-wrap:wrap;gap:10px;}
+.footer-legal-left{font-size:11.5px;color:#bbb;}
+.reg-badges{display:flex;gap:8px;flex-wrap:wrap;}
+.reg-badge{font-size:10px;font-weight:700;color:#888;background:#f5f5f5;padding:4px 9px;border-radius:3px;border:1px solid #e0e0e0;}
+
+/* ── SIDE CTA ── */
+.side-cta{position:fixed;right:-1px;top:50%;z-index:150;transform:translateY(-50%) rotate(90deg);transform-origin:right center;background:var(--orange);color:#fff;font-size:10.5px;font-weight:800;letter-spacing:.8px;padding:7px 18px;border-radius:6px 6px 0 0;cursor:pointer;white-space:nowrap;}
+
+/* ── CHAT BTN ── */
+.chat-btn{position:fixed;bottom:22px;right:22px;width:46px;height:46px;background:var(--orange);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:21px;cursor:pointer;box-shadow:0 4px 18px rgba(232,83,10,.45);z-index:150;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1024px){
+  .hero-inner{grid-template-columns:1fr;}
+  .hero-cards{display:none;}
+  .award-stats{grid-template-columns:repeat(2,1fr);}
+  .award-features{grid-template-columns:1fr 1fr;}
+  .trust-grid{grid-template-columns:repeat(2,1fr);}
+  .trade-wrap{grid-template-columns:1fr;}
+  .trade-left{clip-path:none;padding:48px 5%;}
+  .trade-right{min-height:300px;}
+  .ex-content{grid-template-columns:1fr;}
+  .coins-wrap{height:180px;}
+  .support-grid{grid-template-columns:1fr;}
+  .start-stats{grid-template-columns:repeat(2,1fr);}
+  .footer-main{grid-template-columns:1fr;}
+  .footer-cols{grid-template-columns:repeat(2,1fr);}
+  .promos-inner{grid-template-columns:1fr;}
+}
+@media(max-width:768px){
+  nav{padding:0 16px;}
+  .nav-links{display:none;}
+  .hero-inner{padding:44px 16px 36px;}
+  .spreads{padding:44px 16px;}
+  .award{padding:44px 16px;}
+  .award-stats{grid-template-columns:repeat(2,1fr);}
+  .award-features{grid-template-columns:1fr;}
+  .trust{padding:44px 16px;}
+  .trust-grid{grid-template-columns:repeat(2,1fr);}
+  .excellence{padding:44px 16px;}
+  .support{padding:44px 16px;}
+  .start{padding:48px 16px;}
+  .start-stats{grid-template-columns:repeat(2,1fr);}
+  .footer-main{padding:32px 16px;}
+  .footer-cols{grid-template-columns:1fr 1fr;}
+}
+</style>
 </head>
 <body>
 
-<!-- NAVBAR -->
-<nav id="navbar">
+<!-- SIDE CTA -->
+<div class="side-cta">Time To Make Your Move?</div>
+
+<!-- CHAT -->
+<div class="chat-btn">💬</div>
+
+<!-- ── NAVBAR ── -->
+<nav>
   <a href="#" class="nav-logo">
-    <div class="logo-icon">S</div>
-    <span class="logo-text">Speed<span>Verse</span></span>
+    <svg viewBox="0 0 30 30" fill="none">
+      <rect width="30" height="30" rx="4" fill="#E8530A"/>
+      <path d="M6 8 L14 22 L15 20 L16 22 L24 8 L20 8 L15 17 L10 8 Z" fill="white"/>
+    </svg>
+    <span class="nav-logo-text">speedverse</span>
   </a>
 
   <ul class="nav-links">
-    <li><a href="#markets">Markets</a></li>
-    <li><a href="#platforms">Platforms</a></li>
-    <li><a href="#accounts">Accounts</a></li>
-    <li><a href="#why">Why Us</a></li>
-    <li><a href="#about">About</a></li>
+    <li><a href="#" class="nav-sponsorship"><span class="nav-f1">🏎️</span> Sponsorship</a></li>
+    <li><a href="#spreads">Trading</a></li>
+    <li><a href="#excellence">Platforms</a></li>
     <li><a href="#">Academy</a></li>
-    <li><a href="#">Partners</a></li>
+    <li><a href="#">Market Analysis</a></li>
+    <li><a href="#">Partner Program</a></li>
+    <li><a href="#">Promotions</a></li>
   </ul>
 
-  <div class="nav-actions">
-    <a href="#" class="btn-login">Log In</a>
-    <a href="#" class="btn-primary">Start Trading</a>
-  </div>
-
-  <div class="hamburger" onclick="toggleMenu()">
-    <span></span><span></span><span></span>
+  <div class="nav-right">
+    <div class="nav-icon">🔍</div>
+    <a href="#" class="btn-register">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      Register
+    </a>
+    <a href="#" class="btn-login">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/><polyline points="10,17 15,12 10,7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+      Login
+    </a>
+    <div class="nav-icon">☰</div>
   </div>
 </nav>
 
-<!-- TICKER STRIP -->
-<div class="ticker-strip" style="margin-top:68px">
-  <div class="ticker-track">
-    <!-- repeated twice for seamless loop -->
-    <div class="ticker-item"><span class="ticker-symbol">EUR/USD</span><span class="ticker-price">1.08542</span><span class="ticker-chg up">+0.12%</span></div>
-    <div class="ticker-item"><span class="ticker-symbol">GBP/USD</span><span class="ticker-price">1.27341</span><span class="ticker-chg up">+0.08%</span></div>
-    <div class="ticker-item"><span class="ticker-symbol">USD/JPY</span><span class="ticker-price">149.823</span><span class="ticker-chg dn">-0.15%</span></div>
-    <div class="ticker-item"><span class="ticker-symbol">XAU/USD</span><span class="ticker-price">2,341.50</span><span class="ticker-chg up">+0.31%</span></div>
-    <div class="ticker-item"><span class="ticker-symbol">BTC/USD</span><span class="ticker-price">67,420.00</span><span class="ticker-chg up">+1.24%</span></div>
-    <div class="ticker-item"><span class="ticker-symbol">NAS100</span><span class="ticker-price">18,234.5</span><span class="ticker-chg up">+0.45%</span></div>
-    <div class="ticker-item"><span class="ticker-symbol">SP500</span><span class="ticker-price">5,218.9</span><span class="ticker-chg dn">-0.07%</span></div>
-    <div class="ticker-item"><span class="ticker-symbol">OIL/USD</span><span class="ticker-price">82.14</span><span class="ticker-chg up">+0.22%</span></div>
-    <div class="ticker-item"><span class="ticker-symbol">AUD/USD</span><span class="ticker-price">0.65821</span><span class="ticker-chg dn">-0.09%</span></div>
-    <div class="ticker-item"><span class="ticker-symbol">USD/CAD</span><span class="ticker-price">1.36450</span><span class="ticker-chg up">+0.03%</span></div>
-    <div class="ticker-item"><span class="ticker-symbol">EUR/USD</span><span class="ticker-price">1.08542</span><span class="ticker-chg up">+0.12%</span></div>
-    <div class="ticker-item"><span class="ticker-symbol">GBP/USD</span><span class="ticker-price">1.27341</span><span class="ticker-chg up">+0.08%</span></div>
-    <div class="ticker-item"><span class="ticker-symbol">USD/JPY</span><span class="ticker-price">149.823</span><span class="ticker-chg dn">-0.15%</span></div>
-    <div class="ticker-item"><span class="ticker-symbol">XAU/USD</span><span class="ticker-price">2,341.50</span><span class="ticker-chg up">+0.31%</span></div>
-    <div class="ticker-item"><span class="ticker-symbol">BTC/USD</span><span class="ticker-price">67,420.00</span><span class="ticker-chg up">+1.24%</span></div>
-    <div class="ticker-item"><span class="ticker-symbol">NAS100</span><span class="ticker-price">18,234.5</span><span class="ticker-chg up">+0.45%</span></div>
-    <div class="ticker-item"><span class="ticker-symbol">SP500</span><span class="ticker-price">5,218.9</span><span class="ticker-chg dn">-0.07%</span></div>
-    <div class="ticker-item"><span class="ticker-symbol">OIL/USD</span><span class="ticker-price">82.14</span><span class="ticker-chg up">+0.22%</span></div>
-    <div class="ticker-item"><span class="ticker-symbol">AUD/USD</span><span class="ticker-price">0.65821</span><span class="ticker-chg dn">-0.09%</span></div>
-    <div class="ticker-item"><span class="ticker-symbol">USD/CAD</span><span class="ticker-price">1.36450</span><span class="ticker-chg up">+0.03%</span></div>
-  </div>
-</div>
-
-<!-- HERO -->
-<section class="hero">
+<!-- ── HERO ── -->
+<div class="hero">
   <div class="hero-bg"></div>
-  <div class="hero-grid"></div>
 
   <div class="hero-inner">
-    <div class="hero-content">
-      <div class="hero-badge">
-        <div class="badge-dot"></div>
-        Award-Winning CFD Broker · 15+ Years Experience
-      </div>
-
+    <!-- LEFT -->
+    <div class="hero-left">
+      <div class="hero-eyebrow">An award-winning CFD platform</div>
       <h1 class="hero-title">
-        Trade Smarter<br />
-        <span class="highlight">@SpeedVerse</span><br />
-        Markets
+        SpeedVerse <span class="hl">Ultimate Trading Machine<span class="hero-asterisk">*</span></span>
       </h1>
+      <p class="hero-sub">An award-winning CFD platform trusted by 5,000,000+ traders.</p>
 
-      <p class="hero-sub">
-        Access 1,000+ CFD instruments — Forex, Indices, Commodities, Shares, ETFs and Bonds — with ultra-tight spreads from 0.0 pips, backed by seamless execution and 24/7 support.
-      </p>
-
-      <div class="hero-ctas">
-        <a href="#" class="btn-primary btn-lg">Start Trading Free</a>
-        <a href="#" class="btn-outline">Try Free Demo</a>
+      <div class="hero-form">
+        <span class="fi">✉️</span>
+        <input type="email" placeholder="Enter Your Email"/>
+        <button class="btn-hero">SIGN UP NOW</button>
+        <div class="hero-qr">⊞</div>
       </div>
 
-      <div class="hero-trust">
-        <div class="trust-item">
-          <div class="trust-icon">✓</div>
-          ASIC Regulated
-        </div>
-        <div class="trust-item">
-          <div class="trust-icon">✓</div>
-          FCA Authorised
-        </div>
-        <div class="trust-item">
-          <div class="trust-icon">✓</div>
-          Segregated Funds
-        </div>
-        <div class="trust-item">
-          <div class="trust-icon">✓</div>
-          24/7 Support
-        </div>
+      <div class="hero-cashback">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="2"><path d="M12 22C6.48 22 2 17.52 2 12S6.48 2 12 2s10 4.48 10 10-4.48 10-10 10z"/><path d="M12 6v6l4 2"/></svg>
+        Turn your trades into cashback. Earn USD2 cashback for every USD100,000 traded on eligible CFDs. *T&Cs apply.
       </div>
     </div>
 
-    <div class="hero-visual">
-      <div class="float-notif">
-        <div class="notif-icon">📈</div>
-        <div class="notif-text">
-          <strong>+$1,248.30</strong>
-          XAU/USD Position Closed
+    <!-- RIGHT: promo cards -->
+    <div class="hero-cards" style="position:relative;">
+      <div class="slider-arrow arrow-left">‹</div>
+      <div class="slider-arrow arrow-right">›</div>
+
+      <div class="hcard">
+        <div class="hcard-img" style="background:linear-gradient(135deg,#1a2a3a,#2a3a4a);">📰</div>
+        <div class="hcard-body">
+          <div class="hcard-tag">News</div>
+          <div class="hcard-title">Latest on Trump's Tariffs</div>
         </div>
       </div>
+      <div class="hcard">
+        <div class="hcard-img" style="background:linear-gradient(135deg,#0a1a2a,#1a2a4a);">💻</div>
+        <div class="hcard-body">
+          <div class="hcard-tag">Platform</div>
+          <div class="hcard-title">Trade Smarter on SpeedVerse Web Trading</div>
+        </div>
+      </div>
+      <div class="hcard">
+        <div class="hcard-img" style="background:linear-gradient(135deg,#2a1a0a,#4a2a0a);">💰</div>
+        <div class="hcard-body">
+          <div class="hcard-tag">Promotion</div>
+          <div class="hcard-title">Deposit Bonus</div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-      <div class="chart-card">
-        <div class="chart-header">
-          <div>
-            <div class="chart-pair">EUR / USD</div>
-            <div style="font-size:12px;color:var(--text3)">Foreign Exchange</div>
-          </div>
-          <div style="text-align:right">
-            <div class="chart-price">1.08542</div>
-            <div class="price-change">▲ +0.12% today</div>
+  <!-- strip -->
+  <div class="hero-strip">
+    <p>☑ Turn your trades into cashback. Earn USD2 cashback for every USD100,000 traded on eligible CFDs. *T&Cs apply.</p>
+    <a href="#" class="view-more">VIEW MORE ›</a>
+  </div>
+</div>
+
+<!-- ── PROMOTIONS ROW ── -->
+<div class="promos">
+  <div class="promos-inner">
+    <div class="promo-card">
+      <div class="promo-card-img" style="background:linear-gradient(135deg,#fff3e0,#ffe0b2);">💵</div>
+      <div class="promo-card-body">
+        <div class="promo-tag">Promotion</div>
+        <div class="promo-title">Deposit Bonus</div>
+      </div>
+    </div>
+    <div class="promo-card">
+      <div class="promo-card-img" style="background:linear-gradient(135deg,#e8f5e9,#c8e6c9);">📈</div>
+      <div class="promo-card-body">
+        <div class="promo-tag">Promotion</div>
+        <div class="promo-title">Cashback Prime Promotion</div>
+      </div>
+    </div>
+    <div class="promo-card">
+      <div class="promo-card-img" style="background:linear-gradient(135deg,#fce4ec,#f8bbd0);">🏆</div>
+      <div class="promo-card-body">
+        <div class="promo-tag">Promotion</div>
+        <div class="promo-title">SpeedVerse Glory 2026: Pre-Game Draw</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── SPREADS ── -->
+<section class="spreads" id="spreads">
+  <div class="spreads-inner">
+    <h2>See Our <em>Competitive Spreads</em></h2>
+    <table class="s-table">
+      <thead>
+        <tr>
+          <th class="broker-h">Broker</th>
+          <th class="vantage-h">
+            <svg width="16" height="16" viewBox="0 0 30 30" fill="none" style="vertical-align:middle;margin-right:5px;"><rect width="30" height="30" rx="4" fill="rgba(255,255,255,.3)"/><path d="M6 8L14 22L15 20L16 22L24 8L20 8L15 17L10 8Z" fill="white"/></svg>
+            speedverse
+          </th>
+          <th class="market-h">Market Average</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><div class="td-pair">XAUUSD</div><div class="td-cat">Gold</div></td>
+          <td><span class="crown">👑</span><span class="td-v">0.75</span></td>
+          <td><span class="td-m">0.89</span></td>
+        </tr>
+        <tr>
+          <td><div class="td-pair">GBP/CHF</div><div class="td-cat">Forex</div></td>
+          <td><span class="crown">👑</span><span class="td-v">0.90</span></td>
+          <td><span class="td-m">1.30</span></td>
+        </tr>
+        <tr>
+          <td><div class="td-pair">GBP/NZD</div><div class="td-cat">Forex</div></td>
+          <td><span class="crown">👑</span><span class="td-v">2.65</span></td>
+          <td><span class="td-m">3.31</span></td>
+        </tr>
+        <tr>
+          <td><div class="td-pair">HK50</div><div class="td-cat">Indices</div></td>
+          <td><span class="crown">👑</span><span class="td-v">0.41</span></td>
+          <td><span class="td-m">1.99</span></td>
+        </tr>
+        <tr>
+          <td><div class="td-pair">UKOUSD</div><div class="td-cat">Energy</div></td>
+          <td><span class="crown">👑</span><span class="td-v">2.30</span></td>
+          <td><span class="td-m">3.34</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <ul class="s-notes">
+      <li>Spreads are in pips.</li>
+      <li>Last updated on 11 July 2025.</li>
+      <li>All spreads (in pips) are for indicative purposes only as net costs may differ at any time of the day.</li>
+    </ul>
+    <a href="#" class="btn-pill">SIGN UP NOW</a>
+  </div>
+</section>
+
+<!-- ── AWARD WINNING ── -->
+<section class="award">
+  <div class="award-inner">
+    <div class="award-brand">SpeedVerse</div>
+    <h2 class="award-title">An Award-Winning Broker</h2>
+    <div class="award-stats">
+      <div class="award-stat">
+        <div class="a-icon og">🎓</div>
+        <div class="a-num">5,000,000<span>+</span></div>
+        <div class="a-lbl">Registered Users</div>
+      </div>
+      <div class="award-stat">
+        <div class="a-icon tl">🔍</div>
+        <div class="a-num">1,000<span>+</span></div>
+        <div class="a-lbl">Products</div>
+      </div>
+      <div class="award-stat">
+        <div class="a-icon rd">📊</div>
+        <div class="a-num">From 0.0 pips</div>
+        <div class="a-lbl">Spreads</div>
+      </div>
+      <div class="award-stat">
+        <div class="a-icon bl">💰</div>
+        <div class="a-num">$0</div>
+        <div class="a-lbl">Deposit Fees*</div>
+      </div>
+    </div>
+    <div class="award-features">
+      <div>
+        <div class="af-title">Trusted CFD Broker</div>
+        <div class="af-text">With over 15 years of experience, SpeedVerse has built a reputation as a trusted, award-winning CFD broker. Trade 1000+ CFD products backed by seamless execution and 24/7 support. Our commitment to transparency, rigorous security measures, and industry-leading practices provides a secure and reliable trading platform.<br/><br/><em style="color:#999;font-size:11px;">*Other fees may apply</em></div>
+      </div>
+      <div>
+        <div class="af-title">Secure Funds</div>
+        <div class="af-text">Client funds at SpeedVerse are held in segregated trust accounts with top-tier banks, separate from our operational capital. For added protection, clients will benefit from an additional insurance arrangement at no extra cost.</div>
+      </div>
+      <div>
+        <div class="af-title">Competitive Spreads</div>
+        <div class="af-text">Trade smarter with SpeedVerse's ultra-tight spreads, designed to help you manage trading costs effectively. Enjoy competitive pricing across all products to optimise your trading costs.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── TRUST ── -->
+<section class="trust">
+  <div class="trust-inner">
+    <h2><em>Trust</em> We Have Earned</h2>
+    <div class="trust-grid">
+      <div class="trust-card">
+        <div class="t-logo google">
+          <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          Google
+        </div>
+        <div class="t-stars yellow">★★★★½</div>
+      </div>
+      <div class="trust-card">
+        <div class="t-logo" style="color:#01875f;font-weight:900;">
+          ▶ Google Play
+        </div>
+        <div class="t-stars yellow">★★★★½</div>
+      </div>
+      <div class="trust-card">
+        <div class="t-logo" style="color:#333;">
+          🍎 App Store
+        </div>
+        <div class="t-stars yellow">★★★★★</div>
+      </div>
+      <div class="trust-card">
+        <div class="t-logo trustpilot">
+          ★ Trustpilot
+        </div>
+        <div class="t-stars green">★★★★</div>
+      </div>
+      <div class="trust-card">
+        <div class="t-logo" style="color:#1a5dad;font-size:13px;">ForexBrokers.com</div>
+        <div class="t-stars yellow">★★★★½</div>
+      </div>
+      <div class="trust-card">
+        <div class="t-logo" style="color:#f5a623;font-size:15px;">😊 WikiFX</div>
+        <div class="t-stars yellow">★★★★★</div>
+      </div>
+      <div class="trust-card">
+        <div class="t-logo daytrading" style="font-size:13px;font-weight:900;">DAYTRADING.COM</div>
+        <div class="t-stars yellow">★★★★★</div>
+      </div>
+      <div class="trust-card">
+        <div class="t-logo" style="font-size:16px;font-weight:900;color:#c0392b;">FR</div>
+        <div class="t-stars yellow">★★★★★</div>
+      </div>
+    </div>
+    <div class="media-strip">
+      <span class="media-logo bi">BUSINESS INSIDER</span>
+      <span class="media-logo yahoo">yahoo!</span>
+      <span class="media-logo ap" style="font-size:20px;font-weight:900;">AP</span>
+      <span class="media-logo bloomberg" style="font-size:16px;">Bloomberg</span>
+      <span class="media-logo cnbc">
+        <svg width="18" height="12" viewBox="0 0 60 40"><rect width="60" height="40" rx="3" fill="#007DB8"/><text x="5" y="28" font-size="22" font-weight="900" fill="white" font-family="Arial">CNBC</text></svg>
+      </span>
+      <span class="media-logo reuters">REUTERS</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── TRADE ANYTIME ── -->
+<div class="trade" id="trade">
+  <div class="trade-wrap">
+    <div class="trade-left">
+      <h2 class="trade-title">Trade <em>Anytime, Anywhere</em></h2>
+      <p class="trade-text">One of the world's leading CFD brokers with over 15 years of market experience, SpeedVerse provides traders with access to 1,000+ CFD products, including forex, indices, commodities, shares, ETFs, and even bonds.</p>
+      <p class="trade-text">Trade CFDs with ease on desktop or mobile using our variety of advanced trading tools and features from your home country, whether you are from South Africa, Kenya, Botswana or Nigeria.</p>
+      <a href="#" class="btn-pill" style="margin-top:6px;margin-bottom:24px;">SIGN UP NOW</a>
+      <div class="app-btns">
+        <div class="app-btn">
+          <div class="app-btn-i">▶</div>
+          <div class="app-btn-t">
+            <span class="app-btn-s">GET IT ON</span>
+            <span class="app-btn-n">Google Play</span>
           </div>
         </div>
-
-        <svg class="chart-svg" viewBox="0 0 400 90" preserveAspectRatio="none">
-          <defs>
-            <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#F7941D" stop-opacity="0.3"/>
-              <stop offset="100%" stop-color="#F7941D" stop-opacity="0"/>
-            </linearGradient>
-          </defs>
-          <path d="M0,75 L20,68 L40,72 L60,60 L80,55 L100,62 L120,50 L140,44 L160,48 L180,38 L200,42 L220,35 L240,28 L260,32 L280,24 L300,18 L320,22 L340,15 L360,10 L380,14 L400,8 L400,90 L0,90 Z"
-                fill="url(#chartGrad)"/>
-          <path d="M0,75 L20,68 L40,72 L60,60 L80,55 L100,62 L120,50 L140,44 L160,48 L180,38 L200,42 L220,35 L240,28 L260,32 L280,24 L300,18 L320,22 L340,15 L360,10 L380,14 L400,8"
-                fill="none" stroke="#F7941D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <div class="app-btn">
+          <div class="app-btn-i">🍎</div>
+          <div class="app-btn-t">
+            <span class="app-btn-s">DOWNLOAD ON THE</span>
+            <span class="app-btn-n">App Store</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="trade-right">
+      <!-- Earnings floating card -->
+      <div class="earnings-float">
+        <div class="ef-label">Earnings</div>
+        <div class="ef-pair">📊 Portfolio</div>
+        <div class="ef-val">$1,324.23 USD</div>
+        <div class="ef-chg">▲ +12.4%</div>
+        <svg class="ef-spark" viewBox="0 0 160 36" preserveAspectRatio="none">
+          <defs><linearGradient id="sg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#22c55e" stop-opacity=".3"/><stop offset="100%" stop-color="#22c55e" stop-opacity="0"/></linearGradient></defs>
+          <path d="M0,28 L20,24 L40,26 L60,18 L80,14 L100,16 L120,8 L140,6 L160,2 L160,36 L0,36Z" fill="url(#sg)"/>
+          <path d="M0,28 L20,24 L40,26 L60,18 L80,14 L100,16 L120,8 L140,6 L160,2" fill="none" stroke="#22c55e" stroke-width="1.5"/>
         </svg>
       </div>
-
-      <div class="mini-cards">
-        <div class="mini-card">
-          <div class="mini-label">GOLD (XAU)</div>
-          <div class="mini-val">2,341.5</div>
-          <div class="mini-sub" style="color:var(--green)">▲ +0.31%</div>
-        </div>
-        <div class="mini-card">
-          <div class="mini-label">NAS100</div>
-          <div class="mini-val">18,234</div>
-          <div class="mini-sub" style="color:var(--green)">▲ +0.45%</div>
-        </div>
-        <div class="mini-card">
-          <div class="mini-label">SP500</div>
-          <div class="mini-val">5,218.9</div>
-          <div class="mini-sub" style="color:var(--red)">▼ -0.07%</div>
+      <!-- Person placeholder -->
+      <div style="width:240px;height:320px;background:linear-gradient(160deg,#d0dde8,#e8eef4);border-radius:20px;display:flex;align-items:flex-end;justify-content:center;overflow:hidden;position:relative;">
+        <div style="font-size:130px;position:absolute;bottom:-15px;opacity:.25;user-select:none;">🧑</div>
+        <div style="position:absolute;bottom:24px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.06);border-radius:10px;padding:8px 14px;text-align:center;">
+          <div style="font-size:10px;color:#666;">Live Trading</div>
+          <div style="font-size:13px;font-weight:800;color:#333;">EUR/USD 1.0854</div>
         </div>
       </div>
-    </div>
-  </div>
-</section>
-
-<!-- STATS STRIP -->
-<div class="stats-strip">
-  <div class="stats-inner">
-    <div class="stat-item stat-divider">
-      <div class="stat-num">5,000,000<span>+</span></div>
-      <div class="stat-label">Registered Traders Worldwide</div>
-    </div>
-    <div class="stat-item stat-divider">
-      <div class="stat-num">1,000<span>+</span></div>
-      <div class="stat-label">CFD Instruments Available</div>
-    </div>
-    <div class="stat-item stat-divider">
-      <div class="stat-num">15<span>+</span></div>
-      <div class="stat-label">Years Market Experience</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-num">40<span>+</span></div>
-      <div class="stat-label">Industry Awards Won</div>
     </div>
   </div>
 </div>
 
-<!-- MARKETS -->
-<section id="markets" class="markets-section">
-  <div class="section-inner">
-    <div class="section-tag">MARKETS</div>
-    <h2 class="section-title">Trade the World's<br />Most Popular Markets</h2>
-    <p class="section-sub">Access 1,000+ instruments across all major asset classes with ultra-competitive pricing and lightning-fast execution.</p>
-
-    <div class="markets-tabs">
-      <button class="tab-btn active">All</button>
-      <button class="tab-btn">Forex</button>
-      <button class="tab-btn">Indices</button>
-      <button class="tab-btn">Commodities</button>
-      <button class="tab-btn">Shares</button>
-      <button class="tab-btn">ETFs</button>
-      <button class="tab-btn">Bonds</button>
+<!-- ── DRIVING EXCELLENCE ── -->
+<section class="excellence" id="excellence">
+  <div class="excellence-inner">
+    <h2 class="ex-title">Driving <em>Excellence</em> with a Leading CFD Broker</h2>
+    <div class="ex-tabs">
+      <button class="ex-tab active" onclick="setTab(this,'forex')">FOREX</button>
+      <button class="ex-tab" onclick="setTab(this,'indices')">INDICES</button>
+      <button class="ex-tab" onclick="setTab(this,'gold')">GOLD &amp; SILVER</button>
+      <button class="ex-tab" onclick="setTab(this,'energy')">ENERGY</button>
+      <button class="ex-tab" onclick="setTab(this,'etfs')">ETFS</button>
+      <button class="ex-tab" onclick="setTab(this,'soft')">SOFT COMMODITIES</button>
+      <button class="ex-tab" onclick="setTab(this,'shares')">SHARES</button>
     </div>
 
-    <div class="markets-grid">
-      <div class="market-card">
-        <span class="market-icon">💱</span>
-        <div class="market-pair">EUR / USD</div>
-        <div class="market-name">Euro vs US Dollar</div>
-        <div class="market-price-row">
-          <div class="market-price">1.08542</div>
-          <div class="market-change green">+0.12%</div>
-        </div>
-        <div class="market-spread">Spread from 0.0 pips</div>
+    <div class="ex-content" id="ex-content">
+      <div>
+        <div class="ex-subtitle" id="ex-subtitle">FOREX</div>
+        <p class="ex-text" id="ex-text">Trade the world's most popular forex and currency pairs with a trusted forex broker whether you are from South Africa, Kenya, Botswana or Nigeria.<br/><br/>Access 40+ major, minor, and exotic forex pairs with low spreads from 0.0. Start trading the world's leading currencies including EUR/USD, GBP/USD, and USD/JPY.</p>
+        <a href="#" class="btn-outline-orange" id="ex-btn">LEARN FOREX</a>
       </div>
-
-      <div class="market-card">
-        <span class="market-icon">💱</span>
-        <div class="market-pair">GBP / USD</div>
-        <div class="market-name">Pound vs US Dollar</div>
-        <div class="market-price-row">
-          <div class="market-price">1.27341</div>
-          <div class="market-change green">+0.08%</div>
-        </div>
-        <div class="market-spread">Spread from 0.0 pips</div>
-      </div>
-
-      <div class="market-card">
-        <span class="market-icon">📊</span>
-        <div class="market-pair">NAS100</div>
-        <div class="market-name">NASDAQ 100 Index</div>
-        <div class="market-price-row">
-          <div class="market-price">18,234.5</div>
-          <div class="market-change green">+0.45%</div>
-        </div>
-        <div class="market-spread">Spread from 1.0 point</div>
-      </div>
-
-      <div class="market-card">
-        <span class="market-icon">🥇</span>
-        <div class="market-pair">XAU / USD</div>
-        <div class="market-name">Gold vs US Dollar</div>
-        <div class="market-price-row">
-          <div class="market-price">2,341.50</div>
-          <div class="market-change green">+0.31%</div>
-        </div>
-        <div class="market-spread">Spread from 0.2 pips</div>
-      </div>
-
-      <div class="market-card">
-        <span class="market-icon">📊</span>
-        <div class="market-pair">SP500</div>
-        <div class="market-name">S&amp;P 500 Index</div>
-        <div class="market-price-row">
-          <div class="market-price">5,218.9</div>
-          <div class="market-change red">-0.07%</div>
-        </div>
-        <div class="market-spread">Spread from 0.4 point</div>
-      </div>
-
-      <div class="market-card">
-        <span class="market-icon">🛢️</span>
-        <div class="market-pair">OIL / USD</div>
-        <div class="market-name">Crude Oil WTI</div>
-        <div class="market-price-row">
-          <div class="market-price">82.14</div>
-          <div class="market-change green">+0.22%</div>
-        </div>
-        <div class="market-spread">Spread from 0.03 pips</div>
-      </div>
-    </div>
-
-    <div class="markets-cta">
-      <a href="#" class="btn-primary btn-lg">View All 1,000+ Instruments</a>
-    </div>
-  </div>
-</section>
-
-<!-- PLATFORMS -->
-<section id="platforms">
-  <div class="section-inner">
-    <div class="section-tag">PLATFORMS</div>
-    <h2 class="section-title">Industry-Leading<br />Trading Platforms</h2>
-    <p class="section-sub">Choose from 5 world-class trading platforms, each packed with advanced tools, powerful charting, and seamless execution.</p>
-
-    <div class="platforms-grid">
-      <div class="platform-list">
-        <div class="platform-item active">
-          <div class="platform-logo" style="background:rgba(59,130,246,0.12);color:#3B82F6">MT5</div>
-          <div class="platform-info">
-            <div class="platform-name">MetaTrader 5</div>
-            <div class="platform-desc">Advanced multi-asset trading with 80+ indicators and automated trading via Expert Advisors</div>
-          </div>
-          <div class="platform-arrow">›</div>
-        </div>
-
-        <div class="platform-item">
-          <div class="platform-logo" style="background:rgba(139,92,246,0.12);color:#8B5CF6">MT4</div>
-          <div class="platform-info">
-            <div class="platform-name">MetaTrader 4</div>
-            <div class="platform-desc">The world's most popular forex trading platform — powerful, reliable and feature-rich</div>
-          </div>
-          <div class="platform-arrow">›</div>
-        </div>
-
-        <div class="platform-item">
-          <div class="platform-logo" style="background:rgba(247,148,29,0.12);color:var(--orange)">PRO</div>
-          <div class="platform-info">
-            <div class="platform-name">ProTrader</div>
-            <div class="platform-desc">Professional-grade desktop platform with depth of market, DOM ladder and advanced order types</div>
-          </div>
-          <div class="platform-arrow">›</div>
-        </div>
-
-        <div class="platform-item">
-          <div class="platform-logo" style="background:rgba(20,184,166,0.12);color:#14B8A6">TV</div>
-          <div class="platform-info">
-            <div class="platform-name">TradingView</div>
-            <div class="platform-desc">World-class charting platform with 100+ indicators, social trading features and strategy testing</div>
-          </div>
-          <div class="platform-arrow">›</div>
-        </div>
-
-        <div class="platform-item">
-          <div class="platform-logo" style="background:rgba(0,200,150,0.12);color:var(--green)">📱</div>
-          <div class="platform-info">
-            <div class="platform-name">SpeedVerse App</div>
-            <div class="platform-desc">Trade on the go with our award-winning mobile app — iOS and Android</div>
-          </div>
-          <div class="platform-arrow">›</div>
-        </div>
-      </div>
-
-      <div class="platform-visual">
-        <div class="platform-mockup">
-          <div class="mockup-header">
-            <div class="dot dot-r"></div>
-            <div class="dot dot-y"></div>
-            <div class="dot dot-g"></div>
-          </div>
-
-          <div class="mockup-toolbar">
-            <button class="toolbar-btn active">1H</button>
-            <button class="toolbar-btn">4H</button>
-            <button class="toolbar-btn">1D</button>
-            <button class="toolbar-btn">1W</button>
-            <button class="toolbar-btn">Bar</button>
-            <button class="toolbar-btn">Line</button>
-          </div>
-
-          <div style="font-size:12px;color:var(--text3);margin-bottom:8px;">EUR/USD · 1.08542 · <span style="color:var(--green)">▲ +0.12%</span></div>
-
-          <div class="mockup-chart">
-            <div class="candle-row">
-              <div class="candle c-green"><div class="candle-wick" style="height:14px"></div><div class="candle-body c-green" style="height:24px"></div><div class="candle-wick" style="height:8px"></div></div>
-              <div class="candle c-red"><div class="candle-wick" style="height:10px"></div><div class="candle-body c-red" style="height:18px"></div><div class="candle-wick" style="height:12px"></div></div>
-              <div class="candle c-green"><div class="candle-wick" style="height:8px"></div><div class="candle-body c-green" style="height:30px"></div><div class="candle-wick" style="height:6px"></div></div>
-              <div class="candle c-green"><div class="candle-wick" style="height:12px"></div><div class="candle-body c-green" style="height:22px"></div><div class="candle-wick" style="height:10px"></div></div>
-              <div class="candle c-red"><div class="candle-wick" style="height:16px"></div><div class="candle-body c-red" style="height:26px"></div><div class="candle-wick" style="height:8px"></div></div>
-              <div class="candle c-green"><div class="candle-wick" style="height:6px"></div><div class="candle-body c-green" style="height:36px"></div><div class="candle-wick" style="height:14px"></div></div>
-              <div class="candle c-red"><div class="candle-wick" style="height:10px"></div><div class="candle-body c-red" style="height:14px"></div><div class="candle-wick" style="height:8px"></div></div>
-              <div class="candle c-green"><div class="candle-wick" style="height:8px"></div><div class="candle-body c-green" style="height:40px"></div><div class="candle-wick" style="height:10px"></div></div>
-              <div class="candle c-green"><div class="candle-wick" style="height:14px"></div><div class="candle-body c-green" style="height:28px"></div><div class="candle-wick" style="height:6px"></div></div>
-              <div class="candle c-red"><div class="candle-wick" style="height:10px"></div><div class="candle-body c-red" style="height:20px"></div><div class="candle-wick" style="height:12px"></div></div>
-              <div class="candle c-green"><div class="candle-wick" style="height:6px"></div><div class="candle-body c-green" style="height:44px"></div><div class="candle-wick" style="height:8px"></div></div>
-              <div class="candle c-green"><div class="candle-wick" style="height:12px"></div><div class="candle-body c-green" style="height:32px"></div><div class="candle-wick" style="height:10px"></div></div>
-            </div>
-          </div>
-
-          <div class="mockup-stats">
-            <div class="mstat">
-              <div class="mstat-val" style="color:var(--green)">0.0</div>
-              <div class="mstat-key">Spread (pips)</div>
-            </div>
-            <div class="mstat">
-              <div class="mstat-val">1:500</div>
-              <div class="mstat-key">Max Leverage</div>
-            </div>
-            <div class="mstat">
-              <div class="mstat-val" style="color:var(--orange)">$50</div>
-              <div class="mstat-key">Min Deposit</div>
-            </div>
-          </div>
-        </div>
+      <div class="coins-wrap">
+        <div class="coin-chip" style="background:linear-gradient(135deg,#FF9A3C,#E8530A);top:30px;left:80px;transform:rotate(-12deg);">€$</div>
+        <div class="coin-chip" style="background:linear-gradient(135deg,#C0C0C0,#888);top:20px;right:60px;transform:rotate(8deg);width:60px;height:60px;font-size:22px;">Au</div>
+        <div class="coin-chip" style="background:linear-gradient(135deg,#1a1a1a,#444);top:110px;left:40px;transform:rotate(5deg);border-radius:50%;width:66px;height:66px;">¥</div>
+        <div class="coin-chip" style="background:linear-gradient(135deg,#2DD4BF,#0EA5A0);top:115px;right:80px;transform:rotate(-8deg);">£€</div>
+        <div class="coin-chip" style="background:linear-gradient(135deg,#FB923C,#EA580C);bottom:20px;left:110px;transform:rotate(10deg);width:64px;height:64px;font-size:22px;">3↑</div>
+        <div class="coin-chip" style="background:linear-gradient(135deg,#F87171,#DC2626);bottom:30px;right:50px;transform:rotate(-5deg);width:58px;height:58px;font-size:20px;">$</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- WHY US -->
-<section id="why" class="why-section">
-  <div class="section-inner">
-    <div class="section-tag">WHY SPEEDVERSE</div>
-    <h2 class="section-title">Everything You Need<br />to Trade with Confidence</h2>
-    <p class="section-sub">Built for traders at every level — from beginners to professional institutions — with the tools, pricing and support to succeed.</p>
-
-    <div class="features-grid">
-      <div class="feature-card">
-        <div class="feature-icon icon-orange">⚡</div>
-        <div class="feature-title">Lightning Execution</div>
-        <div class="feature-text">Experience ultra-fast order execution with no dealing desk interference. Trade with confidence knowing your orders are filled at the best available price.</div>
+<!-- ── SUPPORT ── -->
+<section class="support">
+  <div class="support-inner">
+    <h2>Support &amp; Resources</h2>
+    <p class="support-sub">Get the answers, assistance, and education you need to support your trading journey.</p>
+    <div class="support-grid">
+      <div>
+        <div class="sup-icon">🕐</div>
+        <div class="sup-title">24/7 Customer Support</div>
+        <p class="sup-text">We provide support and account assistance at every stage of your journey. Our dedicated customer support team is available 24/7 to assist with any trading-related inquiries.</p>
+        <a href="#" class="sup-link">CHAT NOW</a>
       </div>
-
-      <div class="feature-card">
-        <div class="feature-icon icon-green">💸</div>
-        <div class="feature-title">Ultra-Tight Spreads</div>
-        <div class="feature-text">Access Raw ECN spreads from 0.0 pips on major forex pairs. Our deep liquidity pool ensures consistently competitive pricing even in volatile markets.</div>
+      <div>
+        <div class="sup-icon">🎧</div>
+        <div class="sup-title">Help Center</div>
+        <p class="sup-text">Find answers to your questions quickly with our comprehensive Help Center. From account setup to trading strategies, our resources provide clear and detailed guidance to support your trading journey.</p>
+        <a href="#" class="sup-link">VIEW MORE</a>
       </div>
-
-      <div class="feature-card">
-        <div class="feature-icon icon-blue">🛡️</div>
-        <div class="feature-title">Regulated & Secure</div>
-        <div class="feature-text">Fully regulated by ASIC, FCA, CIMA and VFSC. Your funds are held in segregated accounts with tier-1 banks and protected by negative balance protection.</div>
-      </div>
-
-      <div class="feature-card">
-        <div class="feature-icon icon-purple">📚</div>
-        <div class="feature-title">SpeedVerse Academy</div>
-        <div class="feature-text">Level up your trading with free educational resources — video courses, live webinars, e-books, market analysis and daily trading signals from our experts.</div>
-      </div>
-
-      <div class="feature-card">
-        <div class="feature-icon icon-cyan">🌐</div>
-        <div class="feature-title">24/7 Expert Support</div>
-        <div class="feature-text">Our multilingual support team is available around the clock via live chat, email and phone. Get the help you need, whenever you need it, in your language.</div>
-      </div>
-
-      <div class="feature-card">
-        <div class="feature-icon icon-red">📊</div>
-        <div class="feature-title">Advanced Analytics</div>
-        <div class="feature-text">Access professional-grade market analysis, economic calendar, sentiment indicators, Autochartist signals and Trading Central research — all included free.</div>
+      <div>
+        <div class="sup-icon">🎓</div>
+        <div class="sup-title">Learn</div>
+        <p class="sup-text">Access free educational resources to expand your trading knowledge. Whether you're a beginner or an experienced trader, we have articles, webinars, videos, and courses to support your learning.</p>
+        <a href="#" class="sup-link">VIEW MORE</a>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ACCOUNT TYPES -->
-<section id="accounts">
-  <div class="section-inner">
-    <div class="section-tag">ACCOUNT TYPES</div>
-    <h2 class="section-title">Choose the Right Account<br />for Your Trading Style</h2>
-    <p class="section-sub">From beginners to professionals — find the account that fits your goals, risk appetite and trading strategy.</p>
-
-    <div class="accounts-grid">
-      <div class="account-card">
-        <div class="account-type">Standard</div>
-        <div class="account-name">Standard STP</div>
-        <div class="account-desc">Perfect for beginners. Trade with commission-free spreads and easy access to all markets.</div>
-        <div class="account-specs">
-          <div class="spec-row">
-            <span class="spec-key">Minimum Deposit</span>
-            <span class="spec-val">$50</span>
-          </div>
-          <div class="spec-row">
-            <span class="spec-key">Spread From</span>
-            <span class="spec-val">1.0 pips</span>
-          </div>
-          <div class="spec-row">
-            <span class="spec-key">Commission</span>
-            <span class="spec-val">$0</span>
-          </div>
-          <div class="spec-row">
-            <span class="spec-key">Leverage</span>
-            <span class="spec-val">Up to 1:500</span>
-          </div>
-          <div class="spec-row">
-            <span class="spec-key">Platforms</span>
-            <span class="spec-val">MT4, MT5, App</span>
-          </div>
-        </div>
-        <a href="#" class="btn-account">Open Account</a>
+<!-- ── START TRADING ── -->
+<section class="start">
+  <div class="start-inner">
+    <h2>Start Your Trading Now</h2>
+    <div class="start-stats">
+      <div>
+        <div class="ss-num">5,000,000+</div>
+        <div class="ss-lbl">Registered Users</div>
       </div>
-
-      <div class="account-card featured">
-        <div class="account-type">Professional</div>
-        <div class="account-name">Raw ECN</div>
-        <div class="account-desc">Institutional-grade pricing with Raw ECN spreads from 0.0 pips. Built for active traders.</div>
-        <div class="account-specs">
-          <div class="spec-row">
-            <span class="spec-key">Minimum Deposit</span>
-            <span class="spec-val">$500</span>
-          </div>
-          <div class="spec-row">
-            <span class="spec-key">Spread From</span>
-            <span class="spec-val" style="color:var(--green)">0.0 pips</span>
-          </div>
-          <div class="spec-row">
-            <span class="spec-key">Commission</span>
-            <span class="spec-val">$3 per lot</span>
-          </div>
-          <div class="spec-row">
-            <span class="spec-key">Leverage</span>
-            <span class="spec-val">Up to 1:500</span>
-          </div>
-          <div class="spec-row">
-            <span class="spec-key">Platforms</span>
-            <span class="spec-val">All Platforms</span>
-          </div>
-        </div>
-        <a href="#" class="btn-account featured">Open Raw ECN Account</a>
+      <div>
+        <div class="ss-num">1,000+</div>
+        <div class="ss-lbl">Products</div>
       </div>
-
-      <div class="account-card">
-        <div class="account-type">Elite</div>
-        <div class="account-name">Pro Trader</div>
-        <div class="account-desc">Exclusive benefits for high-volume traders — dedicated account manager and VIP spreads.</div>
-        <div class="account-specs">
-          <div class="spec-row">
-            <span class="spec-key">Minimum Deposit</span>
-            <span class="spec-val">$10,000</span>
-          </div>
-          <div class="spec-row">
-            <span class="spec-key">Spread From</span>
-            <span class="spec-val" style="color:var(--green)">0.0 pips</span>
-          </div>
-          <div class="spec-row">
-            <span class="spec-key">Commission</span>
-            <span class="spec-val">Negotiable</span>
-          </div>
-          <div class="spec-row">
-            <span class="spec-key">Leverage</span>
-            <span class="spec-val">Up to 1:500</span>
-          </div>
-          <div class="spec-row">
-            <span class="spec-key">Platforms</span>
-            <span class="spec-val">All Platforms</span>
-          </div>
-        </div>
-        <a href="#" class="btn-account">Open Account</a>
+      <div>
+        <div class="ss-num">From 0.0 pips</div>
+        <div class="ss-lbl">Spreads</div>
+      </div>
+      <div>
+        <div class="ss-num">$0</div>
+        <div class="ss-lbl">Deposit Fees*</div>
+        <div class="ss-sub">*Other fees may apply</div>
       </div>
     </div>
+    <a href="#" class="btn-start">
+      START NOW
+      <div class="btn-start-arrow">↗</div>
+    </a>
   </div>
 </section>
 
-<!-- BONUS BANNER -->
-<div class="bonus-section">
-  <div class="bonus-card">
-    <div>
-      <div class="bonus-label">Limited Time Offer</div>
-      <div class="bonus-title">50% Welcome<br />Deposit Bonus</div>
-      <div class="bonus-desc">Double your starting capital with our exclusive welcome bonus. Deposit and trade to unlock up to $10,000 in bonus funds. New clients only. T&Cs apply.</div>
-    </div>
-    <div class="bonus-actions">
-      <a href="#" class="btn-primary btn-lg">Claim Bonus Now</a>
-      <a href="#" class="btn-outline">Learn More</a>
-    </div>
-  </div>
-</div>
-
-<!-- REGULATION -->
-<section id="about" class="reg-section">
-  <div class="section-inner">
-    <div class="section-tag">REGULATION</div>
-    <h2 class="section-title">Globally Regulated,<br />Locally Trusted</h2>
-    <p class="section-sub">SpeedVerse Markets is licensed and regulated by multiple tier-1 financial authorities worldwide, ensuring the highest standards of client protection.</p>
-
-    <div class="reg-grid">
-      <div class="reg-card">
-        <div class="reg-flag">🇦🇺</div>
-        <div class="reg-authority">ASIC</div>
-        <div class="reg-country">Australia</div>
-        <div class="reg-num">AFS Licence No. 428901</div>
-      </div>
-      <div class="reg-card">
-        <div class="reg-flag">🇬🇧</div>
-        <div class="reg-authority">FCA</div>
-        <div class="reg-country">United Kingdom</div>
-        <div class="reg-num">FRN 590299</div>
-      </div>
-      <div class="reg-card">
-        <div class="reg-flag">🇰🇾</div>
-        <div class="reg-authority">CIMA</div>
-        <div class="reg-country">Cayman Islands</div>
-        <div class="reg-num">No. 1383491</div>
-      </div>
-      <div class="reg-card">
-        <div class="reg-flag">🇿🇦</div>
-        <div class="reg-authority">FSCA</div>
-        <div class="reg-country">South Africa</div>
-        <div class="reg-num">FSP No. 51268</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- AWARDS -->
-<section>
-  <div class="section-inner">
-    <div class="section-tag">AWARDS</div>
-    <h2 class="section-title" style="text-align:center">40+ Industry Awards</h2>
-    <p class="section-sub" style="text-align:center;margin-left:auto;margin-right:auto">Recognised globally by the most prestigious financial industry authorities and publications.</p>
-
-    <div class="awards-grid">
-      <div class="award-card">
-        <div class="award-icon">🏆</div>
-        <div class="award-name">Best CFD Broker</div>
-        <div class="award-year">2024</div>
-        <div class="award-org">Investment Trends</div>
-      </div>
-      <div class="award-card">
-        <div class="award-icon">🥇</div>
-        <div class="award-name">Best Forex Broker</div>
-        <div class="award-year">2024</div>
-        <div class="award-org">Global Forex Awards</div>
-      </div>
-      <div class="award-card">
-        <div class="award-icon">⭐</div>
-        <div class="award-name">Most Trusted Broker</div>
-        <div class="award-year">2023</div>
-        <div class="award-org">Professional Traders Awards</div>
-      </div>
-      <div class="award-card">
-        <div class="award-icon">🎖️</div>
-        <div class="award-name">Best Trading App</div>
-        <div class="award-year">2023</div>
-        <div class="award-org">FX Markets Asia</div>
-      </div>
-      <div class="award-card">
-        <div class="award-icon">🏅</div>
-        <div class="award-name">Best Spreads</div>
-        <div class="award-year">2024</div>
-        <div class="award-org">Forex Magnates</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- TESTIMONIALS -->
-<section class="testimonials-section">
-  <div class="section-inner">
-    <div class="section-tag">REVIEWS</div>
-    <h2 class="section-title">Trusted by 5,000,000+<br />Traders Worldwide</h2>
-    <p class="section-sub">Don't take our word for it — here's what our community of traders say about SpeedVerse Markets.</p>
-
-    <div class="testimonials-grid">
-      <div class="testimonial-card">
-        <div class="stars">★★★★★</div>
-        <div class="testimonial-text">"The execution speed is incredible. I've traded with many brokers over the years but SpeedVerse's Raw ECN account has the tightest spreads I've ever seen. Highly recommend for serious forex traders."</div>
-        <div class="testimonial-author">
-          <div class="author-avatar" style="background:rgba(247,148,29,0.15);color:var(--orange)">JM</div>
-          <div>
-            <div class="author-name">James M.</div>
-            <div class="author-info">Professional Forex Trader · United Kingdom</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="testimonial-card">
-        <div class="stars">★★★★★</div>
-        <div class="testimonial-text">"Switched from my previous broker and the difference is night and day. The customer support is fast and professional, the MetaTrader 5 integration works flawlessly and withdrawals are always processed within 24 hours."</div>
-        <div class="testimonial-author">
-          <div class="author-avatar" style="background:rgba(59,130,246,0.15);color:#3B82F6">SR</div>
-          <div>
-            <div class="author-name">Sarah R.</div>
-            <div class="author-info">Commodities Trader · Australia</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="testimonial-card">
-        <div class="stars">★★★★★</div>
-        <div class="testimonial-text">"As a beginner, I was nervous about trading CFDs. The SpeedVerse Academy resources and demo account let me practice without risk, and the support team answered every question patiently. 10/10 experience."</div>
-        <div class="testimonial-author">
-          <div class="author-avatar" style="background:rgba(0,200,150,0.15);color:var(--green)">AK</div>
-          <div>
-            <div class="author-name">Ahmed K.</div>
-            <div class="author-info">New Trader · UAE</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- CTA -->
-<section class="cta-section">
-  <div class="cta-inner">
-    <div class="section-tag" style="display:block;text-align:center">GET STARTED TODAY</div>
-    <h2 class="cta-title">Start Trading in<br /><span style="background:linear-gradient(135deg,var(--orange),var(--orange-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Under 3 Minutes</span></h2>
-    <p class="cta-sub">Join 5,000,000+ traders worldwide. Open a free account, fund it and start trading 1,000+ instruments — no experience required.</p>
-    <div class="cta-btns">
-      <a href="#" class="btn-primary btn-lg">Open Live Account</a>
-      <a href="#" class="btn-outline">Try Free Demo</a>
-    </div>
-    <div class="cta-note">No credit card required · Free demo account · Instant setup</div>
-  </div>
-</section>
-
-<!-- FOOTER -->
+<!-- ── FOOTER ── -->
 <footer>
-  <div class="footer-top">
+  <div class="footer-main">
     <div class="footer-brand">
-      <a href="#" class="nav-logo" style="text-decoration:none">
-        <div class="logo-icon">S</div>
-        <span class="logo-text">Speed<span>Verse</span></span>
+      <a href="#" class="nav-logo" style="margin-bottom:0;">
+        <svg width="30" height="30" viewBox="0 0 30 30" fill="none"><rect width="30" height="30" rx="4" fill="#E8530A"/><path d="M6 8L14 22L15 20L16 22L24 8L20 8L15 17L10 8Z" fill="white"/></svg>
+        <span class="nav-logo-text">speedverse</span>
       </a>
-      <p>An award-winning, multi-regulated CFD broker providing access to 1,000+ global instruments with ultra-tight spreads, fast execution and 24/7 expert support.</p>
+      <div class="footer-contact">support@speedversemarkets.com</div>
+      <div class="footer-addr">iCount Building, Kumul Highway,<br/>Port Vila, Vanuatu</div>
       <div class="footer-socials">
-        <a href="#" class="social-btn">𝕏</a>
-        <a href="#" class="social-btn">in</a>
-        <a href="#" class="social-btn">f</a>
-        <a href="#" class="social-btn">📷</a>
-        <a href="#" class="social-btn">▶</a>
+        <div class="soc-btn">f</div>
+        <div class="soc-btn">📷</div>
+        <div class="soc-btn">𝕏</div>
+        <div class="soc-btn">in</div>
+        <div class="soc-btn">▶</div>
+        <div class="soc-btn">♪</div>
       </div>
     </div>
 
-    <div class="footer-col">
-      <h4>Trading</h4>
-      <ul>
-        <li><a href="#">Forex</a></li>
-        <li><a href="#">Indices</a></li>
-        <li><a href="#">Commodities</a></li>
-        <li><a href="#">Shares</a></li>
-        <li><a href="#">ETFs</a></li>
-        <li><a href="#">Bonds</a></li>
-        <li><a href="#">All Instruments</a></li>
-      </ul>
-    </div>
-
-    <div class="footer-col">
-      <h4>Platforms</h4>
-      <ul>
-        <li><a href="#">MetaTrader 5</a></li>
-        <li><a href="#">MetaTrader 4</a></li>
-        <li><a href="#">ProTrader</a></li>
-        <li><a href="#">TradingView</a></li>
-        <li><a href="#">Web Trading</a></li>
-        <li><a href="#">Mobile App</a></li>
-      </ul>
-    </div>
-
-    <div class="footer-col">
-      <h4>Company</h4>
-      <ul>
-        <li><a href="#">About Us</a></li>
-        <li><a href="#">Why SpeedVerse</a></li>
-        <li><a href="#">Awards</a></li>
-        <li><a href="#">Press Releases</a></li>
-        <li><a href="#">Careers</a></li>
-        <li><a href="#">Contact Us</a></li>
-      </ul>
-    </div>
-
-    <div class="footer-col">
-      <h4>Resources</h4>
-      <ul>
-        <li><a href="#">Academy</a></li>
-        <li><a href="#">Market Analysis</a></li>
-        <li><a href="#">Economic Calendar</a></li>
-        <li><a href="#">Partners</a></li>
-        <li><a href="#">IB Program</a></li>
-        <li><a href="#">Help Center</a></li>
-      </ul>
+    <div class="footer-cols">
+      <div class="footer-col">
+        <h4>Sponsorship</h4>
+        <ul>
+          <li><a href="#">Trump Tariffs</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Trading</h4>
+        <ul>
+          <li><a href="#">Overview</a></li>
+          <li><a href="#">All Trading Products</a></li>
+          <li><a href="#">Markets</a></li>
+          <li><a href="#">Trading Accounts</a></li>
+          <li><a href="#">Trading Fees</a></li>
+          <li><a href="#">Deposit and Withdrawal</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Platforms</h4>
+        <ul>
+          <li><a href="#">Overview</a></li>
+          <li><a href="#">SpeedVerse App</a></li>
+          <li><a href="#">SpeedVerse Web Trading</a></li>
+          <li><a href="#">MetaTrader 5</a></li>
+          <li><a href="#">MetaTrader 4</a></li>
+          <li><a href="#">TradingView</a></li>
+          <li><a href="#">Copy Trading</a></li>
+          <li><a href="#">Demo Trading</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Academy</h4>
+        <ul>
+          <li><a href="#">Overview</a></li>
+          <li><a href="#">Trump Tariffs</a></li>
+          <li><a href="#">All Articles</a></li>
+          <li><a href="#">Courses</a></li>
+          <li><a href="#">Webinars</a></li>
+          <li><a href="#">eBooks</a></li>
+          <li><a href="#">Terminology</a></li>
+          <li><a href="#">Live</a></li>
+          <li><a href="#">The SpeedVerse View</a></li>
+        </ul>
+      </div>
     </div>
   </div>
 
   <div class="footer-bottom">
-    <div class="risk-warning">
-      <strong>Risk Warning:</strong> Trading CFDs on margin carries a high level of risk and may not be suitable for all investors. You may lose more than your initial investment. Please ensure that you fully understand the risks involved and seek independent financial advice if necessary. SpeedVerse Markets Ltd is authorised and regulated by ASIC (No. 428901), the FCA (FRN 590299), CIMA (No. 1383491) and the FSCA (FSP No. 51268). CFDs are complex instruments with a high risk of losing money rapidly due to leverage. <strong>73% of retail investor accounts lose money when trading CFDs with this provider.</strong>
+    <div class="quick-links">
+      <span>All CFD Trading Products</span><span>|</span>
+      <a href="#">Forex Trading</a><span>|</span>
+      <a href="#">Indices Trading</a><span>|</span>
+      <a href="#">Commodity Trading</a><span>|</span>
+      <a href="#">Shares Trading</a><span>|</span>
+      <a href="#">ETFs Trading</a><span>|</span>
+      <a href="#">Bond Trading</a>
     </div>
 
-    <div class="footer-meta">
-      <div>© 2026 SpeedVerse Markets Ltd. All rights reserved.</div>
-      <div class="footer-legal">
-        <a href="#">Privacy Policy</a>
-        <a href="#">Terms & Conditions</a>
-        <a href="#">Legal Documents</a>
-        <a href="#">Cookie Policy</a>
-        <a href="#">Sitemap</a>
+    <p class="risk">
+      <strong>Risk Warning:</strong> Trading derivatives carries significant risks. It is not suitable for all investors and if you are a professional client, you could lose substantially more than your initial investment. When acquiring our derivative products you have no entitlement, right or obligation to the underlying financial asset. SpeedVerse Markets is not a financial adviser and all services are provided on an execution only basis. Information is of a general nature only and does not consider your financial objectives, needs or personal circumstances. Important legal documents in relation to our products and services are available on our website. You should read and understand these documents before applying for any SpeedVerse Markets products or services and obtain independent professional advice as necessary.
+    </p>
+    <p class="risk">
+      SpeedVerse Markets Pty Ltd is regulated by the Australian Securities and Investments Commission (ASIC), AFSL no. 428901. SpeedVerse Markets Ltd is authorised and regulated by the Financial Conduct Authority (FCA), FRN 590299. SpeedVerse Financial Services (Pty) Ltd is regulated by the Financial Sector Conduct Authority (FSCA) of South Africa, FSP No. 51268. SpeedVerse International Group Limited is licensed and regulated by the Cayman Islands Monetary Authority (CIMA) Securities Investment Business Law no. 1383491.
+    </p>
+
+    <div class="footer-legal">
+      <div class="footer-legal-left">© 2026 SpeedVerse Markets Ltd. All rights reserved.</div>
+      <div class="reg-badges">
+        <span class="reg-badge">ASIC</span>
+        <span class="reg-badge">FCA</span>
+        <span class="reg-badge">FSCA</span>
+        <span class="reg-badge">CIMA</span>
       </div>
     </div>
   </div>
 </footer>
 
 <script>
-  // Sticky nav shadow
-  window.addEventListener('scroll', () => {
-    const nav = document.getElementById('navbar');
-    nav.style.background = window.scrollY > 10
-      ? 'rgba(6,11,24,0.98)'
-      : 'rgba(6,11,24,0.92)';
-  });
-
-  // Tab switching
-  document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-    });
-  });
-
-  // Platform switching
-  document.querySelectorAll('.platform-item').forEach(item => {
-    item.addEventListener('click', () => {
-      document.querySelectorAll('.platform-item').forEach(i => i.classList.remove('active'));
-      item.classList.add('active');
-    });
-  });
-
-  // Mobile menu
-  function toggleMenu() {
-    const links = document.querySelector('.nav-links');
-    if (links.style.display === 'flex') {
-      links.style.display = 'none';
-    } else {
-      links.style.display = 'flex';
-      links.style.flexDirection = 'column';
-      links.style.position = 'fixed';
-      links.style.top = '68px';
-      links.style.left = '0';
-      links.style.right = '0';
-      links.style.background = 'rgba(6,11,24,0.98)';
-      links.style.padding = '16px 5%';
-      links.style.borderBottom = '1px solid rgba(255,255,255,0.07)';
-      links.style.backdropFilter = 'blur(20px)';
-    }
+// Tab switching for Driving Excellence
+const tabData = {
+  forex: {
+    subtitle: 'FOREX',
+    text: `Trade the world's most popular forex and currency pairs with a trusted forex broker whether you are from South Africa, Kenya, Botswana or Nigeria.<br/><br/>Access 40+ major, minor, and exotic forex pairs with low spreads from 0.0. Start trading the world's leading currencies including EUR/USD, GBP/USD, and USD/JPY.`,
+    btn: 'LEARN FOREX'
+  },
+  indices: {
+    subtitle: 'INDICES',
+    text: `Open positions and diversify your portfolio with global indices. Leverage on the volatility of the largest stock market indices in the world like SP500, DAX, NAS100, and DJ30.<br/><br/>Trade major global indices with tight spreads and no commissions on standard accounts.`,
+    btn: 'LEARN INDICES'
+  },
+  gold: {
+    subtitle: 'GOLD & SILVER',
+    text: `Buy or sell the world's most highly traded precious metals — gold (XAUUSD) and silver (XAGUSD).<br/><br/>Access live precious metals pricing with spreads from 0.2 pips. Gold and silver CFDs are available with competitive margin rates.`,
+    btn: 'LEARN GOLD & SILVER'
+  },
+  energy: {
+    subtitle: 'ENERGY',
+    text: `Trade crude oil, natural gas, and other energy CFDs with competitive spreads.<br/><br/>Energy markets offer significant trading opportunities driven by global supply and demand, geopolitical events, and macroeconomic factors.`,
+    btn: 'LEARN ENERGY'
+  },
+  etfs: {
+    subtitle: 'ETFs',
+    text: `Trade 57 Exchange-Traded Fund (ETF) CFDs including the Invesco QQQ Trust Series 1 and the SPDR S&P 500 ETF Trust.<br/><br/>ETF CFDs let you gain exposure to diversified baskets of assets without owning the underlying securities.`,
+    btn: 'LEARN ETFs'
+  },
+  soft: {
+    subtitle: 'SOFT COMMODITIES',
+    text: `Access 13 soft commodity CFDs including sugar, cocoa, cotton, coffee, and more.<br/><br/>Soft commodities provide unique diversification opportunities, driven by weather patterns, crop reports, and global consumption trends.`,
+    btn: 'LEARN SOFT COMMODITIES'
+  },
+  shares: {
+    subtitle: 'SHARES',
+    text: `Trade 825+ stock CFDs from global markets including TESLA, NVIDIA, Apple, Amazon, and hundreds more.<br/><br/>Trade US share CFDs with $0 commissions and access shares from major exchanges including NYSE, NASDAQ, LSE, and more.`,
+    btn: 'LEARN SHARES'
   }
+};
 
-  // Animate numbers on scroll
-  const stats = document.querySelectorAll('.stat-num');
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.style.opacity = '1';
-        entry.target.style.transform = 'translateY(0)';
-      }
-    });
-  }, { threshold: 0.5 });
+function setTab(el, key) {
+  document.querySelectorAll('.ex-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  const d = tabData[key];
+  document.getElementById('ex-subtitle').textContent = d.subtitle;
+  document.getElementById('ex-text').innerHTML = d.text;
+  document.getElementById('ex-btn').textContent = d.btn;
+}
 
-  stats.forEach(s => {
-    s.style.opacity = '0';
-    s.style.transform = 'translateY(20px)';
-    s.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-    observer.observe(s);
-  });
-
-  // Live price ticker simulation
-  const prices = {
-    'EUR/USD': 1.08542,
-    'GBP/USD': 1.27341,
-    'USD/JPY': 149.823,
-    'XAU/USD': 2341.50,
-    'NAS100': 18234.5,
-    'SP500': 5218.9,
-  };
-
-  function simulatePrices() {
-    document.querySelectorAll('.ticker-item').forEach(item => {
-      const sym = item.querySelector('.ticker-symbol').textContent;
-      if (prices[sym]) {
-        const change = (Math.random() - 0.49) * 0.001;
-        prices[sym] = prices[sym] * (1 + change);
-        const priceEl = item.querySelector('.ticker-price');
-        const chgEl = item.querySelector('.ticker-chg');
-        const pct = (change * 100).toFixed(2);
-        if (sym === 'USD/JPY' || sym === 'NAS100' || sym === 'SP500') {
-          priceEl.textContent = prices[sym].toFixed(1);
-        } else if (sym === 'XAU/USD') {
-          priceEl.textContent = prices[sym].toFixed(2);
-        } else {
-          priceEl.textContent = prices[sym].toFixed(5);
-        }
-        if (change > 0) {
-          chgEl.textContent = `+${pct}%`;
-          chgEl.className = 'ticker-chg up';
-        } else {
-          chgEl.textContent = `${pct}%`;
-          chgEl.className = 'ticker-chg dn';
-        }
-      }
-    });
-  }
-
-  setInterval(simulatePrices, 1500);
+// Sticky nav scroll shadow
+window.addEventListener('scroll', () => {
+  document.querySelector('nav').style.boxShadow =
+    window.scrollY > 4 ? '0 2px 12px rgba(0,0,0,.08)' : 'none';
+});
 </script>
 </body>
 </html>
