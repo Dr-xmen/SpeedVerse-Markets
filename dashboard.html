@@ -317,6 +317,62 @@ button,input,select{font-family:inherit;border:none;outline:none;cursor:pointer;
 .sv-sell{color:var(--red);}
 .sv-buy{color:var(--green);}
 
+/* ══ DASHBOARD OVERVIEW PANEL ══ */
+.dash-panel{
+  display:none;flex:1;overflow-y:auto;overflow-x:hidden;
+  background:var(--bg);padding:24px 28px;flex-direction:column;gap:20px;
+}
+.dash-panel.on{display:flex;}
+.dh-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+.dh-greet{font-size:22px;font-weight:800;color:var(--text);}
+.dh-greet span{color:var(--accent);}
+.dh-date{font-size:12px;color:var(--sub);}
+.dh-dep{background:var(--accent-g);color:#fff;padding:7px 18px;border-radius:8px;font-size:12.5px;font-weight:700;box-shadow:0 4px 14px rgba(240,90,26,.25);}
+/* stat cards */
+.dh-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+.ds-card{
+  background:var(--s1);border:1px solid var(--b);border-radius:12px;
+  padding:14px 16px;position:relative;overflow:hidden;
+}
+.ds-card::before{content:'';position:absolute;inset:0;background:var(--card-glow,transparent);opacity:.06;pointer-events:none;}
+.ds-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;}
+.ds-lbl{font-size:10px;font-weight:700;letter-spacing:.6px;color:var(--sub);text-transform:uppercase;margin-bottom:4px;}
+.ds-val{font-size:20px;font-weight:800;font-family:var(--mono);color:var(--text);line-height:1.1;}
+.ds-sub{font-size:10.5px;font-weight:600;margin-top:4px;}
+.ds-pos{color:var(--green);} .ds-neg{color:var(--red);}
+/* chart row */
+.dh-charts{display:grid;grid-template-columns:1fr 340px;gap:12px;}
+.dc-card{background:var(--s1);border:1px solid var(--b);border-radius:12px;padding:16px;}
+.dc-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.dc-title{font-size:13px;font-weight:700;color:var(--text);}
+.dc-badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;}
+.dh-perf-wrap{position:relative;height:130px;}
+.dh-perf-wrap canvas{position:absolute;inset:0;}
+/* recent trades */
+.dt-table{width:100%;border-collapse:collapse;}
+.dt-table th{font-size:9.5px;font-weight:700;letter-spacing:.5px;color:var(--sub);text-transform:uppercase;padding:6px 8px;text-align:left;border-bottom:1px solid var(--b);}
+.dt-table td{font-size:11.5px;padding:8px 8px;border-bottom:1px solid rgba(255,255,255,.03);color:var(--text);}
+.dt-table tr:last-child td{border-bottom:none;}
+.dt-table tr:hover td{background:rgba(255,255,255,.02);}
+.dt-asset{font-weight:700;}
+.dt-dir{font-size:10px;font-weight:700;padding:2px 7px;border-radius:3px;}
+.dt-buy{background:rgba(0,230,118,.13);color:var(--green);}
+.dt-sell{background:rgba(255,37,87,.13);color:var(--red);}
+.dt-mono{font-family:var(--mono);font-size:11.5px;}
+.dt-pos{color:var(--green);font-family:var(--mono);font-weight:700;}
+.dt-neg{color:var(--red);font-family:var(--mono);font-weight:700;}
+/* allocation */
+.alloc-list{display:flex;flex-direction:column;gap:8px;}
+.al-item{display:flex;align-items:center;gap:8px;}
+.al-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.al-name{font-size:11.5px;color:var(--text);flex:1;}
+.al-bar-w{width:90px;height:5px;background:var(--muted);border-radius:3px;overflow:hidden;}
+.al-bar{height:100%;border-radius:3px;}
+.al-pct{font-size:11px;font-family:var(--mono);font-weight:600;color:var(--sub);width:34px;text-align:right;}
+/* responsive dash */
+@media(max-width:900px){.dh-stats{grid-template-columns:repeat(2,1fr);}.dh-charts{grid-template-columns:1fr;}}
+@media(max-width:600px){.dh-stats{grid-template-columns:repeat(2,1fr);}.dash-panel{padding:16px;gap:14px;}}
+
 /* ══ MOBILE BOTTOM NAV ══ */
 .bot-nav{display:none;height:var(--bnav);flex-shrink:0;background:var(--s1);border-top:1px solid var(--b);z-index:30;}
 .bni-row{display:flex;height:100%;}
@@ -421,11 +477,11 @@ button,input,select{font-family:inherit;border:none;outline:none;cursor:pointer;
 <aside class="sb">
   <div class="sb-logo"><img src="assets/logo.png" alt="SV"/></div>
   <nav class="sb-nav">
-    <div class="sbi" title="">
+    <div class="sbi" onclick="showSection('dash')">
       <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
       <span class="sbi-tip">Dashboard</span>
     </div>
-    <div class="sbi on">
+    <div class="sbi on" onclick="showSection('trade')">
       <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg>
       <span class="sbi-tip">Trade</span>
     </div>
@@ -544,6 +600,98 @@ button,input,select{font-family:inherit;border:none;outline:none;cursor:pointer;
       <div class="ava">JG</div>
     </div>
   </header>
+
+  <!-- DASHBOARD OVERVIEW PANEL -->
+  <div class="dash-panel" id="dash-panel">
+    <!-- Header -->
+    <div class="dh-row">
+      <div>
+        <div class="dh-greet">Good morning, <span>Jay.</span></div>
+        <div class="dh-date" id="dash-date"></div>
+      </div>
+      <button class="dh-dep">+ Fund Account</button>
+    </div>
+
+    <!-- Stat cards -->
+    <div class="dh-stats">
+      <div class="ds-card" style="--card-glow:var(--accent);">
+        <div class="ds-icon" style="background:rgba(240,90,26,.15);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+        <div class="ds-lbl">Balance</div>
+        <div class="ds-val">$10,000</div>
+        <div class="ds-sub ds-pos">Practice Account</div>
+      </div>
+      <div class="ds-card" style="--card-glow:var(--green);">
+        <div class="ds-icon" style="background:rgba(0,230,118,.12);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round"><polyline points="23,6 13.5,15.5 8.5,10.5 1,18"/><polyline points="17,6 23,6 23,12"/></svg>
+        </div>
+        <div class="ds-lbl">Today's P&amp;L</div>
+        <div class="ds-val ds-pos">+$287.50</div>
+        <div class="ds-sub ds-pos">↑ +2.87% today</div>
+      </div>
+      <div class="ds-card" style="--card-glow:var(--cyan);">
+        <div class="ds-icon" style="background:rgba(0,204,255,.1);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2" stroke-linecap="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
+        </div>
+        <div class="ds-lbl">Win Rate</div>
+        <div class="ds-val">64.2%</div>
+        <div class="ds-sub" style="color:var(--cyan);">97 of 151 trades</div>
+      </div>
+      <div class="ds-card" style="--card-glow:var(--gold);">
+        <div class="ds-icon" style="background:rgba(255,215,64,.1);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        </div>
+        <div class="ds-lbl">Total Trades</div>
+        <div class="ds-val">151</div>
+        <div class="ds-sub" style="color:var(--gold);">+12 this week</div>
+      </div>
+    </div>
+
+    <!-- Charts row -->
+    <div class="dh-charts">
+      <!-- Performance chart -->
+      <div class="dc-card">
+        <div class="dc-head">
+          <div class="dc-title">Portfolio Performance</div>
+          <span class="dc-badge ds-pos" style="background:rgba(0,230,118,.12);">+18.4% this month</span>
+        </div>
+        <div class="dh-perf-wrap">
+          <canvas id="perf-canvas"></canvas>
+        </div>
+      </div>
+      <!-- Allocation -->
+      <div class="dc-card">
+        <div class="dc-head">
+          <div class="dc-title">Asset Allocation</div>
+        </div>
+        <div class="alloc-list">
+          <div class="al-item"><div class="al-dot" style="background:#f05a1a;"></div><div class="al-name">Forex</div><div class="al-bar-w"><div class="al-bar" style="width:70%;background:#f05a1a;"></div></div><div class="al-pct">70%</div></div>
+          <div class="al-item"><div class="al-dot" style="background:var(--gold);"></div><div class="al-name">Commodities</div><div class="al-bar-w"><div class="al-bar" style="width:15%;background:var(--gold);"></div></div><div class="al-pct">15%</div></div>
+          <div class="al-item"><div class="al-dot" style="background:var(--cyan);"></div><div class="al-name">Crypto</div><div class="al-bar-w"><div class="al-bar" style="width:10%;background:var(--cyan);"></div></div><div class="al-pct">10%</div></div>
+          <div class="al-item"><div class="al-dot" style="background:var(--green);"></div><div class="al-name">Indices</div><div class="al-bar-w"><div class="al-bar" style="width:5%;background:var(--green);"></div></div><div class="al-pct">5%</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent trades -->
+    <div class="dc-card">
+      <div class="dc-head" style="margin-bottom:8px;">
+        <div class="dc-title">Recent Trades</div>
+        <span class="dc-badge" style="background:var(--s2);color:var(--sub);">Last 7 days</span>
+      </div>
+      <table class="dt-table">
+        <thead><tr><th>Asset</th><th>Direction</th><th>Volume</th><th>Open</th><th>Close</th><th>P&amp;L</th><th>Date</th></tr></thead>
+        <tbody>
+          <tr><td class="dt-asset">EUR/USD</td><td><span class="dt-dir dt-buy">BUY</span></td><td class="dt-mono">0.50</td><td class="dt-mono">1.08320</td><td class="dt-mono">1.08742</td><td class="dt-pos">+$211.00</td><td style="color:var(--sub);font-size:10.5px;">Today 09:14</td></tr>
+          <tr><td class="dt-asset">Gold</td><td><span class="dt-dir dt-buy">BUY</span></td><td class="dt-mono">0.10</td><td class="dt-mono">2311.00</td><td class="dt-mono">2318.40</td><td class="dt-pos">+$74.00</td><td style="color:var(--sub);font-size:10.5px;">Today 08:02</td></tr>
+          <tr><td class="dt-asset">GBP/USD</td><td><span class="dt-dir dt-sell">SELL</span></td><td class="dt-mono">0.25</td><td class="dt-mono">1.27510</td><td class="dt-mono">1.27318</td><td class="dt-pos">+$48.00</td><td style="color:var(--sub);font-size:10.5px;">Yesterday</td></tr>
+          <tr><td class="dt-asset">BTC/USD</td><td><span class="dt-dir dt-sell">SELL</span></td><td class="dt-mono">0.01</td><td class="dt-mono">68,210</td><td class="dt-mono">67,420</td><td class="dt-neg">-$79.00</td><td style="color:var(--sub);font-size:10.5px;">Yesterday</td></tr>
+          <tr><td class="dt-asset">USD/JPY</td><td><span class="dt-dir dt-buy">BUY</span></td><td class="dt-mono">0.30</td><td class="dt-mono">149.210</td><td class="dt-mono">149.842</td><td class="dt-pos">+$126.50</td><td style="color:var(--sub);font-size:10.5px;">2 days ago</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 
   <!-- MOBILE ASSET STRIP -->
   <div class="m-strip">
@@ -1066,6 +1214,84 @@ document.getElementById('tv_chart').addEventListener('click',()=>{ if(sheetOpen&
 
 /* ── BOTTOM NAV ── */
 document.querySelectorAll('.bni').forEach(b=>b.addEventListener('click',function(){ document.querySelectorAll('.bni').forEach(x=>x.classList.remove('on')); this.classList.add('on'); }));
+
+/* ── SECTION SWITCHER ── */
+function showSection(sec) {
+  const allSbi = document.querySelectorAll('.sb-nav .sbi');
+  allSbi.forEach(s => s.classList.remove('on'));
+  // highlight clicked icon (dash = index 0, trade = index 1)
+  if (sec === 'dash')  allSbi[0].classList.add('on');
+  if (sec === 'trade') allSbi[1].classList.add('on');
+
+  const body      = document.querySelector('.body');
+  const mStrip    = document.querySelector('.m-strip');
+  const dashPanel = document.getElementById('dash-panel');
+
+  if (sec === 'dash') {
+    body.style.display      = 'none';
+    mStrip && (mStrip.style.display = 'none');
+    dashPanel.classList.add('on');
+    drawPerfChart();
+    // update date
+    const d = new Date();
+    document.getElementById('dash-date').textContent =
+      d.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  } else {
+    body.style.display      = '';
+    mStrip && (mStrip.style.display = '');
+    dashPanel.classList.remove('on');
+  }
+}
+
+/* ── PERFORMANCE CHART ── */
+function drawPerfChart() {
+  const canvas = document.getElementById('perf-canvas');
+  if (!canvas) return;
+  const wrap = canvas.parentElement;
+  canvas.width  = wrap.offsetWidth;
+  canvas.height = wrap.offsetHeight;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+
+  // Simulated monthly P&L data points
+  const data = [10000,10180,10095,10420,10310,10650,10480,10820,10710,11040,10920,11280,11180,11580,11420,11840,11720,12080,11960,12340,12180,12580,12420,12840,12660,13020,12880,13280,13140,13480];
+  const min = Math.min(...data)*0.998, max = Math.max(...data)*1.002;
+  const scaleX = W / (data.length-1);
+  const scaleY = H / (max - min);
+  const toX = i => i * scaleX;
+  const toY = v => H - (v - min) * scaleY;
+
+  // gradient fill
+  const grad = ctx.createLinearGradient(0,0,0,H);
+  grad.addColorStop(0,'rgba(240,90,26,0.25)');
+  grad.addColorStop(1,'rgba(240,90,26,0.01)');
+
+  ctx.beginPath();
+  ctx.moveTo(toX(0), toY(data[0]));
+  for (let i=1;i<data.length;i++) {
+    const cpx = toX(i-.5);
+    ctx.bezierCurveTo(cpx, toY(data[i-1]), cpx, toY(data[i]), toX(i), toY(data[i]));
+  }
+  ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.closePath();
+  ctx.fillStyle = grad; ctx.fill();
+
+  // line
+  ctx.beginPath();
+  ctx.moveTo(toX(0), toY(data[0]));
+  for (let i=1;i<data.length;i++) {
+    const cpx = toX(i-.5);
+    ctx.bezierCurveTo(cpx, toY(data[i-1]), cpx, toY(data[i]), toX(i), toY(data[i]));
+  }
+  ctx.strokeStyle='#f05a1a'; ctx.lineWidth=2; ctx.stroke();
+
+  // end dot
+  ctx.beginPath();
+  ctx.arc(toX(data.length-1), toY(data[data.length-1]), 4, 0, Math.PI*2);
+  ctx.fillStyle='#f05a1a'; ctx.fill();
+  ctx.beginPath();
+  ctx.arc(toX(data.length-1), toY(data[data.length-1]), 7, 0, Math.PI*2);
+  ctx.fillStyle='rgba(240,90,26,.25)'; ctx.fill();
+}
 </script>
 </body>
 </html>
