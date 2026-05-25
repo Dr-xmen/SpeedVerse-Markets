@@ -135,12 +135,16 @@ table.mkt tbody td{padding:13px 14px;white-space:nowrap;}
 .awards-note{font-size:12px;color:#888;text-align:left;}
 
 /* TRUST */
-.trust{padding:72px 0;background:#fff;overflow:hidden;}
-.trust-track{display:flex;gap:48px;animation:scroll 35s linear infinite;width:max-content;align-items:center;}
-.trust-track:hover{animation-play-state:paused;}
-.trust-logo{font-size:15px;font-weight:800;color:#bbb;letter-spacing:-.3px;white-space:nowrap;flex-shrink:0;padding:0 8px;}
-@keyframes scroll{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
-.trust-fade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,#fff 0%,transparent 10%,transparent 90%,#fff 100%);}
+.trust{padding:80px 0 60px;background:#fff;overflow:hidden;}
+.trust-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;max-width:900px;margin:0 auto 56px;}
+.trust-card{background:#fff;border-radius:12px;border:1px solid #e8e8e8;box-shadow:0 2px 12px rgba(0,0,0,.06);display:flex;align-items:center;justify-content:center;padding:24px 20px;min-height:120px;}
+.trust-card img{width:100%;max-width:200px;height:auto;object-fit:contain;}
+.trust-media-wrap{position:relative;overflow:hidden;}
+.trust-media-track{display:flex;gap:60px;animation:trustscroll 30s linear infinite;width:max-content;align-items:center;}
+.trust-media-track:hover{animation-play-state:paused;}
+.trust-media-logo{font-size:16px;font-weight:800;color:#ccc;letter-spacing:-.4px;white-space:nowrap;flex-shrink:0;padding:0 12px;text-transform:uppercase;}
+@keyframes trustscroll{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
+.trust-fade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,#fff 0%,transparent 12%,transparent 88%,#fff 100%);}
 
 /* TRADE ANYWHERE */
 .trade{padding:72px 0;background:#f8f8f8;}
@@ -464,33 +468,40 @@ footer{background:#111;padding:60px 0 28px;}
 
 <!-- TRUST SECTION -->
 <section class="trust">
-  <div class="si" style="text-align:center;margin-bottom:40px;">
-    <span class="tag">In The News</span>
-    <h2 class="sec-h" style="margin-bottom:0;">Trust We Have Earned</h2>
-    <p class="sec-p" style="margin:8px auto 0;max-width:480px;">Featured in the world's leading financial media and recognised by top industry bodies.</p>
+  <div class="si" style="text-align:center;margin-bottom:44px;">
+    <h2 class="sec-h" style="margin-bottom:8px;"><span style="color:#E8530A;">Trust</span> We Have Earned</h2>
+    <p class="sec-p" style="margin:0 auto;max-width:500px;">Recognised by the world's most trusted review platforms and industry experts.</p>
   </div>
-  <div style="position:relative;overflow:hidden;">
-    <div class="trust-track">
-      <span class="trust-logo">Bloomberg</span>
-      <span class="trust-logo">Reuters</span>
-      <span class="trust-logo">Forbes</span>
-      <span class="trust-logo">Financial Times</span>
-      <span class="trust-logo">CNBC</span>
-      <span class="trust-logo">The Wall Street Journal</span>
-      <span class="trust-logo">Investopedia</span>
-      <span class="trust-logo">MarketWatch</span>
-      <span class="trust-logo">Barron's</span>
-      <span class="trust-logo">Business Insider</span>
-      <span class="trust-logo">Bloomberg</span>
-      <span class="trust-logo">Reuters</span>
-      <span class="trust-logo">Forbes</span>
-      <span class="trust-logo">Financial Times</span>
-      <span class="trust-logo">CNBC</span>
-      <span class="trust-logo">The Wall Street Journal</span>
-      <span class="trust-logo">Investopedia</span>
-      <span class="trust-logo">MarketWatch</span>
-      <span class="trust-logo">Barron's</span>
-      <span class="trust-logo">Business Insider</span>
+  <div class="si">
+    <div class="trust-grid">
+      <div class="trust-card"><img src="assets/google.webp" alt="Google Reviews"/></div>
+      <div class="trust-card"><img src="assets/google-play.webp" alt="Google Play"/></div>
+      <div class="trust-card"><img src="assets/apple-store.webp" alt="App Store"/></div>
+      <div class="trust-card"><img src="assets/trustpilot.webp" alt="Trustpilot"/></div>
+      <div class="trust-card"><img src="assets/forexbrokers.webp" alt="ForexBrokers.com"/></div>
+      <div class="trust-card"><img src="assets/wikifx.webp" alt="WikiFX"/></div>
+      <div class="trust-card"><img src="assets/daytrading.webp" alt="DayTrading.com"/></div>
+      <div class="trust-card"><img src="assets/fr.webp" alt="FR"/></div>
+    </div>
+  </div>
+  <div class="trust-media-wrap">
+    <div class="trust-media-track">
+      <span class="trust-media-logo">Business Insider</span>
+      <span class="trust-media-logo">Yahoo!</span>
+      <span class="trust-media-logo">AP</span>
+      <span class="trust-media-logo">Bloomberg</span>
+      <span class="trust-media-logo">CNBC</span>
+      <span class="trust-media-logo">Reuters</span>
+      <span class="trust-media-logo">CNN</span>
+      <span class="trust-media-logo">Financial Times</span>
+      <span class="trust-media-logo">Business Insider</span>
+      <span class="trust-media-logo">Yahoo!</span>
+      <span class="trust-media-logo">AP</span>
+      <span class="trust-media-logo">Bloomberg</span>
+      <span class="trust-media-logo">CNBC</span>
+      <span class="trust-media-logo">Reuters</span>
+      <span class="trust-media-logo">CNN</span>
+      <span class="trust-media-logo">Financial Times</span>
     </div>
     <div class="trust-fade"></div>
   </div>
