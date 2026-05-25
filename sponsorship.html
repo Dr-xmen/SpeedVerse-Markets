@@ -76,10 +76,8 @@ nav{position:sticky;top:0;z-index:9999;background:#fff;border-bottom:1px solid #
 .btn-outline{display:inline-flex;align-items:center;gap:8px;background:transparent;color:#fff;padding:13px 30px;border-radius:50px;font-size:14px;font-weight:700;border:2px solid rgba(255,255,255,.4);transition:border-color .15s,background .15s;}
 .btn-outline:hover{border-color:#fff;background:rgba(255,255,255,.08);}
 .sp-hero-right{display:flex;align-items:center;justify-content:center;}
-.sp-partner-logo-box{width:380px;height:280px;background:rgba(255,255,255,.06);border:2px dashed rgba(255,255,255,.25);border-radius:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;backdrop-filter:blur(10px);}
-.sp-partner-logo-box svg{opacity:.4;}
-.sp-partner-logo-box p{font-size:13px;color:rgba(255,255,255,.45);font-weight:500;text-align:center;padding:0 20px;}
-.sp-partner-logo-box .ph-label{font-size:10px;color:rgba(255,255,255,.3);letter-spacing:1.5px;text-transform:uppercase;}
+.sp-partner-img{width:420px;height:340px;object-fit:contain;object-position:center bottom;filter:drop-shadow(0 20px 60px rgba(232,83,10,.25));animation:heroImgUp .9s cubic-bezier(.22,.68,0,1.1) .3s both;}
+@keyframes heroImgUp{from{opacity:0;transform:translateY(30px);}to{opacity:1;transform:translateY(0);}}
 
 /* SHARED */
 .si{max-width:1280px;margin:0 auto;padding:0 48px;}
@@ -396,21 +394,17 @@ footer{background:#111;padding:60px 0 28px;}
     <div class="sp-hero-left">
       <div class="sp-hero-eyebrow">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="2.5"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
-        <span>Official Partnership</span>
+        <span>Official Ferrari Partner</span>
       </div>
-      <h1 class="sp-hero-h1">Where Speed<br/>Meets <em>Precision</em></h1>
-      <p class="sp-hero-sub">SpeedVerse Markets partners with the world's elite motorsport organisations, sharing the same DNA — relentless pursuit of performance, precision under pressure, and the drive to win.</p>
+      <h1 class="sp-hero-h1">SpeedVerse x<br/><em>Scuderia Ferrari</em></h1>
+      <p class="sp-hero-sub">SpeedVerse Markets is proud to partner with Scuderia Ferrari HP — the most iconic name in Formula 1. Two forces defined by speed, precision, and the relentless pursuit of victory.</p>
       <div class="sp-hero-btns">
         <a href="#enquire" class="btn-primary">Partnership Enquiry</a>
         <a href="#highlights" class="btn-outline">View Highlights</a>
       </div>
     </div>
     <div class="sp-hero-right">
-      <div class="sp-partner-logo-box">
-        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="12" r="3"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg>
-        <p>Partner logo<br/>will appear here</p>
-        <span class="ph-label">Image coming soon</span>
-      </div>
+      <img class="sp-partner-img" src="assets/partner-ferrari.webp" alt="Ferrari F1 drivers Lewis Hamilton and Charles Leclerc"/>
     </div>
   </div>
 </section>
@@ -442,21 +436,17 @@ footer{background:#111;padding:60px 0 28px;}
   <div class="sp-showcase-inner">
     <div class="sp-showcase-head reveal">
       <div class="sp-showcase-tag">In Action</div>
-      <h2 class="sp-showcase-h2">The <em>Partnership</em> in Motion</h2>
-      <p class="sp-showcase-sub">From the starting grid to the trading screen — see how SpeedVerse and our partners are redefining what it means to perform at the highest level.</p>
+      <h2 class="sp-showcase-h2">SpeedVerse x <em>Ferrari</em> in Motion</h2>
+      <p class="sp-showcase-sub">From the starting grid to the trading screen — see how SpeedVerse Markets and Scuderia Ferrari HP are redefining what it means to perform at the highest level.</p>
     </div>
 
     <div class="sp-media-grid reveal">
       <!-- Main wide media card -->
-      <div class="sp-media-card wide">
-        <div class="sp-media-placeholder">
-          <div class="sp-play-btn">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><polygon points="5,3 19,12 5,21"/></svg>
-          </div>
-        </div>
+      <div class="sp-media-card wide" style="background:#0d1117;">
+        <img src="assets/partner-ferrari.webp" alt="Ferrari F1 partnership" style="width:100%;height:100%;object-fit:contain;object-position:center;padding:20px 40px;"/>
         <div class="sp-media-label">
-          <p>Partnership Showcase Film</p>
-          <span>Image / video coming soon</span>
+          <p>SpeedVerse x Ferrari — Official Partnership</p>
+          <span>Hamilton &amp; Leclerc, 2025 Season</span>
         </div>
       </div>
 
@@ -575,8 +565,8 @@ footer{background:#111;padding:60px 0 28px;}
         </div>
         <div class="sp-news-body">
           <div class="sp-news-date">Coming soon</div>
-          <div class="sp-news-title">SpeedVerse Markets Announces Landmark Partnership</div>
-          <p class="sp-news-excerpt">SpeedVerse Markets takes a bold step forward, uniting the world of elite performance sport with the global trading community through a landmark strategic partnership.</p>
+          <div class="sp-news-title">SpeedVerse Markets Announces Official Ferrari Partnership</div>
+          <p class="sp-news-excerpt">SpeedVerse Markets takes a bold step forward, uniting the world's most iconic F1 team with 5 million global traders in a landmark partnership with Scuderia Ferrari HP.</p>
           <span class="sp-news-read">Read More</span>
         </div>
       </div>
@@ -589,8 +579,8 @@ footer{background:#111;padding:60px 0 28px;}
         </div>
         <div class="sp-news-body">
           <div class="sp-news-date">Coming soon</div>
-          <div class="sp-news-title">Behind the Scenes: SpeedVerse at the Circuit</div>
-          <p class="sp-news-excerpt">Go behind the pit wall with SpeedVerse Markets for an exclusive look at how the partnership came to life — and what it means for our traders and partners alike.</p>
+          <div class="sp-news-title">Behind the Scenes: SpeedVerse at the Ferrari Garage</div>
+          <p class="sp-news-excerpt">Go behind the pit wall with SpeedVerse Markets and Scuderia Ferrari HP for an exclusive look at how the partnership came to life — and what it means for Hamilton, Leclerc, and our global traders.</p>
           <span class="sp-news-read">Read More</span>
         </div>
       </div>
@@ -603,8 +593,8 @@ footer{background:#111;padding:60px 0 28px;}
         </div>
         <div class="sp-news-body">
           <div class="sp-news-date">Coming soon</div>
-          <div class="sp-news-title">Speed, Strategy &amp; Markets: The Parallels That Drive Us</div>
-          <p class="sp-news-excerpt">What does a racing team's strategy have in common with a winning trading plan? More than you think. Explore the shared philosophy behind SpeedVerse's partnership vision.</p>
+          <div class="sp-news-title">Ferrari's Pit Stop vs. a Market Trade: The Parallels That Drive Us</div>
+          <p class="sp-news-excerpt">What does Ferrari's race strategy have in common with a winning trading plan? More than you think. Explore the shared philosophy behind SpeedVerse's partnership with the Prancing Horse.</p>
           <span class="sp-news-read">Read More</span>
         </div>
       </div>
