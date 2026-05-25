@@ -45,18 +45,25 @@ nav{position:sticky;top:0;z-index:500;background:#fff;border-bottom:1px solid #e
 .btn-qr:hover{background:#c94508;}
 
 /* PROMO CARDS */
-.promos{background:#fff;border-bottom:1px solid #eee;position:relative;}
-.promos-track{display:grid;grid-template-columns:repeat(3,1fr);width:100%;}
-.pcard{display:flex;align-items:center;justify-content:space-between;padding:20px 28px;border-right:1px solid #eee;cursor:pointer;background:#fff;transition:background .2s;min-height:110px;position:relative;overflow:hidden;}
-.pcard:last-child{border-right:none;}
-.pcard:hover{background:#fafafa;}
-.pcard-badge{display:inline-block;background:#f0f0f0;color:#555;font-size:10px;font-weight:600;padding:3px 10px;border-radius:50px;margin-bottom:8px;letter-spacing:.2px;}
-.pcard-title{font-size:15px;font-weight:800;color:#1a1a1a;line-height:1.3;max-width:200px;}
+.promos{background:#fff;padding:32px 0 40px;}
+.promos-inner{max-width:1280px;margin:0 auto;padding:0 48px;}
+.promos-row{display:flex;align-items:center;gap:14px;}
+.promo-arrow{width:38px;height:38px;flex-shrink:0;background:#fff;border:1px solid #ddd;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:#555;box-shadow:0 2px 8px rgba(0,0,0,.07);transition:box-shadow .15s;font-family:inherit;}
+.promo-arrow:hover{box-shadow:0 4px 14px rgba(0,0,0,.13);}
+.promos-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;flex:1;overflow:hidden;}
+.pcard{display:flex;align-items:stretch;background:#ebebeb;border-radius:14px;overflow:hidden;cursor:pointer;min-height:175px;transition:box-shadow .2s;}
+.pcard:hover{box-shadow:0 6px 24px rgba(0,0,0,.1);}
+.pcard-left{flex:1;padding:22px 20px 22px 24px;display:flex;flex-direction:column;justify-content:space-between;}
+.pcard-badge{display:inline-block;background:rgba(255,255,255,.75);color:#444;font-size:11px;font-weight:600;padding:4px 12px;border-radius:50px;margin-bottom:10px;width:fit-content;}
+.pcard-title{font-size:17px;font-weight:800;color:#1a1a1a;line-height:1.3;}
 .pcard-title em{font-style:normal;color:#E8530A;}
-.pcard-img{flex-shrink:0;width:110px;height:80px;display:flex;align-items:center;justify-content:center;font-size:44px;}
-.arrow{position:absolute;top:50%;transform:translateY(-50%);width:32px;height:32px;background:#fff;border:1px solid #ddd;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:10;font-size:15px;color:#555;box-shadow:0 2px 8px rgba(0,0,0,.08);}
-.arrow-l{left:-16px;}
-.arrow-r{right:-16px;}
+.pcard-img{width:190px;flex-shrink:0;display:flex;align-items:center;justify-content:flex-end;padding-right:8px;overflow:hidden;}
+.pcard-img img{width:100%;height:100%;object-fit:contain;object-position:center right;}
+.pcard-img .emoji-fallback{font-size:80px;line-height:1;padding:16px;}
+.promos-footer{display:flex;justify-content:space-between;align-items:center;margin-top:18px;padding:0 52px;}
+.promos-footer-text{font-size:14px;color:#555;}
+.promos-viewmore{font-size:13px;font-weight:700;color:#1a1a1a;letter-spacing:.5px;text-decoration:underline;text-underline-offset:3px;cursor:pointer;}
+.promos-viewmore:hover{color:#E8530A;}
 
 /* SHARED */
 .si{max-width:1280px;margin:0 auto;padding:0 48px;}
@@ -260,32 +267,57 @@ footer{background:#111;padding:60px 0 28px;}
 
 <!-- PROMO CARDS -->
 <div class="promos">
-  <div style="max-width:1400px;margin:0 auto;position:relative;padding:0 24px;">
-    <div class="arrow arrow-l">‹</div>
-    <div class="promos-track">
-      <div class="pcard">
-        <div>
-          <div class="pcard-badge">Promotion</div>
-          <div class="pcard-title">Deposit Bonus</div>
+  <div class="promos-inner">
+    <div class="promos-row">
+      <button class="promo-arrow">&#8249;</button>
+      <div class="promos-cards">
+
+        <div class="pcard">
+          <div class="pcard-left">
+            <span class="pcard-badge">Promotion</span>
+            <div class="pcard-title">SpeedVerse Glory 2026:<br/>Pre-Game Draw</div>
+          </div>
+          <div class="pcard-img">
+            <img src="https://d21u74ttq7jqzf.cloudfront.net/image/promotion/en-za/vantage-glory-2026-pre-game-draw.webp"
+                 alt="Pre-Game Draw"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/>
+            <span class="emoji-fallback" style="display:none;">🏆</span>
+          </div>
         </div>
-        <div class="pcard-img">💰</div>
-      </div>
-      <div class="pcard">
-        <div>
-          <div class="pcard-badge">Promotion</div>
-          <div class="pcard-title">Cashback <em>Prime</em><br/>Promotion</div>
+
+        <div class="pcard">
+          <div class="pcard-left">
+            <span class="pcard-badge">Promotion</span>
+            <div class="pcard-title">Bumper Bonus<br/>Promotion</div>
+          </div>
+          <div class="pcard-img">
+            <img src="https://d21u74ttq7jqzf.cloudfront.net/image/promotion/en-za/bumper-bonus-promotion.webp"
+                 alt="Bumper Bonus"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/>
+            <span class="emoji-fallback" style="display:none;">💰</span>
+          </div>
         </div>
-        <div class="pcard-img">📊</div>
-      </div>
-      <div class="pcard">
-        <div>
-          <div class="pcard-badge">Promotion</div>
-          <div class="pcard-title">SpeedVerse Glory 2026:<br/>Pre-Game Draw</div>
+
+        <div class="pcard">
+          <div class="pcard-left">
+            <span class="pcard-badge">Promotion</span>
+            <div class="pcard-title">Cashback <em>Galore</em><br/>Promotion</div>
+          </div>
+          <div class="pcard-img">
+            <img src="https://d21u74ttq7jqzf.cloudfront.net/image/promotion/en-za/cashback-galore-promotion.webp"
+                 alt="Cashback Galore"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/>
+            <span class="emoji-fallback" style="display:none;">📊</span>
+          </div>
         </div>
-        <div class="pcard-img">🏆</div>
+
       </div>
+      <button class="promo-arrow">&#8250;</button>
     </div>
-    <div class="arrow arrow-r">›</div>
+    <div class="promos-footer">
+      <span class="promos-footer-text">🎉 🎉 Earn tickets as you trade and win exclusive prizes.</span>
+      <a href="#" class="promos-viewmore">VIEW MORE</a>
+    </div>
   </div>
 </div>
 
