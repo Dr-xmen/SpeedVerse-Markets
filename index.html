@@ -139,12 +139,14 @@ table.mkt tbody td{padding:13px 14px;white-space:nowrap;}
 .trust-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;max-width:900px;margin:0 auto 56px;}
 .trust-card{background:#fff;border-radius:12px;border:1px solid #e8e8e8;box-shadow:0 2px 12px rgba(0,0,0,.06);display:flex;align-items:center;justify-content:center;padding:24px 20px;min-height:120px;}
 .trust-card img{width:100%;max-width:200px;height:auto;object-fit:contain;}
-.trust-media-wrap{position:relative;overflow:hidden;}
-.trust-media-track{display:flex;gap:60px;animation:trustscroll 30s linear infinite;width:max-content;align-items:center;}
+.trust-media-wrap{position:relative;overflow:hidden;padding:32px 0;}
+.trust-media-track{display:flex;gap:72px;animation:trustscroll 28s linear infinite;width:max-content;align-items:center;}
 .trust-media-track:hover{animation-play-state:paused;}
-.trust-media-logo{font-size:16px;font-weight:800;color:#ccc;letter-spacing:-.4px;white-space:nowrap;flex-shrink:0;padding:0 12px;text-transform:uppercase;}
+.trust-media-logo{flex-shrink:0;display:flex;align-items:center;}
+.trust-media-logo img{height:36px;width:auto;object-fit:contain;filter:grayscale(100%);opacity:.6;transition:filter .3s,opacity .3s;}
+.trust-media-logo img:hover{filter:grayscale(0%);opacity:1;}
 @keyframes trustscroll{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
-.trust-fade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,#fff 0%,transparent 12%,transparent 88%,#fff 100%);}
+.trust-fade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,#fff 0%,transparent 14%,transparent 86%,#fff 100%);}
 
 /* TRADE ANYWHERE */
 .trade{padding:72px 0;background:#f8f8f8;}
@@ -486,22 +488,22 @@ footer{background:#111;padding:60px 0 28px;}
   </div>
   <div class="trust-media-wrap">
     <div class="trust-media-track">
-      <span class="trust-media-logo">Business Insider</span>
-      <span class="trust-media-logo">Yahoo!</span>
-      <span class="trust-media-logo">AP</span>
-      <span class="trust-media-logo">Bloomberg</span>
-      <span class="trust-media-logo">CNBC</span>
-      <span class="trust-media-logo">Reuters</span>
-      <span class="trust-media-logo">CNN</span>
-      <span class="trust-media-logo">Financial Times</span>
-      <span class="trust-media-logo">Business Insider</span>
-      <span class="trust-media-logo">Yahoo!</span>
-      <span class="trust-media-logo">AP</span>
-      <span class="trust-media-logo">Bloomberg</span>
-      <span class="trust-media-logo">CNBC</span>
-      <span class="trust-media-logo">Reuters</span>
-      <span class="trust-media-logo">CNN</span>
-      <span class="trust-media-logo">Financial Times</span>
+      <span class="trust-media-logo"><img src="assets/media-business-insider.webp" alt="Business Insider"/></span>
+      <span class="trust-media-logo"><img src="assets/media-yahoo.webp" alt="Yahoo!"/></span>
+      <span class="trust-media-logo"><img src="assets/media-ap.webp" alt="AP"/></span>
+      <span class="trust-media-logo"><img src="assets/media-bloomberg.webp" alt="Bloomberg"/></span>
+      <span class="trust-media-logo"><img src="assets/media-cnbc.webp" alt="CNBC"/></span>
+      <span class="trust-media-logo"><img src="assets/media-reuters.webp" alt="Reuters"/></span>
+      <span class="trust-media-logo"><img src="assets/media-cnn.webp" alt="CNN"/></span>
+      <span class="trust-media-logo"><img src="assets/media-financial-times.webp" alt="Financial Times"/></span>
+      <span class="trust-media-logo"><img src="assets/media-business-insider.webp" alt="Business Insider"/></span>
+      <span class="trust-media-logo"><img src="assets/media-yahoo.webp" alt="Yahoo!"/></span>
+      <span class="trust-media-logo"><img src="assets/media-ap.webp" alt="AP"/></span>
+      <span class="trust-media-logo"><img src="assets/media-bloomberg.webp" alt="Bloomberg"/></span>
+      <span class="trust-media-logo"><img src="assets/media-cnbc.webp" alt="CNBC"/></span>
+      <span class="trust-media-logo"><img src="assets/media-reuters.webp" alt="Reuters"/></span>
+      <span class="trust-media-logo"><img src="assets/media-cnn.webp" alt="CNN"/></span>
+      <span class="trust-media-logo"><img src="assets/media-financial-times.webp" alt="Financial Times"/></span>
     </div>
     <div class="trust-fade"></div>
   </div>
