@@ -175,14 +175,21 @@ table.mkt tbody td{padding:13px 14px;white-space:nowrap;}
 .trade-support{position:absolute;bottom:120px;left:0;width:160px;border-radius:14px;box-shadow:0 8px 32px rgba(0,0,0,.13);z-index:3;}
 
 /* EXCELLENCE */
-.excellence{padding:72px 0;background:#fff;border-top:1px solid #eee;}
-.exc-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:24px;}
-.exc-tabs{display:flex;border-bottom:2px solid #eee;overflow-x:auto;margin-bottom:32px;}
-.etab{padding:13px 22px;font-size:14px;font-weight:600;color:#888;cursor:pointer;border:none;border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:color .15s;background:none;font-family:inherit;}
+.excellence{padding:88px 0;background:#fff;}
+.exc-wrap{display:grid;grid-template-columns:1fr 420px;gap:60px;align-items:center;}
+.exc-heading{font-size:38px;font-weight:800;color:#1a1a1a;line-height:1.2;margin-bottom:32px;}
+.exc-heading span{color:#E8530A;}
+.exc-tabs{display:flex;gap:0;border-bottom:1.5px solid #e8e8e8;margin-bottom:28px;flex-wrap:wrap;}
+.etab{padding:10px 0;margin-right:22px;font-size:12px;font-weight:700;color:#999;cursor:pointer;border:none;border-bottom:2.5px solid transparent;margin-bottom:-1.5px;white-space:nowrap;transition:color .15s;background:none;font-family:inherit;letter-spacing:.4px;}
 .etab.active,.etab:hover{color:#E8530A;border-bottom-color:#E8530A;}
-.exc-content{display:grid;grid-template-columns:1fr 380px;gap:40px;align-items:center;}
+.exc-panel{display:none;}
+.exc-panel.active{display:block;}
+.exc-panel-title{font-size:18px;font-weight:800;color:#1a1a1a;margin-bottom:14px;letter-spacing:.2px;}
+.exc-panel-desc{font-size:14px;color:#555;line-height:1.8;margin-bottom:12px;max-width:480px;}
+.exc-learn-btn{display:inline-block;background:#E8530A;color:#fff;font-weight:700;font-size:13px;padding:13px 28px;border-radius:30px;text-decoration:none;letter-spacing:.5px;margin-top:10px;transition:background .2s;}
+.exc-learn-btn:hover{background:#c94400;}
 .exc-img-wrap{display:flex;align-items:center;justify-content:center;}
-.exc-market-img{width:100%;max-width:340px;height:auto;display:none;animation:fadeIn .35s ease;}
+.exc-market-img{width:100%;max-width:400px;height:auto;display:none;animation:fadeIn .35s ease;}
 .exc-market-img.active{display:block;}
 @keyframes fadeIn{from{opacity:0;transform:scale(.95);}to{opacity:1;transform:scale(1);}}
 .price-up{color:#2e7d32;font-weight:600;}
@@ -566,50 +573,69 @@ footer{background:#111;padding:60px 0 28px;}
 <!-- DRIVING EXCELLENCE -->
 <section class="excellence">
   <div class="si">
-    <div class="exc-header">
+    <div class="exc-wrap">
       <div>
-        <span class="tag">Markets</span>
-        <h2 class="sec-h" style="margin-bottom:0;">Driving Excellence<br/>in Every Market</h2>
-      </div>
-      <a href="#" class="obtn">
-        Explore All Markets
-        <svg viewBox="0 0 24 24"><polyline points="9,18 15,12 9,6"/></svg>
-      </a>
-    </div>
-    <div class="exc-tabs">
-      <button class="etab active" onclick="switchExc(this,'forex')">Forex</button>
-      <button class="etab" onclick="switchExc(this,'indices')">Indices</button>
-      <button class="etab" onclick="switchExc(this,'gold')">Gold &amp; Silver</button>
-      <button class="etab" onclick="switchExc(this,'energy')">Energy</button>
-      <button class="etab" onclick="switchExc(this,'etfs')">ETFs</button>
-      <button class="etab" onclick="switchExc(this,'soft')">Soft Commodities</button>
-      <button class="etab" onclick="switchExc(this,'shares')">Shares</button>
-    </div>
-    <div class="exc-content">
-      <div style="overflow-x:auto;">
-        <table class="mkt">
-          <thead>
-            <tr>
-              <th>Symbol</th>
-              <th>Bid</th>
-              <th>Ask</th>
-              <th>Change</th>
-              <th>High</th>
-              <th>Low</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody id="exc-body"></tbody>
-        </table>
+        <h2 class="exc-heading">Driving <span>Excellence</span> with a<br/>Leading CFD Broker</h2>
+        <div class="exc-tabs">
+          <button class="etab active" onclick="switchExc(this,'forex')">FOREX</button>
+          <button class="etab" onclick="switchExc(this,'indices')">INDICES</button>
+          <button class="etab" onclick="switchExc(this,'gold')">GOLD &amp; SILVER</button>
+          <button class="etab" onclick="switchExc(this,'energy')">ENERGY</button>
+          <button class="etab" onclick="switchExc(this,'etfs')">ETFS</button>
+          <button class="etab" onclick="switchExc(this,'soft')">SOFT COMMODITIES</button>
+          <button class="etab" onclick="switchExc(this,'shares')">SHARES</button>
+        </div>
+        <div class="exc-panel active" id="exc-panel-forex">
+          <div class="exc-panel-title">FOREX</div>
+          <p class="exc-panel-desc">Trade the world's most popular forex and currency pairs with a trusted forex broker whether you are from South Africa, Kenya, Botswana or Nigeria.</p>
+          <p class="exc-panel-desc">Access 40+ major, minor, and exotic forex pairs with low spreads from 0.0. Start trading the world's leading currencies including EUR/USD, GBP/USD, and USD/JPY.</p>
+          <a href="#" class="exc-learn-btn">LEARN FOREX</a>
+        </div>
+        <div class="exc-panel" id="exc-panel-indices">
+          <div class="exc-panel-title">INDICES</div>
+          <p class="exc-panel-desc">Open positions and diversify your portfolio with global indices whether you are from South Africa, Kenya, Botswana or Nigeria.</p>
+          <p class="exc-panel-desc">Leverage on the volatility of the largest stock market indices in the world like SP500, DAX, NAS100, and DJ30. Try indices trading with SpeedVerse today.</p>
+          <a href="#" class="exc-learn-btn">LEARN INDICES</a>
+        </div>
+        <div class="exc-panel" id="exc-panel-gold">
+          <div class="exc-panel-title">GOLD &amp; SILVER</div>
+          <p class="exc-panel-desc">Buy or sell the world's most highly traded precious metals — gold and silver whether you are from South Africa, Kenya, Botswana or Nigeria.</p>
+          <p class="exc-panel-desc">Trade gold and silver, the world's most popular precious metals, which have historically been used as a hedge against inflation and a store of value during uncertain economic times.</p>
+          <a href="#" class="exc-learn-btn">LEARN GOLD &amp; SILVER</a>
+        </div>
+        <div class="exc-panel" id="exc-panel-energy">
+          <div class="exc-panel-title">ENERGY</div>
+          <p class="exc-panel-desc">Trade energy instruments including crude oil, natural gas, and Brent oil whether you are from South Africa, Kenya, Botswana or Nigeria.</p>
+          <p class="exc-panel-desc">SpeedVerse offers a broad range of energy commodities, providing traders with access to the highly liquid global energy markets. Our energy trading options include crude oil, natural gas, and Brent oil.</p>
+          <a href="#" class="exc-learn-btn">LEARN ENERGY</a>
+        </div>
+        <div class="exc-panel" id="exc-panel-etfs">
+          <div class="exc-panel-title">ETFS</div>
+          <p class="exc-panel-desc">Diversify your portfolio and gain exposure to more markets with ETFs whether you are from South Africa, Kenya, Botswana or Nigeria.</p>
+          <p class="exc-panel-desc">ETFs track the performance of a pool of underlying assets – including commodities, stocks, currencies, indices and more. Start trading popular ETFs like the SPDR S&amp;P 500 ETF and Invesco QQQ Trust.</p>
+          <a href="#" class="exc-learn-btn">LEARN ETFS</a>
+        </div>
+        <div class="exc-panel" id="exc-panel-soft">
+          <div class="exc-panel-title">SOFT COMMODITIES</div>
+          <p class="exc-panel-desc">Trade soft commodities or agricultural goods, such as sugar, coffee, cotton and more from your home country, whether you are from South Africa or beyond.</p>
+          <p class="exc-panel-desc">Soft commodities refer to commodities that are grown rather than mined. When trading soft commodities CFDs, traders will have to consider factors including weather conditions, global demand, and geopolitical events that impact their production.</p>
+          <a href="#" class="exc-learn-btn">LEARN SOFT COMMODITIES</a>
+        </div>
+        <div class="exc-panel" id="exc-panel-shares">
+          <div class="exc-panel-title">SHARES</div>
+          <p class="exc-panel-desc">Choose from the hundreds of individual stocks available in US and more, from wherever you are in the world, be it in South Africa or beyond.</p>
+          <p class="exc-panel-desc">You can invest in the likes of Tesla, Netflix, Meta, and other listed companies through shares CFD. Get access to international share markets including US, Europe, Australia and Asia.</p>
+          <a href="#" class="exc-learn-btn">LEARN SHARES</a>
+        </div>
       </div>
       <div class="exc-img-wrap">
-        <img id="exc-img-forex"          class="exc-market-img active" src="assets/mkt-forex.webp"           alt="Forex"/>
-        <img id="exc-img-indices"        class="exc-market-img"        src="assets/mkt-indices.webp"         alt="Indices"/>
-        <img id="exc-img-gold"           class="exc-market-img"        src="assets/mkt-gold-silver.webp"     alt="Gold &amp; Silver"/>
-        <img id="exc-img-energy"         class="exc-market-img"        src="assets/mkt-energy.webp"          alt="Energy"/>
-        <img id="exc-img-etfs"           class="exc-market-img"        src="assets/mkt-etfs.webp"            alt="ETFs"/>
-        <img id="exc-img-soft"           class="exc-market-img"        src="assets/mkt-soft-commodities.webp" alt="Soft Commodities"/>
-        <img id="exc-img-shares"         class="exc-market-img"        src="assets/mkt-shares.webp"          alt="Shares"/>
+        <img id="exc-img-forex"   class="exc-market-img active" src="assets/mkt-forex.webp"            alt="Forex"/>
+        <img id="exc-img-indices" class="exc-market-img"        src="assets/mkt-indices.webp"          alt="Indices"/>
+        <img id="exc-img-gold"    class="exc-market-img"        src="assets/mkt-gold-silver.webp"      alt="Gold &amp; Silver"/>
+        <img id="exc-img-energy"  class="exc-market-img"        src="assets/mkt-energy.webp"           alt="Energy"/>
+        <img id="exc-img-etfs"    class="exc-market-img"        src="assets/mkt-etfs.webp"             alt="ETFs"/>
+        <img id="exc-img-soft"    class="exc-market-img"        src="assets/mkt-soft-commodities.webp" alt="Soft Commodities"/>
+        <img id="exc-img-shares"  class="exc-market-img"        src="assets/mkt-shares.webp"           alt="Shares"/>
       </div>
     </div>
   </div>
@@ -819,74 +845,19 @@ function switchSpreads(btn,cat){
   renderSpreads(cat);
 }
 
-const excData = {
-  forex:[
-    {sym:'EUR/USD',bid:'1.08523',ask:'1.08526',chg:'+0.15%',high:'1.08741',low:'1.08301',up:true},
-    {sym:'GBP/USD',bid:'1.26847',ask:'1.26851',chg:'-0.08%',high:'1.27124',low:'1.26612',up:false},
-    {sym:'USD/JPY',bid:'157.234',ask:'157.237',chg:'+0.22%',high:'157.589',low:'156.891',up:true},
-    {sym:'AUD/USD',bid:'0.65123',ask:'0.65127',chg:'-0.31%',high:'0.65489',low:'0.65001',up:false},
-    {sym:'USD/CAD',bid:'1.36578',ask:'1.36582',chg:'+0.09%',high:'1.36812',low:'1.36201',up:true},
-  ],
-  indices:[
-    {sym:'S&P 500',bid:'5,234.20',ask:'5,234.50',chg:'+0.68%',high:'5,241.00',low:'5,187.30',up:true},
-    {sym:'NASDAQ 100',bid:'18,421.60',ask:'18,422.40',chg:'+0.94%',high:'18,512.80',low:'18,298.10',up:true},
-    {sym:'DOW JONES',bid:'38,947.00',ask:'38,948.50',chg:'+0.42%',high:'39,012.30',low:'38,762.10',up:true},
-    {sym:'FTSE 100',bid:'8,124.30',ask:'8,125.10',chg:'-0.18%',high:'8,178.50',low:'8,089.60',up:false},
-    {sym:'DAX 40',bid:'18,612.40',ask:'18,613.80',chg:'+0.31%',high:'18,698.20',low:'18,521.70',up:true},
-  ],
-  gold:[
-    {sym:'XAU/USD',bid:'2,347.50',ask:'2,347.63',chg:'+0.54%',high:'2,362.80',low:'2,318.90',up:true},
-    {sym:'XAG/USD',bid:'31.245',ask:'31.248',chg:'+1.12%',high:'31.789',low:'30.812',up:true},
-    {sym:'XPT/USD',bid:'1,012.40',ask:'1,012.70',chg:'-0.23%',high:'1,024.50',low:'1,001.80',up:false},
-  ],
-  energy:[
-    {sym:'Crude Oil WTI',bid:'79.84',ask:'79.87',chg:'+0.78%',high:'80.42',low:'79.01',up:true},
-    {sym:'Brent Crude',bid:'84.12',ask:'84.15',chg:'+0.65%',high:'84.78',low:'83.25',up:true},
-    {sym:'Natural Gas',bid:'2.847',ask:'2.850',chg:'-1.24%',high:'2.921',low:'2.798',up:false},
-  ],
-  etfs:[
-    {sym:'SPDR S&P 500 (SPY)',bid:'521.34',ask:'521.38',chg:'+0.67%',high:'523.12',low:'518.67',up:true},
-    {sym:'Invesco QQQ (QQQ)',bid:'447.82',ask:'447.86',chg:'+0.91%',high:'449.50',low:'444.21',up:true},
-    {sym:'SPDR Gold (GLD)',bid:'218.45',ask:'218.49',chg:'+0.51%',high:'219.87',low:'217.12',up:true},
-  ],
-  soft:[
-    {sym:'Coffee',bid:'196.75',ask:'196.85',chg:'-0.42%',high:'199.50',low:'195.80',up:false},
-    {sym:'Sugar #11',bid:'22.34',ask:'22.36',chg:'+0.19%',high:'22.78',low:'22.01',up:true},
-    {sym:'Cocoa',bid:'8,124',ask:'8,126',chg:'-1.08%',high:'8,312',low:'8,098',up:false},
-    {sym:'Cotton',bid:'77.45',ask:'77.48',chg:'+0.33%',high:'78.10',low:'76.90',up:true},
-  ],
-  shares:[
-    {sym:'Apple (AAPL)',bid:'189.45',ask:'189.48',chg:'+0.84%',high:'190.23',low:'187.56',up:true},
-    {sym:'Tesla (TSLA)',bid:'178.92',ask:'178.97',chg:'-1.32%',high:'183.45',low:'177.80',up:false},
-    {sym:'NVIDIA (NVDA)',bid:'876.54',ask:'876.62',chg:'+2.14%',high:'882.30',low:'856.70',up:true},
-    {sym:'Microsoft (MSFT)',bid:'415.23',ask:'415.28',chg:'+0.47%',high:'417.89',low:'412.50',up:true},
-    {sym:'Amazon (AMZN)',bid:'184.60',ask:'184.65',chg:'+1.02%',high:'186.30',low:'182.90',up:true},
-  ]
-};
 
-function renderExc(cat){
-  document.getElementById('exc-body').innerHTML = (excData[cat]||excData.forex).map(r=>`
-    <tr>
-      <td><strong>${r.sym}</strong></td>
-      <td>${r.bid}</td>
-      <td>${r.ask}</td>
-      <td class="${r.up?'price-up':'price-dn'}">${r.chg}</td>
-      <td>${r.high}</td>
-      <td>${r.low}</td>
-      <td><a href="#" class="tbtn">Trade ›</a></td>
-    </tr>`).join('');
-}
 function switchExc(btn,cat){
   document.querySelectorAll('.etab').forEach(t=>t.classList.remove('active'));
   btn.classList.add('active');
-  renderExc(cat);
+  document.querySelectorAll('.exc-panel').forEach(p=>p.classList.remove('active'));
+  const panel=document.getElementById('exc-panel-'+cat);
+  if(panel) panel.classList.add('active');
   document.querySelectorAll('.exc-market-img').forEach(i=>i.classList.remove('active'));
-  const img = document.getElementById('exc-img-'+cat);
+  const img=document.getElementById('exc-img-'+cat);
   if(img) img.classList.add('active');
 }
 
 renderSpreads('forex');
-renderExc('forex');
 
 // Promo infinite auto-scroll
 (function(){
