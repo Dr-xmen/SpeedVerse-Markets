@@ -61,23 +61,30 @@ nav{position:sticky;top:0;z-index:9999;background:#fff;border-bottom:1px solid #
 .mnav-btns .btn-login{flex:1;justify-content:center;border:1.5px solid #ddd;border-radius:7px;}
 
 /* HERO */
-.sp-hero{position:relative;min-height:620px;display:flex;align-items:center;background:linear-gradient(135deg,#0d1a1a 0%,#1a3328 40%,#c84800 80%,#E8530A 100%);overflow:hidden;}
-.sp-hero-overlay{position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");}
-.sp-hero-content{position:relative;z-index:2;max-width:1280px;margin:0 auto;padding:80px 48px;display:grid;grid-template-columns:1fr 420px;gap:60px;align-items:center;width:100%;}
-.sp-hero-left{}
-.sp-hero-eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:50px;padding:6px 16px;margin-bottom:24px;}
-.sp-hero-eyebrow span{font-size:11px;font-weight:700;color:rgba(255,255,255,.9);letter-spacing:2px;text-transform:uppercase;}
-.sp-hero-h1{font-size:58px;font-weight:900;line-height:1.05;letter-spacing:-1.5px;color:#fff;margin-bottom:20px;}
-.sp-hero-h1 em{font-style:normal;color:#E8530A;}
-.sp-hero-sub{font-size:16px;color:rgba(255,255,255,.75);line-height:1.7;margin-bottom:36px;max-width:500px;}
+.sp-hero{position:relative;height:700px;background:#060000;overflow:hidden;}
+.sp-hero-overlay{position:absolute;inset:0;background:radial-gradient(ellipse 85% 100% at 72% 52%,#8B0000 0%,#5c0000 28%,#250000 52%,#060000 75%);}
+.sp-hero-content{position:relative;z-index:2;max-width:1280px;margin:0 auto;padding:0 64px;height:100%;display:flex;align-items:center;}
+.sp-hero-left{max-width:520px;}
+/* Logo lockup */
+.sp-lockup{display:flex;align-items:center;gap:16px;margin-bottom:32px;}
+.sp-lockup-logo{height:34px;width:auto;object-fit:contain;filter:brightness(0) invert(1);}
+.sp-lockup-div{width:1px;height:50px;background:rgba(255,255,255,.3);}
+.sp-lockup-right{display:flex;align-items:center;gap:10px;}
+.sp-lockup-shield{width:34px;height:42px;}
+.sp-lockup-text{}
+.sp-lockup-brand{display:block;font-size:13px;font-weight:800;color:#fff;letter-spacing:1.5px;}
+.sp-lockup-role{display:block;font-size:9.5px;color:rgba(255,255,255,.55);letter-spacing:1.5px;text-transform:uppercase;line-height:1.5;margin-top:2px;}
+/* Headline */
+.sp-hero-h1{font-size:66px;font-weight:800;line-height:1.05;letter-spacing:-1px;color:#fff;margin-bottom:20px;}
+.sp-hero-h1 em{font-style:normal;color:#E8530A;display:block;}
+.sp-hero-sub{font-size:15px;color:rgba(255,255,255,.72);line-height:1.75;margin-bottom:36px;max-width:440px;}
 .sp-hero-btns{display:flex;gap:14px;flex-wrap:wrap;}
 .btn-primary{display:inline-flex;align-items:center;gap:8px;background:#E8530A;color:#fff;padding:14px 32px;border-radius:50px;font-size:14px;font-weight:700;transition:background .15s;}
 .btn-primary:hover{background:#c94400;}
-.btn-outline{display:inline-flex;align-items:center;gap:8px;background:transparent;color:#fff;padding:13px 30px;border-radius:50px;font-size:14px;font-weight:700;border:2px solid rgba(255,255,255,.4);transition:border-color .15s,background .15s;}
-.btn-outline:hover{border-color:#fff;background:rgba(255,255,255,.08);}
-.sp-hero-right{display:flex;align-items:center;justify-content:center;}
-.sp-partner-img{width:420px;height:340px;object-fit:contain;object-position:center bottom;filter:drop-shadow(0 20px 60px rgba(232,83,10,.25));animation:heroImgUp .9s cubic-bezier(.22,.68,0,1.1) .3s both;}
-@keyframes heroImgUp{from{opacity:0;transform:translateY(30px);}to{opacity:1;transform:translateY(0);}}
+.btn-outline{display:inline-flex;align-items:center;gap:8px;background:transparent;color:#fff;padding:13px 30px;border-radius:50px;font-size:14px;font-weight:700;border:2px solid rgba(255,255,255,.35);transition:border-color .15s,background .15s;}
+.btn-outline:hover{border-color:#fff;background:rgba(255,255,255,.07);}
+/* Drivers image — absolute right, bleeds off edge */
+.sp-hero-drivers{position:absolute;right:0;bottom:0;height:108%;width:auto;object-fit:contain;object-position:right bottom;z-index:1;}
 
 /* SHARED */
 .si{max-width:1280px;margin:0 auto;padding:0 48px;}
@@ -208,9 +215,11 @@ footer{background:#111;padding:60px 0 28px;}
   .nav-links,.nav-right{display:none !important;}
   .nav-hamburger{display:flex;}
 
-  .sp-hero-content{grid-template-columns:1fr;gap:40px;padding:60px 24px;}
-  .sp-hero-h1{font-size:36px;}
-  .sp-hero-right{display:none;}
+  .sp-hero{height:auto;min-height:520px;padding-bottom:0;}
+  .sp-hero-content{padding:72px 24px;align-items:flex-start;}
+  .sp-hero-h1{font-size:38px;}
+  .sp-hero-left{max-width:100%;}
+  .sp-hero-drivers{height:55%;opacity:.35;}
 
   .si{padding:0 20px;}
   .sp-showcase-inner{padding:0 20px;}
@@ -392,21 +401,33 @@ footer{background:#111;padding:60px 0 28px;}
   <div class="sp-hero-overlay"></div>
   <div class="sp-hero-content">
     <div class="sp-hero-left">
-      <div class="sp-hero-eyebrow">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="2.5"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
-        <span>Official Ferrari Partner</span>
+      <!-- Logo lockup: SpeedVerse / Ferrari Official Partner -->
+      <div class="sp-lockup">
+        <img class="sp-lockup-logo" src="assets/logo.png" alt="SpeedVerse Markets"/>
+        <div class="sp-lockup-div"></div>
+        <div class="sp-lockup-right">
+          <!-- Ferrari shield placeholder — replace with official asset when available -->
+          <svg class="sp-lockup-shield" viewBox="0 0 34 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M17 1L2 7.5V19C2 30 10.5 38.5 17 41C23.5 38.5 32 30 32 19V7.5L17 1Z" fill="#FFD100" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+            <path d="M17 5L6 10.5V19C6 27.5 12 34.5 17 37C22 34.5 28 27.5 28 19V10.5L17 5Z" fill="#C8A000"/>
+            <text x="17" y="26" font-size="11" font-weight="900" text-anchor="middle" fill="#000" font-family="serif">SF</text>
+          </svg>
+          <div class="sp-lockup-text">
+            <span class="sp-lockup-brand">FERRARI</span>
+            <span class="sp-lockup-role">OFFICIAL<br/>PARTNER</span>
+          </div>
+        </div>
       </div>
-      <h1 class="sp-hero-h1">SpeedVerse x<br/><em>Scuderia Ferrari</em></h1>
-      <p class="sp-hero-sub">SpeedVerse Markets is proud to partner with Scuderia Ferrari HP — the most iconic name in Formula 1. Two forces defined by speed, precision, and the relentless pursuit of victory.</p>
+      <h1 class="sp-hero-h1">A Pursuit of<br/><em>Excellence</em></h1>
+      <p class="sp-hero-sub">A partnership built on passion, innovation and a relentless pursuit of excellence.<br/>SpeedVerse is proud to be partnering with Scuderia Ferrari HP on its journey in Formula 1.</p>
       <div class="sp-hero-btns">
         <a href="#enquire" class="btn-primary">Partnership Enquiry</a>
         <a href="#highlights" class="btn-outline">View Highlights</a>
       </div>
     </div>
-    <div class="sp-hero-right">
-      <img class="sp-partner-img" src="assets/partner-ferrari.webp" alt="Ferrari F1 drivers Lewis Hamilton and Charles Leclerc"/>
-    </div>
   </div>
+  <!-- Drivers image bleeds off the right edge -->
+  <img class="sp-hero-drivers" src="assets/partner-ferrari.webp" alt="Lewis Hamilton and Charles Leclerc — Scuderia Ferrari HP"/>
 </section>
 
 <!-- STATS BAR -->
