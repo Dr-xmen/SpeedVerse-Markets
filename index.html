@@ -222,6 +222,17 @@ table.mkt tbody td{padding:13px 14px;white-space:nowrap;}
 .sn-start-btn:hover{background:#c94400;}
 .sn-start-btn svg{width:20px;height:20px;background:#fff;border-radius:50%;padding:3px;flex-shrink:0;}
 
+/* HERO ENTRANCE ANIMATIONS */
+@keyframes heroFadeUp{from{opacity:0;transform:translateY(36px);}to{opacity:1;transform:translateY(0);}}
+@keyframes heroFadeLeft{from{opacity:0;transform:translateX(-36px);}to{opacity:1;transform:translateX(0);}}
+.hero-title{animation:heroFadeUp .8s ease both;}
+.hero-sub{animation:heroFadeUp .8s ease .25s both;}
+.hero-form-row{animation:heroFadeUp .8s ease .5s both;}
+
+/* SCROLL REVEAL */
+.reveal{opacity:0;transform:translateY(40px);transition:opacity .7s ease,transform .7s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+
 /* FOOTER */
 footer{background:#111;padding:60px 0 28px;}
 .ft-top{display:grid;grid-template-columns:240px 1fr;gap:60px;margin-bottom:48px;}
@@ -921,6 +932,69 @@ renderSpreads('forex');
   jumpTo(total);
   updateCaption(total);
   startAuto();
+})();
+
+// ── SCROLL REVEAL ──────────────────────────────────────────────
+(function(){
+  const revealEls = [
+    ...document.querySelectorAll('.si'),
+    ...document.querySelectorAll('.pcard'),
+    ...document.querySelectorAll('.awards-feature'),
+    ...document.querySelectorAll('.trust-card'),
+    ...document.querySelectorAll('.sup-card'),
+    ...document.querySelectorAll('.exc-wrap'),
+    ...document.querySelectorAll('.trade-wrap'),
+    ...document.querySelectorAll('.sn-stats'),
+    ...document.querySelectorAll('.sn-start-btn'),
+  ];
+  revealEls.forEach((el,i)=>{
+    el.classList.add('reveal');
+    el.style.transitionDelay = (i % 4) * 0.08 + 's';
+  });
+  const ro = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); });
+  },{threshold:0.12});
+  revealEls.forEach(el=>ro.observe(el));
+})();
+
+// ── NUMBER COUNTER ─────────────────────────────────────────────
+(function(){
+  function parseNum(txt){
+    const m = txt.match(/[\d,.]+/);
+    return m ? parseFloat(m[0].replace(/,/g,'')) : null;
+  }
+  function formatNum(n, template){
+    if(n >= 1000000) return (n/1000000).toFixed(n%1000000===0?0:1).replace(/\.0$/,'') + ',000,000+';
+    if(n >= 1000)    return n.toLocaleString() + (template.includes('+') ? '+' : '');
+    return template.startsWith('$') ? '$' + n : n + (template.includes('+') ? '+' : '');
+  }
+  const counterEls = [
+    ...document.querySelectorAll('.awards-stat-num'),
+    ...document.querySelectorAll('.sn-stat-num'),
+  ].filter(el => parseNum(el.textContent) !== null);
+
+  const ro = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(!e.isIntersecting) return;
+      ro.unobserve(e.target);
+      const el = e.target;
+      const original = el.textContent.trim();
+      const target = parseNum(original);
+      if(target === null) return;
+      const duration = 1800;
+      const steps = 60;
+      let step = 0;
+      const timer = setInterval(()=>{
+        step++;
+        const progress = step/steps;
+        const eased = 1 - Math.pow(1-progress, 3);
+        const current = Math.round(eased * target);
+        el.textContent = formatNum(current, original);
+        if(step >= steps){ el.textContent = original; clearInterval(timer); }
+      }, duration/steps);
+    });
+  },{threshold:0.5});
+  counterEls.forEach(el=>ro.observe(el));
 })();
 </script>
 </body>
