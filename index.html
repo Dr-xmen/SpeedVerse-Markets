@@ -118,17 +118,21 @@ table.mkt tbody td{padding:13px 14px;white-space:nowrap;}
 .lev{color:#888;font-size:13px;}
 
 /* AWARDS */
-.awards{padding:72px 0;background:#F5F5F5;}
-.awards-wrap{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start;}
-.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:32px;}
-.stat{background:#fff;border-radius:12px;padding:22px 24px;box-shadow:0 2px 12px rgba(0,0,0,.05);}
-.stat-n{font-size:30px;font-weight:900;color:#E8530A;line-height:1;margin-bottom:4px;}
-.stat-l{font-size:13px;color:#666;font-weight:500;}
-.awards-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
-.award{background:#fff;border-radius:12px;padding:20px 16px;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,.05);}
-.award-yr{font-size:11px;font-weight:700;color:#E8530A;letter-spacing:1px;margin-bottom:6px;}
-.award-nm{font-size:13px;font-weight:700;color:#1a1a1a;line-height:1.3;margin-bottom:4px;}
-.award-by{font-size:11px;color:#aaa;}
+.awards{padding:72px 0;background:#f0f0f0;text-align:center;}
+.awards-brand{font-size:32px;font-weight:800;color:#E8530A;line-height:1.1;margin-bottom:4px;}
+.awards-title{font-size:32px;font-weight:800;color:#1a1a1a;margin-bottom:40px;}
+.awards-stats{display:flex;justify-content:center;gap:0;margin-bottom:56px;}
+.awards-stat{flex:1;max-width:220px;padding:0 20px;}
+.awards-stat+.awards-stat{border-left:1px solid #ddd;}
+.awards-stat-num{font-size:26px;font-weight:800;color:#E8530A;margin-bottom:6px;}
+.awards-stat-label{font-size:13px;color:#555;}
+.awards-features{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;margin-bottom:28px;}
+.awards-feature{text-align:center;}
+.awards-feature-icon{width:140px;height:140px;background:#fff;border-radius:24px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;box-shadow:0 2px 16px rgba(0,0,0,.06);}
+.awards-feature-icon img{width:90px;height:90px;object-fit:contain;}
+.awards-feature-title{font-size:13px;font-weight:800;color:#1a1a1a;letter-spacing:.8px;text-transform:uppercase;margin-bottom:12px;}
+.awards-feature-desc{font-size:13px;color:#555;line-height:1.7;text-align:left;}
+.awards-note{font-size:12px;color:#888;text-align:left;}
 
 /* TRUST */
 .trust{padding:72px 0;background:#fff;overflow:hidden;}
@@ -412,34 +416,53 @@ footer{background:#111;padding:60px 0 28px;}
 <!-- AWARDS SECTION -->
 <section class="awards">
   <div class="si">
-    <div class="awards-wrap">
-      <div>
-        <span class="tag">Recognition</span>
-        <h2 class="sec-h">SpeedVerse An Award-Winning Broker</h2>
-        <p class="sec-p">Recognised globally for excellence in trading technology, customer service, and market access.</p>
-        <a href="#" class="obtn">
-          See All Awards
-          <svg viewBox="0 0 24 24"><polyline points="9,18 15,12 9,6"/></svg>
-        </a>
-        <div class="stats-grid">
-          <div class="stat"><div class="stat-n">5M+</div><div class="stat-l">Traders Worldwide</div></div>
-          <div class="stat"><div class="stat-n">1,000+</div><div class="stat-l">Tradeable Assets</div></div>
-          <div class="stat"><div class="stat-n">17+</div><div class="stat-l">Years of Excellence</div></div>
-          <div class="stat"><div class="stat-n">3</div><div class="stat-l">Global Regulators</div></div>
-        </div>
+    <div class="awards-brand">SpeedVerse</div>
+    <div class="awards-title">An Award-Winning Broker</div>
+
+    <div class="awards-stats">
+      <div class="awards-stat">
+        <div class="awards-stat-num">5,000,000+</div>
+        <div class="awards-stat-label">Registered Users</div>
       </div>
-      <div class="awards-grid">
-        <div class="award"><div class="award-yr">2024</div><div class="award-nm">Best Global Broker</div><div class="award-by">Global Forex Awards</div></div>
-        <div class="award"><div class="award-yr">2024</div><div class="award-nm">Best CFD Broker</div><div class="award-by">Finance Magnates</div></div>
-        <div class="award"><div class="award-yr">2024</div><div class="award-nm">Best Trading Platform</div><div class="award-by">Forex Expo Dubai</div></div>
-        <div class="award"><div class="award-yr">2023</div><div class="award-nm">Most Trusted Broker</div><div class="award-by">World Forex Awards</div></div>
-        <div class="award"><div class="award-yr">2023</div><div class="award-nm">Best Mobile App</div><div class="award-by">Global Banking &amp; Finance</div></div>
-        <div class="award"><div class="award-yr">2023</div><div class="award-nm">Best Customer Service</div><div class="award-by">Forex Expo</div></div>
-        <div class="award"><div class="award-yr">2022</div><div class="award-nm">Best Forex Broker Africa</div><div class="award-by">FAME Awards</div></div>
-        <div class="award"><div class="award-yr">2022</div><div class="award-nm">Best Copy Trading</div><div class="award-by">Invest Cuffs</div></div>
-        <div class="award"><div class="award-yr">2022</div><div class="award-nm">Best Research Tools</div><div class="award-by">ForexBrokers.com</div></div>
+      <div class="awards-stat">
+        <div class="awards-stat-num">1,000+</div>
+        <div class="awards-stat-label">Products</div>
+      </div>
+      <div class="awards-stat">
+        <div class="awards-stat-num">From 0.0 pips</div>
+        <div class="awards-stat-label">Spreads</div>
+      </div>
+      <div class="awards-stat">
+        <div class="awards-stat-num">$0</div>
+        <div class="awards-stat-label">Deposit Fees*</div>
       </div>
     </div>
+
+    <div class="awards-features">
+      <div class="awards-feature">
+        <div class="awards-feature-icon">
+          <img src="assets/icon-trusted-broker.webp" alt="Trusted CFD Broker"/>
+        </div>
+        <div class="awards-feature-title">Trusted CFD Broker</div>
+        <div class="awards-feature-desc">With over 15 years of experience, SpeedVerse has built a reputation as a trusted, award-winning CFD broker. Trade 1,000+ CFD products backed by seamless execution and 24/7 support. Our commitment to transparency, rigorous security measures, and industry-leading practices provides a secure and reliable trading platform.</div>
+      </div>
+      <div class="awards-feature">
+        <div class="awards-feature-icon">
+          <img src="assets/icon-secure-funds.webp" alt="Secure Funds"/>
+        </div>
+        <div class="awards-feature-title">Secure Funds</div>
+        <div class="awards-feature-desc">Client funds at SpeedVerse are held in segregated trust accounts with top-tier banks, separate from our operational capital. For added protection, clients will benefit from an additional insurance arrangement at no extra cost.</div>
+      </div>
+      <div class="awards-feature">
+        <div class="awards-feature-icon">
+          <img src="assets/icon-competitive-spreads.webp" alt="Competitive Spreads"/>
+        </div>
+        <div class="awards-feature-title">Competitive Spreads</div>
+        <div class="awards-feature-desc">Trade smarter with SpeedVerse's ultra-tight spreads, designed to help you manage trading costs effectively. Enjoy competitive pricing across all products to optimise your trading costs.</div>
+      </div>
+    </div>
+
+    <div class="awards-note">*Other fees may apply</div>
   </div>
 </section>
 
