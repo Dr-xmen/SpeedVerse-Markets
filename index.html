@@ -48,10 +48,12 @@ nav{position:sticky;top:0;z-index:500;background:#fff;border-bottom:1px solid #e
 .promos{background:#fff;padding:32px 0 40px;}
 .promos-inner{max-width:1280px;margin:0 auto;padding:0 48px;}
 .promos-row{display:flex;align-items:center;gap:14px;}
-.promo-arrow{width:38px;height:38px;flex-shrink:0;background:#fff;border:1px solid #ddd;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:#555;box-shadow:0 2px 8px rgba(0,0,0,.07);transition:box-shadow .15s;font-family:inherit;}
+.promo-arrow{width:38px;height:38px;flex-shrink:0;background:#fff;border:1px solid #ddd;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:#555;box-shadow:0 2px 8px rgba(0,0,0,.07);transition:box-shadow .15s,opacity .15s;font-family:inherit;}
 .promo-arrow:hover{box-shadow:0 4px 14px rgba(0,0,0,.13);}
-.promos-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;flex:1;overflow:hidden;}
-.pcard{position:relative;background:#ebebeb;border-radius:14px;overflow:hidden;cursor:pointer;height:148px;transition:box-shadow .2s;}
+.promo-arrow:disabled{opacity:.3;cursor:default;box-shadow:none;}
+.promos-viewport{flex:1;overflow:hidden;}
+.promos-cards{display:flex;gap:16px;transition:transform .4s ease;}
+.pcard{position:relative;background:#ebebeb;border-radius:14px;overflow:hidden;cursor:pointer;height:148px;flex:0 0 calc(33.333% - 11px);transition:box-shadow .2s;}
 .pcard:hover{box-shadow:0 6px 24px rgba(0,0,0,.1);}
 .pcard-left{position:relative;z-index:1;padding:16px 20px;height:100%;display:flex;flex-direction:column;justify-content:space-between;width:52%;}
 .pcard-badge{display:inline-block;background:rgba(255,255,255,.8);color:#444;font-size:11px;font-weight:600;padding:4px 12px;border-radius:50px;width:fit-content;}
@@ -59,7 +61,6 @@ nav{position:sticky;top:0;z-index:500;background:#fff;border-bottom:1px solid #e
 .pcard-title em{font-style:normal;color:#E8530A;}
 .pcard-img{position:absolute;right:50px;top:50%;transform:translateY(-50%);width:70%;height:260%;}
 .pcard-img img{width:100%;height:100%;object-fit:contain;transform:scale(1.5);transform-origin:center center;}
-.pcard-img .emoji-fallback{font-size:80px;line-height:1;}
 .promos-footer{display:flex;justify-content:space-between;align-items:center;margin-top:18px;padding:0 52px;}
 .promos-footer-text{font-size:14px;color:#555;}
 .promos-viewmore{font-size:13px;font-weight:700;color:#1a1a1a;letter-spacing:.5px;text-decoration:underline;text-underline-offset:3px;cursor:pointer;}
@@ -269,41 +270,61 @@ footer{background:#111;padding:60px 0 28px;}
 <div class="promos">
   <div class="promos-inner">
     <div class="promos-row">
-      <button class="promo-arrow">&#8249;</button>
-      <div class="promos-cards">
+      <button class="promo-arrow" id="promo-prev">&#8249;</button>
+      <div class="promos-viewport">
+        <div class="promos-cards" id="promos-cards">
 
-        <div class="pcard">
-          <div class="pcard-left">
-            <span class="pcard-badge">Promotion</span>
-            <div class="pcard-title">SpeedVerse Glory 2026:<br/>Pre-Game Draw</div>
+          <div class="pcard">
+            <div class="pcard-left">
+              <span class="pcard-badge">Promotion</span>
+              <div class="pcard-title">SpeedVerse Glory 2026:<br/>Pre-Game Draw</div>
+            </div>
+            <div class="pcard-img"><img src="assets/glory-nobg.png" alt="Pre-Game Draw"/></div>
           </div>
-          <div class="pcard-img">
-            <img src="assets/glory-nobg.png" alt="Pre-Game Draw"/>
+
+          <div class="pcard">
+            <div class="pcard-left">
+              <span class="pcard-badge">Promotion</span>
+              <div class="pcard-title">Bumper Bonus<br/>Promotion</div>
+            </div>
+            <div class="pcard-img"><img src="assets/bumper-bonus-nobg.png" alt="Bumper Bonus"/></div>
           </div>
+
+          <div class="pcard">
+            <div class="pcard-left">
+              <span class="pcard-badge">Promotion</span>
+              <div class="pcard-title">Cashback <em>Prime</em><br/>Promotion</div>
+            </div>
+            <div class="pcard-img"><img src="assets/cashback-prime-nobg.png" alt="Cashback Prime"/></div>
+          </div>
+
+          <div class="pcard">
+            <div class="pcard-left">
+              <span class="pcard-badge">News</span>
+              <div class="pcard-title">Latest on Trump's<br/>Tariffs</div>
+            </div>
+            <div class="pcard-img"><img src="assets/trump-tariffs.png" alt="Trump Tariffs"/></div>
+          </div>
+
+          <div class="pcard">
+            <div class="pcard-left">
+              <span class="pcard-badge">Platform</span>
+              <div class="pcard-title">Trade Smarter on<br/>SpeedVerse Web Trading</div>
+            </div>
+            <div class="pcard-img"><img src="assets/web-trading.png" alt="Web Trading"/></div>
+          </div>
+
+          <div class="pcard">
+            <div class="pcard-left">
+              <span class="pcard-badge">Promotion</span>
+              <div class="pcard-title">Deposit <em>Bonus</em></div>
+            </div>
+            <div class="pcard-img"><img src="assets/deposit-bonus.png" alt="Deposit Bonus"/></div>
+          </div>
+
         </div>
-
-        <div class="pcard">
-          <div class="pcard-left">
-            <span class="pcard-badge">Promotion</span>
-            <div class="pcard-title">Bumper Bonus<br/>Promotion</div>
-          </div>
-          <div class="pcard-img">
-            <img src="assets/bumper-bonus-nobg.png" alt="Bumper Bonus"/>
-          </div>
-        </div>
-
-        <div class="pcard">
-          <div class="pcard-left">
-            <span class="pcard-badge">Promotion</span>
-            <div class="pcard-title">Cashback <em>Prime</em><br/>Promotion</div>
-          </div>
-          <div class="pcard-img">
-            <img src="assets/cashback-prime-nobg.png" alt="Cashback Prime"/>
-          </div>
-        </div>
-
       </div>
-      <button class="promo-arrow">&#8250;</button>
+      <button class="promo-arrow" id="promo-next">&#8250;</button>
     </div>
     <div class="promos-footer">
       <span class="promos-footer-text">🎉 🎉 Earn tickets as you trade and win exclusive prizes.</span>
@@ -778,6 +799,27 @@ function switchExc(btn,cat){
 
 renderSpreads('forex');
 renderExc('forex');
+
+// Promo slider
+(function(){
+  const track = document.getElementById('promos-cards');
+  const prev  = document.getElementById('promo-prev');
+  const next  = document.getElementById('promo-next');
+  const cards = track.querySelectorAll('.pcard');
+  const visible = 3;
+  let idx = 0;
+
+  function update(){
+    const cardW = cards[0].offsetWidth + 16;
+    track.style.transform = `translateX(-${idx * cardW}px)`;
+    prev.disabled = idx === 0;
+    next.disabled = idx >= cards.length - visible;
+  }
+
+  prev.addEventListener('click', ()=>{ if(idx>0){ idx--; update(); }});
+  next.addEventListener('click', ()=>{ if(idx < cards.length - visible){ idx++; update(); }});
+  update();
+})();
 </script>
 </body>
 </html>
