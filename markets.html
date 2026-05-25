@@ -597,6 +597,44 @@ function isDark(hex) {
   return (r*299+g*587+b*114)/1000 < 140;
 }
 
+/* ── LOGO HELPERS ── */
+function cryptoBase(name) {
+  const n = (name||'').toUpperCase().trim();
+  for (const q of ['USDT','USDC','BUSD','TUSD','DAI','USD','BTC','ETH','BNB']) {
+    if (n.endsWith(q) && n.length > q.length) return n.slice(0, -q.length);
+  }
+  return n.slice(0, 6);
+}
+function iconFallback(el) {
+  const div = document.createElement('div');
+  div.className = 'sym-icon';
+  div.style.cssText = `background:${el.dataset.bg};color:${el.dataset.txt}`;
+  div.textContent = el.dataset.init;
+  el.parentNode.replaceChild(div, el);
+}
+const CURRENCY_FLAG = {
+  EUR:'eu',GBP:'gb',USD:'us',JPY:'jp',CHF:'ch',CAD:'ca',AUD:'au',
+  NZD:'nz',SEK:'se',NOK:'no',DKK:'dk',SGD:'sg',HKD:'hk',CNH:'cn',
+  CNY:'cn',MXN:'mx',ZAR:'za',TRY:'tr',PLN:'pl',CZK:'cz',HUF:'hu',
+  KRW:'kr',INR:'in',BRL:'br',THB:'th',SAR:'sa',AED:'ae',
+};
+function buildIcon(mkt, rowName, base, bg, txt, init) {
+  if (mkt === 'crypto') {
+    const cb = cryptoBase(rowName || base).toLowerCase();
+    const src = `https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1.0.0/32/color/${cb}.png`;
+    return `<img class="sym-icon" src="${src}" onerror="iconFallback(this)" data-bg="${bg}" data-txt="${txt}" data-init="${init}" alt="${cb}" style="object-fit:contain;background:transparent;">`;
+  }
+  if (mkt === 'forex') {
+    const cur = (rowName||base).toUpperCase().slice(0,3);
+    const cc = CURRENCY_FLAG[cur];
+    if (cc) {
+      const src = `https://flagcdn.com/32x24/${cc}.png`;
+      return `<img class="sym-icon" src="${src}" onerror="iconFallback(this)" data-bg="${bg}" data-txt="${txt}" data-init="${init}" alt="${cur}" style="object-fit:cover;border-radius:4px;">`;
+    }
+  }
+  return `<div class="sym-icon" style="background:${bg};color:${txt};">${init}</div>`;
+}
+
 /* ═══════════════════════════════════════════════════════
    FETCH FROM TRADINGVIEW SCREENER
    ═══════════════════════════════════════════════════════ */
@@ -751,7 +789,7 @@ function renderTable() {
       <td>
         <div class="sym-cell">
           <svg class="star-btn ${wl?'on':''}" width="14" height="14" viewBox="0 0 24 24" fill="${wl?'var(--gold)':'none'}" stroke="${wl?'var(--gold)':'var(--muted)'}" stroke-width="2" stroke-linecap="round" onclick="toggleWatchlist('${row.s}',this)"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26 12,2"/></svg>
-          <div class="sym-icon" style="background:${bg};color:${txt};">${init}</div>
+          ${buildIcon(currentMarket, row.name, base, bg, txt, init)}
           <div>
             <div class="sym-name">${row.name||base}</div>
             <div class="sym-desc">${row.desc||''}</div>
