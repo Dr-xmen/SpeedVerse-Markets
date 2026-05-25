@@ -233,6 +233,19 @@ table.mkt tbody td{padding:13px 14px;white-space:nowrap;}
 .reveal{opacity:0;transform:translateY(40px);transition:opacity .7s ease,transform .7s ease;}
 .reveal.visible{opacity:1;transform:translateY(0);}
 
+/* IMAGE ANIMATIONS */
+@keyframes imgZoomFade{from{opacity:0;transform:scale(0.82) translateY(28px);}to{opacity:1;transform:scale(1) translateY(0);}}
+@keyframes imgSlideIn{from{opacity:0;transform:translateX(52px) scale(0.9);}to{opacity:1;transform:translateX(0) scale(1);}}
+@keyframes imgPop{from{opacity:0;transform:scale(0.7);}to{opacity:1;transform:scale(1);}}
+@keyframes fadeIn{from{opacity:0;transform:scale(0.88) translateY(18px);}to{opacity:1;transform:scale(1) translateY(0);}}
+
+.img-zoom{opacity:0;}
+.img-zoom.img-in{animation:imgZoomFade .85s cubic-bezier(.22,.68,0,1.15) both;}
+.img-slide{opacity:0;}
+.img-slide.img-in{animation:imgSlideIn .9s cubic-bezier(.22,.68,0,1.1) both;}
+.img-pop{opacity:0;}
+.img-pop.img-in{animation:imgPop .6s cubic-bezier(.34,1.56,.64,1) both;}
+
 /* FOOTER */
 footer{background:#111;padding:60px 0 28px;}
 .ft-top{display:grid;grid-template-columns:240px 1fr;gap:60px;margin-bottom:48px;}
@@ -995,6 +1008,37 @@ renderSpreads('forex');
     });
   },{threshold:0.5});
   counterEls.forEach(el=>ro.observe(el));
+})();
+
+// ── IMAGE ANIMATIONS ───────────────────────────────────────────
+(function(){
+  // Large feature images — slide in from right
+  document.querySelectorAll('.trade-man, .trade-support').forEach(el=>{
+    el.classList.add('img-slide');
+  });
+  // Market tab images — zoom fade (already handled by @keyframes fadeIn on .active, enhanced above)
+  // Trust card logos, support icons, awards icons — zoom fade with stagger
+  document.querySelectorAll('.trust-card img, .sup-icon img').forEach((el,i)=>{
+    el.classList.add('img-zoom');
+    el.style.animationDelay = (i * 0.07) + 's';
+  });
+  // Store/app buttons, earnings card — pop in
+  document.querySelectorAll('.trade-store-row img, .trade-earnings-card').forEach((el,i)=>{
+    el.classList.add('img-pop');
+    el.style.animationDelay = (i * 0.1 + 0.2) + 's';
+  });
+
+  const imgObserver = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(!e.isIntersecting) return;
+      e.target.classList.add('img-in');
+      imgObserver.unobserve(e.target);
+    });
+  },{threshold:0.15});
+
+  document.querySelectorAll('.img-zoom,.img-slide,.img-pop').forEach(el=>{
+    imgObserver.observe(el);
+  });
 })();
 </script>
 </body>
