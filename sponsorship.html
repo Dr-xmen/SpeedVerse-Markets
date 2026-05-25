@@ -105,6 +105,28 @@ nav{position:sticky;top:0;z-index:9999;background:#fff;border-bottom:1px solid #
 .sp-media-label span{font-size:10px;color:rgba(255,255,255,.5);}
 .sp-media-ph-text{font-size:12px;color:rgba(255,255,255,.3);letter-spacing:1px;text-transform:uppercase;}
 
+/* COLLABORATION / EXEC SECTION */
+.sp-collab{background:#080808;padding:80px 0 0;}
+.sp-collab-head{text-align:center;margin-bottom:60px;padding:0 48px;}
+.sp-collab-h2{font-size:36px;font-weight:800;color:#fff;line-height:1.35;margin-bottom:18px;}
+.sp-collab-h2 span{color:#E8530A;}
+.sp-collab-sub{font-size:14px;color:rgba(255,255,255,.5);line-height:1.85;max-width:620px;margin:0 auto;}
+.sp-collab-grid{display:grid;grid-template-columns:1fr 1fr;max-width:1280px;margin:0 auto;}
+.sp-collab-person{padding:0 56px 64px;border-right:1px solid rgba(255,255,255,.08);}
+.sp-collab-person:last-child{border-right:none;}
+.sp-collab-photo-wrap{position:relative;height:400px;text-align:center;margin:0 -56px;}
+.sp-collab-photo-wrap img{height:100%;width:auto;max-width:100%;object-fit:contain;object-position:bottom center;display:block;margin:0 auto;}
+.sp-collab-photo-fade{position:absolute;bottom:0;left:0;right:0;height:160px;background:linear-gradient(to top,#080808 30%,transparent);}
+.sp-collab-badge{display:flex;align-items:center;gap:10px;margin:28px 0 18px;}
+.sp-badge-sv{width:44px;height:44px;background:#E8530A;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:#fff;font-family:Inter,sans-serif;letter-spacing:.5px;flex-shrink:0;}
+.sp-badge-ferrari{width:34px;height:42px;flex-shrink:0;}
+.sp-badge-sep{font-size:20px;color:rgba(255,255,255,.3);line-height:1;}
+.sp-badge-hp{width:38px;height:38px;background:#0096D6;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:#fff;letter-spacing:-.5px;flex-shrink:0;}
+.sp-collab-name{font-size:34px;font-weight:800;color:#fff;line-height:1.15;margin-bottom:10px;}
+.sp-collab-role{font-size:13px;color:rgba(255,255,255,.5);margin-bottom:18px;}
+.sp-collab-line{width:100%;height:1px;background:rgba(255,255,255,.12);margin-bottom:18px;}
+.sp-collab-quote{font-size:13px;color:rgba(255,255,255,.55);line-height:1.9;}
+
 /* SHARED VALUES */
 .sp-values{padding:90px 0;background:#fff;}
 .sp-values-head{text-align:center;margin-bottom:64px;}
@@ -223,6 +245,11 @@ footer{background:#111;padding:60px 0 28px;}
 
   .sp-media-grid{grid-template-columns:1fr;}
   .sp-media-card.wide{aspect-ratio:16/9;}
+  .sp-collab-grid{grid-template-columns:1fr;}
+  .sp-collab-person{border-right:none;border-bottom:1px solid rgba(255,255,255,.08);padding:0 24px 48px;}
+  .sp-collab-person:last-child{border-bottom:none;}
+  .sp-collab-photo-wrap{margin:0 -24px;height:320px;}
+  .sp-collab-head{padding:0 24px;}
   .sp-pillars{grid-template-columns:1fr;}
   .sp-quotes{grid-template-columns:1fr;}
   .sp-news-grid{grid-template-columns:1fr;}
@@ -398,10 +425,6 @@ footer{background:#111;padding:60px 0 28px;}
       <img class="sp-lockup-img" src="assets/lockup-ferrari.png" alt="SpeedVerse Markets — Ferrari Official Partner"/>
       <h1 class="sp-hero-h1">A Pursuit of<br/><em>Excellence</em></h1>
       <p class="sp-hero-sub">A partnership built on passion, innovation and a relentless pursuit of excellence.<br/>SpeedVerse is proud to be partnering with Scuderia Ferrari HP on its journey in Formula 1.</p>
-      <div class="sp-hero-btns">
-        <a href="#enquire" class="btn-primary">Partnership Enquiry</a>
-        <a href="#highlights" class="btn-outline">View Highlights</a>
-      </div>
     </div>
   </div>
   <!-- Drivers image bleeds off the right edge -->
@@ -472,6 +495,53 @@ footer{background:#111;padding:60px 0 28px;}
         </div>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- COLLABORATION / SHARED VALUES EXEC SECTION -->
+<section class="sp-collab">
+  <div class="sp-collab-head reveal">
+    <h2 class="sp-collab-h2">A Collaboration Built on Some of <span>Shared Values</span></h2>
+    <p class="sp-collab-sub">As a proud Official Partner of Scuderia Ferrari HP, SpeedVerse shares some of the core values that define the legendary team — excellence, innovation, and passion. The partnership is driven by a shared commitment to push boundaries and redefine excellence in their respective fields.</p>
+  </div>
+  <div class="sp-collab-grid">
+
+    <!-- Left: SpeedVerse CEO -->
+    <div class="sp-collab-person reveal">
+      <div class="sp-collab-photo-wrap">
+        <img src="assets/exec-speedverse.webp" alt="SpeedVerse Markets CEO"/>
+        <div class="sp-collab-photo-fade"></div>
+      </div>
+      <div class="sp-collab-badge">
+        <div class="sp-badge-sv">SV</div>
+      </div>
+      <div class="sp-collab-name">SpeedVerse<br/>CEO</div>
+      <div class="sp-collab-role">Chief Executive Officer, SpeedVerse Markets</div>
+      <div class="sp-collab-line"></div>
+      <p class="sp-collab-quote">Partnering with Ferrari is an exciting milestone for SpeedVerse. Ferrari's legacy of speed and innovation mirrors our own commitment to empowering traders with cutting-edge tools and exceptional performance. Together, we aim to inspire our global community with the perfect blend of motorsport and trading expertise.</p>
+    </div>
+
+    <!-- Right: Ferrari exec -->
+    <div class="sp-collab-person reveal">
+      <div class="sp-collab-photo-wrap">
+        <img src="assets/exec-ferrari.webp" alt="Lorenzo Giorgetti — Chief Racing Revenue Officer"/>
+        <div class="sp-collab-photo-fade"></div>
+      </div>
+      <div class="sp-collab-badge">
+        <svg class="sp-badge-ferrari" viewBox="0 0 34 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M17 1L2 7.5V19C2 30 10.5 38.5 17 41C23.5 38.5 32 30 32 19V7.5L17 1Z" fill="#FFD100"/>
+          <path d="M17 5L6 10.5V19C6 27.5 12 34.5 17 37C22 34.5 28 27.5 28 19V10.5L17 5Z" fill="#C8A000"/>
+          <text x="17" y="26" font-size="10" font-weight="900" text-anchor="middle" fill="#1a1a1a" font-family="serif">SF</text>
+        </svg>
+        <span class="sp-badge-sep">/</span>
+        <div class="sp-badge-hp">hp</div>
+      </div>
+      <div class="sp-collab-name">Lorenzo<br/>Giorgetti</div>
+      <div class="sp-collab-role">Chief Racing Revenue Officer, Scuderia Ferrari HP</div>
+      <div class="sp-collab-line"></div>
+      <p class="sp-collab-quote">We are pleased to welcome SpeedVerse Markets as an official partner of Scuderia Ferrari HP. This collaboration is built on shared values of innovation, precision, and performance — core principles that drive both our team in Formula 1 and SpeedVerse in the world of trading. We look forward to working together to engage our global audiences in exciting new ways.</p>
+    </div>
+
   </div>
 </section>
 
