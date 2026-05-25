@@ -211,18 +211,16 @@ table.mkt tbody td{padding:13px 14px;white-space:nowrap;}
 .sup-link:hover{text-decoration:underline;}
 
 /* START NOW */
-.startnow{padding:80px 0;background:linear-gradient(135deg,#1a2f2a 0%,#0d1a15 50%,#111 100%);position:relative;overflow:hidden;}
-.startnow::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 75% 50%,rgba(232,83,10,.18) 0%,transparent 55%);}
-.sn-inner{position:relative;z-index:1;display:flex;justify-content:space-between;align-items:center;gap:40px;flex-wrap:wrap;}
-.sn-title{font-size:40px;font-weight:900;color:#fff;line-height:1.1;letter-spacing:-1px;margin-bottom:14px;}
-.sn-title em{font-style:normal;color:#E8530A;}
-.sn-sub{font-size:15px;color:rgba(255,255,255,.55);line-height:1.6;max-width:440px;}
-.sn-form{display:flex;gap:10px;flex-wrap:wrap;}
-.sn-input{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;padding:0 20px;height:52px;border-radius:50px;font-size:14px;font-family:inherit;outline:none;width:260px;}
-.sn-input::placeholder{color:rgba(255,255,255,.35);}
-.sn-btn{height:52px;padding:0 28px;background:#E8530A;color:#fff;border:none;border-radius:50px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;transition:background .15s;white-space:nowrap;}
-.sn-btn:hover{background:#c94508;}
-.sn-note{font-size:11px;color:rgba(255,255,255,.3);margin-top:10px;}
+.startnow{padding:90px 0;background:linear-gradient(120deg,#071510 0%,#0e2a1f 25%,#1a4a30 45%,#c84800 75%,#E8530A 100%);text-align:center;}
+.sn-title{font-size:42px;font-weight:800;color:#fff;margin-bottom:48px;letter-spacing:-.5px;}
+.sn-stats{display:flex;justify-content:center;align-items:stretch;gap:0;margin-bottom:48px;flex-wrap:wrap;}
+.sn-stat{padding:0 48px;text-align:center;border-right:1px solid rgba(255,255,255,.2);}
+.sn-stat:last-child{border-right:none;}
+.sn-stat-num{font-size:32px;font-weight:800;color:#fff;line-height:1.1;margin-bottom:6px;}
+.sn-stat-label{font-size:13px;color:rgba(255,255,255,.7);line-height:1.4;}
+.sn-start-btn{display:inline-flex;align-items:center;gap:12px;background:#E8530A;color:#fff;font-weight:700;font-size:15px;padding:18px 36px;border-radius:50px;text-decoration:none;letter-spacing:.5px;transition:background .2s;}
+.sn-start-btn:hover{background:#c94400;}
+.sn-start-btn svg{width:20px;height:20px;background:#fff;border-radius:50%;padding:3px;flex-shrink:0;}
 
 /* FOOTER */
 footer{background:#111;padding:60px 0 28px;}
@@ -679,18 +677,30 @@ footer{background:#111;padding:60px 0 28px;}
 
 <!-- START NOW -->
 <section class="startnow">
-  <div class="si sn-inner">
-    <div>
-      <h2 class="sn-title">Start Your Trading<br/><em>Now</em></h2>
-      <p class="sn-sub">Join 5,000,000+ traders who chose SpeedVerse Markets as their trusted trading partner. Open your account in minutes.</p>
-    </div>
-    <div>
-      <div class="sn-form">
-        <input class="sn-input" type="email" placeholder="Enter your email address"/>
-        <button class="sn-btn">GET STARTED</button>
+  <div class="si">
+    <h2 class="sn-title">Start Your Trading Now</h2>
+    <div class="sn-stats">
+      <div class="sn-stat">
+        <div class="sn-stat-num">5,000,000+</div>
+        <div class="sn-stat-label">Registered Users</div>
       </div>
-      <p class="sn-note">*CFD trading involves significant risk. Not suitable for all investors.</p>
+      <div class="sn-stat">
+        <div class="sn-stat-num">1,000+</div>
+        <div class="sn-stat-label">Products</div>
+      </div>
+      <div class="sn-stat">
+        <div class="sn-stat-num">From 0.0 pips</div>
+        <div class="sn-stat-label">Spreads</div>
+      </div>
+      <div class="sn-stat">
+        <div class="sn-stat-num">$0</div>
+        <div class="sn-stat-label">Deposit Fees*<br/><span style="font-size:11px;">*Other fees may apply</span></div>
+      </div>
     </div>
+    <a href="#" class="sn-start-btn">
+      START NOW
+      <svg viewBox="0 0 24 24" fill="none" stroke="#E8530A" stroke-width="2.5"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7,7 17,7 17,17"/></svg>
+    </a>
   </div>
 </section>
 
