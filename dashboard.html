@@ -663,30 +663,9 @@ input{font-family:inherit;border:none;outline:none;background:none;color:var(--t
 
   <div class="rp-block" style="flex:1;">
     <div class="rp-title">Recent Transactions <span>View All</span></div>
-    <div class="rtx-item">
-      <div class="rtx-icon" style="background:rgba(14,203,129,.12);"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
-      <div class="rtx-info"><div class="rtx-type">Deposit</div><div class="rtx-sub">USDT · TRC-20</div></div>
-      <div class="rtx-right"><div class="rtx-amt rtx-pos">+2,500.00</div><div class="rtx-date">Today, 14:32</div></div>
-    </div>
-    <div class="rtx-item">
-      <div class="rtx-icon" style="background:rgba(246,70,93,.12);"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17,8 12,3 7,8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
-      <div class="rtx-info"><div class="rtx-type">Withdraw</div><div class="rtx-sub">BTC · On-chain</div></div>
-      <div class="rtx-right"><div class="rtx-amt rtx-neg">-0.0500</div><div class="rtx-date">Today, 11:05</div></div>
-    </div>
-    <div class="rtx-item">
-      <div class="rtx-icon" style="background:rgba(33,150,243,.12);"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round"><polyline points="17,1 21,5 17,9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7,23 3,19 7,15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg></div>
-      <div class="rtx-info"><div class="rtx-type">Transfer</div><div class="rtx-sub">Funding → Spot</div></div>
-      <div class="rtx-right"><div class="rtx-amt rtx-pos">+1,200.00</div><div class="rtx-date">Yesterday, 18:45</div></div>
-    </div>
-    <div class="rtx-item">
-      <div class="rtx-icon" style="background:rgba(98,126,234,.12);"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#627eea" stroke-width="2" stroke-linecap="round"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg></div>
-      <div class="rtx-info"><div class="rtx-type">Trade Profit</div><div class="rtx-sub">BTC/USDT Perp</div></div>
-      <div class="rtx-right"><div class="rtx-amt rtx-pos">+843.20</div><div class="rtx-date">Yesterday, 15:22</div></div>
-    </div>
-    <div class="rtx-item">
-      <div class="rtx-icon" style="background:rgba(240,185,11,.12);"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg></div>
-      <div class="rtx-info"><div class="rtx-type">Earn Reward</div><div class="rtx-sub">USDT Flexible</div></div>
-      <div class="rtx-right"><div class="rtx-amt rtx-pos">+12.48</div><div class="rtx-date">Yesterday, 00:00</div></div>
+    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 0;gap:10px;">
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+      <span style="font-size:12px;color:rgba(255,255,255,.25);font-weight:500;">No recent transactions</span>
     </div>
     <div class="view-all-btn">View All Transactions →</div>
   </div>
