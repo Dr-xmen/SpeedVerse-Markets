@@ -52,11 +52,6 @@ input,select{font-family:inherit;}
 .form-title{font-size:22px;font-weight:800;color:#111;margin-bottom:4px;}
 .form-subtitle{font-size:13px;color:#888;margin-bottom:28px;}
 
-/* Tabs */
-.form-tabs{display:flex;background:#f4f6f9;border-radius:8px;padding:4px;margin-bottom:24px;gap:4px;}
-.ftab{flex:1;text-align:center;padding:9px 0;font-size:13px;font-weight:600;color:#888;border-radius:6px;cursor:pointer;transition:all .2s;border:none;background:transparent;}
-.ftab.active{background:#fff;color:#E8530A;box-shadow:0 2px 8px rgba(0,0,0,.08);}
-
 /* Form fields */
 .form-group{margin-bottom:16px;}
 .form-label{display:block;font-size:12px;font-weight:600;color:#555;margin-bottom:6px;letter-spacing:.3px;}
@@ -66,10 +61,6 @@ input,select{font-family:inherit;}
 .form-input-wrap{position:relative;}
 .form-input-wrap .eye-btn{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#aaa;padding:0;display:flex;align-items:center;}
 .form-input-wrap .eye-btn:hover{color:#666;}
-.phone-row{display:flex;gap:8px;}
-.phone-code{width:90px;flex-shrink:0;height:48px;border:1.5px solid #e0e3e8;border-radius:8px;padding:0 10px;font-size:13px;color:#111;outline:none;cursor:pointer;background:#fff;appearance:none;-webkit-appearance:none;}
-.phone-code:focus{border-color:#E8530A;}
-.phone-input{flex:1;}
 
 /* Submit button */
 .btn-submit{width:100%;height:50px;background:#E8530A;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;transition:background .15s;letter-spacing:.3px;margin-top:4px;}
@@ -86,10 +77,6 @@ input,select{font-family:inherit;}
 .form-link a:hover{text-decoration:underline;}
 .form-divider{display:flex;align-items:center;gap:12px;margin:20px 0;color:#ccc;font-size:12px;}
 .form-divider::before,.form-divider::after{content:'';flex:1;height:1px;background:#e8e8e8;}
-
-/* Tab panels */
-.tab-panel{display:none;}
-.tab-panel.active{display:block;}
 
 /* MOBILE */
 @media(max-width:768px){
@@ -157,42 +144,10 @@ input,select{font-family:inherit;}
 
     <div class="form-divider">or</div>
 
-    <!-- Tabs -->
-    <div class="form-tabs">
-      <button class="ftab active" onclick="switchTab('email')">Email Address</button>
-      <button class="ftab" onclick="switchTab('phone')">Phone Number</button>
-    </div>
-
-    <!-- Email panel -->
-    <div class="tab-panel active" id="panel-email">
-      <div class="form-group">
-        <label class="form-label">Email *</label>
-        <input class="form-input" type="email" placeholder="Enter your email"/>
-      </div>
-    </div>
-
-    <!-- Phone panel -->
-    <div class="tab-panel" id="panel-phone">
-      <div class="form-group">
-        <label class="form-label">Phone Number *</label>
-        <div class="phone-row">
-          <select class="phone-code">
-            <option value="+27">🇿🇦 +27</option>
-            <option value="+254">🇰🇪 +254</option>
-            <option value="+234">🇳🇬 +234</option>
-            <option value="+267">🇧🇼 +267</option>
-            <option value="+233">🇬🇭 +233</option>
-            <option value="+255">🇹🇿 +255</option>
-            <option value="+256">🇺🇬 +256</option>
-            <option value="+260">🇿🇲 +260</option>
-            <option value="+263">🇿🇼 +263</option>
-            <option value="+1">🇺🇸 +1</option>
-            <option value="+44">🇬🇧 +44</option>
-            <option value="+61">🇦🇺 +61</option>
-          </select>
-          <input class="form-input phone-input" type="tel" placeholder="Phone number"/>
-        </div>
-      </div>
+    <!-- Email -->
+    <div class="form-group">
+      <label class="form-label">Email *</label>
+      <input class="form-input" type="email" placeholder="Enter your email"/>
     </div>
 
     <!-- Password -->
@@ -219,11 +174,6 @@ input,select{font-family:inherit;}
 </div>
 
 <script>
-function switchTab(tab) {
-  document.querySelectorAll('.ftab').forEach((t,i) => t.classList.toggle('active', (tab==='email'&&i===0)||(tab==='phone'&&i===1)));
-  document.getElementById('panel-email').classList.toggle('active', tab==='email');
-  document.getElementById('panel-phone').classList.toggle('active', tab==='phone');
-}
 function togglePwd(id, btn) {
   const input = document.getElementById(id);
   const isText = input.type === 'text';
