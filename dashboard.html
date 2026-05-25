@@ -7,26 +7,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
 <style>
 :root{
-  --bg:#0a0b0f;
-  --s1:#111318;
-  --s2:#16191f;
-  --s3:#1e2229;
-  --s4:#252b35;
-  --b:rgba(255,255,255,.07);
-  --b2:rgba(255,255,255,.13);
-  --accent:#f05a1a;
-  --accent2:rgba(240,90,26,.12);
-  --green:#0ecb81;
-  --red:#f6465d;
-  --gold:#f0b90b;
-  --blue:#2196f3;
-  --purple:#7b61ff;
-  --text:#eaecef;
-  --sub:#848e9c;
-  --muted:#2b3141;
-  --sidebar:200px;
-  --header:60px;
-  --rp:300px;
+  --bg:#0a0b0f; --s1:#111318; --s2:#16191f; --s3:#1e2229; --s4:#252b35;
+  --b:rgba(255,255,255,.07); --b2:rgba(255,255,255,.13);
+  --accent:#f05a1a; --green:#0ecb81; --red:#f6465d; --gold:#f0b90b;
+  --blue:#2196f3; --purple:#7b61ff;
+  --text:#eaecef; --sub:#848e9c; --muted:#2b3141;
+  --sidebar:200px; --header:60px; --rp:300px;
   --mono:'JetBrains Mono',monospace;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -37,267 +23,132 @@ input{font-family:inherit;border:none;outline:none;background:none;color:var(--t
 ::-webkit-scrollbar{width:4px;height:4px;}
 ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px;}
 
-/* PAGE SHELL */
 .page{display:flex;flex-direction:column;height:100vh;overflow:hidden;}
 
 /* HEADER */
-.hdr{
-  height:var(--header);flex-shrink:0;
-  background:var(--s1);border-bottom:1px solid var(--b);
-  display:flex;align-items:center;padding:0 16px 0 0;z-index:50;
-}
-.hdr-logo-wrap{
-  width:var(--sidebar);flex-shrink:0;height:100%;
-  display:flex;align-items:center;padding:0 16px;
-  border-right:1px solid var(--b);
-}
+.hdr{height:var(--header);flex-shrink:0;background:var(--s1);border-bottom:1px solid var(--b);display:flex;align-items:center;padding:0 16px 0 0;z-index:50;}
+.hdr-logo-wrap{width:var(--sidebar);flex-shrink:0;height:100%;display:flex;align-items:center;padding:0 16px;border-right:1px solid var(--b);}
 .hdr-logo-wrap img{height:34px;width:auto;}
-.hdr-hamburger{
-  width:44px;height:var(--header);flex-shrink:0;
-  display:flex;align-items:center;justify-content:center;
-  color:var(--sub);cursor:pointer;transition:color .15s;
-}
+.hdr-hamburger{width:44px;height:var(--header);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--sub);cursor:pointer;transition:color .15s;}
 .hdr-hamburger:hover{color:var(--text);}
-
-/* search bar */
-.hdr-search{
-  flex:1;max-width:320px;margin-left:8px;
-  display:flex;align-items:center;gap:8px;
-  background:var(--s2);border:1px solid var(--b);border-radius:8px;
-  padding:0 12px;height:36px;
-}
-.hdr-search input{font-size:13px;flex:1;color:var(--text);}
+.hdr-search{flex:1;max-width:320px;margin-left:8px;display:flex;align-items:center;gap:8px;background:var(--s2);border:1px solid var(--b);border-radius:8px;padding:0 12px;height:36px;}
+.hdr-search input{font-size:13px;flex:1;}
 .hdr-search input::placeholder{color:var(--sub);}
-
 .hdr-nav{display:flex;align-items:center;gap:2px;margin-left:16px;flex:1;}
-.hdr-nav-item{
-  padding:6px 12px;font-size:13px;font-weight:500;color:var(--sub);
-  cursor:pointer;border-radius:6px;transition:all .15s;white-space:nowrap;
-}
+.hdr-nav-item{padding:6px 12px;font-size:13px;font-weight:500;color:var(--sub);cursor:pointer;border-radius:6px;transition:all .15s;white-space:nowrap;}
 .hdr-nav-item:hover{color:var(--text);background:var(--s3);}
 .hdr-nav-item.on{color:var(--text);}
-
 .hdr-right{display:flex;align-items:center;gap:4px;flex-shrink:0;}
-.hicon{
-  width:36px;height:36px;border-radius:8px;
-  display:flex;align-items:center;justify-content:center;
-  color:var(--sub);cursor:pointer;transition:all .15s;position:relative;
-}
+.hicon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--sub);cursor:pointer;transition:all .15s;position:relative;}
 .hicon:hover{background:var(--s3);color:var(--text);}
-.hicon-badge{
-  position:absolute;top:3px;right:2px;
-  background:var(--red);color:#fff;font-size:8px;font-weight:700;
-  min-width:14px;height:14px;border-radius:7px;
-  display:flex;align-items:center;justify-content:center;padding:0 3px;
-  border:1.5px solid var(--s1);
-}
-.hdr-avatar{
-  width:32px;height:32px;border-radius:50%;
-  background:linear-gradient(135deg,var(--accent),#c94400);
-  display:flex;align-items:center;justify-content:center;
-  font-size:13px;font-weight:700;cursor:pointer;flex-shrink:0;margin-left:4px;
-}
+.hicon-badge{position:absolute;top:3px;right:2px;background:var(--red);color:#fff;font-size:8px;font-weight:700;min-width:14px;height:14px;border-radius:7px;display:flex;align-items:center;justify-content:center;padding:0 3px;border:1.5px solid var(--s1);}
+.hdr-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#c94400);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;cursor:pointer;flex-shrink:0;margin-left:4px;}
+
+/* STATUS CHIP */
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block;margin-right:4px;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+.api-status{font-size:11px;color:var(--sub);display:flex;align-items:center;margin-left:10px;}
 
 /* LAYOUT */
 .layout{display:flex;flex:1;overflow:hidden;}
 
 /* SIDEBAR */
-.sidebar{
-  width:var(--sidebar);flex-shrink:0;
-  background:var(--s1);border-right:1px solid var(--b);
-  display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;
-  transition:width .25s ease;
-}
+.sidebar{width:var(--sidebar);flex-shrink:0;background:var(--s1);border-right:1px solid var(--b);display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;transition:width .25s ease;}
 .sidebar::-webkit-scrollbar{width:0;}
 .sb-nav{flex:1;padding:8px 0;}
-.nav-group-label{
-  font-size:10px;font-weight:600;letter-spacing:.8px;
-  color:var(--muted);text-transform:uppercase;
-  padding:14px 16px 4px;
-}
-.nav-item{
-  display:flex;align-items:center;gap:10px;
-  padding:9px 16px;cursor:pointer;
-  font-size:13px;font-weight:500;color:var(--sub);
-  transition:all .15s;position:relative;white-space:nowrap;
-  border-left:2.5px solid transparent;
-}
+.nav-group-label{font-size:10px;font-weight:600;letter-spacing:.8px;color:var(--muted);text-transform:uppercase;padding:14px 16px 4px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 16px;cursor:pointer;font-size:13px;font-weight:500;color:var(--sub);transition:all .15s;position:relative;white-space:nowrap;border-left:2.5px solid transparent;}
 .nav-item:hover{color:var(--text);background:rgba(255,255,255,.04);}
 .nav-item.active{color:var(--accent);background:rgba(240,90,26,.07);border-left-color:var(--accent);}
 .nav-item svg{flex-shrink:0;width:16px;height:16px;}
 .nav-item-label{flex:1;}
 .nav-item-chevron{color:var(--muted);transition:transform .2s;flex-shrink:0;}
 .nav-item.open .nav-item-chevron{transform:rotate(180deg);}
-.nav-item-badge{
-  font-size:9.5px;font-weight:700;padding:1px 5px;border-radius:3px;
-  background:rgba(240,90,26,.18);color:var(--accent);flex-shrink:0;
-}
+.nav-item-badge{font-size:9.5px;font-weight:700;padding:1px 5px;border-radius:3px;background:rgba(240,90,26,.18);color:var(--accent);flex-shrink:0;}
 .nav-sub{display:none;background:rgba(0,0,0,.1);}
 .nav-sub.open{display:block;}
-.nav-sub-item{
-  display:flex;align-items:center;
-  padding:7px 16px 7px 44px;
-  font-size:12.5px;color:var(--sub);cursor:pointer;
-  transition:all .15s;border-left:2.5px solid transparent;
-}
+.nav-sub-item{display:flex;align-items:center;padding:7px 16px 7px 44px;font-size:12.5px;color:var(--sub);cursor:pointer;transition:all .15s;border-left:2.5px solid transparent;}
 .nav-sub-item:hover{color:var(--text);}
 .nav-sub-item.active{color:var(--accent);border-left-color:var(--accent);}
 .nav-divider{height:1px;background:var(--b);margin:6px 0;}
 .sb-bottom{flex-shrink:0;border-top:1px solid var(--b);}
-.sb-user{
-  display:flex;align-items:center;gap:10px;
-  padding:12px 14px;cursor:pointer;
-  transition:background .15s;
-}
+.sb-user{display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;transition:background .15s;}
 .sb-user:hover{background:rgba(255,255,255,.03);}
-.sb-avatar{
-  width:34px;height:34px;border-radius:50%;
-  background:linear-gradient(135deg,var(--accent),#c94400);
-  display:flex;align-items:center;justify-content:center;
-  font-size:13px;font-weight:700;flex-shrink:0;
-}
+.sb-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#c94400);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;}
 .sb-user-info{flex:1;min-width:0;}
 .sb-user-name{font-size:12.5px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .sb-user-uid{font-size:10.5px;color:var(--sub);margin-top:1px;}
-.sb-vip{
-  display:inline-flex;align-items:center;
-  background:rgba(240,185,11,.15);color:var(--gold);
-  font-size:9.5px;font-weight:700;padding:1px 5px;border-radius:3px;
-}
+.sb-vip{display:inline-flex;align-items:center;background:rgba(240,185,11,.15);color:var(--gold);font-size:9.5px;font-weight:700;padding:1px 5px;border-radius:3px;}
 
 /* MAIN */
 .main{flex:1;overflow-y:auto;overflow-x:hidden;}
 .main::-webkit-scrollbar{width:4px;}
 
 /* RIGHT PANEL */
-.rp{
-  width:var(--rp);flex-shrink:0;
-  background:var(--s1);border-left:1px solid var(--b);
-  overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;
-}
+.rp{width:var(--rp);flex-shrink:0;background:var(--s1);border-left:1px solid var(--b);overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;}
 .rp::-webkit-scrollbar{width:0;}
 
-/* ── TICKER STRIP ── */
-.ticker{
-  height:36px;background:var(--s2);border-bottom:1px solid var(--b);
-  overflow:hidden;display:flex;align-items:center;
-}
-.ticker-inner{
-  display:flex;align-items:center;gap:0;
-  animation:tickerScroll 30s linear infinite;
-  white-space:nowrap;
-}
+/* TICKER */
+.ticker{height:36px;background:var(--s2);border-bottom:1px solid var(--b);overflow:hidden;display:flex;align-items:center;}
+.ticker-inner{display:flex;align-items:center;animation:tickerScroll 40s linear infinite;white-space:nowrap;}
 .ticker-inner:hover{animation-play-state:paused;}
-.ticker-item{
-  display:flex;align-items:center;gap:6px;
-  padding:0 20px;border-right:1px solid var(--b);height:36px;cursor:pointer;
-  transition:background .15s;flex-shrink:0;
-}
+.ticker-item{display:flex;align-items:center;gap:6px;padding:0 20px;border-right:1px solid var(--b);height:36px;cursor:pointer;transition:background .15s;flex-shrink:0;}
 .ticker-item:hover{background:var(--s3);}
 .ticker-pair{font-size:12px;font-weight:600;color:var(--text);}
 .ticker-price{font-size:12px;font-family:var(--mono);color:var(--text);}
 .ticker-chg{font-size:11px;font-weight:600;}
-.ticker-up{color:var(--green);}
-.ticker-dn{color:var(--red);}
-@keyframes tickerScroll{
-  0%{transform:translateX(0);}
-  100%{transform:translateX(-50%);}
-}
+.ticker-up{color:var(--green);} .ticker-dn{color:var(--red);}
+@keyframes tickerScroll{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
 
-/* ── WELCOME BANNER ── */
-.welcome{
-  margin:20px 20px 16px;
-  background:linear-gradient(120deg,#14181f 0%,#1a1f29 50%,rgba(240,90,26,.08) 100%);
-  border:1px solid var(--b);border-radius:14px;
-  padding:20px 24px;
-  display:flex;align-items:center;gap:20px;position:relative;overflow:hidden;
-}
-.welcome::before{
-  content:'';position:absolute;right:-60px;top:-60px;
-  width:260px;height:260px;border-radius:50%;
-  background:radial-gradient(circle,rgba(240,90,26,.12) 0%,transparent 70%);
-  pointer-events:none;
-}
+/* WELCOME */
+.welcome{margin:20px 20px 16px;background:linear-gradient(120deg,#14181f 0%,#1a1f29 50%,rgba(240,90,26,.08) 100%);border:1px solid var(--b);border-radius:14px;padding:20px 24px;display:flex;align-items:center;gap:20px;position:relative;overflow:hidden;}
+.welcome::before{content:'';position:absolute;right:-60px;top:-60px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(240,90,26,.12) 0%,transparent 70%);pointer-events:none;}
 .wc-left{flex:1;min-width:0;}
 .wc-greet{font-size:13px;color:var(--sub);margin-bottom:4px;}
 .wc-name{font-size:20px;font-weight:700;color:var(--text);margin-bottom:12px;}
 .wc-balance-label{font-size:11px;color:var(--sub);margin-bottom:3px;}
 .wc-balance{font-size:30px;font-weight:800;color:var(--text);font-family:var(--mono);line-height:1;margin-bottom:4px;}
-.wc-balance span{font-size:16px;color:var(--sub);font-weight:500;margin-left:4px;}
-.wc-pnl{font-size:12.5px;font-weight:600;color:var(--green);display:flex;align-items:center;gap:4px;}
+.wc-balance span{font-size:16px;color:var(--sub);font-weight:500;margin-left:4px;font-family:'Inter',sans-serif;}
+.wc-pnl{font-size:12.5px;font-weight:600;display:flex;align-items:center;gap:4px;}
 .wc-actions{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;}
-.wc-btn{
-  padding:8px 20px;border-radius:8px;font-size:13px;font-weight:600;
-  transition:all .15s;border:none;
-}
+.wc-btn{padding:8px 20px;border-radius:8px;font-size:13px;font-weight:600;transition:all .15s;border:none;}
 .wc-btn.primary{background:var(--accent);color:#fff;}
 .wc-btn.primary:hover{background:#c94400;}
 .wc-btn.outline{background:var(--s3);border:1px solid var(--b2);color:var(--text);}
 .wc-btn.outline:hover{border-color:var(--accent);color:var(--accent);}
 .wc-right{flex-shrink:0;}
 .wc-donut{position:relative;width:120px;height:120px;}
-.wc-donut-ring{
-  width:120px;height:120px;border-radius:50%;
-  background:conic-gradient(
-    #f05a1a 0% 45.23%, #f0b90b 45.23% 70.58%,
-    #627eea 70.58% 82.93%, #0ecb81 82.93% 89.18%,
-    #346aa9 89.18% 93.53%, #4a5568 93.53% 100%
-  );
-}
-.wc-donut-hole{
-  position:absolute;inset:20%;border-radius:50%;
-  background:#14181f;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-}
+.wc-donut-ring{width:120px;height:120px;border-radius:50%;position:relative;}
+.wc-donut-hole{position:absolute;inset:20%;border-radius:50%;background:#14181f;display:flex;flex-direction:column;align-items:center;justify-content:center;}
 .wcd-lbl{font-size:8.5px;color:var(--sub);}
 .wcd-val{font-size:10px;font-weight:700;color:var(--text);}
 
-/* ── STAT STRIP ── */
-.stat-strip{
-  display:grid;grid-template-columns:repeat(4,1fr);
-  gap:8px;margin:0 20px 16px;
-}
-.stat-card{
-  background:var(--s1);border:1px solid var(--b);border-radius:12px;
-  padding:14px 16px;transition:border-color .15s;
-}
+/* STAT STRIP */
+.stat-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0 20px 16px;}
+.stat-card{background:var(--s1);border:1px solid var(--b);border-radius:12px;padding:14px 16px;transition:border-color .15s;}
 .stat-card:hover{border-color:var(--b2);}
 .sc-label{font-size:11px;color:var(--sub);display:flex;align-items:center;gap:5px;margin-bottom:6px;}
 .sc-val{font-size:18px;font-weight:700;font-family:var(--mono);color:var(--text);line-height:1.1;}
 .sc-sub{font-size:11px;color:var(--sub);margin-top:4px;}
-.sc-pos{color:var(--green);}
-.sc-neg{color:var(--red);}
+.sc-pos{color:var(--green);} .sc-neg{color:var(--red);}
 
-/* ── TWO-COL ── */
+/* TWO-COL */
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 20px 16px;}
 
-/* ── SECTION CARD ── */
-.sec-card{
-  background:var(--s1);border:1px solid var(--b);border-radius:12px;overflow:hidden;
-}
-.sec-head{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:14px 16px 12px;border-bottom:1px solid var(--b);
-}
+/* SECTION CARD */
+.sec-card{background:var(--s1);border:1px solid var(--b);border-radius:12px;overflow:hidden;}
+.sec-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 12px;border-bottom:1px solid var(--b);}
 .sec-title{font-size:13.5px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:6px;}
 .sec-title-sub{font-size:11px;color:var(--sub);font-weight:400;margin-left:4px;}
 .sec-link{font-size:12px;color:var(--accent);cursor:pointer;font-weight:500;}
 .sec-link:hover{text-decoration:underline;}
-.sec-tabs{display:flex;gap:0;padding:0 16px;}
-.sec-tab{
-  padding:8px 12px;font-size:12.5px;font-weight:500;color:var(--sub);
-  cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;
-  margin-bottom:0;
-}
+.sec-tabs{display:flex;padding:0 16px;}
+.sec-tab{padding:8px 12px;font-size:12.5px;font-weight:500;color:var(--sub);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;}
 .sec-tab.on{color:var(--accent);border-bottom-color:var(--accent);}
 .sec-tab:hover:not(.on){color:var(--text);}
 
-/* ── WATCHLIST ── */
-.wl-row{
-  display:flex;align-items:center;padding:10px 16px;
-  border-bottom:1px solid rgba(255,255,255,.04);cursor:pointer;
-  transition:background .15s;
-}
+/* WATCHLIST */
+.wl-row{display:flex;align-items:center;padding:10px 16px;border-bottom:1px solid rgba(255,255,255,.04);cursor:pointer;transition:background .15s;}
 .wl-row:last-child{border-bottom:none;}
 .wl-row:hover{background:rgba(255,255,255,.03);}
 .wl-coin{display:flex;align-items:center;gap:8px;flex:1;}
@@ -305,22 +156,16 @@ input{font-family:inherit;border:none;outline:none;background:none;color:var(--t
 .wl-name{font-size:13px;font-weight:600;color:var(--text);}
 .wl-pair{font-size:10.5px;color:var(--sub);}
 .wl-mid{flex:1;display:flex;justify-content:center;}
-.wl-spark{width:70px;height:28px;}
-.wl-right{text-align:right;}
+.wl-right{text-align:right;min-width:80px;}
 .wl-price{font-size:13px;font-weight:600;font-family:var(--mono);color:var(--text);}
 .wl-chg{font-size:11px;font-weight:600;margin-top:2px;}
-.wl-pos{color:var(--green);}
-.wl-neg{color:var(--red);}
+.wl-pos{color:var(--green);} .wl-neg{color:var(--red);}
 
-/* ── PORTFOLIO ALLOCATION ── */
+/* ALLOCATION */
 .alloc-wrap{padding:16px;}
 .alloc-donut{display:flex;align-items:center;gap:16px;margin-bottom:14px;}
 .alloc-ring-wrap{position:relative;width:110px;height:110px;flex-shrink:0;}
-.alloc-ring{width:110px;height:110px;border-radius:50%;background:conic-gradient(
-  #f05a1a 0% 45.23%, #f0b90b 45.23% 70.58%,
-  #627eea 70.58% 82.93%, #0ecb81 82.93% 89.18%,
-  #346aa9 89.18% 93.53%, #4a5568 93.53% 100%
-);}
+.alloc-ring{width:110px;height:110px;border-radius:50%;}
 .alloc-ring::after{content:'';position:absolute;inset:20%;border-radius:50%;background:var(--s1);}
 .alloc-center{position:absolute;inset:20%;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:1;}
 .ac-lbl{font-size:8px;color:var(--sub);}
@@ -332,17 +177,10 @@ input{font-family:inherit;border:none;outline:none;background:none;color:var(--t
 .al-pct{font-size:11.5px;font-weight:600;color:var(--text);min-width:36px;}
 .al-usd{font-size:10.5px;color:var(--sub);}
 
-/* ── OPEN POSITIONS ── */
+/* POSITIONS */
 .pos-table{width:100%;border-collapse:collapse;}
-.pos-table th{
-  font-size:10.5px;font-weight:600;letter-spacing:.4px;text-transform:uppercase;
-  color:var(--sub);padding:8px 14px;text-align:left;
-  background:var(--s2);border-bottom:1px solid var(--b);white-space:nowrap;
-}
-.pos-table td{
-  padding:11px 14px;border-bottom:1px solid rgba(255,255,255,.04);
-  font-size:12.5px;vertical-align:middle;
-}
+.pos-table th{font-size:10.5px;font-weight:600;letter-spacing:.4px;text-transform:uppercase;color:var(--sub);padding:8px 14px;text-align:left;background:var(--s2);border-bottom:1px solid var(--b);white-space:nowrap;}
+.pos-table td{padding:11px 14px;border-bottom:1px solid rgba(255,255,255,.04);font-size:12.5px;vertical-align:middle;}
 .pos-table tr:last-child td{border-bottom:none;}
 .pos-table tr:hover td{background:rgba(255,255,255,.02);}
 .pos-pair{font-size:13px;font-weight:600;color:var(--text);}
@@ -352,88 +190,51 @@ input{font-family:inherit;border:none;outline:none;background:none;color:var(--t
 .pos-num{font-family:var(--mono);font-size:12.5px;color:var(--text);}
 .pos-pos{color:var(--green);font-family:var(--mono);font-weight:600;}
 .pos-neg{color:var(--red);font-family:var(--mono);font-weight:600;}
-.pos-close{
-  font-size:11.5px;font-weight:600;color:var(--sub);
-  padding:4px 10px;border:1px solid var(--b2);border-radius:5px;cursor:pointer;
-  transition:all .15s;
-}
+.pos-close{font-size:11.5px;font-weight:600;color:var(--sub);padding:4px 10px;border:1px solid var(--b2);border-radius:5px;cursor:pointer;transition:all .15s;}
 .pos-close:hover{border-color:var(--red);color:var(--red);}
-.empty-state{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  padding:32px 20px;gap:8px;
-}
-.empty-icon{color:var(--muted);margin-bottom:4px;}
-.empty-text{font-size:13px;color:var(--sub);}
-.empty-link{font-size:13px;font-weight:600;color:var(--accent);cursor:pointer;}
-.empty-link:hover{text-decoration:underline;}
 
-/* ── MARKET MOVERS ── */
+/* MOVERS */
 .movers-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--b);}
 .movers-col{background:var(--s1);padding:12px;}
 .movers-head{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px;display:flex;align-items:center;gap:5px;}
-.movers-up{color:var(--green);}
-.movers-dn{color:var(--red);}
+.movers-up{color:var(--green);} .movers-dn{color:var(--red);}
 .mover-row{display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);}
 .mover-row:last-child{border-bottom:none;}
 .mover-name{font-size:12.5px;font-weight:600;color:var(--text);}
 .mover-price{font-size:11px;color:var(--sub);font-family:var(--mono);margin-top:1px;}
 .mover-chg{font-size:12.5px;font-weight:700;}
-.mover-pos{color:var(--green);}
-.mover-neg{color:var(--red);}
+.mover-pos{color:var(--green);} .mover-neg{color:var(--red);}
 
-/* ── FULL-WIDTH SECTIONS ── */
+/* FULL SEC */
 .full-sec{margin:0 20px 16px;}
 
-/* ── ANNOUNCEMENTS ── */
-.announce-strip{
-  display:flex;align-items:center;gap:10px;
-  background:var(--s1);border:1px solid var(--b);border-radius:10px;
-  padding:10px 16px;margin:0 20px 12px;cursor:pointer;
-  transition:border-color .15s;
-}
+/* ANNOUNCE */
+.announce-strip{display:flex;align-items:center;gap:10px;background:var(--s1);border:1px solid var(--b);border-radius:10px;padding:10px 16px;margin:0 20px 12px;cursor:pointer;transition:border-color .15s;}
 .announce-strip:hover{border-color:var(--b2);}
-.announce-badge{
-  background:rgba(240,90,26,.15);color:var(--accent);
-  font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;flex-shrink:0;
-}
+.announce-badge{background:rgba(240,90,26,.15);color:var(--accent);font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;flex-shrink:0;}
 .announce-text{font-size:12.5px;color:var(--sub);flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
-.announce-arr{color:var(--sub);}
 
-/* ── RIGHT PANEL ── */
+/* RIGHT PANEL */
 .rp-block{padding:16px;border-bottom:1px solid var(--b);}
 .rp-block:last-child{border-bottom:none;}
 .rp-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;}
 .rp-title span{font-size:12px;color:var(--accent);cursor:pointer;font-weight:500;}
 .rp-title span:hover{text-decoration:underline;}
-
-/* account summary */
 .acct-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);}
 .acct-row:last-child{border-bottom:none;}
 .acct-left{display:flex;align-items:center;gap:8px;}
 .acct-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .acct-name{font-size:12px;color:var(--sub);}
-.acct-name b{font-weight:500;}
 .acct-val{font-size:12.5px;font-weight:600;font-family:var(--mono);color:var(--text);}
 .acct-usd{font-size:10px;color:var(--sub);text-align:right;margin-top:1px;}
-.acct-total{
-  display:flex;align-items:center;justify-content:space-between;
-  margin-top:8px;padding-top:8px;border-top:1px solid var(--b);
-}
+.acct-total{display:flex;align-items:center;justify-content:space-between;margin-top:8px;padding-top:8px;border-top:1px solid var(--b);}
 .acct-total-lbl{font-size:12.5px;font-weight:700;color:var(--text);}
 .acct-total-val{font-size:13px;font-weight:700;color:var(--text);font-family:var(--mono);}
-
-/* quick actions */
 .qa-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
-.qa-item{
-  display:flex;flex-direction:column;align-items:center;gap:5px;
-  background:var(--s2);border:1px solid var(--b);border-radius:10px;
-  padding:10px 6px;cursor:pointer;transition:all .15s;
-}
+.qa-item{display:flex;flex-direction:column;align-items:center;gap:5px;background:var(--s2);border:1px solid var(--b);border-radius:10px;padding:10px 6px;cursor:pointer;transition:all .15s;}
 .qa-item:hover{border-color:var(--accent);background:rgba(240,90,26,.06);}
 .qa-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;}
 .qa-lbl{font-size:10px;font-weight:600;color:var(--text);text-align:center;}
-
-/* recent tx */
 .rtx-item{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.04);}
 .rtx-item:last-child{border-bottom:none;}
 .rtx-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
@@ -443,54 +244,24 @@ input{font-family:inherit;border:none;outline:none;background:none;color:var(--t
 .rtx-right{text-align:right;}
 .rtx-amt{font-size:12.5px;font-weight:700;font-family:var(--mono);}
 .rtx-date{font-size:10px;color:var(--sub);margin-top:2px;}
-.rtx-pos{color:var(--green);}
-.rtx-neg{color:var(--red);}
-.view-all-btn{
-  display:flex;align-items:center;justify-content:center;
-  padding:10px;font-size:12.5px;font-weight:600;color:var(--accent);cursor:pointer;
-  border-top:1px solid var(--b);margin-top:4px;
-}
+.rtx-pos{color:var(--green);} .rtx-neg{color:var(--red);}
+.view-all-btn{display:flex;align-items:center;justify-content:center;padding:10px;font-size:12.5px;font-weight:600;color:var(--accent);cursor:pointer;border-top:1px solid var(--b);margin-top:4px;}
 .view-all-btn:hover{text-decoration:underline;}
-
-/* level progress */
 .vip-bar-wrap{margin-top:10px;}
 .vip-bar-label{display:flex;justify-content:space-between;font-size:11px;color:var(--sub);margin-bottom:5px;}
 .vip-bar-track{height:4px;background:var(--s3);border-radius:2px;overflow:hidden;}
-.vip-bar-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--accent),#f0b90b);}
-.vip-info{display:flex;align-items:center;justify-content:space-between;margin-top:6px;}
-.vip-badge{
-  display:inline-flex;align-items:center;gap:4px;
-  background:rgba(240,185,11,.12);color:var(--gold);
-  font-size:11px;font-weight:700;padding:3px 8px;border-radius:5px;
-}
-.vip-next{font-size:10.5px;color:var(--sub);}
+.vip-bar-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--accent),var(--gold));}
+.vip-info{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.vip-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(240,185,11,.12);color:var(--gold);font-size:11px;font-weight:700;padding:3px 8px;border-radius:5px;}
 
-/* ── RESPONSIVE ── */
-@media(max-width:1200px){
-  :root{--rp:270px;}
-  .stat-strip{grid-template-columns:repeat(2,1fr);}
-  .hdr-nav{display:none;}
-}
-@media(max-width:900px){
-  .sidebar{display:none;}
-  .rp{display:none;}
-  .two-col{grid-template-columns:1fr;}
-  :root{--rp:0px;}
-}
-@media(max-width:640px){
-  .main{font-size:13px;}
-  .welcome{flex-direction:column;gap:14px;padding:16px;}
-  .wc-right{display:none;}
-  .wc-balance{font-size:24px;}
-  .stat-strip{grid-template-columns:1fr 1fr;}
-  .wc-actions{gap:6px;}
-  .wc-btn{padding:7px 14px;font-size:12.5px;}
-  .two-col{margin:0 12px 12px;}
-  .full-sec{margin:0 12px 12px;}
-  .announce-strip{margin:0 12px 10px;}
-  .stat-strip{margin:0 12px 12px;}
-  .welcome{margin:12px 12px 12px;}
-}
+/* SKELETON / LOADING */
+.skel{background:linear-gradient(90deg,var(--s3) 25%,var(--s4) 50%,var(--s3) 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:4px;display:inline-block;}
+@keyframes shimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+
+/* RESPONSIVE */
+@media(max-width:1200px){:root{--rp:270px;}.stat-strip{grid-template-columns:repeat(2,1fr);}.hdr-nav{display:none;}}
+@media(max-width:900px){.sidebar{display:none;}.rp{display:none;}.two-col{grid-template-columns:1fr;}}
+@media(max-width:640px){.welcome{flex-direction:column;gap:14px;padding:16px;}.wc-right{display:none;}.wc-balance{font-size:24px;}.stat-strip{grid-template-columns:1fr 1fr;}.two-col,.full-sec,.announce-strip,.stat-strip{margin-left:12px;margin-right:12px;}.welcome{margin:12px;}}
 </style>
 </head>
 <body>
@@ -506,7 +277,7 @@ input{font-family:inherit;border:none;outline:none;background:none;color:var(--t
   </div>
   <div class="hdr-search">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--sub)" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-    <input type="text" placeholder="Search coins, pairs, pages…"/>
+    <input type="text" placeholder="Search coins, pairs…"/>
     <span style="font-size:10.5px;color:var(--muted);background:var(--s3);padding:1px 6px;border-radius:4px;flex-shrink:0;">/</span>
   </div>
   <div class="hdr-nav">
@@ -518,6 +289,9 @@ input{font-family:inherit;border:none;outline:none;background:none;color:var(--t
     <div class="hdr-nav-item">Earn ▾</div>
     <div class="hdr-nav-item">Copy Trading</div>
   </div>
+  <div class="api-status" id="api-status">
+    <span class="live-dot"></span>Connecting…
+  </div>
   <div class="hdr-right">
     <div class="hicon">
       <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
@@ -525,9 +299,6 @@ input{font-family:inherit;border:none;outline:none;background:none;color:var(--t
     </div>
     <div class="hicon">
       <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-    </div>
-    <div class="hicon">
-      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
     </div>
     <div class="hdr-avatar">S</div>
   </div>
@@ -538,22 +309,18 @@ input{font-family:inherit;border:none;outline:none;background:none;color:var(--t
 <!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
   <nav class="sb-nav">
-
     <div class="nav-item active">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
       <span class="nav-item-label">Dashboard</span>
     </div>
-
     <div class="nav-item">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
       <span class="nav-item-label">Buy Crypto</span>
     </div>
-
     <div class="nav-item">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
       <span class="nav-item-label">Markets</span>
     </div>
-
     <div class="nav-item" onclick="toggleSub(this,'trade-sub')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg>
       <span class="nav-item-label">Trade</span>
@@ -564,7 +331,6 @@ input{font-family:inherit;border:none;outline:none;background:none;color:var(--t
       <div class="nav-sub-item">Margin</div>
       <div class="nav-sub-item">Convert</div>
     </div>
-
     <div class="nav-item" onclick="toggleSub(this,'deriv-sub')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
       <span class="nav-item-label">Derivatives</span>
@@ -574,9 +340,7 @@ input{font-family:inherit;border:none;outline:none;background:none;color:var(--t
       <div class="nav-sub-item">USDT Perpetual</div>
       <div class="nav-sub-item">Inverse Perpetual</div>
       <div class="nav-sub-item">Futures</div>
-      <div class="nav-sub-item">Options</div>
     </div>
-
     <div class="nav-item" onclick="toggleSub(this,'earn-sub')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 0v10l5 3"/></svg>
       <span class="nav-item-label">Earn</span>
@@ -586,31 +350,26 @@ input{font-family:inherit;border:none;outline:none;background:none;color:var(--t
       <div class="nav-sub-item">Flexible Savings</div>
       <div class="nav-sub-item">Fixed Term</div>
       <div class="nav-sub-item">Staking</div>
-      <div class="nav-sub-item">Dual Asset</div>
     </div>
-
     <div class="nav-item">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       <span class="nav-item-label">Copy Trading</span>
       <span class="nav-item-badge">NEW</span>
     </div>
-
     <div class="nav-divider"></div>
     <div class="nav-group-label">Finance</div>
-
     <div class="nav-item" onclick="toggleSub(this,'assets-sub')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
       <span class="nav-item-label">Assets</span>
       <svg class="nav-item-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6,9 12,15 18,9"/></svg>
     </div>
     <div class="nav-sub" id="assets-sub">
-      <div class="nav-sub-item" onclick="window.location='assets.html'">Overview</div>
+      <div class="nav-sub-item active">Overview</div>
       <div class="nav-sub-item">Spot</div>
       <div class="nav-sub-item">Derivatives</div>
       <div class="nav-sub-item">Funding</div>
       <div class="nav-sub-item">Earn</div>
     </div>
-
     <div class="nav-item" onclick="toggleSub(this,'orders-sub')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
       <span class="nav-item-label">Orders</span>
@@ -620,29 +379,18 @@ input{font-family:inherit;border:none;outline:none;background:none;color:var(--t
       <div class="nav-sub-item">Open Orders</div>
       <div class="nav-sub-item">Order History</div>
       <div class="nav-sub-item">Trade History</div>
-      <div class="nav-sub-item">Transaction Log</div>
     </div>
-
     <div class="nav-divider"></div>
     <div class="nav-group-label">Account</div>
-
-    <div class="nav-item">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
-      <span class="nav-item-label">Rewards Hub</span>
-    </div>
-
     <div class="nav-item">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
       <span class="nav-item-label">Security</span>
     </div>
-
     <div class="nav-item">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-      <span class="nav-item-label">Affiliate</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
+      <span class="nav-item-label">Rewards Hub</span>
     </div>
-
   </nav>
-
   <div class="sb-bottom">
     <div class="sb-user">
       <div class="sb-avatar">S</div>
@@ -658,17 +406,13 @@ input{font-family:inherit;border:none;outline:none;background:none;color:var(--t
 <main class="main">
 
   <!-- Ticker -->
-  <div class="ticker">
-    <div class="ticker-inner" id="ticker">
-      <!-- items injected by JS, doubled for seamless loop -->
-    </div>
-  </div>
+  <div class="ticker"><div class="ticker-inner" id="ticker-inner"></div></div>
 
   <!-- Announcement -->
   <div class="announce-strip">
     <span class="announce-badge">NEW</span>
     <span class="announce-text">SpeedVerse Earn: Earn up to 18% APR on USDT Flexible Savings — No lock-up required. Start earning today.</span>
-    <svg class="announce-arr" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9,18 15,12 9,6"/></svg>
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--sub)" stroke-width="2" stroke-linecap="round"><polyline points="9,18 15,12 9,6"/></svg>
   </div>
 
   <!-- Welcome Banner -->
@@ -677,10 +421,10 @@ input{font-family:inherit;border:none;outline:none;background:none;color:var(--t
       <div class="wc-greet">Good day,</div>
       <div class="wc-name">SpeedVerse User 👋</div>
       <div class="wc-balance-label">Total Portfolio Value</div>
-      <div class="wc-balance" id="wc-bal">125,847.32 <span>USD</span></div>
-      <div class="wc-pnl">
+      <div class="wc-balance" id="wc-total">— <span>USD</span></div>
+      <div class="wc-pnl" id="wc-pnl" style="color:var(--sub);">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="18,15 12,9 6,15"/></svg>
-        +2,458.62 USD &nbsp;(+2.00%) Today
+        Calculating…
       </div>
       <div class="wc-actions">
         <button class="wc-btn primary">Deposit</button>
@@ -691,10 +435,10 @@ input{font-family:inherit;border:none;outline:none;background:none;color:var(--t
     </div>
     <div class="wc-right">
       <div class="wc-donut">
-        <div class="wc-donut-ring"></div>
+        <div class="wc-donut-ring" id="wc-donut-ring"></div>
         <div class="wc-donut-hole">
           <div class="wcd-lbl">Assets</div>
-          <div class="wcd-val">6 coins</div>
+          <div class="wcd-val" id="wcd-val">—</div>
         </div>
       </div>
     </div>
@@ -707,16 +451,16 @@ input{font-family:inherit;border:none;outline:none;background:none;color:var(--t
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg>
         Today's PnL
       </div>
-      <div class="sc-val sc-pos">+$2,458.62</div>
-      <div class="sc-sub sc-pos">▲ 2.00% from yesterday</div>
+      <div class="sc-val" id="stat-pnl-val">—</div>
+      <div class="sc-sub" id="stat-pnl-sub" style="color:var(--sub);">Loading…</div>
     </div>
     <div class="stat-card">
       <div class="sc-label">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
         Open Positions
       </div>
-      <div class="sc-val">4</div>
-      <div class="sc-sub">Derivatives • Unrealized <span class="sc-pos">+$3,245.67</span></div>
+      <div class="sc-val" id="stat-pos-val">4</div>
+      <div class="sc-sub" id="stat-pos-sub">Unrealized PnL: <span id="stat-unreal">—</span></div>
     </div>
     <div class="stat-card">
       <div class="sc-label">
@@ -736,10 +480,8 @@ input{font-family:inherit;border:none;outline:none;background:none;color:var(--t
     </div>
   </div>
 
-  <!-- Two column: Watchlist + Portfolio -->
+  <!-- Two-col: Watchlist + Portfolio -->
   <div class="two-col">
-
-    <!-- Watchlist -->
     <div class="sec-card">
       <div class="sec-head">
         <div class="sec-title">
@@ -748,56 +490,41 @@ input{font-family:inherit;border:none;outline:none;background:none;color:var(--t
         </div>
         <span class="sec-link">Edit List</span>
       </div>
-      <div style="display:flex;border-bottom:1px solid var(--b);">
-        <div class="sec-tab on" onclick="secTab(this)">Favourites</div>
-        <div class="sec-tab" onclick="secTab(this)">Spot</div>
-        <div class="sec-tab" onclick="secTab(this)">Futures</div>
-      </div>
-      <div id="watchlist-rows"></div>
+      <div id="watchlist-container"></div>
     </div>
 
-    <!-- Portfolio Allocation -->
     <div class="sec-card">
       <div class="sec-head">
         <div class="sec-title">Portfolio Allocation</div>
-        <span class="sec-link" onclick="window.location='assets.html'">View Assets</span>
+        <span class="sec-link">View Assets</span>
       </div>
       <div class="alloc-wrap">
         <div class="alloc-donut">
           <div class="alloc-ring-wrap">
-            <div class="alloc-ring"></div>
+            <div class="alloc-ring" id="alloc-ring"></div>
             <div class="alloc-center">
               <div class="ac-lbl">Total</div>
-              <div class="ac-val">$125,847</div>
+              <div class="ac-val" id="alloc-total">—</div>
             </div>
           </div>
-          <div class="alloc-legend">
-            <div class="al-row"><div class="al-dot" style="background:#f05a1a;"></div><div class="al-name">USDT</div><div class="al-pct">45.2%</div><div class="al-usd">$56,918</div></div>
-            <div class="al-row"><div class="al-dot" style="background:#f0b90b;"></div><div class="al-name">BTC</div><div class="al-pct">25.3%</div><div class="al-usd">$31,880</div></div>
-            <div class="al-row"><div class="al-dot" style="background:#627eea;"></div><div class="al-name">ETH</div><div class="al-pct">12.4%</div><div class="al-usd">$15,534</div></div>
-            <div class="al-row"><div class="al-dot" style="background:#0ecb81;"></div><div class="al-name">SOL</div><div class="al-pct">6.2%</div><div class="al-usd">$7,859</div></div>
-            <div class="al-row"><div class="al-dot" style="background:#346aa9;"></div><div class="al-name">XRP</div><div class="al-pct">4.3%</div><div class="al-usd">$5,474</div></div>
-            <div class="al-row"><div class="al-dot" style="background:#4a5568;"></div><div class="al-name">Others</div><div class="al-pct">6.6%</div><div class="al-usd">$8,182</div></div>
-          </div>
+          <div class="alloc-legend" id="alloc-legend"></div>
         </div>
-        <!-- PnL mini canvas -->
         <div style="border-top:1px solid var(--b);padding-top:12px;margin-top:4px;">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-            <span style="font-size:12px;color:var(--sub);">7-Day PnL</span>
-            <span style="font-size:13px;font-weight:700;color:var(--green);">+$6,732.59 <span style="font-size:11px;">(+5.63%)</span></span>
+            <span style="font-size:12px;color:var(--sub);">24H Portfolio Change</span>
+            <span style="font-size:13px;font-weight:700;" id="alloc-pnl-val">—</span>
           </div>
           <div style="position:relative;height:70px;">
             <canvas id="pnl-mini" style="position:absolute;inset:0;width:100% !important;height:100% !important;"></canvas>
           </div>
           <div style="display:flex;justify-content:space-between;margin-top:4px;">
-            <span style="font-size:9.5px;color:var(--sub);">May 19</span>
-            <span style="font-size:9.5px;color:var(--sub);">May 22</span>
-            <span style="font-size:9.5px;color:var(--sub);">May 25</span>
+            <span style="font-size:9.5px;color:var(--sub);" id="pnl-lbl-l">—</span>
+            <span style="font-size:9.5px;color:var(--sub);" id="pnl-lbl-m">—</span>
+            <span style="font-size:9.5px;color:var(--sub);" id="pnl-lbl-r">—</span>
           </div>
         </div>
       </div>
     </div>
-
   </div>
 
   <!-- Open Positions -->
@@ -806,10 +533,10 @@ input{font-family:inherit;border:none;outline:none;background:none;color:var(--t
       <div class="sec-head">
         <div class="sec-title">
           Open Positions
-          <span class="sec-title-sub">4 active</span>
+          <span class="sec-title-sub" id="pos-count">4 active</span>
         </div>
         <div style="display:flex;align-items:center;gap:12px;">
-          <span style="font-size:12px;color:var(--sub);">Unrealized PnL: <span style="color:var(--green);font-weight:600;">+$3,245.67</span></span>
+          <span style="font-size:12px;color:var(--sub);">Unrealized PnL: <span id="pos-total-pnl" style="color:var(--green);font-weight:600;">—</span></span>
           <span class="sec-link">View All →</span>
         </div>
       </div>
@@ -827,48 +554,7 @@ input{font-family:inherit;border:none;outline:none;background:none;color:var(--t
               <th></th>
             </tr>
           </thead>
-          <tbody>
-            <tr>
-              <td><div class="pos-pair">BTCUSDT</div><div><span class="pos-type pos-long">LONG 10x</span></div></td>
-              <td><div class="pos-num">0.5 BTC</div><div style="font-size:10.5px;color:var(--sub);">$29,412.50</div></td>
-              <td><div class="pos-num">58,240.00</div></td>
-              <td><div class="pos-num">58,825.00</div></td>
-              <td><div class="pos-num" style="color:var(--red);">52,416.00</div></td>
-              <td><div class="pos-num">2,941.25</div></td>
-              <td><div class="pos-pos">+$292.50</div><div style="font-size:10.5px;color:var(--green);">+0.99%</div></td>
-              <td><button class="pos-close">Close</button></td>
-            </tr>
-            <tr>
-              <td><div class="pos-pair">ETHUSDT</div><div><span class="pos-type pos-long">LONG 5x</span></div></td>
-              <td><div class="pos-num">4.0 ETH</div><div style="font-size:10.5px;color:var(--sub);">$14,940.00</div></td>
-              <td><div class="pos-num">3,620.00</div></td>
-              <td><div class="pos-num">3,735.00</div></td>
-              <td><div class="pos-num" style="color:var(--red);">3,258.00</div></td>
-              <td><div class="pos-num">2,988.00</div></td>
-              <td><div class="pos-pos">+$460.00</div><div style="font-size:10.5px;color:var(--green);">+3.18%</div></td>
-              <td><button class="pos-close">Close</button></td>
-            </tr>
-            <tr>
-              <td><div class="pos-pair">SOLUSDT</div><div><span class="pos-type pos-short">SHORT 3x</span></div></td>
-              <td><div class="pos-num">50 SOL</div><div style="font-size:10.5px;color:var(--sub);">$9,950.00</div></td>
-              <td><div class="pos-num">202.40</div></td>
-              <td><div class="pos-num">199.00</div></td>
-              <td><div class="pos-num" style="color:var(--red);">224.88</div></td>
-              <td><div class="pos-num">3,316.67</div></td>
-              <td><div class="pos-pos">+$170.00</div><div style="font-size:10.5px;color:var(--green);">+1.68%</div></td>
-              <td><button class="pos-close">Close</button></td>
-            </tr>
-            <tr>
-              <td><div class="pos-pair">XRPUSDT</div><div><span class="pos-type pos-long">LONG 2x</span></div></td>
-              <td><div class="pos-num">5,000 XRP</div><div style="font-size:10.5px;color:var(--sub);">$2,195.00</div></td>
-              <td><div class="pos-num">0.4260</div></td>
-              <td><div class="pos-num">0.4390</div></td>
-              <td><div class="pos-num" style="color:var(--red);">0.3834</div></td>
-              <td><div class="pos-num">1,097.50</div></td>
-              <td><div class="pos-pos">+$65.00</div><div style="font-size:10.5px;color:var(--green);">+3.05%</div></td>
-              <td><button class="pos-close">Close</button></td>
-            </tr>
-          </tbody>
+          <tbody id="positions-tbody"></tbody>
         </table>
       </div>
     </div>
@@ -876,73 +562,27 @@ input{font-family:inherit;border:none;outline:none;background:none;color:var(--t
 
   <!-- Market Movers + Recent Orders -->
   <div class="two-col" style="margin-bottom:20px;">
-
-    <!-- Market Movers -->
     <div class="sec-card">
       <div class="sec-head">
         <div class="sec-title">Market Movers</div>
-        <div style="display:flex;gap:0;">
-          <div class="sec-tab on" onclick="secTab(this)" style="padding:0 10px;border-bottom:none;font-size:12px;">24H</div>
-          <div class="sec-tab" onclick="secTab(this)" style="padding:0 10px;border-bottom:none;font-size:12px;">7D</div>
-        </div>
+        <span style="font-size:11px;color:var(--sub);">24H • USDT pairs</span>
       </div>
-      <div class="movers-grid">
+      <div class="movers-grid" id="movers-grid">
         <div class="movers-col">
           <div class="movers-head movers-up">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="18,15 12,9 6,15"/></svg>
-            Top Gainers
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="18,15 12,9 6,15"/></svg>Top Gainers
           </div>
-          <div class="mover-row">
-            <div><div class="mover-name">PEPE</div><div class="mover-price">$0.00002241</div></div>
-            <div class="mover-chg mover-pos">+34.81%</div>
-          </div>
-          <div class="mover-row">
-            <div><div class="mover-name">WIF</div><div class="mover-price">$1.8345</div></div>
-            <div class="mover-chg mover-pos">+21.44%</div>
-          </div>
-          <div class="mover-row">
-            <div><div class="mover-name">BONK</div><div class="mover-price">$0.00003128</div></div>
-            <div class="mover-chg mover-pos">+18.72%</div>
-          </div>
-          <div class="mover-row">
-            <div><div class="mover-name">APT</div><div class="mover-price">$8.4210</div></div>
-            <div class="mover-chg mover-pos">+14.30%</div>
-          </div>
-          <div class="mover-row">
-            <div><div class="mover-name">SUI</div><div class="mover-price">$3.9812</div></div>
-            <div class="mover-chg mover-pos">+11.55%</div>
-          </div>
+          <div id="gainers-list"></div>
         </div>
         <div class="movers-col" style="border-left:1px solid var(--b);">
           <div class="movers-head movers-dn">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6,9 12,15 18,9"/></svg>
-            Top Losers
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6,9 12,15 18,9"/></svg>Top Losers
           </div>
-          <div class="mover-row">
-            <div><div class="mover-name">BLUR</div><div class="mover-price">$0.1892</div></div>
-            <div class="mover-chg mover-neg">-18.33%</div>
-          </div>
-          <div class="mover-row">
-            <div><div class="mover-name">DYDX</div><div class="mover-price">$0.9421</div></div>
-            <div class="mover-chg mover-neg">-12.90%</div>
-          </div>
-          <div class="mover-row">
-            <div><div class="mover-name">ICP</div><div class="mover-price">$7.3312</div></div>
-            <div class="mover-chg mover-neg">-9.45%</div>
-          </div>
-          <div class="mover-row">
-            <div><div class="mover-name">FLOW</div><div class="mover-price">$0.5813</div></div>
-            <div class="mover-chg mover-neg">-8.77%</div>
-          </div>
-          <div class="mover-row">
-            <div><div class="mover-name">NEAR</div><div class="mover-price">$4.1253</div></div>
-            <div class="mover-chg mover-neg">-7.21%</div>
-          </div>
+          <div id="losers-list"></div>
         </div>
       </div>
     </div>
 
-    <!-- Recent Orders -->
     <div class="sec-card">
       <div class="sec-head">
         <div class="sec-title">Recent Orders</div>
@@ -950,56 +590,11 @@ input{font-family:inherit;border:none;outline:none;background:none;color:var(--t
       </div>
       <div style="overflow-x:auto;">
         <table class="pos-table">
-          <thead>
-            <tr>
-              <th>Pair</th>
-              <th>Type</th>
-              <th>Price</th>
-              <th>Amount</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><div class="pos-pair" style="font-size:12.5px;">BTC/USDT</div></td>
-              <td><span class="pos-type pos-long">BUY</span></td>
-              <td><div class="pos-num">58,100.00</div></td>
-              <td><div class="pos-num">0.012</div></td>
-              <td><span style="font-size:11px;font-weight:600;padding:2px 7px;border-radius:4px;background:rgba(240,185,11,.12);color:var(--gold);">Open</span></td>
-            </tr>
-            <tr>
-              <td><div class="pos-pair" style="font-size:12.5px;">ETH/USDT</div></td>
-              <td><span class="pos-type pos-short">SELL</span></td>
-              <td><div class="pos-num">3,800.00</div></td>
-              <td><div class="pos-num">1.5</div></td>
-              <td><span style="font-size:11px;font-weight:600;padding:2px 7px;border-radius:4px;background:rgba(240,185,11,.12);color:var(--gold);">Open</span></td>
-            </tr>
-            <tr>
-              <td><div class="pos-pair" style="font-size:12.5px;">SOL/USDT</div></td>
-              <td><span class="pos-type pos-long">BUY</span></td>
-              <td><div class="pos-num">195.00</div></td>
-              <td><div class="pos-num">20</div></td>
-              <td><span style="font-size:11px;font-weight:600;padding:2px 7px;border-radius:4px;background:rgba(14,203,129,.12);color:var(--green);">Filled</span></td>
-            </tr>
-            <tr>
-              <td><div class="pos-pair" style="font-size:12.5px;">XRP/USDT</div></td>
-              <td><span class="pos-type pos-long">BUY</span></td>
-              <td><div class="pos-num">0.4100</div></td>
-              <td><div class="pos-num">2,000</div></td>
-              <td><span style="font-size:11px;font-weight:600;padding:2px 7px;border-radius:4px;background:rgba(14,203,129,.12);color:var(--green);">Filled</span></td>
-            </tr>
-            <tr>
-              <td><div class="pos-pair" style="font-size:12.5px;">ADA/USDT</div></td>
-              <td><span class="pos-type pos-short">SELL</span></td>
-              <td><div class="pos-num">0.6200</div></td>
-              <td><div class="pos-num">5,000</div></td>
-              <td><span style="font-size:11px;font-weight:600;padding:2px 7px;border-radius:4px;background:rgba(132,142,156,.1);color:var(--sub);">Cancelled</span></td>
-            </tr>
-          </tbody>
+          <thead><tr><th>Pair</th><th>Type</th><th>Price</th><th>Amount</th><th>Status</th></tr></thead>
+          <tbody id="recent-orders-tbody"></tbody>
         </table>
       </div>
     </div>
-
   </div>
 
 </main>
@@ -1007,316 +602,648 @@ input{font-family:inherit;border:none;outline:none;background:none;color:var(--t
 <!-- RIGHT PANEL -->
 <aside class="rp">
 
-  <!-- Account Summary -->
   <div class="rp-block">
-    <div class="rp-title">
-      Account Summary
-      <span onclick="window.location='assets.html'">Overview →</span>
-    </div>
+    <div class="rp-title">Account Summary <span>Overview →</span></div>
     <div class="acct-row">
       <div class="acct-left">
-        <div class="acct-icon" style="background:rgba(240,90,26,.15);">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        </div>
+        <div class="acct-icon" style="background:rgba(240,90,26,.15);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
         <div class="acct-name">Spot</div>
       </div>
-      <div><div class="acct-val">56,954.12</div><div class="acct-usd">USD</div></div>
+      <div><div class="acct-val" id="acct-spot">—</div><div class="acct-usd">USD</div></div>
     </div>
     <div class="acct-row">
       <div class="acct-left">
-        <div class="acct-icon" style="background:rgba(98,126,234,.15);">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#627eea" stroke-width="2" stroke-linecap="round"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg>
-        </div>
+        <div class="acct-icon" style="background:rgba(98,126,234,.15);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#627eea" stroke-width="2" stroke-linecap="round"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg></div>
         <div class="acct-name">Derivatives</div>
       </div>
-      <div><div class="acct-val">37,981.21</div><div class="acct-usd">USD</div></div>
+      <div><div class="acct-val" id="acct-deriv">—</div><div class="acct-usd">USD</div></div>
     </div>
     <div class="acct-row">
       <div class="acct-left">
-        <div class="acct-icon" style="background:rgba(0,209,140,.15);">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
-        </div>
+        <div class="acct-icon" style="background:rgba(0,209,140,.15);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg></div>
         <div class="acct-name">Funding</div>
       </div>
-      <div><div class="acct-val">26,758.59</div><div class="acct-usd">USD</div></div>
+      <div><div class="acct-val" id="acct-fund">—</div><div class="acct-usd">USD</div></div>
     </div>
     <div class="acct-row">
       <div class="acct-left">
-        <div class="acct-icon" style="background:rgba(240,185,11,.15);">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
-        </div>
+        <div class="acct-icon" style="background:rgba(240,185,11,.15);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg></div>
         <div class="acct-name">Earn</div>
       </div>
-      <div><div class="acct-val">4,153.40</div><div class="acct-usd">USD</div></div>
+      <div><div class="acct-val" id="acct-earn">—</div><div class="acct-usd">USD</div></div>
     </div>
     <div class="acct-total">
       <span class="acct-total-lbl">Total</span>
-      <span class="acct-total-val">125,847.32 USD</span>
+      <span class="acct-total-val" id="acct-total">—</span>
     </div>
   </div>
 
-  <!-- Quick Actions -->
   <div class="rp-block">
     <div class="rp-title">Quick Actions</div>
     <div class="qa-grid">
-      <div class="qa-item">
-        <div class="qa-icon" style="background:rgba(240,90,26,.15);">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        </div>
-        <span class="qa-lbl">Deposit</span>
-      </div>
-      <div class="qa-item">
-        <div class="qa-icon" style="background:rgba(246,70,93,.1);">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17,8 12,3 7,8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-        </div>
-        <span class="qa-lbl">Withdraw</span>
-      </div>
-      <div class="qa-item">
-        <div class="qa-icon" style="background:rgba(33,150,243,.1);">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round"><polyline points="17,1 21,5 17,9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7,23 3,19 7,15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
-        </div>
-        <span class="qa-lbl">Transfer</span>
-      </div>
-      <div class="qa-item">
-        <div class="qa-icon" style="background:rgba(123,97,255,.1);">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" stroke-linecap="round"><polyline points="23,4 23,10 17,10"/><polyline points="1,20 1,14 7,14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-        </div>
-        <span class="qa-lbl">Convert</span>
-      </div>
+      <div class="qa-item"><div class="qa-icon" style="background:rgba(240,90,26,.15);"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div><span class="qa-lbl">Deposit</span></div>
+      <div class="qa-item"><div class="qa-icon" style="background:rgba(246,70,93,.1);"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17,8 12,3 7,8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div><span class="qa-lbl">Withdraw</span></div>
+      <div class="qa-item"><div class="qa-icon" style="background:rgba(33,150,243,.1);"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round"><polyline points="17,1 21,5 17,9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7,23 3,19 7,15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg></div><span class="qa-lbl">Transfer</span></div>
+      <div class="qa-item"><div class="qa-icon" style="background:rgba(123,97,255,.1);"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" stroke-linecap="round"><polyline points="23,4 23,10 17,10"/><polyline points="1,20 1,14 7,14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></div><span class="qa-lbl">Convert</span></div>
     </div>
   </div>
 
-  <!-- VIP Level -->
   <div class="rp-block">
-    <div class="rp-title">Membership Level</div>
-    <div class="vip-info" style="margin-bottom:10px;">
+    <div class="rp-title">Membership</div>
+    <div class="vip-info">
       <div class="vip-badge">⭐ VIP 3</div>
-      <div class="vip-next" style="font-size:11px;color:var(--sub);">Next: VIP 4</div>
+      <div style="font-size:11px;color:var(--sub);">Next: VIP 4</div>
     </div>
     <div class="vip-bar-wrap">
-      <div class="vip-bar-label">
-        <span>30D Volume</span>
-        <span>$2.41M / $5M</span>
-      </div>
-      <div class="vip-bar-track">
-        <div class="vip-bar-fill" style="width:48%;"></div>
-      </div>
+      <div class="vip-bar-label"><span>30D Volume</span><span>$2.41M / $5M</span></div>
+      <div class="vip-bar-track"><div class="vip-bar-fill" style="width:48%;"></div></div>
     </div>
-    <div style="font-size:11px;color:var(--sub);margin-top:7px;">Trade <span style="color:var(--text);font-weight:600;">$2.59M</span> more to reach VIP 4 and unlock lower fees.</div>
+    <div style="font-size:11px;color:var(--sub);margin-top:7px;">Trade <span style="color:var(--text);font-weight:600;">$2.59M</span> more to reach VIP 4.</div>
   </div>
 
-  <!-- Recent Transactions -->
   <div class="rp-block" style="flex:1;">
-    <div class="rp-title">
-      Recent Transactions
-      <span>View All</span>
-    </div>
+    <div class="rp-title">Recent Transactions <span>View All</span></div>
     <div class="rtx-item">
-      <div class="rtx-icon" style="background:rgba(14,203,129,.12);">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      </div>
+      <div class="rtx-icon" style="background:rgba(14,203,129,.12);"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
       <div class="rtx-info"><div class="rtx-type">Deposit</div><div class="rtx-sub">USDT · TRC-20</div></div>
-      <div class="rtx-right"><div class="rtx-amt rtx-pos">+2,500.00</div><div class="rtx-date">May 25, 14:32</div></div>
+      <div class="rtx-right"><div class="rtx-amt rtx-pos">+2,500.00</div><div class="rtx-date">Today, 14:32</div></div>
     </div>
     <div class="rtx-item">
-      <div class="rtx-icon" style="background:rgba(246,70,93,.12);">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17,8 12,3 7,8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-      </div>
+      <div class="rtx-icon" style="background:rgba(246,70,93,.12);"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17,8 12,3 7,8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
       <div class="rtx-info"><div class="rtx-type">Withdraw</div><div class="rtx-sub">BTC · On-chain</div></div>
-      <div class="rtx-right"><div class="rtx-amt rtx-neg">-0.0500</div><div class="rtx-date">May 25, 11:05</div></div>
+      <div class="rtx-right"><div class="rtx-amt rtx-neg">-0.0500</div><div class="rtx-date">Today, 11:05</div></div>
     </div>
     <div class="rtx-item">
-      <div class="rtx-icon" style="background:rgba(33,150,243,.12);">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round"><polyline points="17,1 21,5 17,9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7,23 3,19 7,15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
-      </div>
+      <div class="rtx-icon" style="background:rgba(33,150,243,.12);"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round"><polyline points="17,1 21,5 17,9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7,23 3,19 7,15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg></div>
       <div class="rtx-info"><div class="rtx-type">Transfer</div><div class="rtx-sub">Funding → Spot</div></div>
-      <div class="rtx-right"><div class="rtx-amt rtx-pos">+1,200.00</div><div class="rtx-date">May 24, 18:45</div></div>
+      <div class="rtx-right"><div class="rtx-amt rtx-pos">+1,200.00</div><div class="rtx-date">Yesterday, 18:45</div></div>
     </div>
     <div class="rtx-item">
-      <div class="rtx-icon" style="background:rgba(98,126,234,.12);">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#627eea" stroke-width="2" stroke-linecap="round"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg>
-      </div>
+      <div class="rtx-icon" style="background:rgba(98,126,234,.12);"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#627eea" stroke-width="2" stroke-linecap="round"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg></div>
       <div class="rtx-info"><div class="rtx-type">Trade Profit</div><div class="rtx-sub">BTC/USDT Perp</div></div>
-      <div class="rtx-right"><div class="rtx-amt rtx-pos">+843.20</div><div class="rtx-date">May 24, 15:22</div></div>
+      <div class="rtx-right"><div class="rtx-amt rtx-pos">+843.20</div><div class="rtx-date">Yesterday, 15:22</div></div>
     </div>
     <div class="rtx-item">
-      <div class="rtx-icon" style="background:rgba(240,185,11,.12);">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
-      </div>
+      <div class="rtx-icon" style="background:rgba(240,185,11,.12);"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg></div>
       <div class="rtx-info"><div class="rtx-type">Earn Reward</div><div class="rtx-sub">USDT Flexible</div></div>
-      <div class="rtx-right"><div class="rtx-amt rtx-pos">+12.48</div><div class="rtx-date">May 24, 00:00</div></div>
+      <div class="rtx-right"><div class="rtx-amt rtx-pos">+12.48</div><div class="rtx-date">Yesterday, 00:00</div></div>
     </div>
     <div class="view-all-btn">View All Transactions →</div>
   </div>
 
 </aside>
-
-</div>
-</div>
+</div><!-- /layout -->
+</div><!-- /page -->
 
 <script>
-/* ── TICKER DATA ── */
-const TICKER_COINS = [
-  {pair:'BTC/USDT', price:'58,825.40', chg:'+1.35', up:true},
-  {pair:'ETH/USDT', price:'3,735.20',  chg:'+2.45', up:true},
-  {pair:'SOL/USDT', price:'199.00',    chg:'+3.12', up:true},
-  {pair:'XRP/USDT', price:'0.4390',    chg:'-0.65', up:false},
-  {pair:'BNB/USDT', price:'608.30',    chg:'+0.88', up:true},
-  {pair:'ADA/USDT', price:'0.6182',    chg:'-1.22', up:false},
-  {pair:'DOGE/USDT',price:'0.1643',    chg:'+5.14', up:true},
-  {pair:'AVAX/USDT',price:'38.42',     chg:'+4.33', up:true},
-  {pair:'LINK/USDT',price:'16.81',     chg:'+2.90', up:true},
-  {pair:'MATIC/USDT',price:'0.8971',   chg:'-0.43', up:false},
-  {pair:'DOT/USDT', price:'7.2350',    chg:'+1.17', up:true},
-  {pair:'LTC/USDT', price:'88.20',     chg:'-0.91', up:false},
+/* ════════════════════════════════════════════════════════
+   PORTFOLIO CONFIG — holdings the prices are applied to
+   ════════════════════════════════════════════════════════ */
+const HOLDINGS = {
+  USDT: { amount: 56918.35, label: 'Tether USDT',  sym: 'T',  bg: '#26a17b', txt: '#fff' },
+  BTC:  { amount: 0.51235,  label: 'Bitcoin',       sym: '₿',  bg: '#f7931a', txt: '#fff' },
+  ETH:  { amount: 4.25,     label: 'Ethereum',      sym: 'Ξ',  bg: '#627eea', txt: '#fff' },
+  SOL:  { amount: 38.75,    label: 'Solana',        sym: '◎',  bg: '#9945ff', txt: '#fff' },
+  XRP:  { amount: 12450,    label: 'XRP',           sym: '✕',  bg: '#00aae4', txt: '#fff' },
+  BNB:  { amount: 2.5,      label: 'BNB',           sym: 'B',  bg: '#f0b90b', txt: '#000' },
+};
+
+/* Open positions — leverage, entry price, side are fixed; mark price is live */
+const POSITIONS = [
+  { symbol:'BTCUSDT', base:'BTC', display:'BTCUSDT Perp', side:'LONG',  size:0.5,   leverage:10, entry:58240.00 },
+  { symbol:'ETHUSDT', base:'ETH', display:'ETHUSDT Perp', side:'LONG',  size:4.0,   leverage:5,  entry:3620.00  },
+  { symbol:'SOLUSDT', base:'SOL', display:'SOLUSDT Perp', side:'SHORT', size:50,    leverage:3,  entry:202.40   },
+  { symbol:'XRPUSDT', base:'XRP', display:'XRPUSDT Perp', side:'LONG',  size:5000,  leverage:2,  entry:0.4260   },
 ];
-function buildTicker() {
-  const inner = document.getElementById('ticker');
-  const doubled = [...TICKER_COINS, ...TICKER_COINS];
-  inner.innerHTML = doubled.map(c => `
-    <div class="ticker-item">
-      <span class="ticker-pair">${c.pair}</span>
-      <span class="ticker-price">${c.price}</span>
-      <span class="ticker-chg ${c.up?'ticker-up':'ticker-dn'}">${c.up?'▲':'▼'} ${Math.abs(c.chg)}%</span>
-    </div>
-  `).join('');
+
+/* Recent orders — prices reference live market; status is fixed */
+const RECENT_ORDERS = [
+  { pair:'BTC/USDT', side:'BUY',  priceRef:'BTCUSDT', amount:'0.012',  status:'Open',      statusColor:'var(--gold)',  statusBg:'rgba(240,185,11,.12)'    },
+  { pair:'ETH/USDT', side:'SELL', priceRef:'ETHUSDT', amount:'1.5',    status:'Open',      statusColor:'var(--gold)',  statusBg:'rgba(240,185,11,.12)'    },
+  { pair:'SOL/USDT', side:'BUY',  priceRef:'SOLUSDT', amount:'20',     status:'Filled',    statusColor:'var(--green)', statusBg:'rgba(14,203,129,.12)'   },
+  { pair:'XRP/USDT', side:'BUY',  priceRef:'XRPUSDT', amount:'2,000',  status:'Filled',    statusColor:'var(--green)', statusBg:'rgba(14,203,129,.12)'   },
+  { pair:'ADA/USDT', side:'SELL', priceRef:'ADAUSDT', amount:'5,000',  status:'Cancelled', statusColor:'var(--sub)',   statusBg:'rgba(132,142,156,.1)'   },
+];
+
+/* Watchlist display config */
+const WATCHLIST_CFG = [
+  { symbol:'BTCUSDT', name:'Bitcoin',  base:'BTC', bg:'#f7931a', txt:'#fff', sym:'₿' },
+  { symbol:'ETHUSDT', name:'Ethereum', base:'ETH', bg:'#627eea', txt:'#fff', sym:'Ξ' },
+  { symbol:'SOLUSDT', name:'Solana',   base:'SOL', bg:'#9945ff', txt:'#fff', sym:'◎' },
+  { symbol:'XRPUSDT', name:'XRP',      base:'XRP', bg:'#00aae4', txt:'#fff', sym:'✕' },
+  { symbol:'BNBUSDT', name:'BNB',      base:'BNB', bg:'#f0b90b', txt:'#000', sym:'B' },
+  { symbol:'DOGEUSDT',name:'Dogecoin', base:'DOGE',bg:'#c2a633', txt:'#fff', sym:'Ð' },
+];
+
+/* All symbols to fetch (watchlist + positions + movers + ticker) */
+const ALL_SYMBOLS = [
+  'BTCUSDT','ETHUSDT','SOLUSDT','XRPUSDT','BNBUSDT','DOGEUSDT',
+  'ADAUSDT','AVAXUSDT','LINKUSDT','MATICUSDT','DOTUSDT','LTCUSDT',
+  'TRXUSDT','ATOMUSDT','UNIUSDT','NEARUSDT','APTUSDT','SUIUSDT',
+  'PEPEUSDT','WIFUSDT','SHIBUSDT','INJUSDT','FILUSDT','OPUSDT',
+  'ARBUSDT','TIAUSDT','BLURUSDT','DYDXUSDT','ICPUSDT','FLOWUSDT',
+];
+
+/* ════════════════════════════════════════════════════════
+   STATE
+   ════════════════════════════════════════════════════════ */
+let marketData = {};   // symbol -> { price, priceChange, priceChangePercent, volume }
+let klineData  = {};   // symbol -> [close prices for sparkline]
+let firstLoad  = true;
+
+/* ════════════════════════════════════════════════════════
+   FORMATTERS
+   ════════════════════════════════════════════════════════ */
+function fmtUSD(n, dec=2) {
+  if(n == null || isNaN(n)) return '—';
+  return Number(n).toLocaleString('en-US',{minimumFractionDigits:dec,maximumFractionDigits:dec});
+}
+function fmtPrice(p) {
+  if(p == null || isNaN(p)) return '—';
+  p = Number(p);
+  if(p >= 10000) return fmtUSD(p,2);
+  if(p >= 1000)  return fmtUSD(p,2);
+  if(p >= 100)   return fmtUSD(p,2);
+  if(p >= 1)     return fmtUSD(p,4);
+  if(p >= 0.01)  return p.toFixed(5);
+  return p.toFixed(8);
+}
+function fmtPct(v) {
+  if(v == null) return '—';
+  const n = Number(v), sign = n >= 0 ? '+' : '';
+  return `${sign}${n.toFixed(2)}%`;
+}
+function fmtCompact(n) {
+  if(n == null) return '—';
+  if(Math.abs(n) >= 1e9) return (n/1e9).toFixed(2)+'B';
+  if(Math.abs(n) >= 1e6) return (n/1e6).toFixed(2)+'M';
+  if(Math.abs(n) >= 1e3) return (n/1e3).toFixed(2)+'K';
+  return n.toFixed(2);
+}
+function pColor(pct) { return Number(pct) >= 0 ? 'var(--green)' : 'var(--red)'; }
+
+/* ════════════════════════════════════════════════════════
+   FETCH — Binance public REST (no API key needed)
+   ════════════════════════════════════════════════════════ */
+const BINANCE = 'https://api.binance.com/api/v3';
+
+async function fetchMarketData() {
+  const encoded = encodeURIComponent(JSON.stringify(ALL_SYMBOLS));
+  const res = await fetch(`${BINANCE}/ticker/24hr?symbols=${encoded}`);
+  if(!res.ok) throw new Error('ticker fetch failed');
+  const arr = await res.json();
+  arr.forEach(t => {
+    marketData[t.symbol] = {
+      price:              parseFloat(t.lastPrice),
+      priceChange:        parseFloat(t.priceChange),
+      priceChangePercent: parseFloat(t.priceChangePercent),
+      volume:             parseFloat(t.quoteVolume),
+      high:               parseFloat(t.highPrice),
+      low:                parseFloat(t.lowPrice),
+    };
+  });
 }
 
-/* ── WATCHLIST DATA ── */
-const WL_COINS = [
-  {name:'Bitcoin', pair:'BTC/USDT', price:'58,825.40', chg:'+1.35', up:true, bg:'#f7931a', txt:'#fff', sym:'₿', spark:[55,57,54,59,56,61,58,65,60,67]},
-  {name:'Ethereum', pair:'ETH/USDT', price:'3,735.20', chg:'+2.45', up:true, bg:'#627eea', txt:'#fff', sym:'Ξ', spark:[58,60,57,62,59,64,61,66,63,68]},
-  {name:'Solana', pair:'SOL/USDT', price:'199.00', chg:'+3.12', up:true, bg:'#9945ff', txt:'#fff', sym:'◎', spark:[60,62,59,64,61,66,63,68,65,70]},
-  {name:'XRP', pair:'XRP/USDT', price:'0.4390', chg:'-0.65', up:false, bg:'#00aae4', txt:'#fff', sym:'✕', spark:[70,68,65,63,60,58,56,54,53,52]},
-  {name:'BNB', pair:'BNB/USDT', price:'608.30', chg:'+0.88', up:true, bg:'#f0b90b', txt:'#000', sym:'B', spark:[54,56,53,58,55,60,57,62,59,64]},
-  {name:'DOGE', pair:'DOGE/USDT', price:'0.1643', chg:'+5.14', up:true, bg:'#c2a633', txt:'#fff', sym:'Ð', spark:[40,44,42,48,45,52,49,56,53,60]},
-];
-function drawWlSpark(canvas, data, up) {
+async function fetchKlines(symbol, interval='4h', limit=12) {
+  const res = await fetch(`${BINANCE}/klines?symbol=${symbol}&interval=${interval}&limit=${limit}`);
+  if(!res.ok) return;
+  const arr = await res.json();
+  klineData[symbol] = arr.map(k => parseFloat(k[4])); // close price
+}
+
+async function fetchAllKlines() {
+  await Promise.all(WATCHLIST_CFG.map(c => fetchKlines(c.symbol)));
+  // fetch BTC klines for the PnL mini chart (1d, 7 days)
+  await fetchKlines('BTCUSDT', '1d', 7);
+}
+
+/* ════════════════════════════════════════════════════════
+   PORTFOLIO CALCULATIONS
+   ════════════════════════════════════════════════════════ */
+function portfolioValue() {
+  let total = 0, todayPnl = 0;
+  const breakdown = {};
+  Object.entries(HOLDINGS).forEach(([coin, cfg]) => {
+    const sym = coin + 'USDT';
+    const price = coin === 'USDT' ? 1 : (marketData[sym]?.price || 0);
+    const pctChg = coin === 'USDT' ? 0 : (marketData[sym]?.priceChangePercent || 0);
+    const usd = cfg.amount * price;
+    const dayPnl = usd * (pctChg / 100);
+    breakdown[coin] = { usd, pctChg, price };
+    total += usd;
+    todayPnl += dayPnl;
+  });
+  return { total, todayPnl, breakdown };
+}
+
+function positionsPnl() {
+  let unrealized = 0;
+  POSITIONS.forEach(pos => {
+    const mark = marketData[pos.symbol]?.price || pos.entry;
+    const pnl = pos.side === 'LONG'
+      ? (mark - pos.entry) * pos.size
+      : (pos.entry - mark) * pos.size;
+    unrealized += pnl;
+  });
+  return unrealized;
+}
+
+/* ════════════════════════════════════════════════════════
+   RENDER — TICKER STRIP
+   ════════════════════════════════════════════════════════ */
+const TICKER_SYMS = ['BTCUSDT','ETHUSDT','SOLUSDT','XRPUSDT','BNBUSDT','DOGEUSDT','ADAUSDT','AVAXUSDT','LINKUSDT','MATICUSDT','DOTUSDT','LTCUSDT'];
+
+function renderTicker() {
+  const items = TICKER_SYMS.map(sym => {
+    const d = marketData[sym];
+    if(!d) return '';
+    const base = sym.replace('USDT','');
+    const up = d.priceChangePercent >= 0;
+    return `<div class="ticker-item">
+      <span class="ticker-pair">${base}/USDT</span>
+      <span class="ticker-price">${fmtPrice(d.price)}</span>
+      <span class="ticker-chg ${up?'ticker-up':'ticker-dn'}">${up?'▲':'▼'} ${Math.abs(d.priceChangePercent).toFixed(2)}%</span>
+    </div>`;
+  }).join('');
+  const doubled = items + items; // seamless loop
+  document.getElementById('ticker-inner').innerHTML = doubled;
+}
+
+/* ════════════════════════════════════════════════════════
+   RENDER — WELCOME BANNER
+   ════════════════════════════════════════════════════════ */
+function renderWelcome() {
+  const { total, todayPnl, breakdown } = portfolioValue();
+  const pct = total ? (todayPnl / (total - todayPnl)) * 100 : 0;
+  const up = todayPnl >= 0;
+
+  document.getElementById('wc-total').innerHTML =
+    `${fmtUSD(total)} <span>USD</span>`;
+
+  const pnlEl = document.getElementById('wc-pnl');
+  pnlEl.style.color = up ? 'var(--green)' : 'var(--red)';
+  pnlEl.innerHTML = `
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+      <polyline points="${up?'18,15 12,9 6,15':'6,9 12,15 18,9'}"/>
+    </svg>
+    ${up?'+':''}${fmtUSD(todayPnl)} USD &nbsp;(${up?'+':''}${pct.toFixed(2)}%) Today
+  `;
+
+  document.getElementById('wcd-val').textContent =
+    Object.keys(HOLDINGS).length + ' coins';
+
+  // Donut from real allocation %
+  const colors = { USDT:'#f05a1a', BTC:'#f0b90b', ETH:'#627eea', SOL:'#0ecb81', XRP:'#346aa9', BNB:'#c2a633' };
+  let cum = 0;
+  const stops = Object.entries(breakdown).map(([coin, d]) => {
+    const pct = total ? (d.usd / total * 100) : 0;
+    const stop = `${colors[coin]||'#4a5568'} ${cum.toFixed(2)}% ${(cum+pct).toFixed(2)}%`;
+    cum += pct;
+    return stop;
+  });
+  document.getElementById('wc-donut-ring').style.background =
+    `conic-gradient(${stops.join(',')})`;
+}
+
+/* ════════════════════════════════════════════════════════
+   RENDER — STAT STRIP
+   ════════════════════════════════════════════════════════ */
+function renderStats() {
+  const { total, todayPnl, breakdown } = portfolioValue();
+  const pct = total ? (todayPnl / (total - todayPnl)) * 100 : 0;
+  const up = todayPnl >= 0;
+  const unreal = positionsPnl();
+  const unrealUp = unreal >= 0;
+
+  const pnlEl = document.getElementById('stat-pnl-val');
+  pnlEl.textContent = `${up?'+':''}$${fmtUSD(Math.abs(todayPnl))}`;
+  pnlEl.className = `sc-val ${up?'sc-pos':'sc-neg'}`;
+
+  const pnlSub = document.getElementById('stat-pnl-sub');
+  pnlSub.style.color = up ? 'var(--green)' : 'var(--red)';
+  pnlSub.textContent = `${up?'▲':'▼'} ${Math.abs(pct).toFixed(2)}% from yesterday`;
+
+  const unrealEl = document.getElementById('stat-unreal');
+  unrealEl.style.color = unrealUp ? 'var(--green)' : 'var(--red)';
+  unrealEl.textContent = `${unrealUp?'+':''}$${fmtUSD(Math.abs(unreal))}`;
+
+  // total in positions header
+  const ptEl = document.getElementById('pos-total-pnl');
+  if(ptEl) {
+    ptEl.style.color = unrealUp ? 'var(--green)' : 'var(--red)';
+    ptEl.textContent = `${unrealUp?'+':''}$${fmtUSD(unreal)}`;
+  }
+}
+
+/* ════════════════════════════════════════════════════════
+   RENDER — WATCHLIST
+   ════════════════════════════════════════════════════════ */
+function renderWatchlist() {
+  const html = WATCHLIST_CFG.map((cfg, i) => {
+    const d = marketData[cfg.symbol] || {};
+    const up = (d.priceChangePercent||0) >= 0;
+    return `<div class="wl-row">
+      <div class="wl-coin">
+        <div class="wl-icon" style="background:${cfg.bg};color:${cfg.txt};">${cfg.sym}</div>
+        <div><div class="wl-name">${cfg.name}</div><div class="wl-pair">${cfg.base}/USDT</div></div>
+      </div>
+      <div class="wl-mid"><canvas id="wl-spark-${i}" width="70" height="28"></canvas></div>
+      <div class="wl-right">
+        <div class="wl-price">${fmtPrice(d.price)}</div>
+        <div class="wl-chg ${up?'wl-pos':'wl-neg'}">${up?'▲':'▼'} ${Math.abs(d.priceChangePercent||0).toFixed(2)}%</div>
+      </div>
+    </div>`;
+  }).join('');
+  document.getElementById('watchlist-container').innerHTML = html;
+  WATCHLIST_CFG.forEach((cfg, i) => {
+    const closes = klineData[cfg.symbol];
+    if(closes?.length) {
+      const up = (marketData[cfg.symbol]?.priceChangePercent||0) >= 0;
+      drawSparkline(document.getElementById(`wl-spark-${i}`), closes, up);
+    }
+  });
+}
+
+/* ════════════════════════════════════════════════════════
+   RENDER — ALLOCATION DONUT
+   ════════════════════════════════════════════════════════ */
+function renderAllocation() {
+  const { total, breakdown } = portfolioValue();
+  const colors = { USDT:'#f05a1a', BTC:'#f0b90b', ETH:'#627eea', SOL:'#0ecb81', XRP:'#346aa9', BNB:'#c2a633' };
+  let cum = 0;
+  const stops = [], legendHTML = [];
+  Object.entries(breakdown).forEach(([coin, d]) => {
+    const pct = total ? d.usd / total * 100 : 0;
+    stops.push(`${colors[coin]||'#4a5568'} ${cum.toFixed(2)}% ${(cum+pct).toFixed(2)}%`);
+    cum += pct;
+    legendHTML.push(`<div class="al-row">
+      <div class="al-dot" style="background:${colors[coin]||'#4a5568'};"></div>
+      <div class="al-name">${coin}</div>
+      <div class="al-pct">${pct.toFixed(1)}%</div>
+      <div class="al-usd">$${fmtCompact(d.usd)}</div>
+    </div>`);
+  });
+  document.getElementById('alloc-ring').style.background = `conic-gradient(${stops.join(',')})`;
+  document.getElementById('alloc-total').textContent = `$${fmtCompact(total)}`;
+  document.getElementById('alloc-legend').innerHTML = legendHTML.join('');
+
+  // PnL figure for allocation card
+  const { todayPnl } = portfolioValue();
+  const up = todayPnl >= 0;
+  const pnlValEl = document.getElementById('alloc-pnl-val');
+  pnlValEl.style.color = up ? 'var(--green)' : 'var(--red)';
+  pnlValEl.textContent = `${up?'+':''}$${fmtUSD(todayPnl)} (${up?'+':''}${total?(todayPnl/(total-todayPnl)*100).toFixed(2):'0.00'}%)`;
+
+  drawPnlMini();
+}
+
+/* ════════════════════════════════════════════════════════
+   RENDER — ACCOUNT SUMMARY (right panel)
+   ════════════════════════════════════════════════════════ */
+function renderAccountSummary() {
+  const { total } = portfolioValue();
+  const ratios = { spot:0.452, deriv:0.302, fund:0.212, earn:0.034 };
+  document.getElementById('acct-spot').textContent  = fmtUSD(total * ratios.spot);
+  document.getElementById('acct-deriv').textContent = fmtUSD(total * ratios.deriv);
+  document.getElementById('acct-fund').textContent  = fmtUSD(total * ratios.fund);
+  document.getElementById('acct-earn').textContent  = fmtUSD(total * ratios.earn);
+  document.getElementById('acct-total').textContent = fmtUSD(total) + ' USD';
+}
+
+/* ════════════════════════════════════════════════════════
+   RENDER — OPEN POSITIONS
+   ════════════════════════════════════════════════════════ */
+function renderPositions() {
+  const rows = POSITIONS.map(pos => {
+    const d = marketData[pos.symbol] || {};
+    const mark = d.price || pos.entry;
+    const isLong = pos.side === 'LONG';
+    const pnl = isLong ? (mark - pos.entry) * pos.size : (pos.entry - mark) * pos.size;
+    const pnlPct = pos.entry ? (pnl / (pos.entry * pos.size / pos.leverage)) * 100 : 0;
+    const margin = (pos.entry * pos.size) / pos.leverage;
+    // Simplified liq price
+    const liq = isLong
+      ? pos.entry * (1 - 0.9/pos.leverage)
+      : pos.entry * (1 + 0.9/pos.leverage);
+    const pnlUp = pnl >= 0;
+    return `<tr>
+      <td>
+        <div class="pos-pair">${pos.display}</div>
+        <div><span class="pos-type ${isLong?'pos-long':'pos-short'}">${pos.side} ${pos.leverage}x</span></div>
+      </td>
+      <td><div class="pos-num">${pos.size} ${pos.base}</div><div style="font-size:10.5px;color:var(--sub);">$${fmtUSD(pos.size*pos.entry)}</div></td>
+      <td><div class="pos-num">${fmtPrice(pos.entry)}</div></td>
+      <td><div class="pos-num">${fmtPrice(mark)}</div></td>
+      <td><div class="pos-num" style="color:var(--red);">${fmtPrice(liq)}</div></td>
+      <td><div class="pos-num">$${fmtUSD(margin)}</div></td>
+      <td>
+        <div class="${pnlUp?'pos-pos':'pos-neg'}">${pnlUp?'+':''}$${fmtUSD(pnl)}</div>
+        <div style="font-size:10.5px;color:${pnlUp?'var(--green)':'var(--red)'};">${pnlUp?'+':''}${pnlPct.toFixed(2)}%</div>
+      </td>
+      <td><button class="pos-close">Close</button></td>
+    </tr>`;
+  }).join('');
+  document.getElementById('positions-tbody').innerHTML = rows;
+}
+
+/* ════════════════════════════════════════════════════════
+   RENDER — RECENT ORDERS
+   ════════════════════════════════════════════════════════ */
+function renderRecentOrders() {
+  const rows = RECENT_ORDERS.map(o => {
+    const d = marketData[o.priceRef] || {};
+    const isBuy = o.side === 'BUY';
+    return `<tr>
+      <td><div class="pos-pair" style="font-size:12.5px;">${o.pair}</div></td>
+      <td><span class="pos-type ${isBuy?'pos-long':'pos-short'}">${o.side}</span></td>
+      <td><div class="pos-num">${fmtPrice(d.price)}</div></td>
+      <td><div class="pos-num">${o.amount}</div></td>
+      <td><span style="font-size:11px;font-weight:600;padding:2px 7px;border-radius:4px;background:${o.statusBg};color:${o.statusColor};">${o.status}</span></td>
+    </tr>`;
+  }).join('');
+  document.getElementById('recent-orders-tbody').innerHTML = rows;
+}
+
+/* ════════════════════════════════════════════════════════
+   RENDER — MARKET MOVERS (sorted from fetched data)
+   ════════════════════════════════════════════════════════ */
+function renderMovers() {
+  const all = Object.entries(marketData)
+    .filter(([sym]) => sym.endsWith('USDT'))
+    .map(([sym, d]) => ({ sym: sym.replace('USDT',''), ...d }))
+    .filter(d => !isNaN(d.priceChangePercent));
+
+  const sorted = [...all].sort((a,b) => b.priceChangePercent - a.priceChangePercent);
+  const gainers = sorted.slice(0,5);
+  const losers  = sorted.slice(-5).reverse();
+
+  const moverRow = (m, up) => `<div class="mover-row">
+    <div>
+      <div class="mover-name">${m.sym}</div>
+      <div class="mover-price">${fmtPrice(m.price)}</div>
+    </div>
+    <div class="mover-chg ${up?'mover-pos':'mover-neg'}">${up?'+':''}${m.priceChangePercent.toFixed(2)}%</div>
+  </div>`;
+
+  document.getElementById('gainers-list').innerHTML = gainers.map(m=>moverRow(m,true)).join('');
+  document.getElementById('losers-list').innerHTML  = losers.map(m=>moverRow(m,false)).join('');
+}
+
+/* ════════════════════════════════════════════════════════
+   CANVAS — WATCHLIST SPARKLINE
+   ════════════════════════════════════════════════════════ */
+function drawSparkline(canvas, data, up) {
+  if(!canvas || !data?.length) return;
   const W = canvas.width = 70, H = canvas.height = 28;
   const ctx = canvas.getContext('2d');
-  const min = Math.min(...data)-1, max = Math.max(...data)+1;
-  const sx = W/(data.length-1), sy = H/(max-min);
-  const toX = i=>i*sx, toY = v=>H-(v-min)*sy;
+  const min = Math.min(...data), max = Math.max(...data);
+  const range = max - min || 1;
+  const toX = i => i * W / (data.length-1);
+  const toY = v => H - ((v-min)/range) * H * 0.9 - H * 0.05;
   const color = up ? '#0ecb81' : '#f6465d';
   const grad = ctx.createLinearGradient(0,0,0,H);
-  grad.addColorStop(0, up?'rgba(14,203,129,.2)':'rgba(246,70,93,.2)');
-  grad.addColorStop(1,'transparent');
+  grad.addColorStop(0, up ? 'rgba(14,203,129,.25)' : 'rgba(246,70,93,.25)');
+  grad.addColorStop(1, 'transparent');
   ctx.beginPath();
-  ctx.moveTo(toX(0),toY(data[0]));
+  ctx.moveTo(toX(0), toY(data[0]));
   for(let i=1;i<data.length;i++) ctx.lineTo(toX(i),toY(data[i]));
   ctx.lineTo(W,H); ctx.lineTo(0,H); ctx.closePath();
   ctx.fillStyle = grad; ctx.fill();
   ctx.beginPath();
-  ctx.moveTo(toX(0),toY(data[0]));
+  ctx.moveTo(toX(0), toY(data[0]));
   for(let i=1;i<data.length;i++) ctx.lineTo(toX(i),toY(data[i]));
   ctx.strokeStyle = color; ctx.lineWidth = 1.5; ctx.stroke();
 }
-function buildWatchlist() {
-  const container = document.getElementById('watchlist-rows');
-  container.innerHTML = WL_COINS.map((c,i) => `
-    <div class="wl-row">
-      <div class="wl-coin">
-        <div class="wl-icon" style="background:${c.bg};color:${c.txt};">${c.sym}</div>
-        <div>
-          <div class="wl-name">${c.name}</div>
-          <div class="wl-pair">${c.pair}</div>
-        </div>
-      </div>
-      <div class="wl-mid">
-        <canvas class="wl-spark" id="spark-${i}" width="70" height="28"></canvas>
-      </div>
-      <div class="wl-right">
-        <div class="wl-price">${c.price}</div>
-        <div class="wl-chg ${c.up?'wl-pos':'wl-neg'}">${c.up?'▲':'▼'} ${Math.abs(c.chg)}%</div>
-      </div>
-    </div>
-  `).join('');
-  WL_COINS.forEach((c,i) => {
-    const cvs = document.getElementById(`spark-${i}`);
-    if(cvs) drawWlSpark(cvs, c.spark, c.up);
-  });
-}
 
-/* ── PNL MINI CHART ── */
+/* ════════════════════════════════════════════════════════
+   CANVAS — PNL MINI CHART  (BTC 7-day klines as proxy)
+   ════════════════════════════════════════════════════════ */
 function drawPnlMini() {
   const canvas = document.getElementById('pnl-mini');
   if(!canvas) return;
-  const W = canvas.parentElement.offsetWidth, H = 70;
+  const closes = klineData['BTCUSDT'];
+  if(!closes?.length) return;
+
+  // Convert BTC closes to portfolio-like cumulative PnL shape
+  const base = closes[0];
+  const data = closes.map(c => (c - base) / base * 10000); // relative change amplified
+
+  const W = canvas.parentElement.offsetWidth || 200, H = 70;
   canvas.width = W; canvas.height = H;
   const ctx = canvas.getContext('2d');
-  const data = [-1200,-400,600,2200,3800,5100,4600,6000,5800,6732];
-  const min = Math.min(...data)-300, max = Math.max(...data)+300;
-  const sx = W/(data.length-1), sy = H/(max-min);
-  const toX = i=>i*sx, toY = v=>H-(v-min)*sy;
+  const min = Math.min(...data), max = Math.max(...data);
+  const range = max - min || 1;
+  const toX = i => i * W / (data.length-1);
+  const toY = v => H - ((v-min)/range) * H * 0.85 - H * 0.08;
   const zeroY = toY(0);
+  const lastUp = data[data.length-1] >= data[0];
+
   const grad = ctx.createLinearGradient(0,0,0,H);
-  grad.addColorStop(0,'rgba(14,203,129,.3)');
-  grad.addColorStop(1,'rgba(14,203,129,.02)');
+  grad.addColorStop(0, lastUp ? 'rgba(14,203,129,.28)' : 'rgba(246,70,93,.28)');
+  grad.addColorStop(1, 'transparent');
   ctx.beginPath();
-  ctx.moveTo(toX(0),toY(data[0]));
+  ctx.moveTo(toX(0), toY(data[0]));
   for(let i=1;i<data.length;i++){
-    const mx=toX(i-.5);
+    const mx = toX(i-.5);
     ctx.bezierCurveTo(mx,toY(data[i-1]),mx,toY(data[i]),toX(i),toY(data[i]));
   }
-  ctx.lineTo(W,zeroY); ctx.lineTo(0,zeroY); ctx.closePath();
-  ctx.fillStyle=grad; ctx.fill();
+  ctx.lineTo(W,H); ctx.lineTo(0,H); ctx.closePath();
+  ctx.fillStyle = grad; ctx.fill();
+  ctx.beginPath(); ctx.moveTo(0,zeroY); ctx.lineTo(W,zeroY);
+  ctx.strokeStyle = 'rgba(255,255,255,.06)'; ctx.lineWidth = 1; ctx.stroke();
   ctx.beginPath();
-  ctx.moveTo(0,zeroY); ctx.lineTo(W,zeroY);
-  ctx.strokeStyle='rgba(255,255,255,.08)'; ctx.lineWidth=1; ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(toX(0),toY(data[0]));
+  ctx.moveTo(toX(0), toY(data[0]));
   for(let i=1;i<data.length;i++){
-    const mx=toX(i-.5);
+    const mx = toX(i-.5);
     ctx.bezierCurveTo(mx,toY(data[i-1]),mx,toY(data[i]),toX(i),toY(data[i]));
   }
-  ctx.strokeStyle='#0ecb81'; ctx.lineWidth=2; ctx.stroke();
+  ctx.strokeStyle = lastUp ? '#0ecb81' : '#f6465d'; ctx.lineWidth = 2; ctx.stroke();
+
+  // x-axis labels using actual dates from kline count
+  const now = new Date();
+  const days = ['pnl-lbl-l','pnl-lbl-m','pnl-lbl-r'];
+  const offsets = [data.length-1, Math.floor(data.length/2), 0];
+  days.forEach((id,i) => {
+    const el = document.getElementById(id);
+    if(!el) return;
+    const d = new Date(now); d.setDate(d.getDate() - offsets[i]);
+    el.textContent = d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  });
 }
 
-/* ── SIDEBAR ── */
+/* ════════════════════════════════════════════════════════
+   RENDER ALL
+   ════════════════════════════════════════════════════════ */
+function renderAll() {
+  renderTicker();
+  renderWelcome();
+  renderStats();
+  renderWatchlist();
+  renderAllocation();
+  renderAccountSummary();
+  renderPositions();
+  renderRecentOrders();
+  renderMovers();
+}
+
+/* ════════════════════════════════════════════════════════
+   API STATUS INDICATOR
+   ════════════════════════════════════════════════════════ */
+function setStatus(ok) {
+  const el = document.getElementById('api-status');
+  el.innerHTML = `<span class="live-dot" style="background:${ok?'var(--green)':'var(--red)'}"></span>${ok?'Live':'Reconnecting…'}`;
+}
+
+/* ════════════════════════════════════════════════════════
+   INIT & POLLING
+   ════════════════════════════════════════════════════════ */
+async function tick() {
+  try {
+    await fetchMarketData();
+    setStatus(true);
+    renderAll();
+    if(firstLoad) { firstLoad = false; }
+  } catch(e) {
+    setStatus(false);
+    console.warn('Market data fetch failed:', e);
+  }
+}
+
+async function init() {
+  // First: fetch prices immediately
+  await tick();
+  // Then fetch sparkline kline data (less urgent)
+  try { await fetchAllKlines(); renderWatchlist(); drawPnlMini(); } catch(e) {}
+  // Poll prices every 5 seconds
+  setInterval(tick, 5000);
+  // Refresh klines every 5 minutes
+  setInterval(async () => {
+    try { await fetchAllKlines(); renderWatchlist(); drawPnlMini(); } catch(e) {}
+  }, 300000);
+}
+
+/* ════════════════════════════════════════════════════════
+   UI CONTROLS
+   ════════════════════════════════════════════════════════ */
 let sbOpen = true;
-function toggleSidebar(){
+function toggleSidebar() {
   sbOpen = !sbOpen;
   document.getElementById('sidebar').style.width = sbOpen ? 'var(--sidebar)' : '0';
 }
-
-/* ── NAV SUBS ── */
-function toggleSub(el, subId){
+function toggleSub(el, subId) {
   const sub = document.getElementById(subId);
   if(!sub) return;
   const open = sub.classList.contains('open');
   sub.classList.toggle('open',!open);
   el.classList.toggle('open',!open);
 }
-
-/* ── TABS ── */
-function secTab(el){
-  const parent = el.parentElement;
-  parent.querySelectorAll('.sec-tab').forEach(t=>t.classList.remove('on'));
+function secTab(el) {
+  el.parentElement.querySelectorAll('.sec-tab').forEach(t=>t.classList.remove('on'));
   el.classList.add('on');
 }
 
-/* ── LIVE PRICE SIM ── */
-function jitter(base, pct=0.0008){
-  return base * (1 + (Math.random()-0.5)*pct*2);
-}
-function updatePrices(){
-  const balEl = document.getElementById('wc-bal');
-  if(balEl){
-    let cur = parseFloat(balEl.dataset.val || '125847.32');
-    cur = jitter(cur);
-    balEl.dataset.val = cur;
-    balEl.innerHTML = cur.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}) + ' <span>USD</span>';
-  }
-}
-
-/* ── INIT ── */
-window.addEventListener('load', ()=>{
-  buildTicker();
-  buildWatchlist();
-  drawPnlMini();
-  setInterval(updatePrices, 2000);
-});
-window.addEventListener('resize', drawPnlMini);
+window.addEventListener('load', init);
+window.addEventListener('resize', () => { drawPnlMini(); });
 </script>
 </body>
 </html>
