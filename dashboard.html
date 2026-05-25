@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Trade — SpeedVerse Markets</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;}
+body{font-family:'Inter',sans-serif;background:#0d0d1a;color:#e2e8f0;}
+button{font-family:inherit;cursor:pointer;border:none;outline:none;}
+input{font-family:inherit;outline:none;border:none;}
+
+/* APP SHELL */
+.app{display:flex;height:100vh;width:100vw;overflow:hidden;}
+
+/* SIDEBAR */
+.sidebar{width:64px;flex-shrink:0;background:#08080f;border-right:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column;align-items:center;z-index:10;}
+.sb-logo{width:64px;height:60px;display:flex;align-items:center;justify-content:center;border-bottom:1px solid rgba(255,255,255,.06);flex-shrink:0;}
+.sb-logo img{height:34px;width:auto;}
+.sb-nav{display:flex;flex-direction:column;align-items:center;padding:10px 0;gap:2px;flex:1;}
+.sb-bottom{display:flex;flex-direction:column;align-items:center;padding:10px 0;gap:2px;}
+.sbi{position:relative;width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#3d4a5c;cursor:pointer;transition:all .2s;}
+.sbi:hover,.sbi.on{background:rgba(232,83,10,.12);color:#E8530A;}
+.sbi.on::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:22px;border-radius:0 3px 3px 0;background:#E8530A;}
+.sbi-tip{position:absolute;left:54px;background:#1a1a2e;border:1px solid rgba(255,255,255,.1);color:#e2e8f0;font-size:11px;font-weight:600;padding:4px 10px;border-radius:6px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s;z-index:200;}
+.sbi:hover .sbi-tip{opacity:1;}
+
+/* MAIN */
+.main{display:flex;flex-direction:column;flex:1;overflow:hidden;min-width:0;}
+
+/* TOPBAR */
+.topbar{height:54px;flex-shrink:0;background:#08080f;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;padding:0 14px;gap:10px;z-index:9;}
+.tb-asset{display:flex;align-items:center;gap:9px;padding:5px 10px;border-radius:8px;cursor:pointer;transition:background .15s;flex-shrink:0;}
+.tb-asset:hover{background:rgba(255,255,255,.05);}
+.tb-flag{width:26px;height:26px;border-radius:50%;background:#152030;display:flex;align-items:center;justify-content:center;font-size:14px;}
+.tb-aname{font-size:14px;font-weight:700;color:#f1f5f9;}
+.tb-aprice{font-size:12px;color:#64748b;font-variant-numeric:tabular-nums;transition:color .3s;}
+.tb-badge{font-size:11px;font-weight:700;padding:2px 7px;border-radius:4px;}
+.up-badge{background:rgba(34,197,94,.15);color:#22c55e;}
+.dn-badge{background:rgba(239,68,68,.15);color:#ef4444;}
+.tb-sep{width:1px;height:26px;background:rgba(255,255,255,.07);flex-shrink:0;}
+.tf-wrap{display:flex;gap:1px;}
+.tf-btn{padding:5px 9px;border-radius:6px;font-size:11.5px;font-weight:600;color:#3d4a5c;background:transparent;border:none;cursor:pointer;transition:all .15s;}
+.tf-btn:hover{color:#94a3b8;background:rgba(255,255,255,.04);}
+.tf-btn.on{background:#E8530A;color:#fff;}
+.ind-btn{display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:6px;font-size:11.5px;font-weight:600;color:#3d4a5c;background:transparent;cursor:pointer;transition:all .15s;}
+.ind-btn:hover{color:#94a3b8;background:rgba(255,255,255,.04);}
+.tb-right{display:flex;align-items:center;gap:10px;margin-left:auto;}
+.acc-toggle{display:flex;background:#101020;border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:3px;gap:2px;}
+.acc-t{padding:4px 13px;border-radius:6px;font-size:11.5px;font-weight:600;color:#3d4a5c;cursor:pointer;transition:all .2s;}
+.acc-t.on{background:#1a1a30;color:#f1f5f9;}
+.bal-wrap{display:flex;align-items:center;gap:8px;background:#101020;border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:5px 12px;cursor:pointer;}
+.bal-amt{font-size:13.5px;font-weight:700;color:#f1f5f9;font-variant-numeric:tabular-nums;}
+.bal-lbl{font-size:10px;color:#3d4a5c;}
+.btn-dep{background:#E8530A;color:#fff;padding:6px 16px;border-radius:8px;font-size:12.5px;font-weight:700;transition:background .15s;white-space:nowrap;}
+.btn-dep:hover{background:#c94400;}
+.icon-btn{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#3d4a5c;cursor:pointer;background:transparent;border:none;transition:all .15s;position:relative;}
+.icon-btn:hover{background:rgba(255,255,255,.05);color:#94a3b8;}
+.ndot{position:absolute;top:5px;right:6px;width:6px;height:6px;border-radius:50%;background:#E8530A;border:2px solid #08080f;}
+.avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#E8530A,#ff7b2e);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;cursor:pointer;border:2px solid rgba(232,83,10,.35);flex-shrink:0;}
+
+/* CONTENT */
+.content{display:flex;flex:1;overflow:hidden;min-height:0;}
+
+/* CHART AREA */
+.chart-col{display:flex;flex-direction:column;flex:1;overflow:hidden;min-width:0;}
+.chart-box{flex:1;position:relative;min-height:0;}
+#tv_chart{width:100%;height:100%;}
+
+/* POSITIONS */
+.pos-bar{flex-shrink:0;background:#08080f;border-top:1px solid rgba(255,255,255,.06);}
+.pos-tabs{display:flex;padding:0 14px;border-bottom:1px solid rgba(255,255,255,.06);}
+.pos-tab{padding:9px 14px;font-size:11.5px;font-weight:600;color:#3d4a5c;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;margin-bottom:-1px;}
+.pos-tab.on{color:#E8530A;border-bottom-color:#E8530A;}
+.pos-tab:hover:not(.on){color:#64748b;}
+.pos-cnt{display:inline-flex;align-items:center;justify-content:center;background:#E8530A;color:#fff;width:15px;height:15px;border-radius:50%;font-size:9px;font-weight:700;margin-left:5px;}
+.pos-list{max-height:108px;overflow-y:auto;}
+.pos-row{display:grid;grid-template-columns:150px 88px 86px 110px 1fr 76px;align-items:center;gap:8px;padding:7px 14px;border-bottom:1px solid rgba(255,255,255,.04);}
+.pos-row:hover{background:rgba(255,255,255,.02);}
+.p-asset{display:flex;align-items:center;gap:7px;}
+.p-flag{width:20px;height:20px;border-radius:50%;background:#152030;display:flex;align-items:center;justify-content:center;font-size:11px;}
+.p-name{font-size:11.5px;font-weight:600;color:#e2e8f0;}
+.p-dir{font-size:11px;font-weight:700;display:flex;align-items:center;gap:3px;}
+.p-dir.up{color:#22c55e;} .p-dir.dn{color:#ef4444;}
+.p-amt{font-size:11.5px;color:#64748b;}
+.p-pnl{font-size:11.5px;font-weight:700;}
+.p-pnl.pos{color:#22c55e;} .p-pnl.neg{color:#ef4444;}
+.p-timer{display:flex;align-items:center;gap:6px;}
+.p-bar{flex:1;height:3px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden;}
+.p-fill{height:100%;border-radius:2px;background:#E8530A;transition:width 1s linear;}
+.p-time{font-size:10.5px;color:#475569;font-variant-numeric:tabular-nums;width:32px;flex-shrink:0;}
+.btn-cls{padding:3px 9px;border-radius:5px;background:rgba(239,68,68,.12);color:#ef4444;font-size:10.5px;font-weight:600;border:1px solid rgba(239,68,68,.25);cursor:pointer;transition:all .15s;white-space:nowrap;}
+.btn-cls:hover{background:rgba(239,68,68,.22);}
+
+/* TRADE PANEL */
+.trade-panel{width:272px;flex-shrink:0;background:#0a0a18;border-left:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;}
+.trade-panel::-webkit-scrollbar{width:3px;}
+.trade-panel::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:2px;}
+
+/* Watchlist */
+.wl-head{padding:12px 12px 8px;border-bottom:1px solid rgba(255,255,255,.06);}
+.wl-search{position:relative;display:flex;align-items:center;}
+.wl-search input{width:100%;height:34px;background:#101020;border:1px solid rgba(255,255,255,.07);border-radius:7px;padding:0 10px 0 32px;font-size:12px;color:#e2e8f0;transition:border-color .2s;}
+.wl-search input::placeholder{color:#3d4a5c;}
+.wl-search input:focus{border-color:rgba(232,83,10,.4);}
+.wl-search svg{position:absolute;left:10px;color:#3d4a5c;pointer-events:none;}
+.wl-list{display:flex;flex-direction:column;}
+.wl-item{display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:pointer;transition:background .15s;}
+.wl-item:hover{background:rgba(255,255,255,.03);}
+.wl-item.on{background:rgba(232,83,10,.08);}
+.wl-flag{width:22px;height:22px;border-radius:50%;background:#152030;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;}
+.wl-info{flex:1;min-width:0;}
+.wl-name{font-size:11.5px;font-weight:600;color:#e2e8f0;}
+.wl-price{font-size:10.5px;color:#475569;font-variant-numeric:tabular-nums;}
+.wl-pct{font-size:11px;font-weight:700;color:#22c55e;flex-shrink:0;}
+
+/* Type tabs */
+.type-tabs{display:flex;background:#08080f;border-bottom:1px solid rgba(255,255,255,.06);}
+.type-t{flex:1;padding:10px 0;text-align:center;font-size:11.5px;font-weight:600;color:#3d4a5c;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;}
+.type-t.on{color:#E8530A;border-bottom-color:#E8530A;background:rgba(232,83,10,.05);}
+
+/* Panel sections */
+.ps{padding:12px;border-bottom:1px solid rgba(255,255,255,.06);}
+.ps-lbl{font-size:10px;font-weight:700;color:#3d4a5c;letter-spacing:.6px;text-transform:uppercase;margin-bottom:9px;}
+
+/* Amount */
+.amt-ctrl{display:flex;align-items:center;gap:6px;background:#101020;border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:2px;}
+.amt-btn{width:34px;height:34px;border-radius:6px;background:rgba(255,255,255,.05);color:#64748b;font-size:18px;display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;flex-shrink:0;transition:all .15s;}
+.amt-btn:hover{background:rgba(255,255,255,.09);color:#e2e8f0;}
+.amt-inp{flex:1;text-align:center;background:transparent;font-size:17px;font-weight:700;color:#f1f5f9;font-variant-numeric:tabular-nums;width:0;min-width:0;}
+.amt-cur{font-size:12px;color:#3d4a5c;padding-right:6px;flex-shrink:0;}
+.quick-row{display:flex;gap:5px;margin-top:7px;}
+.qamt{flex:1;padding:5px 0;text-align:center;background:#101020;border:1px solid rgba(255,255,255,.07);border-radius:6px;font-size:11px;font-weight:600;color:#3d4a5c;cursor:pointer;transition:all .15s;}
+.qamt:hover{border-color:rgba(232,83,10,.35);color:#E8530A;}
+
+/* Time */
+.time-grid{display:flex;flex-wrap:wrap;gap:5px;}
+.time-o{padding:5px 9px;border-radius:6px;background:#101020;border:1px solid rgba(255,255,255,.07);font-size:11px;font-weight:600;color:#3d4a5c;cursor:pointer;transition:all .15s;}
+.time-o:hover{border-color:rgba(232,83,10,.35);color:#E8530A;}
+.time-o.on{background:rgba(232,83,10,.14);border-color:#E8530A;color:#E8530A;}
+
+/* Profit */
+.profit-card{background:#07180d;border:1px solid rgba(34,197,94,.18);border-radius:10px;padding:14px;text-align:center;}
+.profit-lbl{font-size:10px;font-weight:700;color:#4ade80;letter-spacing:.8px;margin-bottom:3px;}
+.profit-pct{font-size:30px;font-weight:800;color:#22c55e;line-height:1;}
+.profit-sub{font-size:11px;color:#4ade80;margin-top:3px;}
+
+/* Buttons */
+.trade-btns{padding:12px;display:flex;flex-direction:column;gap:7px;}
+.btn-higher,.btn-lower{height:52px;border-radius:10px;color:#fff;font-size:14px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px;border:none;cursor:pointer;transition:all .15s;letter-spacing:.3px;}
+.btn-higher{background:linear-gradient(135deg,#15803d,#22c55e);box-shadow:0 4px 18px rgba(34,197,94,.22);}
+.btn-higher:hover{transform:translateY(-1px);box-shadow:0 6px 22px rgba(34,197,94,.32);}
+.btn-lower{background:linear-gradient(135deg,#b91c1c,#ef4444);box-shadow:0 4px 18px rgba(239,68,68,.22);}
+.btn-lower:hover{transform:translateY(-1px);box-shadow:0 6px 22px rgba(239,68,68,.32);}
+.btn-higher:active,.btn-lower:active{transform:translateY(0);}
+.btn-sub{font-size:10.5px;font-weight:500;opacity:.8;}
+
+/* Stats */
+.stat-strip{display:flex;border-top:1px solid rgba(255,255,255,.06);padding:10px 12px;gap:0;}
+.st{flex:1;text-align:center;}
+.st+.st{border-left:1px solid rgba(255,255,255,.06);}
+.st-v{font-size:12.5px;font-weight:700;color:#f1f5f9;}
+.st-l{font-size:9.5px;color:#3d4a5c;margin-top:2px;}
+
+::-webkit-scrollbar{width:3px;height:3px;}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:2px;}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sb-logo"><img src="assets/logo.png" alt="SpeedVerse"/></div>
+  <nav class="sb-nav">
+    <div class="sbi on">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg>
+      <span class="sbi-tip">Trade</span>
+    </div>
+    <div class="sbi">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      <span class="sbi-tip">Portfolio</span>
+    </div>
+    <div class="sbi">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
+      <span class="sbi-tip">Tournaments</span>
+    </div>
+    <div class="sbi">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      <span class="sbi-tip">Leaderboard</span>
+    </div>
+    <div class="sbi">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span class="sbi-tip">Community</span>
+    </div>
+  </nav>
+  <div class="sb-bottom">
+    <div class="sbi">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 0-14.14 0"/><path d="M4.93 19.07a10 10 0 0 0 14.14 0"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M2 12h2"/><path d="M20 12h2"/></svg>
+      <span class="sbi-tip">Settings</span>
+    </div>
+    <div class="sbi">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <span class="sbi-tip">Help</span>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="tb-asset" id="tb-asset-btn">
+      <div class="tb-flag" id="tb-flag">🇪🇺</div>
+      <div>
+        <div class="tb-aname" id="tb-aname">EUR/USD</div>
+        <div class="tb-aprice" id="tb-price">1.08542</div>
+      </div>
+      <span class="tb-badge up-badge" id="tb-change">+0.12%</span>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#3d4a5c" stroke-width="2"><polyline points="6,9 12,15 18,9"/></svg>
+    </div>
+
+    <div class="tb-sep"></div>
+
+    <div class="tf-wrap">
+      <button class="tf-btn" onclick="setTF(this,'1')">1m</button>
+      <button class="tf-btn on" onclick="setTF(this,'5')">5m</button>
+      <button class="tf-btn" onclick="setTF(this,'15')">15m</button>
+      <button class="tf-btn" onclick="setTF(this,'60')">1h</button>
+      <button class="tf-btn" onclick="setTF(this,'240')">4h</button>
+      <button class="tf-btn" onclick="setTF(this,'D')">1D</button>
+    </div>
+
+    <div class="tb-sep"></div>
+
+    <button class="ind-btn">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+      Indicators
+    </button>
+
+    <div class="tb-right">
+      <div class="acc-toggle">
+        <div class="acc-t" onclick="switchAcc('real',this)">Real</div>
+        <div class="acc-t on" onclick="switchAcc('practice',this)">Practice</div>
+      </div>
+      <div class="bal-wrap">
+        <div>
+          <div class="bal-amt" id="bal-amt">$10,000.00</div>
+          <div class="bal-lbl" id="bal-lbl">USD · Practice</div>
+        </div>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#3d4a5c" stroke-width="2"><polyline points="6,9 12,15 18,9"/></svg>
+      </div>
+      <button class="btn-dep">+ Deposit</button>
+      <button class="icon-btn">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="ndot"></span>
+      </button>
+      <div class="avatar">JG</div>
+    </div>
+  </header>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- CHART COL -->
+    <div class="chart-col">
+      <div class="chart-box">
+        <div id="tv_chart"></div>
+      </div>
+
+      <!-- POSITIONS -->
+      <div class="pos-bar">
+        <div class="pos-tabs">
+          <div class="pos-tab on">Open trades <span class="pos-cnt">2</span></div>
+          <div class="pos-tab">Closed trades</div>
+          <div class="pos-tab">Cancelled</div>
+        </div>
+        <div class="pos-list">
+          <div class="pos-row">
+            <div class="p-asset"><div class="p-flag">🇪🇺</div><div class="p-name">EUR/USD</div></div>
+            <div class="p-dir up">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="#22c55e"><polyline points="18,15 12,9 6,15"/></svg>HIGHER
+            </div>
+            <div class="p-amt">$50.00</div>
+            <div class="p-pnl pos" id="p1-pnl">+$43.50</div>
+            <div class="p-timer">
+              <div class="p-bar"><div class="p-fill" id="p1-fill" style="width:65%"></div></div>
+              <div class="p-time" id="p1-time">0:45</div>
+            </div>
+            <button class="btn-cls">Close</button>
+          </div>
+          <div class="pos-row">
+            <div class="p-asset"><div class="p-flag">🇬🇧</div><div class="p-name">GBP/USD</div></div>
+            <div class="p-dir dn">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="#ef4444"><polyline points="6,9 12,15 18,9"/></svg>LOWER
+            </div>
+            <div class="p-amt">$25.00</div>
+            <div class="p-pnl neg" id="p2-pnl">-$21.75</div>
+            <div class="p-timer">
+              <div class="p-bar"><div class="p-fill" id="p2-fill" style="width:82%"></div></div>
+              <div class="p-time" id="p2-time">1:23</div>
+            </div>
+            <button class="btn-cls">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TRADE PANEL -->
+    <aside class="trade-panel">
+
+      <!-- Watchlist -->
+      <div class="wl-head">
+        <div class="wl-search">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" placeholder="Search assets..."/>
+        </div>
+      </div>
+      <div class="wl-list">
+        <div class="wl-item on" onclick="selectAsset(this,'EUR/USD','🇪🇺','FX:EURUSD')">
+          <div class="wl-flag">🇪🇺</div>
+          <div class="wl-info"><div class="wl-name">EUR/USD</div><div class="wl-price" id="wl-eurusd">1.08542</div></div>
+          <div class="wl-pct">87%</div>
+        </div>
+        <div class="wl-item" onclick="selectAsset(this,'GBP/USD','🇬🇧','FX:GBPUSD')">
+          <div class="wl-flag">🇬🇧</div>
+          <div class="wl-info"><div class="wl-name">GBP/USD</div><div class="wl-price" id="wl-gbpusd">1.27318</div></div>
+          <div class="wl-pct">83%</div>
+        </div>
+        <div class="wl-item" onclick="selectAsset(this,'USD/JPY','🇯🇵','FX:USDJPY')">
+          <div class="wl-flag">🇯🇵</div>
+          <div class="wl-info"><div class="wl-name">USD/JPY</div><div class="wl-price" id="wl-usdjpy">149.842</div></div>
+          <div class="wl-pct">80%</div>
+        </div>
+        <div class="wl-item" onclick="selectAsset(this,'Gold','🥇','TVC:GOLD')">
+          <div class="wl-flag">🥇</div>
+          <div class="wl-info"><div class="wl-name">Gold</div><div class="wl-price" id="wl-gold">2318.40</div></div>
+          <div class="wl-pct">85%</div>
+        </div>
+        <div class="wl-item" onclick="selectAsset(this,'Crude Oil','🛢️','TVC:USOIL')">
+          <div class="wl-flag">🛢️</div>
+          <div class="wl-info"><div class="wl-name">Crude Oil</div><div class="wl-price" id="wl-oil">78.24</div></div>
+          <div class="wl-pct">78%</div>
+        </div>
+        <div class="wl-item" onclick="selectAsset(this,'Bitcoin','₿','BINANCE:BTCUSDT')">
+          <div class="wl-flag">₿</div>
+          <div class="wl-info"><div class="wl-name">Bitcoin</div><div class="wl-price" id="wl-btc">67,420.00</div></div>
+          <div class="wl-pct">82%</div>
+        </div>
+      </div>
+
+      <!-- Trade type -->
+      <div class="type-tabs">
+        <div class="type-t on">Binary</div>
+        <div class="type-t">Digital</div>
+        <div class="type-t">Forex</div>
+      </div>
+
+      <!-- Amount -->
+      <div class="ps">
+        <div class="ps-lbl">Investment Amount</div>
+        <div class="amt-ctrl">
+          <button class="amt-btn" onclick="adjAmt(-5)">−</button>
+          <input class="amt-inp" id="amt-inp" type="number" value="10" min="1"/>
+          <span class="amt-cur">USD</span>
+          <button class="amt-btn" onclick="adjAmt(5)">+</button>
+        </div>
+        <div class="quick-row">
+          <div class="qamt" onclick="setAmt(5)">$5</div>
+          <div class="qamt" onclick="setAmt(10)">$10</div>
+          <div class="qamt" onclick="setAmt(25)">$25</div>
+          <div class="qamt" onclick="setAmt(50)">$50</div>
+        </div>
+      </div>
+
+      <!-- Time -->
+      <div class="ps">
+        <div class="ps-lbl">Expiry Time</div>
+        <div class="time-grid">
+          <div class="time-o on" onclick="selTime(this)">1 min</div>
+          <div class="time-o" onclick="selTime(this)">2 min</div>
+          <div class="time-o" onclick="selTime(this)">5 min</div>
+          <div class="time-o" onclick="selTime(this)">15 min</div>
+          <div class="time-o" onclick="selTime(this)">30 min</div>
+          <div class="time-o" onclick="selTime(this)">1 hour</div>
+        </div>
+      </div>
+
+      <!-- Profit -->
+      <div class="ps">
+        <div class="profit-card">
+          <div class="profit-lbl">PROFIT</div>
+          <div class="profit-pct">87%</div>
+          <div class="profit-sub" id="profit-sub">+$8.70 on $10</div>
+        </div>
+      </div>
+
+      <!-- Buttons -->
+      <div class="trade-btns">
+        <button class="btn-higher" onclick="trade('higher')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><polyline points="18,15 12,9 6,15"/></svg>
+          <div><div>HIGHER</div><div class="btn-sub" id="h-sub">+$8.70</div></div>
+        </button>
+        <button class="btn-lower" onclick="trade('lower')">
+          <div><div>LOWER</div><div class="btn-sub" id="l-sub">+$8.70</div></div>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><polyline points="6,9 12,15 18,9"/></svg>
+        </button>
+      </div>
+
+      <!-- Stats -->
+      <div class="stat-strip">
+        <div class="st"><div class="st-v" style="color:#22c55e">62%</div><div class="st-l">Win Rate</div></div>
+        <div class="st"><div class="st-v">147</div><div class="st-l">Trades</div></div>
+        <div class="st"><div class="st-v" style="color:#22c55e">+$2,340</div><div class="st-l">P&amp;L</div></div>
+      </div>
+
+    </aside>
+  </div>
+</div>
+</div>
+
+<script src="https://s3.tradingview.com/tv.js"></script>
+<script>
+// === CHART ===
+let tvWidget;
+function initChart(symbol) {
+  if (tvWidget) { tvWidget.remove(); }
+  tvWidget = new TradingView.widget({
+    autosize: true,
+    symbol: symbol || 'FX:EURUSD',
+    interval: '5',
+    timezone: 'Etc/UTC',
+    theme: 'dark',
+    style: '1',
+    locale: 'en',
+    toolbar_bg: '#08080f',
+    enable_publishing: false,
+    withdateranges: true,
+    hide_side_toolbar: false,
+    allow_symbol_change: false,
+    save_image: false,
+    container_id: 'tv_chart',
+    overrides: {
+      'paneProperties.background': '#0d0d1a',
+      'paneProperties.backgroundType': 'solid',
+      'paneProperties.vertGridProperties.color': 'rgba(255,255,255,0.03)',
+      'paneProperties.horzGridProperties.color': 'rgba(255,255,255,0.03)',
+    }
+  });
+}
+initChart('FX:EURUSD');
+
+// === PRICE SIMULATION ===
+let prices = { eurusd:1.08542, gbpusd:1.27318, usdjpy:149.842, gold:2318.40, oil:78.24, btc:67420.00 };
+function rnd(v, f) { return v * (1 + (Math.random()-.5)*f*2); }
+function fmt(v,d) { return v.toFixed(d); }
+
+setInterval(() => {
+  prices.eurusd = rnd(prices.eurusd, 0.00018);
+  prices.gbpusd = rnd(prices.gbpusd, 0.00018);
+  prices.usdjpy = rnd(prices.usdjpy, 0.00018);
+  prices.gold   = rnd(prices.gold,   0.00025);
+  prices.oil    = rnd(prices.oil,    0.00025);
+  prices.btc    = rnd(prices.btc,    0.0004);
+
+  const el = id => document.getElementById(id);
+  const prev = parseFloat(el('tb-price').textContent);
+  el('tb-price').textContent = fmt(prices.eurusd, 5);
+  el('tb-price').style.color = prices.eurusd >= prev ? '#22c55e' : '#ef4444';
+  setTimeout(() => { el('tb-price').style.color = '#64748b'; }, 500);
+
+  el('wl-eurusd').textContent = fmt(prices.eurusd, 5);
+  el('wl-gbpusd').textContent = fmt(prices.gbpusd, 5);
+  el('wl-usdjpy').textContent = fmt(prices.usdjpy, 3);
+  el('wl-gold').textContent   = fmt(prices.gold, 2);
+  el('wl-oil').textContent    = fmt(prices.oil, 2);
+  el('wl-btc').textContent    = prices.btc.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+}, 1000);
+
+// === POSITION TIMERS ===
+let p1s = 45, p2s = 83;
+setInterval(() => {
+  const el = id => document.getElementById(id);
+  if (p1s > 0) {
+    p1s--;
+    const m=Math.floor(p1s/60), s=p1s%60;
+    el('p1-time').textContent = m+':'+(s<10?'0':'')+s;
+    el('p1-fill').style.width = (p1s/60*100)+'%';
+  }
+  if (p2s > 0) {
+    p2s--;
+    const m=Math.floor(p2s/60), s=p2s%60;
+    el('p2-time').textContent = m+':'+(s<10?'0':'')+s;
+    el('p2-fill').style.width = (p2s/120*100)+'%';
+  }
+}, 1000);
+
+// === AMOUNT ===
+let amt = 10;
+function adjAmt(d) { amt = Math.max(1, amt+d); syncAmt(); }
+function setAmt(v) { amt = v; syncAmt(); }
+function syncAmt() {
+  document.getElementById('amt-inp').value = amt;
+  const p = (amt * 0.87).toFixed(2);
+  document.getElementById('profit-sub').textContent = '+$'+p+' on $'+amt;
+  document.getElementById('h-sub').textContent = '+$'+p;
+  document.getElementById('l-sub').textContent = '+$'+p;
+}
+document.getElementById('amt-inp').addEventListener('input', function() {
+  amt = Math.max(1, parseInt(this.value)||1);
+  syncAmt();
+});
+
+// === TIME ===
+function selTime(el) {
+  document.querySelectorAll('.time-o').forEach(t => t.classList.remove('on'));
+  el.classList.add('on');
+}
+
+// === TIMEFRAME ===
+function setTF(el, iv) {
+  document.querySelectorAll('.tf-btn').forEach(b => b.classList.remove('on'));
+  el.classList.add('on');
+}
+
+// === ACCOUNT ===
+let balance = 10000;
+function switchAcc(type, el) {
+  document.querySelectorAll('.acc-t').forEach(t => t.classList.remove('on'));
+  el.classList.add('on');
+  balance = type === 'practice' ? 10000 : 1250;
+  const b = document.getElementById('bal-amt');
+  b.textContent = '$'+balance.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  document.getElementById('bal-lbl').textContent = 'USD · '+(type==='practice'?'Practice':'Real');
+}
+
+// === SELECT ASSET ===
+function selectAsset(el, name, flag, symbol) {
+  document.querySelectorAll('.wl-item').forEach(i => i.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('tb-aname').textContent = name;
+  document.getElementById('tb-flag').textContent = flag;
+  initChart(symbol);
+}
+
+// === TRADE ===
+function trade(dir) {
+  if (amt > balance) return;
+  balance -= amt;
+  document.getElementById('bal-amt').textContent = '$'+balance.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const btn = document.querySelector('.btn-'+dir+'er') || document.querySelector('.btn-'+dir);
+  if (btn) { btn.style.transform='scale(0.96)'; setTimeout(()=>{btn.style.transform='';},130); }
+}
+
+// === TYPE TABS ===
+document.querySelectorAll('.type-t').forEach(t => t.addEventListener('click', function() {
+  document.querySelectorAll('.type-t').forEach(x => x.classList.remove('on'));
+  this.classList.add('on');
+}));
+
+// === POS TABS ===
+document.querySelectorAll('.pos-tab').forEach(t => t.addEventListener('click', function() {
+  document.querySelectorAll('.pos-tab').forEach(x => x.classList.remove('on'));
+  this.classList.add('on');
+}));
+</script>
+</body>
+</html>
