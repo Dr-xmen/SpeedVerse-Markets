@@ -4,7 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
 <title>Dashboard — SpeedVerse Markets</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
 <style>
 :root{
   --bg:#0a0b0f;
@@ -13,70 +13,95 @@
   --s3:#1e2229;
   --s4:#252b35;
   --b:rgba(255,255,255,.07);
-  --b2:rgba(255,255,255,.12);
+  --b2:rgba(255,255,255,.13);
   --accent:#f05a1a;
+  --accent2:rgba(240,90,26,.12);
   --green:#0ecb81;
   --red:#f6465d;
   --gold:#f0b90b;
   --blue:#2196f3;
+  --purple:#7b61ff;
   --text:#eaecef;
   --sub:#848e9c;
   --muted:#2b3141;
-  --sidebar:185px;
+  --sidebar:200px;
   --header:60px;
-  --rp:282px;
+  --rp:300px;
+  --mono:'JetBrains Mono',monospace;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;}
 a{text-decoration:none;color:inherit;}
 button{font-family:inherit;cursor:pointer;border:none;background:none;}
-input{font-family:inherit;border:none;outline:none;background:none;}
+input{font-family:inherit;border:none;outline:none;background:none;color:var(--text);}
 ::-webkit-scrollbar{width:4px;height:4px;}
 ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px;}
 
-/* ── PAGE SHELL ── */
+/* PAGE SHELL */
 .page{display:flex;flex-direction:column;height:100vh;overflow:hidden;}
 
-/* ── HEADER ── */
+/* HEADER */
 .hdr{
   height:var(--header);flex-shrink:0;
   background:var(--s1);border-bottom:1px solid var(--b);
-  display:flex;align-items:center;padding:0 20px 0 0;gap:0;z-index:50;
+  display:flex;align-items:center;padding:0 16px 0 0;z-index:50;
 }
-.hdr-logo{
-  width:var(--sidebar);flex-shrink:0;
-  display:flex;align-items:center;gap:10px;padding:0 16px;
-  border-right:1px solid var(--b);height:100%;
-}
-.hdr-logo img{height:36px;width:auto;}
-.hdr-hamburger{
-  width:48px;height:var(--header);flex-shrink:0;
-  display:flex;align-items:center;justify-content:center;
-  color:var(--sub);cursor:pointer;transition:color .15s;
+.hdr-logo-wrap{
+  width:var(--sidebar);flex-shrink:0;height:100%;
+  display:flex;align-items:center;padding:0 16px;
   border-right:1px solid var(--b);
 }
+.hdr-logo-wrap img{height:34px;width:auto;}
+.hdr-hamburger{
+  width:44px;height:var(--header);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--sub);cursor:pointer;transition:color .15s;
+}
 .hdr-hamburger:hover{color:var(--text);}
-.hdr-spacer{flex:1;}
-.hdr-icons{display:flex;align-items:center;gap:4px;}
+
+/* search bar */
+.hdr-search{
+  flex:1;max-width:320px;margin-left:8px;
+  display:flex;align-items:center;gap:8px;
+  background:var(--s2);border:1px solid var(--b);border-radius:8px;
+  padding:0 12px;height:36px;
+}
+.hdr-search input{font-size:13px;flex:1;color:var(--text);}
+.hdr-search input::placeholder{color:var(--sub);}
+
+.hdr-nav{display:flex;align-items:center;gap:2px;margin-left:16px;flex:1;}
+.hdr-nav-item{
+  padding:6px 12px;font-size:13px;font-weight:500;color:var(--sub);
+  cursor:pointer;border-radius:6px;transition:all .15s;white-space:nowrap;
+}
+.hdr-nav-item:hover{color:var(--text);background:var(--s3);}
+.hdr-nav-item.on{color:var(--text);}
+
+.hdr-right{display:flex;align-items:center;gap:4px;flex-shrink:0;}
 .hicon{
-  width:38px;height:38px;border-radius:8px;
+  width:36px;height:36px;border-radius:8px;
   display:flex;align-items:center;justify-content:center;
   color:var(--sub);cursor:pointer;transition:all .15s;position:relative;
 }
 .hicon:hover{background:var(--s3);color:var(--text);}
 .hicon-badge{
-  position:absolute;top:4px;right:3px;
-  background:var(--accent);color:#fff;
-  font-size:8.5px;font-weight:700;
+  position:absolute;top:3px;right:2px;
+  background:var(--red);color:#fff;font-size:8px;font-weight:700;
   min-width:14px;height:14px;border-radius:7px;
+  display:flex;align-items:center;justify-content:center;padding:0 3px;
+  border:1.5px solid var(--s1);
+}
+.hdr-avatar{
+  width:32px;height:32px;border-radius:50%;
+  background:linear-gradient(135deg,var(--accent),#c94400);
   display:flex;align-items:center;justify-content:center;
-  padding:0 3px;border:1.5px solid var(--s1);
+  font-size:13px;font-weight:700;cursor:pointer;flex-shrink:0;margin-left:4px;
 }
 
-/* ── LAYOUT ── */
+/* LAYOUT */
 .layout{display:flex;flex:1;overflow:hidden;}
 
-/* ── SIDEBAR ── */
+/* SIDEBAR */
 .sidebar{
   width:var(--sidebar);flex-shrink:0;
   background:var(--s1);border-right:1px solid var(--b);
@@ -85,12 +110,17 @@ input{font-family:inherit;border:none;outline:none;background:none;}
 }
 .sidebar::-webkit-scrollbar{width:0;}
 .sb-nav{flex:1;padding:8px 0;}
+.nav-group-label{
+  font-size:10px;font-weight:600;letter-spacing:.8px;
+  color:var(--muted);text-transform:uppercase;
+  padding:14px 16px 4px;
+}
 .nav-item{
   display:flex;align-items:center;gap:10px;
   padding:9px 16px;cursor:pointer;
   font-size:13px;font-weight:500;color:var(--sub);
   transition:all .15s;position:relative;white-space:nowrap;
-  border-left:3px solid transparent;
+  border-left:2.5px solid transparent;
 }
 .nav-item:hover{color:var(--text);background:rgba(255,255,255,.04);}
 .nav-item.active{color:var(--accent);background:rgba(240,90,26,.07);border-left-color:var(--accent);}
@@ -98,270 +128,368 @@ input{font-family:inherit;border:none;outline:none;background:none;}
 .nav-item-label{flex:1;}
 .nav-item-chevron{color:var(--muted);transition:transform .2s;flex-shrink:0;}
 .nav-item.open .nav-item-chevron{transform:rotate(180deg);}
-.nav-sub{display:none;background:rgba(0,0,0,.15);}
+.nav-item-badge{
+  font-size:9.5px;font-weight:700;padding:1px 5px;border-radius:3px;
+  background:rgba(240,90,26,.18);color:var(--accent);flex-shrink:0;
+}
+.nav-sub{display:none;background:rgba(0,0,0,.1);}
 .nav-sub.open{display:block;}
 .nav-sub-item{
   display:flex;align-items:center;
-  padding:7px 16px 7px 42px;
+  padding:7px 16px 7px 44px;
   font-size:12.5px;color:var(--sub);cursor:pointer;
-  transition:all .15s;border-left:3px solid transparent;
+  transition:all .15s;border-left:2.5px solid transparent;
 }
 .nav-sub-item:hover{color:var(--text);}
 .nav-sub-item.active{color:var(--accent);border-left-color:var(--accent);}
 .nav-divider{height:1px;background:var(--b);margin:6px 0;}
+.sb-bottom{flex-shrink:0;border-top:1px solid var(--b);}
 .sb-user{
   display:flex;align-items:center;gap:10px;
-  padding:12px 16px;border-top:1px solid var(--b);
-  cursor:pointer;flex-shrink:0;
+  padding:12px 14px;cursor:pointer;
+  transition:background .15s;
 }
-.sb-user-avatar{
+.sb-user:hover{background:rgba(255,255,255,.03);}
+.sb-avatar{
   width:34px;height:34px;border-radius:50%;
-  background:var(--s3);border:2px solid var(--b2);
+  background:linear-gradient(135deg,var(--accent),#c94400);
   display:flex;align-items:center;justify-content:center;
-  font-size:13px;font-weight:700;color:var(--text);flex-shrink:0;
+  font-size:13px;font-weight:700;flex-shrink:0;
 }
-.sb-user-name{font-size:12px;font-weight:600;color:var(--text);}
-.sb-user-badge{
-  display:inline-flex;align-items:center;gap:3px;
-  background:rgba(240,90,26,.2);color:var(--accent);
-  font-size:10px;font-weight:700;padding:1px 6px;border-radius:3px;margin-top:2px;
+.sb-user-info{flex:1;min-width:0;}
+.sb-user-name{font-size:12.5px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sb-user-uid{font-size:10.5px;color:var(--sub);margin-top:1px;}
+.sb-vip{
+  display:inline-flex;align-items:center;
+  background:rgba(240,185,11,.15);color:var(--gold);
+  font-size:9.5px;font-weight:700;padding:1px 5px;border-radius:3px;
 }
-.sb-user-uid{font-size:10px;color:var(--sub);margin-top:1px;}
 
-/* ── MAIN ── */
-.main{flex:1;overflow-y:auto;overflow-x:hidden;padding:0;}
+/* MAIN */
+.main{flex:1;overflow-y:auto;overflow-x:hidden;}
 .main::-webkit-scrollbar{width:4px;}
 
-/* ── RIGHT PANEL ── */
+/* RIGHT PANEL */
 .rp{
   width:var(--rp);flex-shrink:0;
   background:var(--s1);border-left:1px solid var(--b);
-  overflow-y:auto;overflow-x:hidden;
+  overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;
 }
 .rp::-webkit-scrollbar{width:0;}
 
-/* ── PAGE HEADER ── */
-.page-hdr{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:20px 24px 16px;flex-wrap:wrap;gap:12px;
+/* ── TICKER STRIP ── */
+.ticker{
+  height:36px;background:var(--s2);border-bottom:1px solid var(--b);
+  overflow:hidden;display:flex;align-items:center;
 }
-.page-title{font-size:18px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:8px;}
-.page-title svg{color:var(--sub);}
-.action-btns{display:flex;align-items:center;gap:6px;}
-.abtn{
-  padding:7px 18px;border-radius:7px;font-size:13px;font-weight:600;
-  border:1px solid var(--b2);color:var(--text);transition:all .15s;
-}
-.abtn:hover{background:var(--s3);border-color:var(--b2);}
-.abtn.primary{background:var(--accent);border-color:var(--accent);color:#fff;}
-.abtn.primary:hover{opacity:.88;}
-.abtn-icon{
-  width:34px;height:34px;border-radius:7px;
-  border:1px solid var(--b2);color:var(--sub);
-  display:flex;align-items:center;justify-content:center;transition:all .15s;
-}
-.abtn-icon:hover{background:var(--s3);color:var(--text);}
-
-/* ── BALANCE ROW ── */
-.bal-row{display:flex;gap:1px;padding:0 24px;margin-bottom:16px;}
-.bal-card{background:var(--s1);border:1px solid var(--b);border-radius:12px;padding:16px 18px;transition:border-color .15s;}
-.bal-card:hover{border-color:var(--b2);}
-.bal-card-main{flex:1.4;position:relative;overflow:hidden;}
-.bal-card-sm{flex:1;}
-.bc-label{font-size:11px;color:var(--sub);display:flex;align-items:center;gap:5px;margin-bottom:8px;}
-.bc-label-right{margin-left:auto;display:flex;align-items:center;gap:4px;font-size:11px;color:var(--sub);cursor:pointer;}
-.bc-label-right svg{color:var(--sub);}
-.bc-val{font-size:22px;font-weight:700;color:var(--text);display:flex;align-items:baseline;gap:6px;line-height:1.2;}
-.bc-val-main{font-size:26px;}
-.bc-val-currency{font-size:14px;color:var(--sub);font-weight:500;}
-.bc-btc{font-size:11px;color:var(--sub);margin-top:4px;}
-.bc-pnl{font-size:11.5px;font-weight:600;margin-top:6px;}
-.bc-pos{color:var(--green);} .bc-neg{color:var(--red);}
-.bc-sparkline{position:absolute;right:0;top:0;bottom:0;width:120px;pointer-events:none;}
-.bc-sparkline canvas{position:absolute;bottom:0;right:0;}
-.bc-val-lg{font-size:18px;font-weight:700;color:var(--text);}
-
-/* bal row inner gaps */
-.bal-row{gap:8px;}
-
-/* ── CHARTS ROW ── */
-.charts-row{display:grid;grid-template-columns:1fr 1.3fr;gap:8px;padding:0 24px;margin-bottom:16px;}
-.chart-card{background:var(--s1);border:1px solid var(--b);border-radius:12px;padding:16px 18px;}
-.cc-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
-.cc-title{font-size:13.5px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:6px;}
-.cc-title svg{color:var(--sub);}
-.cc-right{display:flex;align-items:center;gap:8px;}
-.view-all{font-size:12px;color:var(--accent);cursor:pointer;font-weight:500;}
-.view-all:hover{text-decoration:underline;}
-.period-sel{
-  display:flex;align-items:center;gap:4px;
-  background:var(--s2);border:1px solid var(--b);
-  border-radius:6px;padding:3px 8px;
-  font-size:11.5px;color:var(--text);cursor:pointer;
-}
-
-/* donut */
-.donut-wrap{display:flex;align-items:center;gap:20px;}
-.donut-chart{position:relative;width:140px;height:140px;flex-shrink:0;}
-.donut-ring{width:140px;height:140px;border-radius:50%;background:conic-gradient(
-  #f05a1a 0% 45.23%,
-  #f0b90b 45.23% 70.58%,
-  #627eea 70.58% 82.93%,
-  #00d18c 82.93% 89.18%,
-  #346aa9 89.18% 93.53%,
-  #4a5568 93.53% 100%
-);position:relative;}
-.donut-ring::after{
-  content:'';position:absolute;inset:22%;
-  border-radius:50%;background:var(--s1);
-}
-.donut-center{
-  position:absolute;inset:22%;border-radius:50%;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  z-index:1;
-}
-.dc-label{font-size:9.5px;color:var(--sub);}
-.dc-val{font-size:11.5px;font-weight:700;color:var(--text);line-height:1.2;text-align:center;}
-.donut-legend{display:flex;flex-direction:column;gap:7px;flex:1;}
-.dl-item{display:flex;align-items:center;gap:7px;}
-.dl-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-.dl-name{font-size:11.5px;color:var(--sub);flex:1;}
-.dl-pct{font-size:11.5px;font-weight:600;color:var(--text);margin-right:8px;min-width:38px;}
-.dl-usd{font-size:11px;color:var(--sub);}
-
-/* pnl chart */
-.pnl-total{margin-bottom:12px;}
-.pnl-label{font-size:11px;color:var(--sub);margin-bottom:3px;}
-.pnl-val{font-size:20px;font-weight:700;color:var(--green);}
-.pnl-val-sub{font-size:12px;font-weight:500;color:var(--green);}
-.chart-canvas-wrap{position:relative;height:140px;}
-.chart-canvas-wrap canvas{position:absolute;inset:0;width:100% !important;height:100% !important;}
-.chart-x-labels{display:flex;justify-content:space-between;margin-top:4px;}
-.chart-x-lbl{font-size:9.5px;color:var(--sub);}
-
-/* ── ASSETS TABLE ── */
-.assets-section{padding:0 24px 24px;}
-.assets-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px;}
-.assets-title{font-size:14px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:6px;}
-.assets-title svg{color:var(--sub);}
-.assets-controls{display:flex;align-items:center;gap:12px;}
-.search-box{
-  display:flex;align-items:center;gap:6px;
-  background:var(--s2);border:1px solid var(--b);border-radius:7px;
-  padding:6px 10px;
-}
-.search-box input{font-size:12px;color:var(--text);width:130px;}
-.search-box input::placeholder{color:var(--sub);}
-.search-box svg{color:var(--sub);flex-shrink:0;}
-.hide-small{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--sub);cursor:pointer;}
-.hide-small input[type=checkbox]{accent-color:var(--accent);cursor:pointer;}
-
-.asset-tabs{display:flex;gap:0;border-bottom:1px solid var(--b);margin-bottom:0;}
-.at-tab{
-  padding:9px 16px;font-size:13px;font-weight:500;
-  color:var(--sub);cursor:pointer;border-bottom:2px solid transparent;
-  transition:all .15s;margin-bottom:-1px;
-}
-.at-tab.on{color:var(--accent);border-bottom-color:var(--accent);}
-.at-tab:hover:not(.on){color:var(--text);}
-
-.asset-table{width:100%;border-collapse:collapse;background:var(--s1);border:1px solid var(--b);border-radius:0 0 12px 12px;overflow:hidden;}
-.asset-table th{
-  font-size:11px;font-weight:600;letter-spacing:.4px;
-  color:var(--sub);text-transform:uppercase;
-  padding:10px 16px;text-align:left;
-  background:var(--s2);border-bottom:1px solid var(--b);
+.ticker-inner{
+  display:flex;align-items:center;gap:0;
+  animation:tickerScroll 30s linear infinite;
   white-space:nowrap;
 }
-.asset-table td{padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.04);font-size:13px;vertical-align:middle;}
-.asset-table tr:last-child td{border-bottom:none;}
-.asset-table tr:hover td{background:rgba(255,255,255,.02);}
-.coin-cell{display:flex;align-items:center;gap:10px;}
-.coin-icon{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;}
-.coin-name{font-size:13px;font-weight:600;color:var(--text);}
-.coin-full{font-size:11px;color:var(--sub);}
-.td-num{font-size:13px;color:var(--text);font-variant-numeric:tabular-nums;}
-.td-btc{font-size:11px;color:var(--sub);margin-top:2px;font-variant-numeric:tabular-nums;}
-.td-pos{color:var(--green);font-weight:600;}
-.td-neg{color:var(--red);font-weight:600;}
-.td-neutral{color:var(--sub);}
-.act-btns{display:flex;gap:10px;}
-.act-btn{font-size:12.5px;font-weight:500;color:var(--accent);cursor:pointer;transition:opacity .15s;}
-.act-btn:hover{opacity:.7;}
-.tbl-footer{
-  display:flex;align-items:center;justify-content:center;
-  padding:14px;border-top:1px solid var(--b);
-  font-size:13px;font-weight:600;color:var(--accent);cursor:pointer;
-  background:var(--s1);border-radius:0 0 12px 12px;
+.ticker-inner:hover{animation-play-state:paused;}
+.ticker-item{
+  display:flex;align-items:center;gap:6px;
+  padding:0 20px;border-right:1px solid var(--b);height:36px;cursor:pointer;
+  transition:background .15s;flex-shrink:0;
 }
-.tbl-footer:hover{background:var(--s2);}
+.ticker-item:hover{background:var(--s3);}
+.ticker-pair{font-size:12px;font-weight:600;color:var(--text);}
+.ticker-price{font-size:12px;font-family:var(--mono);color:var(--text);}
+.ticker-chg{font-size:11px;font-weight:600;}
+.ticker-up{color:var(--green);}
+.ticker-dn{color:var(--red);}
+@keyframes tickerScroll{
+  0%{transform:translateX(0);}
+  100%{transform:translateX(-50%);}
+}
 
-/* ── RIGHT PANEL INNER ── */
-.rp-section{padding:16px;border-bottom:1px solid var(--b);}
-.rp-title{font-size:13.5px;font-weight:700;color:var(--text);margin-bottom:14px;}
-.acct-rows{display:flex;flex-direction:column;gap:0;}
-.acct-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+/* ── WELCOME BANNER ── */
+.welcome{
+  margin:20px 20px 16px;
+  background:linear-gradient(120deg,#14181f 0%,#1a1f29 50%,rgba(240,90,26,.08) 100%);
+  border:1px solid var(--b);border-radius:14px;
+  padding:20px 24px;
+  display:flex;align-items:center;gap:20px;position:relative;overflow:hidden;
+}
+.welcome::before{
+  content:'';position:absolute;right:-60px;top:-60px;
+  width:260px;height:260px;border-radius:50%;
+  background:radial-gradient(circle,rgba(240,90,26,.12) 0%,transparent 70%);
+  pointer-events:none;
+}
+.wc-left{flex:1;min-width:0;}
+.wc-greet{font-size:13px;color:var(--sub);margin-bottom:4px;}
+.wc-name{font-size:20px;font-weight:700;color:var(--text);margin-bottom:12px;}
+.wc-balance-label{font-size:11px;color:var(--sub);margin-bottom:3px;}
+.wc-balance{font-size:30px;font-weight:800;color:var(--text);font-family:var(--mono);line-height:1;margin-bottom:4px;}
+.wc-balance span{font-size:16px;color:var(--sub);font-weight:500;margin-left:4px;}
+.wc-pnl{font-size:12.5px;font-weight:600;color:var(--green);display:flex;align-items:center;gap:4px;}
+.wc-actions{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;}
+.wc-btn{
+  padding:8px 20px;border-radius:8px;font-size:13px;font-weight:600;
+  transition:all .15s;border:none;
+}
+.wc-btn.primary{background:var(--accent);color:#fff;}
+.wc-btn.primary:hover{background:#c94400;}
+.wc-btn.outline{background:var(--s3);border:1px solid var(--b2);color:var(--text);}
+.wc-btn.outline:hover{border-color:var(--accent);color:var(--accent);}
+.wc-right{flex-shrink:0;}
+.wc-donut{position:relative;width:120px;height:120px;}
+.wc-donut-ring{
+  width:120px;height:120px;border-radius:50%;
+  background:conic-gradient(
+    #f05a1a 0% 45.23%, #f0b90b 45.23% 70.58%,
+    #627eea 70.58% 82.93%, #0ecb81 82.93% 89.18%,
+    #346aa9 89.18% 93.53%, #4a5568 93.53% 100%
+  );
+}
+.wc-donut-hole{
+  position:absolute;inset:20%;border-radius:50%;
+  background:#14181f;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+}
+.wcd-lbl{font-size:8.5px;color:var(--sub);}
+.wcd-val{font-size:10px;font-weight:700;color:var(--text);}
+
+/* ── STAT STRIP ── */
+.stat-strip{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:8px;margin:0 20px 16px;
+}
+.stat-card{
+  background:var(--s1);border:1px solid var(--b);border-radius:12px;
+  padding:14px 16px;transition:border-color .15s;
+}
+.stat-card:hover{border-color:var(--b2);}
+.sc-label{font-size:11px;color:var(--sub);display:flex;align-items:center;gap:5px;margin-bottom:6px;}
+.sc-val{font-size:18px;font-weight:700;font-family:var(--mono);color:var(--text);line-height:1.1;}
+.sc-sub{font-size:11px;color:var(--sub);margin-top:4px;}
+.sc-pos{color:var(--green);}
+.sc-neg{color:var(--red);}
+
+/* ── TWO-COL ── */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 20px 16px;}
+
+/* ── SECTION CARD ── */
+.sec-card{
+  background:var(--s1);border:1px solid var(--b);border-radius:12px;overflow:hidden;
+}
+.sec-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 16px 12px;border-bottom:1px solid var(--b);
+}
+.sec-title{font-size:13.5px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:6px;}
+.sec-title-sub{font-size:11px;color:var(--sub);font-weight:400;margin-left:4px;}
+.sec-link{font-size:12px;color:var(--accent);cursor:pointer;font-weight:500;}
+.sec-link:hover{text-decoration:underline;}
+.sec-tabs{display:flex;gap:0;padding:0 16px;}
+.sec-tab{
+  padding:8px 12px;font-size:12.5px;font-weight:500;color:var(--sub);
+  cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;
+  margin-bottom:0;
+}
+.sec-tab.on{color:var(--accent);border-bottom-color:var(--accent);}
+.sec-tab:hover:not(.on){color:var(--text);}
+
+/* ── WATCHLIST ── */
+.wl-row{
+  display:flex;align-items:center;padding:10px 16px;
+  border-bottom:1px solid rgba(255,255,255,.04);cursor:pointer;
+  transition:background .15s;
+}
+.wl-row:last-child{border-bottom:none;}
+.wl-row:hover{background:rgba(255,255,255,.03);}
+.wl-coin{display:flex;align-items:center;gap:8px;flex:1;}
+.wl-icon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
+.wl-name{font-size:13px;font-weight:600;color:var(--text);}
+.wl-pair{font-size:10.5px;color:var(--sub);}
+.wl-mid{flex:1;display:flex;justify-content:center;}
+.wl-spark{width:70px;height:28px;}
+.wl-right{text-align:right;}
+.wl-price{font-size:13px;font-weight:600;font-family:var(--mono);color:var(--text);}
+.wl-chg{font-size:11px;font-weight:600;margin-top:2px;}
+.wl-pos{color:var(--green);}
+.wl-neg{color:var(--red);}
+
+/* ── PORTFOLIO ALLOCATION ── */
+.alloc-wrap{padding:16px;}
+.alloc-donut{display:flex;align-items:center;gap:16px;margin-bottom:14px;}
+.alloc-ring-wrap{position:relative;width:110px;height:110px;flex-shrink:0;}
+.alloc-ring{width:110px;height:110px;border-radius:50%;background:conic-gradient(
+  #f05a1a 0% 45.23%, #f0b90b 45.23% 70.58%,
+  #627eea 70.58% 82.93%, #0ecb81 82.93% 89.18%,
+  #346aa9 89.18% 93.53%, #4a5568 93.53% 100%
+);}
+.alloc-ring::after{content:'';position:absolute;inset:20%;border-radius:50%;background:var(--s1);}
+.alloc-center{position:absolute;inset:20%;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:1;}
+.ac-lbl{font-size:8px;color:var(--sub);}
+.ac-val{font-size:9.5px;font-weight:700;color:var(--text);text-align:center;}
+.alloc-legend{flex:1;display:flex;flex-direction:column;gap:6px;}
+.al-row{display:flex;align-items:center;gap:7px;}
+.al-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.al-name{font-size:11.5px;color:var(--sub);flex:1;}
+.al-pct{font-size:11.5px;font-weight:600;color:var(--text);min-width:36px;}
+.al-usd{font-size:10.5px;color:var(--sub);}
+
+/* ── OPEN POSITIONS ── */
+.pos-table{width:100%;border-collapse:collapse;}
+.pos-table th{
+  font-size:10.5px;font-weight:600;letter-spacing:.4px;text-transform:uppercase;
+  color:var(--sub);padding:8px 14px;text-align:left;
+  background:var(--s2);border-bottom:1px solid var(--b);white-space:nowrap;
+}
+.pos-table td{
+  padding:11px 14px;border-bottom:1px solid rgba(255,255,255,.04);
+  font-size:12.5px;vertical-align:middle;
+}
+.pos-table tr:last-child td{border-bottom:none;}
+.pos-table tr:hover td{background:rgba(255,255,255,.02);}
+.pos-pair{font-size:13px;font-weight:600;color:var(--text);}
+.pos-type{font-size:10px;font-weight:700;padding:2px 6px;border-radius:3px;margin-top:2px;display:inline-block;}
+.pos-long{background:rgba(14,203,129,.15);color:var(--green);}
+.pos-short{background:rgba(246,70,93,.15);color:var(--red);}
+.pos-num{font-family:var(--mono);font-size:12.5px;color:var(--text);}
+.pos-pos{color:var(--green);font-family:var(--mono);font-weight:600;}
+.pos-neg{color:var(--red);font-family:var(--mono);font-weight:600;}
+.pos-close{
+  font-size:11.5px;font-weight:600;color:var(--sub);
+  padding:4px 10px;border:1px solid var(--b2);border-radius:5px;cursor:pointer;
+  transition:all .15s;
+}
+.pos-close:hover{border-color:var(--red);color:var(--red);}
+.empty-state{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:32px 20px;gap:8px;
+}
+.empty-icon{color:var(--muted);margin-bottom:4px;}
+.empty-text{font-size:13px;color:var(--sub);}
+.empty-link{font-size:13px;font-weight:600;color:var(--accent);cursor:pointer;}
+.empty-link:hover{text-decoration:underline;}
+
+/* ── MARKET MOVERS ── */
+.movers-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--b);}
+.movers-col{background:var(--s1);padding:12px;}
+.movers-head{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px;display:flex;align-items:center;gap:5px;}
+.movers-up{color:var(--green);}
+.movers-dn{color:var(--red);}
+.mover-row{display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.mover-row:last-child{border-bottom:none;}
+.mover-name{font-size:12.5px;font-weight:600;color:var(--text);}
+.mover-price{font-size:11px;color:var(--sub);font-family:var(--mono);margin-top:1px;}
+.mover-chg{font-size:12.5px;font-weight:700;}
+.mover-pos{color:var(--green);}
+.mover-neg{color:var(--red);}
+
+/* ── FULL-WIDTH SECTIONS ── */
+.full-sec{margin:0 20px 16px;}
+
+/* ── ANNOUNCEMENTS ── */
+.announce-strip{
+  display:flex;align-items:center;gap:10px;
+  background:var(--s1);border:1px solid var(--b);border-radius:10px;
+  padding:10px 16px;margin:0 20px 12px;cursor:pointer;
+  transition:border-color .15s;
+}
+.announce-strip:hover{border-color:var(--b2);}
+.announce-badge{
+  background:rgba(240,90,26,.15);color:var(--accent);
+  font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;flex-shrink:0;
+}
+.announce-text{font-size:12.5px;color:var(--sub);flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+.announce-arr{color:var(--sub);}
+
+/* ── RIGHT PANEL ── */
+.rp-block{padding:16px;border-bottom:1px solid var(--b);}
+.rp-block:last-child{border-bottom:none;}
+.rp-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;}
+.rp-title span{font-size:12px;color:var(--accent);cursor:pointer;font-weight:500;}
+.rp-title span:hover{text-decoration:underline;}
+
+/* account summary */
+.acct-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);}
 .acct-row:last-child{border-bottom:none;}
-.acct-row-left{display:flex;align-items:center;gap:8px;}
-.acct-icon{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;}
+.acct-left{display:flex;align-items:center;gap:8px;}
+.acct-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .acct-name{font-size:12px;color:var(--sub);}
-.acct-val{font-size:12.5px;font-weight:600;color:var(--text);text-align:right;}
-.acct-val-usd{font-size:10px;color:var(--sub);text-align:right;}
-.acct-total-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0 0;margin-top:4px;border-top:1px solid var(--b);}
+.acct-name b{font-weight:500;}
+.acct-val{font-size:12.5px;font-weight:600;font-family:var(--mono);color:var(--text);}
+.acct-usd{font-size:10px;color:var(--sub);text-align:right;margin-top:1px;}
+.acct-total{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-top:8px;padding-top:8px;border-top:1px solid var(--b);
+}
 .acct-total-lbl{font-size:12.5px;font-weight:700;color:var(--text);}
-.acct-total-val{font-size:13px;font-weight:700;color:var(--text);}
+.acct-total-val{font-size:13px;font-weight:700;color:var(--text);font-family:var(--mono);}
 
 /* quick actions */
 .qa-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
 .qa-item{
-  display:flex;flex-direction:column;align-items:center;gap:6px;
+  display:flex;flex-direction:column;align-items:center;gap:5px;
   background:var(--s2);border:1px solid var(--b);border-radius:10px;
   padding:10px 6px;cursor:pointer;transition:all .15s;
 }
 .qa-item:hover{border-color:var(--accent);background:rgba(240,90,26,.06);}
-.qa-icon{
-  width:34px;height:34px;border-radius:9px;
-  display:flex;align-items:center;justify-content:center;
-}
-.qa-lbl{font-size:10.5px;font-weight:600;color:var(--text);}
+.qa-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;}
+.qa-lbl{font-size:10px;font-weight:600;color:var(--text);text-align:center;}
 
 /* recent tx */
-.rtx-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
-.rtx-title{font-size:13.5px;font-weight:700;color:var(--text);}
-.rtx-view{font-size:12px;color:var(--accent);cursor:pointer;}
 .rtx-item{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.04);}
 .rtx-item:last-child{border-bottom:none;}
-.rtx-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.rtx-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .rtx-info{flex:1;min-width:0;}
-.rtx-type{font-size:12px;font-weight:600;color:var(--text);}
+.rtx-type{font-size:12.5px;font-weight:600;color:var(--text);}
 .rtx-sub{font-size:10.5px;color:var(--sub);margin-top:1px;}
 .rtx-right{text-align:right;}
-.rtx-amt{font-size:12px;font-weight:700;}
-.rtx-date{font-size:10px;color:var(--sub);margin-top:1px;}
-.rtx-view-all{
+.rtx-amt{font-size:12.5px;font-weight:700;font-family:var(--mono);}
+.rtx-date{font-size:10px;color:var(--sub);margin-top:2px;}
+.rtx-pos{color:var(--green);}
+.rtx-neg{color:var(--red);}
+.view-all-btn{
   display:flex;align-items:center;justify-content:center;
-  padding:10px 0;font-size:12.5px;font-weight:600;color:var(--accent);cursor:pointer;
+  padding:10px;font-size:12.5px;font-weight:600;color:var(--accent);cursor:pointer;
+  border-top:1px solid var(--b);margin-top:4px;
 }
-.rtx-view-all:hover{text-decoration:underline;}
+.view-all-btn:hover{text-decoration:underline;}
 
-/* ── MOBILE ── */
-@media(max-width:1024px){
-  :root{--rp:248px;}
-  .charts-row{grid-template-columns:1fr;}
-  .bc-sparkline{display:none;}
+/* level progress */
+.vip-bar-wrap{margin-top:10px;}
+.vip-bar-label{display:flex;justify-content:space-between;font-size:11px;color:var(--sub);margin-bottom:5px;}
+.vip-bar-track{height:4px;background:var(--s3);border-radius:2px;overflow:hidden;}
+.vip-bar-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--accent),#f0b90b);}
+.vip-info{display:flex;align-items:center;justify-content:space-between;margin-top:6px;}
+.vip-badge{
+  display:inline-flex;align-items:center;gap:4px;
+  background:rgba(240,185,11,.12);color:var(--gold);
+  font-size:11px;font-weight:700;padding:3px 8px;border-radius:5px;
 }
-@media(max-width:820px){
+.vip-next{font-size:10.5px;color:var(--sub);}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1200px){
+  :root{--rp:270px;}
+  .stat-strip{grid-template-columns:repeat(2,1fr);}
+  .hdr-nav{display:none;}
+}
+@media(max-width:900px){
   .sidebar{display:none;}
   .rp{display:none;}
-  .bal-row{flex-direction:column;}
-  .bal-card-main,.bal-card-sm{flex:none;width:100%;}
-  .charts-row{grid-template-columns:1fr;}
-  .action-btns .abtn:not(.primary):not(.abtn-icon){display:none;}
+  .two-col{grid-template-columns:1fr;}
+  :root{--rp:0px;}
 }
-@media(max-width:480px){
-  .page-hdr{padding:14px 14px 10px;}
-  .bal-row,.charts-row,.assets-section{padding-left:14px;padding-right:14px;}
-  .at-tab{padding:8px 10px;font-size:12px;}
+@media(max-width:640px){
+  .main{font-size:13px;}
+  .welcome{flex-direction:column;gap:14px;padding:16px;}
+  .wc-right{display:none;}
+  .wc-balance{font-size:24px;}
+  .stat-strip{grid-template-columns:1fr 1fr;}
+  .wc-actions{gap:6px;}
+  .wc-btn{padding:7px 14px;font-size:12.5px;}
+  .two-col{margin:0 12px 12px;}
+  .full-sec{margin:0 12px 12px;}
+  .announce-strip{margin:0 12px 10px;}
+  .stat-strip{margin:0 12px 12px;}
+  .welcome{margin:12px 12px 12px;}
 }
 </style>
 </head>
@@ -370,30 +498,38 @@ input{font-family:inherit;border:none;outline:none;background:none;}
 
 <!-- HEADER -->
 <header class="hdr">
-  <div class="hdr-logo">
+  <div class="hdr-logo-wrap">
     <img src="assets/logo.png" alt="SpeedVerse Markets"/>
   </div>
   <div class="hdr-hamburger" onclick="toggleSidebar()">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
   </div>
-  <div class="hdr-spacer"></div>
-  <div class="hdr-icons">
+  <div class="hdr-search">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--sub)" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="text" placeholder="Search coins, pairs, pages…"/>
+    <span style="font-size:10.5px;color:var(--muted);background:var(--s3);padding:1px 6px;border-radius:4px;flex-shrink:0;">/</span>
+  </div>
+  <div class="hdr-nav">
+    <div class="hdr-nav-item on">Dashboard</div>
+    <div class="hdr-nav-item">Buy Crypto</div>
+    <div class="hdr-nav-item">Markets</div>
+    <div class="hdr-nav-item">Trade ▾</div>
+    <div class="hdr-nav-item">Derivatives ▾</div>
+    <div class="hdr-nav-item">Earn ▾</div>
+    <div class="hdr-nav-item">Copy Trading</div>
+  </div>
+  <div class="hdr-right">
     <div class="hicon">
-      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-    </div>
-    <div class="hicon" style="position:relative;">
       <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-      <span class="hicon-badge">12</span>
-    </div>
-    <div class="hicon">
-      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      <span class="hicon-badge">3</span>
     </div>
     <div class="hicon">
       <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
     </div>
     <div class="hicon">
-      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
     </div>
+    <div class="hdr-avatar">S</div>
   </div>
 </header>
 
@@ -403,12 +539,17 @@ input{font-family:inherit;border:none;outline:none;background:none;}
 <aside class="sidebar" id="sidebar">
   <nav class="sb-nav">
 
-    <div class="nav-item" onclick="navTo(this,'index.html')">
+    <div class="nav-item active">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
       <span class="nav-item-label">Dashboard</span>
     </div>
 
-    <div class="nav-item" onclick="navTo(this,'markets/forex.html')">
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <span class="nav-item-label">Buy Crypto</span>
+    </div>
+
+    <div class="nav-item">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
       <span class="nav-item-label">Markets</span>
     </div>
@@ -416,82 +557,74 @@ input{font-family:inherit;border:none;outline:none;background:none;}
     <div class="nav-item" onclick="toggleSub(this,'trade-sub')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg>
       <span class="nav-item-label">Trade</span>
-      <svg class="nav-item-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"/></svg>
+      <svg class="nav-item-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6,9 12,15 18,9"/></svg>
     </div>
     <div class="nav-sub" id="trade-sub">
       <div class="nav-sub-item">Spot</div>
-      <div class="nav-sub-item" onclick="window.location='dashboard.html'">Derivatives</div>
-      <div class="nav-sub-item">Copy Trading</div>
+      <div class="nav-sub-item">Margin</div>
+      <div class="nav-sub-item">Convert</div>
     </div>
 
     <div class="nav-item" onclick="toggleSub(this,'deriv-sub')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
       <span class="nav-item-label">Derivatives</span>
-      <svg class="nav-item-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"/></svg>
+      <svg class="nav-item-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6,9 12,15 18,9"/></svg>
     </div>
     <div class="nav-sub" id="deriv-sub">
       <div class="nav-sub-item">USDT Perpetual</div>
       <div class="nav-sub-item">Inverse Perpetual</div>
       <div class="nav-sub-item">Futures</div>
+      <div class="nav-sub-item">Options</div>
     </div>
 
     <div class="nav-item" onclick="toggleSub(this,'earn-sub')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 0v10l5 3"/></svg>
       <span class="nav-item-label">Earn</span>
-      <svg class="nav-item-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"/></svg>
+      <svg class="nav-item-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6,9 12,15 18,9"/></svg>
     </div>
     <div class="nav-sub" id="earn-sub">
       <div class="nav-sub-item">Flexible Savings</div>
+      <div class="nav-sub-item">Fixed Term</div>
       <div class="nav-sub-item">Staking</div>
       <div class="nav-sub-item">Dual Asset</div>
     </div>
 
     <div class="nav-item">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26 12,2"/></svg>
-      <span class="nav-item-label">NFT</span>
-    </div>
-
-    <div class="nav-item">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       <span class="nav-item-label">Copy Trading</span>
+      <span class="nav-item-badge">NEW</span>
     </div>
 
     <div class="nav-divider"></div>
+    <div class="nav-group-label">Finance</div>
 
-    <div class="nav-item open active" onclick="toggleSub(this,'assets-sub')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/></svg>
+    <div class="nav-item" onclick="toggleSub(this,'assets-sub')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
       <span class="nav-item-label">Assets</span>
-      <svg class="nav-item-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"/></svg>
+      <svg class="nav-item-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6,9 12,15 18,9"/></svg>
     </div>
-    <div class="nav-sub open" id="assets-sub">
-      <div class="nav-sub-item active">Overview</div>
+    <div class="nav-sub" id="assets-sub">
+      <div class="nav-sub-item" onclick="window.location='assets.html'">Overview</div>
       <div class="nav-sub-item">Spot</div>
       <div class="nav-sub-item">Derivatives</div>
       <div class="nav-sub-item">Funding</div>
       <div class="nav-sub-item">Earn</div>
-      <div class="nav-sub-item">Copy Trading</div>
     </div>
 
     <div class="nav-item" onclick="toggleSub(this,'orders-sub')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
       <span class="nav-item-label">Orders</span>
-      <svg class="nav-item-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"/></svg>
+      <svg class="nav-item-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6,9 12,15 18,9"/></svg>
     </div>
     <div class="nav-sub" id="orders-sub">
       <div class="nav-sub-item">Open Orders</div>
       <div class="nav-sub-item">Order History</div>
       <div class="nav-sub-item">Trade History</div>
+      <div class="nav-sub-item">Transaction Log</div>
     </div>
 
-    <div class="nav-item" onclick="toggleSub(this,'tools-sub')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
-      <span class="nav-item-label">Tools</span>
-      <svg class="nav-item-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"/></svg>
-    </div>
-    <div class="nav-sub" id="tools-sub">
-      <div class="nav-sub-item">API Management</div>
-      <div class="nav-sub-item">Trading Bot</div>
-    </div>
+    <div class="nav-divider"></div>
+    <div class="nav-group-label">Account</div>
 
     <div class="nav-item">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
@@ -499,23 +632,24 @@ input{font-family:inherit;border:none;outline:none;background:none;}
     </div>
 
     <div class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <span class="nav-item-label">Security</span>
+    </div>
+
+    <div class="nav-item">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
       <span class="nav-item-label">Affiliate</span>
     </div>
 
-    <div class="nav-item">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-      <span class="nav-item-label">Account & Security</span>
-    </div>
-
   </nav>
 
-  <div class="sb-user">
-    <div class="sb-user-avatar">S</div>
-    <div>
-      <div class="sb-user-name">SpeedVerse User</div>
-      <div class="sb-user-badge">⭐ VIP 3</div>
-      <div class="sb-user-uid">UID: 92847362</div>
+  <div class="sb-bottom">
+    <div class="sb-user">
+      <div class="sb-avatar">S</div>
+      <div class="sb-user-info">
+        <div class="sb-user-name">SpeedVerse User</div>
+        <div class="sb-user-uid">UID: 92847362 &nbsp;<span class="sb-vip">VIP 3</span></div>
+      </div>
     </div>
   </div>
 </aside>
@@ -523,222 +657,349 @@ input{font-family:inherit;border:none;outline:none;background:none;}
 <!-- MAIN -->
 <main class="main">
 
-  <!-- Page Header -->
-  <div class="page-hdr">
-    <div class="page-title">
-      Assets Overview
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-    </div>
-    <div class="action-btns">
-      <button class="abtn primary">Deposit</button>
-      <button class="abtn">Withdraw</button>
-      <button class="abtn">Transfer</button>
-      <button class="abtn">Convert</button>
-      <button class="abtn">History</button>
-      <button class="abtn-icon">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-      </button>
+  <!-- Ticker -->
+  <div class="ticker">
+    <div class="ticker-inner" id="ticker">
+      <!-- items injected by JS, doubled for seamless loop -->
     </div>
   </div>
 
-  <!-- Balance Row -->
-  <div class="bal-row">
-    <!-- Total Balance (main) -->
-    <div class="bal-card bal-card-main">
-      <div class="bc-label">
-        Total Balance
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-        <div class="bc-label-right">
-          24H
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"/></svg>
+  <!-- Announcement -->
+  <div class="announce-strip">
+    <span class="announce-badge">NEW</span>
+    <span class="announce-text">SpeedVerse Earn: Earn up to 18% APR on USDT Flexible Savings — No lock-up required. Start earning today.</span>
+    <svg class="announce-arr" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9,18 15,12 9,6"/></svg>
+  </div>
+
+  <!-- Welcome Banner -->
+  <div class="welcome">
+    <div class="wc-left">
+      <div class="wc-greet">Good day,</div>
+      <div class="wc-name">SpeedVerse User 👋</div>
+      <div class="wc-balance-label">Total Portfolio Value</div>
+      <div class="wc-balance" id="wc-bal">125,847.32 <span>USD</span></div>
+      <div class="wc-pnl">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="18,15 12,9 6,15"/></svg>
+        +2,458.62 USD &nbsp;(+2.00%) Today
+      </div>
+      <div class="wc-actions">
+        <button class="wc-btn primary">Deposit</button>
+        <button class="wc-btn outline">Withdraw</button>
+        <button class="wc-btn outline">Transfer</button>
+        <button class="wc-btn outline">Buy Crypto</button>
+      </div>
+    </div>
+    <div class="wc-right">
+      <div class="wc-donut">
+        <div class="wc-donut-ring"></div>
+        <div class="wc-donut-hole">
+          <div class="wcd-lbl">Assets</div>
+          <div class="wcd-val">6 coins</div>
         </div>
       </div>
-      <div class="bc-val">
-        <span class="bc-val-main" id="bal-main">125,847.32</span>
-        <span class="bc-val-currency">USD</span>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--sub)" stroke-width="2" style="margin-left:2px;"><polyline points="6,9 12,15 18,9"/></svg>
-      </div>
-      <div class="bc-btc">≈ 2.15213428 BTC</div>
-      <div class="bc-pnl bc-pos">Today's PnL&nbsp;&nbsp;+2,458.62 USD (+2.00%)</div>
-      <div class="bc-sparkline"><canvas id="sparkline" width="120" height="60"></canvas></div>
-    </div>
-    <!-- Available -->
-    <div class="bal-card bal-card-sm">
-      <div class="bc-label">Available Balance <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
-      <div class="bc-val-lg">86,732.59 <span style="font-size:12px;color:var(--sub);font-weight:500;">USD</span></div>
-      <div class="bc-btc">≈ 1.48215209 BTC</div>
-    </div>
-    <!-- Margin -->
-    <div class="bal-card bal-card-sm">
-      <div class="bc-label">Margin Balance</div>
-      <div class="bc-val-lg">37,981.21 <span style="font-size:12px;color:var(--sub);font-weight:500;">USD</span></div>
-      <div class="bc-btc">≈ 0.64998219 BTC</div>
-    </div>
-    <!-- Unrealized PnL -->
-    <div class="bal-card bal-card-sm">
-      <div class="bc-label">Unrealized PnL <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6,9 12,15 18,9"/></svg></div>
-      <div class="bc-val-lg bc-pos">+3,245.67 <span style="font-size:12px;font-weight:500;">USD</span></div>
-      <div class="bc-btc bc-pos">(+2.66%)</div>
-    </div>
-    <!-- Equity -->
-    <div class="bal-card bal-card-sm">
-      <div class="bc-label">Equity</div>
-      <div class="bc-val-lg">128,692.99 <span style="font-size:12px;color:var(--sub);font-weight:500;">USD</span></div>
-      <div class="bc-btc">≈ 2.19521428 BTC</div>
     </div>
   </div>
 
-  <!-- Charts Row -->
-  <div class="charts-row">
-    <!-- Asset Allocation -->
-    <div class="chart-card">
-      <div class="cc-head">
-        <div class="cc-title">
-          Asset Allocation
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-        </div>
-        <span class="view-all">View All</span>
+  <!-- Stats Strip -->
+  <div class="stat-strip">
+    <div class="stat-card">
+      <div class="sc-label">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg>
+        Today's PnL
       </div>
-      <div class="donut-wrap">
-        <div class="donut-chart">
-          <div class="donut-ring">
-            <div class="donut-center">
-              <div class="dc-label">Total</div>
-              <div class="dc-val">125,847.32<br/>USD</div>
+      <div class="sc-val sc-pos">+$2,458.62</div>
+      <div class="sc-sub sc-pos">▲ 2.00% from yesterday</div>
+    </div>
+    <div class="stat-card">
+      <div class="sc-label">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        Open Positions
+      </div>
+      <div class="sc-val">4</div>
+      <div class="sc-sub">Derivatives • Unrealized <span class="sc-pos">+$3,245.67</span></div>
+    </div>
+    <div class="stat-card">
+      <div class="sc-label">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        Open Orders
+      </div>
+      <div class="sc-val">7</div>
+      <div class="sc-sub">3 Spot &nbsp;•&nbsp; 4 Derivatives</div>
+    </div>
+    <div class="stat-card">
+      <div class="sc-label">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
+        30D Volume
+      </div>
+      <div class="sc-val">$2.41M</div>
+      <div class="sc-sub">Rank <span style="color:var(--gold);">Gold</span> Trader</div>
+    </div>
+  </div>
+
+  <!-- Two column: Watchlist + Portfolio -->
+  <div class="two-col">
+
+    <!-- Watchlist -->
+    <div class="sec-card">
+      <div class="sec-head">
+        <div class="sec-title">
+          Watchlist
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26 12,2"/></svg>
+        </div>
+        <span class="sec-link">Edit List</span>
+      </div>
+      <div style="display:flex;border-bottom:1px solid var(--b);">
+        <div class="sec-tab on" onclick="secTab(this)">Favourites</div>
+        <div class="sec-tab" onclick="secTab(this)">Spot</div>
+        <div class="sec-tab" onclick="secTab(this)">Futures</div>
+      </div>
+      <div id="watchlist-rows"></div>
+    </div>
+
+    <!-- Portfolio Allocation -->
+    <div class="sec-card">
+      <div class="sec-head">
+        <div class="sec-title">Portfolio Allocation</div>
+        <span class="sec-link" onclick="window.location='assets.html'">View Assets</span>
+      </div>
+      <div class="alloc-wrap">
+        <div class="alloc-donut">
+          <div class="alloc-ring-wrap">
+            <div class="alloc-ring"></div>
+            <div class="alloc-center">
+              <div class="ac-lbl">Total</div>
+              <div class="ac-val">$125,847</div>
             </div>
           </div>
+          <div class="alloc-legend">
+            <div class="al-row"><div class="al-dot" style="background:#f05a1a;"></div><div class="al-name">USDT</div><div class="al-pct">45.2%</div><div class="al-usd">$56,918</div></div>
+            <div class="al-row"><div class="al-dot" style="background:#f0b90b;"></div><div class="al-name">BTC</div><div class="al-pct">25.3%</div><div class="al-usd">$31,880</div></div>
+            <div class="al-row"><div class="al-dot" style="background:#627eea;"></div><div class="al-name">ETH</div><div class="al-pct">12.4%</div><div class="al-usd">$15,534</div></div>
+            <div class="al-row"><div class="al-dot" style="background:#0ecb81;"></div><div class="al-name">SOL</div><div class="al-pct">6.2%</div><div class="al-usd">$7,859</div></div>
+            <div class="al-row"><div class="al-dot" style="background:#346aa9;"></div><div class="al-name">XRP</div><div class="al-pct">4.3%</div><div class="al-usd">$5,474</div></div>
+            <div class="al-row"><div class="al-dot" style="background:#4a5568;"></div><div class="al-name">Others</div><div class="al-pct">6.6%</div><div class="al-usd">$8,182</div></div>
+          </div>
         </div>
-        <div class="donut-legend">
-          <div class="dl-item"><div class="dl-dot" style="background:#f05a1a;"></div><div class="dl-name">USDT</div><div class="dl-pct">45.23%</div><div class="dl-usd">56,918.35 USD</div></div>
-          <div class="dl-item"><div class="dl-dot" style="background:#f0b90b;"></div><div class="dl-name">BTC</div><div class="dl-pct">25.35%</div><div class="dl-usd">31,880.47 USD</div></div>
-          <div class="dl-item"><div class="dl-dot" style="background:#627eea;"></div><div class="dl-name">ETH</div><div class="dl-pct">12.35%</div><div class="dl-usd">15,534.12 USD</div></div>
-          <div class="dl-item"><div class="dl-dot" style="background:#00d18c;"></div><div class="dl-name">SOL</div><div class="dl-pct">6.25%</div><div class="dl-usd">7,859.25 USD</div></div>
-          <div class="dl-item"><div class="dl-dot" style="background:#346aa9;"></div><div class="dl-name">XRP</div><div class="dl-pct">4.35%</div><div class="dl-usd">5,474.32 USD</div></div>
-          <div class="dl-item"><div class="dl-dot" style="background:#4a5568;"></div><div class="dl-name">Others</div><div class="dl-pct">6.47%</div><div class="dl-usd">8,180.81 USD</div></div>
+        <!-- PnL mini canvas -->
+        <div style="border-top:1px solid var(--b);padding-top:12px;margin-top:4px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+            <span style="font-size:12px;color:var(--sub);">7-Day PnL</span>
+            <span style="font-size:13px;font-weight:700;color:var(--green);">+$6,732.59 <span style="font-size:11px;">(+5.63%)</span></span>
+          </div>
+          <div style="position:relative;height:70px;">
+            <canvas id="pnl-mini" style="position:absolute;inset:0;width:100% !important;height:100% !important;"></canvas>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:4px;">
+            <span style="font-size:9.5px;color:var(--sub);">May 19</span>
+            <span style="font-size:9.5px;color:var(--sub);">May 22</span>
+            <span style="font-size:9.5px;color:var(--sub);">May 25</span>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- PnL Overview -->
-    <div class="chart-card">
-      <div class="cc-head">
-        <div class="cc-title">
-          PnL Overview
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+  </div>
+
+  <!-- Open Positions -->
+  <div class="full-sec">
+    <div class="sec-card">
+      <div class="sec-head">
+        <div class="sec-title">
+          Open Positions
+          <span class="sec-title-sub">4 active</span>
         </div>
-        <div class="period-sel">
-          7D
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"/></svg>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <span style="font-size:12px;color:var(--sub);">Unrealized PnL: <span style="color:var(--green);font-weight:600;">+$3,245.67</span></span>
+          <span class="sec-link">View All →</span>
         </div>
       </div>
-      <div class="pnl-total">
-        <div class="pnl-label">Total PnL</div>
-        <div><span class="pnl-val">+6,732.59 </span><span class="pnl-val-sub">USD (+5.63%)</span></div>
-      </div>
-      <div class="chart-canvas-wrap">
-        <canvas id="pnl-chart"></canvas>
-      </div>
-      <div class="chart-x-labels">
-        <span class="chart-x-lbl">May 16</span>
-        <span class="chart-x-lbl">May 17</span>
-        <span class="chart-x-lbl">May 18</span>
-        <span class="chart-x-lbl">May 19</span>
-        <span class="chart-x-lbl">May 20</span>
-        <span class="chart-x-lbl">May 21</span>
-        <span class="chart-x-lbl">May 22</span>
+      <div style="overflow-x:auto;">
+        <table class="pos-table">
+          <thead>
+            <tr>
+              <th>Contract</th>
+              <th>Size</th>
+              <th>Entry Price</th>
+              <th>Mark Price</th>
+              <th>Liq. Price</th>
+              <th>Margin</th>
+              <th>Unrealized PnL</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><div class="pos-pair">BTCUSDT</div><div><span class="pos-type pos-long">LONG 10x</span></div></td>
+              <td><div class="pos-num">0.5 BTC</div><div style="font-size:10.5px;color:var(--sub);">$29,412.50</div></td>
+              <td><div class="pos-num">58,240.00</div></td>
+              <td><div class="pos-num">58,825.00</div></td>
+              <td><div class="pos-num" style="color:var(--red);">52,416.00</div></td>
+              <td><div class="pos-num">2,941.25</div></td>
+              <td><div class="pos-pos">+$292.50</div><div style="font-size:10.5px;color:var(--green);">+0.99%</div></td>
+              <td><button class="pos-close">Close</button></td>
+            </tr>
+            <tr>
+              <td><div class="pos-pair">ETHUSDT</div><div><span class="pos-type pos-long">LONG 5x</span></div></td>
+              <td><div class="pos-num">4.0 ETH</div><div style="font-size:10.5px;color:var(--sub);">$14,940.00</div></td>
+              <td><div class="pos-num">3,620.00</div></td>
+              <td><div class="pos-num">3,735.00</div></td>
+              <td><div class="pos-num" style="color:var(--red);">3,258.00</div></td>
+              <td><div class="pos-num">2,988.00</div></td>
+              <td><div class="pos-pos">+$460.00</div><div style="font-size:10.5px;color:var(--green);">+3.18%</div></td>
+              <td><button class="pos-close">Close</button></td>
+            </tr>
+            <tr>
+              <td><div class="pos-pair">SOLUSDT</div><div><span class="pos-type pos-short">SHORT 3x</span></div></td>
+              <td><div class="pos-num">50 SOL</div><div style="font-size:10.5px;color:var(--sub);">$9,950.00</div></td>
+              <td><div class="pos-num">202.40</div></td>
+              <td><div class="pos-num">199.00</div></td>
+              <td><div class="pos-num" style="color:var(--red);">224.88</div></td>
+              <td><div class="pos-num">3,316.67</div></td>
+              <td><div class="pos-pos">+$170.00</div><div style="font-size:10.5px;color:var(--green);">+1.68%</div></td>
+              <td><button class="pos-close">Close</button></td>
+            </tr>
+            <tr>
+              <td><div class="pos-pair">XRPUSDT</div><div><span class="pos-type pos-long">LONG 2x</span></div></td>
+              <td><div class="pos-num">5,000 XRP</div><div style="font-size:10.5px;color:var(--sub);">$2,195.00</div></td>
+              <td><div class="pos-num">0.4260</div></td>
+              <td><div class="pos-num">0.4390</div></td>
+              <td><div class="pos-num" style="color:var(--red);">0.3834</div></td>
+              <td><div class="pos-num">1,097.50</div></td>
+              <td><div class="pos-pos">+$65.00</div><div style="font-size:10.5px;color:var(--green);">+3.05%</div></td>
+              <td><button class="pos-close">Close</button></td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
 
-  <!-- My Assets -->
-  <div class="assets-section">
-    <div class="assets-head">
-      <div class="assets-title">
-        My Assets
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-      </div>
-      <div class="assets-controls">
-        <div class="search-box">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input type="text" placeholder="Search"/>
+  <!-- Market Movers + Recent Orders -->
+  <div class="two-col" style="margin-bottom:20px;">
+
+    <!-- Market Movers -->
+    <div class="sec-card">
+      <div class="sec-head">
+        <div class="sec-title">Market Movers</div>
+        <div style="display:flex;gap:0;">
+          <div class="sec-tab on" onclick="secTab(this)" style="padding:0 10px;border-bottom:none;font-size:12px;">24H</div>
+          <div class="sec-tab" onclick="secTab(this)" style="padding:0 10px;border-bottom:none;font-size:12px;">7D</div>
         </div>
-        <label class="hide-small"><input type="checkbox"/> Hide Small Balances</label>
+      </div>
+      <div class="movers-grid">
+        <div class="movers-col">
+          <div class="movers-head movers-up">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="18,15 12,9 6,15"/></svg>
+            Top Gainers
+          </div>
+          <div class="mover-row">
+            <div><div class="mover-name">PEPE</div><div class="mover-price">$0.00002241</div></div>
+            <div class="mover-chg mover-pos">+34.81%</div>
+          </div>
+          <div class="mover-row">
+            <div><div class="mover-name">WIF</div><div class="mover-price">$1.8345</div></div>
+            <div class="mover-chg mover-pos">+21.44%</div>
+          </div>
+          <div class="mover-row">
+            <div><div class="mover-name">BONK</div><div class="mover-price">$0.00003128</div></div>
+            <div class="mover-chg mover-pos">+18.72%</div>
+          </div>
+          <div class="mover-row">
+            <div><div class="mover-name">APT</div><div class="mover-price">$8.4210</div></div>
+            <div class="mover-chg mover-pos">+14.30%</div>
+          </div>
+          <div class="mover-row">
+            <div><div class="mover-name">SUI</div><div class="mover-price">$3.9812</div></div>
+            <div class="mover-chg mover-pos">+11.55%</div>
+          </div>
+        </div>
+        <div class="movers-col" style="border-left:1px solid var(--b);">
+          <div class="movers-head movers-dn">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6,9 12,15 18,9"/></svg>
+            Top Losers
+          </div>
+          <div class="mover-row">
+            <div><div class="mover-name">BLUR</div><div class="mover-price">$0.1892</div></div>
+            <div class="mover-chg mover-neg">-18.33%</div>
+          </div>
+          <div class="mover-row">
+            <div><div class="mover-name">DYDX</div><div class="mover-price">$0.9421</div></div>
+            <div class="mover-chg mover-neg">-12.90%</div>
+          </div>
+          <div class="mover-row">
+            <div><div class="mover-name">ICP</div><div class="mover-price">$7.3312</div></div>
+            <div class="mover-chg mover-neg">-9.45%</div>
+          </div>
+          <div class="mover-row">
+            <div><div class="mover-name">FLOW</div><div class="mover-price">$0.5813</div></div>
+            <div class="mover-chg mover-neg">-8.77%</div>
+          </div>
+          <div class="mover-row">
+            <div><div class="mover-name">NEAR</div><div class="mover-price">$4.1253</div></div>
+            <div class="mover-chg mover-neg">-7.21%</div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div class="asset-tabs">
-      <div class="at-tab on" onclick="assetTab(this)">All Assets</div>
-      <div class="at-tab" onclick="assetTab(this)">Spot</div>
-      <div class="at-tab" onclick="assetTab(this)">Derivatives</div>
-      <div class="at-tab" onclick="assetTab(this)">Funding</div>
-      <div class="at-tab" onclick="assetTab(this)">Earn</div>
+    <!-- Recent Orders -->
+    <div class="sec-card">
+      <div class="sec-head">
+        <div class="sec-title">Recent Orders</div>
+        <span class="sec-link">View All →</span>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="pos-table">
+          <thead>
+            <tr>
+              <th>Pair</th>
+              <th>Type</th>
+              <th>Price</th>
+              <th>Amount</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><div class="pos-pair" style="font-size:12.5px;">BTC/USDT</div></td>
+              <td><span class="pos-type pos-long">BUY</span></td>
+              <td><div class="pos-num">58,100.00</div></td>
+              <td><div class="pos-num">0.012</div></td>
+              <td><span style="font-size:11px;font-weight:600;padding:2px 7px;border-radius:4px;background:rgba(240,185,11,.12);color:var(--gold);">Open</span></td>
+            </tr>
+            <tr>
+              <td><div class="pos-pair" style="font-size:12.5px;">ETH/USDT</div></td>
+              <td><span class="pos-type pos-short">SELL</span></td>
+              <td><div class="pos-num">3,800.00</div></td>
+              <td><div class="pos-num">1.5</div></td>
+              <td><span style="font-size:11px;font-weight:600;padding:2px 7px;border-radius:4px;background:rgba(240,185,11,.12);color:var(--gold);">Open</span></td>
+            </tr>
+            <tr>
+              <td><div class="pos-pair" style="font-size:12.5px;">SOL/USDT</div></td>
+              <td><span class="pos-type pos-long">BUY</span></td>
+              <td><div class="pos-num">195.00</div></td>
+              <td><div class="pos-num">20</div></td>
+              <td><span style="font-size:11px;font-weight:600;padding:2px 7px;border-radius:4px;background:rgba(14,203,129,.12);color:var(--green);">Filled</span></td>
+            </tr>
+            <tr>
+              <td><div class="pos-pair" style="font-size:12.5px;">XRP/USDT</div></td>
+              <td><span class="pos-type pos-long">BUY</span></td>
+              <td><div class="pos-num">0.4100</div></td>
+              <td><div class="pos-num">2,000</div></td>
+              <td><span style="font-size:11px;font-weight:600;padding:2px 7px;border-radius:4px;background:rgba(14,203,129,.12);color:var(--green);">Filled</span></td>
+            </tr>
+            <tr>
+              <td><div class="pos-pair" style="font-size:12.5px;">ADA/USDT</div></td>
+              <td><span class="pos-type pos-short">SELL</span></td>
+              <td><div class="pos-num">0.6200</div></td>
+              <td><div class="pos-num">5,000</div></td>
+              <td><span style="font-size:11px;font-weight:600;padding:2px 7px;border-radius:4px;background:rgba(132,142,156,.1);color:var(--sub);">Cancelled</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
-    <div style="overflow-x:auto;">
-    <table class="asset-table">
-      <thead>
-        <tr>
-          <th>Coin</th>
-          <th>Total Balance</th>
-          <th>Available Balance</th>
-          <th>USD Value</th>
-          <th>24H Change</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><div class="coin-cell"><div class="coin-icon" style="background:#26a17b;color:#fff;">T</div><div><div class="coin-name">USDT</div><div class="coin-full">Tether USDT</div></div></div></td>
-          <td><div class="td-num">56,918.3500</div></td>
-          <td><div class="td-num">56,918.3500</div></td>
-          <td><div class="td-num">56,918.35</div><div class="td-btc">≈ 0.973152 BTC</div></td>
-          <td><div class="td-pos">+0.01%</div></td>
-          <td><div class="act-btns"><span class="act-btn">Deposit</span><span class="act-btn">Withdraw</span><span class="act-btn">Trade</span></div></td>
-        </tr>
-        <tr>
-          <td><div class="coin-cell"><div class="coin-icon" style="background:#f7931a;color:#fff;">₿</div><div><div class="coin-name">BTC</div><div class="coin-full">Bitcoin</div></div></div></td>
-          <td><div class="td-num">0.51235000</div></td>
-          <td><div class="td-num">0.31235000</div></td>
-          <td><div class="td-num">31,880.47</div><div class="td-btc">≈ 0.544312 BTC</div></td>
-          <td><div class="td-pos">+1.35%</div></td>
-          <td><div class="act-btns"><span class="act-btn">Deposit</span><span class="act-btn">Withdraw</span><span class="act-btn">Trade</span></div></td>
-        </tr>
-        <tr>
-          <td><div class="coin-cell"><div class="coin-icon" style="background:#627eea;color:#fff;">Ξ</div><div><div class="coin-name">ETH</div><div class="coin-full">Ethereum</div></div></div></td>
-          <td><div class="td-num">4.25000000</div></td>
-          <td><div class="td-num">2.95000000</div></td>
-          <td><div class="td-num">15,534.12</div><div class="td-btc">≈ 0.265421 BTC</div></td>
-          <td><div class="td-pos">+2.45%</div></td>
-          <td><div class="act-btns"><span class="act-btn">Deposit</span><span class="act-btn">Withdraw</span><span class="act-btn">Trade</span></div></td>
-        </tr>
-        <tr>
-          <td><div class="coin-cell"><div class="coin-icon" style="background:#9945ff;color:#fff;">◎</div><div><div class="coin-name">SOL</div><div class="coin-full">Solana</div></div></div></td>
-          <td><div class="td-num">38.75000000</div></td>
-          <td><div class="td-num">28.25000000</div></td>
-          <td><div class="td-num">7,859.25</div><div class="td-btc">≈ 0.134215 BTC</div></td>
-          <td><div class="td-pos">+3.12%</div></td>
-          <td><div class="act-btns"><span class="act-btn">Deposit</span><span class="act-btn">Withdraw</span><span class="act-btn">Trade</span></div></td>
-        </tr>
-        <tr>
-          <td><div class="coin-cell"><div class="coin-icon" style="background:#00aae4;color:#fff;">✕</div><div><div class="coin-name">XRP</div><div class="coin-full">XRP</div></div></div></td>
-          <td><div class="td-num">12,450.0000</div></td>
-          <td><div class="td-num">9,850.0000</div></td>
-          <td><div class="td-num">5,474.32</div><div class="td-btc">≈ 0.093541 BTC</div></td>
-          <td><div class="td-neg">-0.65%</div></td>
-          <td><div class="act-btns"><span class="act-btn">Deposit</span><span class="act-btn">Withdraw</span><span class="act-btn">Trade</span></div></td>
-        </tr>
-        <tr>
-          <td><div class="coin-cell"><div class="coin-icon" style="background:#2b3141;color:var(--sub);">⊕</div><div><div class="coin-name">Others</div><div class="coin-full">Other Assets</div></div></div></td>
-          <td><div class="td-num td-neutral">—</div></td>
-          <td><div class="td-num td-neutral">—</div></td>
-          <td><div class="td-num">8,180.81</div><div class="td-btc">≈ 0.140713 BTC</div></td>
-          <td><div class="td-pos">+0.85%</div></td>
-          <td><div class="act-btns"><span class="act-btn">View All</span></div></td>
-        </tr>
-      </tbody>
-    </table>
-    </div>
-    <div class="tbl-footer">View All Assets →</div>
   </div>
 
 </main>
@@ -747,240 +1008,315 @@ input{font-family:inherit;border:none;outline:none;background:none;}
 <aside class="rp">
 
   <!-- Account Summary -->
-  <div class="rp-section">
-    <div class="rp-title">Account Summary</div>
-    <div class="acct-rows">
-      <div class="acct-row">
-        <div class="acct-row-left">
-          <div class="acct-icon" style="background:rgba(240,90,26,.15);">🪙</div>
-          <div class="acct-name">Spot Account</div>
-        </div>
-        <div><div class="acct-val">56,954.12</div><div class="acct-val-usd">USD</div></div>
-      </div>
-      <div class="acct-row">
-        <div class="acct-row-left">
-          <div class="acct-icon" style="background:rgba(98,126,234,.15);">📊</div>
-          <div class="acct-name">Derivatives Account</div>
-        </div>
-        <div><div class="acct-val">37,981.21</div><div class="acct-val-usd">USD</div></div>
-      </div>
-      <div class="acct-row">
-        <div class="acct-row-left">
-          <div class="acct-icon" style="background:rgba(0,209,140,.15);">💰</div>
-          <div class="acct-name">Funding Account</div>
-        </div>
-        <div><div class="acct-val">26,758.59</div><div class="acct-val-usd">USD</div></div>
-      </div>
-      <div class="acct-row">
-        <div class="acct-row-left">
-          <div class="acct-icon" style="background:rgba(240,185,11,.15);">⚡</div>
-          <div class="acct-name">Earn Account</div>
-        </div>
-        <div><div class="acct-val">4,153.40</div><div class="acct-val-usd">USD</div></div>
-      </div>
-      <div class="acct-row">
-        <div class="acct-row-left">
-          <div class="acct-icon" style="background:rgba(150,150,150,.1);">👥</div>
-          <div class="acct-name">Copy Trading Account</div>
-        </div>
-        <div><div class="acct-val">0.00</div><div class="acct-val-usd">USD</div></div>
-      </div>
+  <div class="rp-block">
+    <div class="rp-title">
+      Account Summary
+      <span onclick="window.location='assets.html'">Overview →</span>
     </div>
-    <div class="acct-total-row">
-      <span class="acct-total-lbl">Total Balance</span>
+    <div class="acct-row">
+      <div class="acct-left">
+        <div class="acct-icon" style="background:rgba(240,90,26,.15);">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <div class="acct-name">Spot</div>
+      </div>
+      <div><div class="acct-val">56,954.12</div><div class="acct-usd">USD</div></div>
+    </div>
+    <div class="acct-row">
+      <div class="acct-left">
+        <div class="acct-icon" style="background:rgba(98,126,234,.15);">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#627eea" stroke-width="2" stroke-linecap="round"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg>
+        </div>
+        <div class="acct-name">Derivatives</div>
+      </div>
+      <div><div class="acct-val">37,981.21</div><div class="acct-usd">USD</div></div>
+    </div>
+    <div class="acct-row">
+      <div class="acct-left">
+        <div class="acct-icon" style="background:rgba(0,209,140,.15);">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+        </div>
+        <div class="acct-name">Funding</div>
+      </div>
+      <div><div class="acct-val">26,758.59</div><div class="acct-usd">USD</div></div>
+    </div>
+    <div class="acct-row">
+      <div class="acct-left">
+        <div class="acct-icon" style="background:rgba(240,185,11,.15);">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
+        </div>
+        <div class="acct-name">Earn</div>
+      </div>
+      <div><div class="acct-val">4,153.40</div><div class="acct-usd">USD</div></div>
+    </div>
+    <div class="acct-total">
+      <span class="acct-total-lbl">Total</span>
       <span class="acct-total-val">125,847.32 USD</span>
     </div>
   </div>
 
   <!-- Quick Actions -->
-  <div class="rp-section">
+  <div class="rp-block">
     <div class="rp-title">Quick Actions</div>
     <div class="qa-grid">
       <div class="qa-item">
         <div class="qa-icon" style="background:rgba(240,90,26,.15);">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         </div>
         <span class="qa-lbl">Deposit</span>
       </div>
       <div class="qa-item">
-        <div class="qa-icon" style="background:rgba(240,90,26,.12);">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17,8 12,3 7,8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <div class="qa-icon" style="background:rgba(246,70,93,.1);">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17,8 12,3 7,8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
         </div>
         <span class="qa-lbl">Withdraw</span>
       </div>
       <div class="qa-item">
-        <div class="qa-icon" style="background:rgba(240,90,26,.12);">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><polyline points="17,1 21,5 17,9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7,23 3,19 7,15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+        <div class="qa-icon" style="background:rgba(33,150,243,.1);">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round"><polyline points="17,1 21,5 17,9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7,23 3,19 7,15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
         </div>
         <span class="qa-lbl">Transfer</span>
       </div>
       <div class="qa-item">
-        <div class="qa-icon" style="background:rgba(240,90,26,.12);">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><polyline points="23,4 23,10 17,10"/><polyline points="1,20 1,14 7,14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+        <div class="qa-icon" style="background:rgba(123,97,255,.1);">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" stroke-linecap="round"><polyline points="23,4 23,10 17,10"/><polyline points="1,20 1,14 7,14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
         </div>
         <span class="qa-lbl">Convert</span>
       </div>
     </div>
   </div>
 
+  <!-- VIP Level -->
+  <div class="rp-block">
+    <div class="rp-title">Membership Level</div>
+    <div class="vip-info" style="margin-bottom:10px;">
+      <div class="vip-badge">⭐ VIP 3</div>
+      <div class="vip-next" style="font-size:11px;color:var(--sub);">Next: VIP 4</div>
+    </div>
+    <div class="vip-bar-wrap">
+      <div class="vip-bar-label">
+        <span>30D Volume</span>
+        <span>$2.41M / $5M</span>
+      </div>
+      <div class="vip-bar-track">
+        <div class="vip-bar-fill" style="width:48%;"></div>
+      </div>
+    </div>
+    <div style="font-size:11px;color:var(--sub);margin-top:7px;">Trade <span style="color:var(--text);font-weight:600;">$2.59M</span> more to reach VIP 4 and unlock lower fees.</div>
+  </div>
+
   <!-- Recent Transactions -->
-  <div class="rp-section" style="border-bottom:none;">
-    <div class="rtx-head">
-      <div class="rtx-title">Recent Transactions</div>
-      <span class="rtx-view">View All</span>
+  <div class="rp-block" style="flex:1;">
+    <div class="rp-title">
+      Recent Transactions
+      <span>View All</span>
     </div>
     <div class="rtx-item">
-      <div class="rtx-icon" style="background:rgba(0,209,140,.12);">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      <div class="rtx-icon" style="background:rgba(14,203,129,.12);">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
       </div>
-      <div class="rtx-info"><div class="rtx-type">Deposit</div><div class="rtx-sub">USDT</div></div>
-      <div class="rtx-right"><div class="rtx-amt td-pos">+2,500.00</div><div class="rtx-date">May 22, 2024 14:32</div></div>
+      <div class="rtx-info"><div class="rtx-type">Deposit</div><div class="rtx-sub">USDT · TRC-20</div></div>
+      <div class="rtx-right"><div class="rtx-amt rtx-pos">+2,500.00</div><div class="rtx-date">May 25, 14:32</div></div>
     </div>
     <div class="rtx-item">
       <div class="rtx-icon" style="background:rgba(246,70,93,.12);">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17,8 12,3 7,8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17,8 12,3 7,8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
       </div>
-      <div class="rtx-info"><div class="rtx-type">Withdraw</div><div class="rtx-sub">BTC</div></div>
-      <div class="rtx-right"><div class="rtx-amt td-neg">-0.050000</div><div class="rtx-date">May 22, 2024 11:05</div></div>
+      <div class="rtx-info"><div class="rtx-type">Withdraw</div><div class="rtx-sub">BTC · On-chain</div></div>
+      <div class="rtx-right"><div class="rtx-amt rtx-neg">-0.0500</div><div class="rtx-date">May 25, 11:05</div></div>
     </div>
     <div class="rtx-item">
-      <div class="rtx-icon" style="background:rgba(240,90,26,.12);">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><polyline points="17,1 21,5 17,9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7,23 3,19 7,15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+      <div class="rtx-icon" style="background:rgba(33,150,243,.12);">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round"><polyline points="17,1 21,5 17,9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7,23 3,19 7,15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
       </div>
-      <div class="rtx-info"><div class="rtx-type">Transfer</div><div class="rtx-sub">From Funding</div></div>
-      <div class="rtx-right"><div class="rtx-amt td-pos">+1,200.00</div><div class="rtx-date">May 21, 2024 18:45</div></div>
+      <div class="rtx-info"><div class="rtx-type">Transfer</div><div class="rtx-sub">Funding → Spot</div></div>
+      <div class="rtx-right"><div class="rtx-amt rtx-pos">+1,200.00</div><div class="rtx-date">May 24, 18:45</div></div>
     </div>
     <div class="rtx-item">
       <div class="rtx-icon" style="background:rgba(98,126,234,.12);">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#627eea" stroke-width="2" stroke-linecap="round"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#627eea" stroke-width="2" stroke-linecap="round"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg>
       </div>
-      <div class="rtx-info"><div class="rtx-type">Trade</div><div class="rtx-sub">BTC/USDT</div></div>
-      <div class="rtx-right"><div class="rtx-amt td-neg">-0.012350</div><div class="rtx-date">May 21, 2024 15:22</div></div>
+      <div class="rtx-info"><div class="rtx-type">Trade Profit</div><div class="rtx-sub">BTC/USDT Perp</div></div>
+      <div class="rtx-right"><div class="rtx-amt rtx-pos">+843.20</div><div class="rtx-date">May 24, 15:22</div></div>
     </div>
     <div class="rtx-item">
-      <div class="rtx-icon" style="background:rgba(0,209,140,.12);">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      <div class="rtx-icon" style="background:rgba(240,185,11,.12);">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
       </div>
-      <div class="rtx-info"><div class="rtx-type">Deposit</div><div class="rtx-sub">ETH</div></div>
-      <div class="rtx-right"><div class="rtx-amt td-pos">+3,250.00</div><div class="rtx-date">May 20, 2024 09:15</div></div>
+      <div class="rtx-info"><div class="rtx-type">Earn Reward</div><div class="rtx-sub">USDT Flexible</div></div>
+      <div class="rtx-right"><div class="rtx-amt rtx-pos">+12.48</div><div class="rtx-date">May 24, 00:00</div></div>
     </div>
-    <div class="rtx-view-all">View All →</div>
+    <div class="view-all-btn">View All Transactions →</div>
   </div>
 
 </aside>
 
-</div><!-- /layout -->
-</div><!-- /page -->
+</div>
+</div>
 
 <script>
-/* ── SPARKLINE ── */
-function drawSparkline() {
-  const canvas = document.getElementById('sparkline');
-  if (!canvas) return;
-  const W = 120, H = 60;
-  canvas.width = W; canvas.height = H;
+/* ── TICKER DATA ── */
+const TICKER_COINS = [
+  {pair:'BTC/USDT', price:'58,825.40', chg:'+1.35', up:true},
+  {pair:'ETH/USDT', price:'3,735.20',  chg:'+2.45', up:true},
+  {pair:'SOL/USDT', price:'199.00',    chg:'+3.12', up:true},
+  {pair:'XRP/USDT', price:'0.4390',    chg:'-0.65', up:false},
+  {pair:'BNB/USDT', price:'608.30',    chg:'+0.88', up:true},
+  {pair:'ADA/USDT', price:'0.6182',    chg:'-1.22', up:false},
+  {pair:'DOGE/USDT',price:'0.1643',    chg:'+5.14', up:true},
+  {pair:'AVAX/USDT',price:'38.42',     chg:'+4.33', up:true},
+  {pair:'LINK/USDT',price:'16.81',     chg:'+2.90', up:true},
+  {pair:'MATIC/USDT',price:'0.8971',   chg:'-0.43', up:false},
+  {pair:'DOT/USDT', price:'7.2350',    chg:'+1.17', up:true},
+  {pair:'LTC/USDT', price:'88.20',     chg:'-0.91', up:false},
+];
+function buildTicker() {
+  const inner = document.getElementById('ticker');
+  const doubled = [...TICKER_COINS, ...TICKER_COINS];
+  inner.innerHTML = doubled.map(c => `
+    <div class="ticker-item">
+      <span class="ticker-pair">${c.pair}</span>
+      <span class="ticker-price">${c.price}</span>
+      <span class="ticker-chg ${c.up?'ticker-up':'ticker-dn'}">${c.up?'▲':'▼'} ${Math.abs(c.chg)}%</span>
+    </div>
+  `).join('');
+}
+
+/* ── WATCHLIST DATA ── */
+const WL_COINS = [
+  {name:'Bitcoin', pair:'BTC/USDT', price:'58,825.40', chg:'+1.35', up:true, bg:'#f7931a', txt:'#fff', sym:'₿', spark:[55,57,54,59,56,61,58,65,60,67]},
+  {name:'Ethereum', pair:'ETH/USDT', price:'3,735.20', chg:'+2.45', up:true, bg:'#627eea', txt:'#fff', sym:'Ξ', spark:[58,60,57,62,59,64,61,66,63,68]},
+  {name:'Solana', pair:'SOL/USDT', price:'199.00', chg:'+3.12', up:true, bg:'#9945ff', txt:'#fff', sym:'◎', spark:[60,62,59,64,61,66,63,68,65,70]},
+  {name:'XRP', pair:'XRP/USDT', price:'0.4390', chg:'-0.65', up:false, bg:'#00aae4', txt:'#fff', sym:'✕', spark:[70,68,65,63,60,58,56,54,53,52]},
+  {name:'BNB', pair:'BNB/USDT', price:'608.30', chg:'+0.88', up:true, bg:'#f0b90b', txt:'#000', sym:'B', spark:[54,56,53,58,55,60,57,62,59,64]},
+  {name:'DOGE', pair:'DOGE/USDT', price:'0.1643', chg:'+5.14', up:true, bg:'#c2a633', txt:'#fff', sym:'Ð', spark:[40,44,42,48,45,52,49,56,53,60]},
+];
+function drawWlSpark(canvas, data, up) {
+  const W = canvas.width = 70, H = canvas.height = 28;
   const ctx = canvas.getContext('2d');
-  const data = [30,28,32,27,35,38,33,40,36,44,41,48,44,52,49,56,52,58,55,60];
-  const min = Math.min(...data)-2, max = Math.max(...data)+2;
+  const min = Math.min(...data)-1, max = Math.max(...data)+1;
   const sx = W/(data.length-1), sy = H/(max-min);
-  const toX = i => i*sx, toY = v => H-(v-min)*sy;
+  const toX = i=>i*sx, toY = v=>H-(v-min)*sy;
+  const color = up ? '#0ecb81' : '#f6465d';
   const grad = ctx.createLinearGradient(0,0,0,H);
-  grad.addColorStop(0,'rgba(14,203,129,0.3)');
-  grad.addColorStop(1,'rgba(14,203,129,0.0)');
+  grad.addColorStop(0, up?'rgba(14,203,129,.2)':'rgba(246,70,93,.2)');
+  grad.addColorStop(1,'transparent');
   ctx.beginPath();
   ctx.moveTo(toX(0),toY(data[0]));
   for(let i=1;i<data.length;i++) ctx.lineTo(toX(i),toY(data[i]));
   ctx.lineTo(W,H); ctx.lineTo(0,H); ctx.closePath();
-  ctx.fillStyle=grad; ctx.fill();
+  ctx.fillStyle = grad; ctx.fill();
   ctx.beginPath();
   ctx.moveTo(toX(0),toY(data[0]));
   for(let i=1;i<data.length;i++) ctx.lineTo(toX(i),toY(data[i]));
-  ctx.strokeStyle='#0ecb81'; ctx.lineWidth=1.5; ctx.stroke();
+  ctx.strokeStyle = color; ctx.lineWidth = 1.5; ctx.stroke();
 }
-
-/* ── PNL CHART ── */
-function drawPnlChart() {
-  const canvas = document.getElementById('pnl-chart');
-  if (!canvas) return;
-  const wrap = canvas.parentElement;
-  const W = wrap.offsetWidth, H = wrap.offsetHeight;
-  canvas.width = W; canvas.height = H;
-  const ctx = canvas.getContext('2d');
-  // data: ~7 days, starts negative then climbs
-  const data = [-1200, -800, 200, 1800, 3200, 5100, 4600, 6000, 5400, 6732];
-  const min = Math.min(...data)-200, max = Math.max(...data)+200;
-  const sx = W/(data.length-1), sy = H/(max-min);
-  const toX = i => i*sx, toY = v => H-(v-min)*sy;
-  const zeroY = toY(0);
-
-  // gradient fill (green above zero, red below)
-  const gradUp = ctx.createLinearGradient(0,0,0,zeroY);
-  gradUp.addColorStop(0,'rgba(14,203,129,.25)');
-  gradUp.addColorStop(1,'rgba(14,203,129,.02)');
-
-  ctx.beginPath();
-  ctx.moveTo(toX(0),toY(data[0]));
-  for(let i=1;i<data.length;i++){
-    const cpx=toX(i-.5);
-    ctx.bezierCurveTo(cpx,toY(data[i-1]),cpx,toY(data[i]),toX(i),toY(data[i]));
-  }
-  ctx.lineTo(W,zeroY); ctx.lineTo(0,zeroY); ctx.closePath();
-  ctx.fillStyle=gradUp; ctx.fill();
-
-  // zero line
-  ctx.beginPath();
-  ctx.moveTo(0,zeroY); ctx.lineTo(W,zeroY);
-  ctx.strokeStyle='rgba(255,255,255,.08)'; ctx.lineWidth=1; ctx.stroke();
-
-  // line
-  ctx.beginPath();
-  ctx.moveTo(toX(0),toY(data[0]));
-  for(let i=1;i<data.length;i++){
-    const cpx=toX(i-.5);
-    ctx.bezierCurveTo(cpx,toY(data[i-1]),cpx,toY(data[i]),toX(i),toY(data[i]));
-  }
-  ctx.strokeStyle='#0ecb81'; ctx.lineWidth=2; ctx.stroke();
-
-  // y-axis labels
-  const yLabels = [8000,6000,4000,2000,0,-2000];
-  ctx.fillStyle='rgba(132,142,156,.7)'; ctx.font='9px Inter'; ctx.textAlign='left';
-  yLabels.forEach(v => {
-    if(v >= min && v <= max) ctx.fillText(v===0?'0':v.toLocaleString(), 4, toY(v)-2);
+function buildWatchlist() {
+  const container = document.getElementById('watchlist-rows');
+  container.innerHTML = WL_COINS.map((c,i) => `
+    <div class="wl-row">
+      <div class="wl-coin">
+        <div class="wl-icon" style="background:${c.bg};color:${c.txt};">${c.sym}</div>
+        <div>
+          <div class="wl-name">${c.name}</div>
+          <div class="wl-pair">${c.pair}</div>
+        </div>
+      </div>
+      <div class="wl-mid">
+        <canvas class="wl-spark" id="spark-${i}" width="70" height="28"></canvas>
+      </div>
+      <div class="wl-right">
+        <div class="wl-price">${c.price}</div>
+        <div class="wl-chg ${c.up?'wl-pos':'wl-neg'}">${c.up?'▲':'▼'} ${Math.abs(c.chg)}%</div>
+      </div>
+    </div>
+  `).join('');
+  WL_COINS.forEach((c,i) => {
+    const cvs = document.getElementById(`spark-${i}`);
+    if(cvs) drawWlSpark(cvs, c.spark, c.up);
   });
 }
 
-/* ── SIDEBAR TOGGLE ── */
+/* ── PNL MINI CHART ── */
+function drawPnlMini() {
+  const canvas = document.getElementById('pnl-mini');
+  if(!canvas) return;
+  const W = canvas.parentElement.offsetWidth, H = 70;
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+  const data = [-1200,-400,600,2200,3800,5100,4600,6000,5800,6732];
+  const min = Math.min(...data)-300, max = Math.max(...data)+300;
+  const sx = W/(data.length-1), sy = H/(max-min);
+  const toX = i=>i*sx, toY = v=>H-(v-min)*sy;
+  const zeroY = toY(0);
+  const grad = ctx.createLinearGradient(0,0,0,H);
+  grad.addColorStop(0,'rgba(14,203,129,.3)');
+  grad.addColorStop(1,'rgba(14,203,129,.02)');
+  ctx.beginPath();
+  ctx.moveTo(toX(0),toY(data[0]));
+  for(let i=1;i<data.length;i++){
+    const mx=toX(i-.5);
+    ctx.bezierCurveTo(mx,toY(data[i-1]),mx,toY(data[i]),toX(i),toY(data[i]));
+  }
+  ctx.lineTo(W,zeroY); ctx.lineTo(0,zeroY); ctx.closePath();
+  ctx.fillStyle=grad; ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(0,zeroY); ctx.lineTo(W,zeroY);
+  ctx.strokeStyle='rgba(255,255,255,.08)'; ctx.lineWidth=1; ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(toX(0),toY(data[0]));
+  for(let i=1;i<data.length;i++){
+    const mx=toX(i-.5);
+    ctx.bezierCurveTo(mx,toY(data[i-1]),mx,toY(data[i]),toX(i),toY(data[i]));
+  }
+  ctx.strokeStyle='#0ecb81'; ctx.lineWidth=2; ctx.stroke();
+}
+
+/* ── SIDEBAR ── */
 let sbOpen = true;
-function toggleSidebar() {
+function toggleSidebar(){
   sbOpen = !sbOpen;
   document.getElementById('sidebar').style.width = sbOpen ? 'var(--sidebar)' : '0';
 }
 
 /* ── NAV SUBS ── */
-function toggleSub(el, subId) {
+function toggleSub(el, subId){
   const sub = document.getElementById(subId);
-  if (!sub) return;
-  const isOpen = sub.classList.contains('open');
-  sub.classList.toggle('open', !isOpen);
-  el.classList.toggle('open', !isOpen);
+  if(!sub) return;
+  const open = sub.classList.contains('open');
+  sub.classList.toggle('open',!open);
+  el.classList.toggle('open',!open);
 }
 
-function navTo(el, url) {
-  window.location.href = url;
-}
-
-/* ── ASSET TABS ── */
-function assetTab(el) {
-  document.querySelectorAll('.at-tab').forEach(t => t.classList.remove('on'));
+/* ── TABS ── */
+function secTab(el){
+  const parent = el.parentElement;
+  parent.querySelectorAll('.sec-tab').forEach(t=>t.classList.remove('on'));
   el.classList.add('on');
 }
 
+/* ── LIVE PRICE SIM ── */
+function jitter(base, pct=0.0008){
+  return base * (1 + (Math.random()-0.5)*pct*2);
+}
+function updatePrices(){
+  const balEl = document.getElementById('wc-bal');
+  if(balEl){
+    let cur = parseFloat(balEl.dataset.val || '125847.32');
+    cur = jitter(cur);
+    balEl.dataset.val = cur;
+    balEl.innerHTML = cur.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}) + ' <span>USD</span>';
+  }
+}
+
 /* ── INIT ── */
-window.addEventListener('load', () => {
-  drawSparkline();
-  drawPnlChart();
+window.addEventListener('load', ()=>{
+  buildTicker();
+  buildWatchlist();
+  drawPnlMini();
+  setInterval(updatePrices, 2000);
 });
-window.addEventListener('resize', drawPnlChart);
+window.addEventListener('resize', drawPnlMini);
 </script>
 </body>
 </html>
