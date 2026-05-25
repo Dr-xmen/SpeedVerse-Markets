@@ -11,9 +11,9 @@ body{font-family:'Inter',sans-serif;color:#1a1a1a;background:#fff;overflow-x:hid
 a{text-decoration:none;color:inherit;}
 
 /* NAVBAR */
-nav{position:sticky;top:0;z-index:9999;background:#fff;border-bottom:1px solid #eee;box-shadow:0 2px 16px rgba(0,0,0,.08);display:flex;align-items:center;padding:0 32px;height:72px;overflow:visible;}
+nav{position:sticky;top:0;z-index:9999;background:#fff;border-bottom:1px solid #eee;box-shadow:0 2px 16px rgba(0,0,0,.08);display:flex;align-items:center;padding:0 32px;min-height:90px;overflow:visible;}
 .nav-logo{display:flex;align-items:center;flex-shrink:0;margin-right:36px;}
-.nav-logo img{height:54px;width:auto;display:block;}
+.nav-logo img{height:80px;width:auto;display:block;}
 .nav-links{display:flex;align-items:center;list-style:none;margin:0;padding:0;gap:2px;flex:1;}
 .nav-links>li{position:relative;display:list-item;}
 .nav-links>li>a{display:flex;align-items:center;gap:5px;font-size:14px;font-weight:600;color:#222;padding:8px 16px;border-radius:6px;white-space:nowrap;text-decoration:none;transition:color .15s,background .15s;}
@@ -22,7 +22,8 @@ nav{position:sticky;top:0;z-index:9999;background:#fff;border-bottom:1px solid #
 .nav-caret{display:inline-block;width:10px;height:10px;flex-shrink:0;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolyline points='1,1 5,5 9,1' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") center/contain no-repeat;transition:transform .25s;}
 .nav-links>li:hover>.nav-caret,.nav-links>li.dd-open>.nav-caret,.nav-links>li:hover>a .nav-caret,.nav-links>li.dd-open>a .nav-caret{transform:rotate(180deg);}
 /* Dropdown */
-.nav-dropdown{position:absolute;top:calc(100% + 8px);left:0;z-index:10000;background:#fff;border-radius:14px;box-shadow:0 12px 48px rgba(0,0,0,.15);padding:10px;min-width:300px;opacity:0;visibility:hidden;transform:translateY(10px);transition:opacity .2s ease,transform .2s ease,visibility .2s;}
+.nav-dropdown{position:absolute;top:100%;left:0;z-index:10000;padding-top:10px;min-width:300px;opacity:0;visibility:hidden;transform:translateY(6px);transition:opacity .2s ease,transform .2s ease,visibility .2s;}
+.nav-dropdown-inner{background:#fff;border-radius:14px;box-shadow:0 12px 48px rgba(0,0,0,.15);padding:10px;}
 .nav-links>li:hover .nav-dropdown,.nav-links>li.dd-open .nav-dropdown{opacity:1;visibility:visible;transform:translateY(0);}
 .nav-dd-item{display:flex;align-items:center;gap:14px;padding:11px 14px;border-radius:10px;text-decoration:none;color:inherit;transition:background .15s;}
 .nav-dd-item:hover{background:#fff6f2;}
@@ -301,76 +302,74 @@ footer{background:#111;padding:60px 0 28px;}
     <li>
       <a href="#">Markets <span class="nav-caret"></span></a>
       <div class="nav-dropdown" style="min-width:320px;">
-        <a href="#" class="nav-dd-item">
-          <div class="nav-dd-icon"><img src="assets/nav-forex.svg" alt="Forex"/></div>
-          <div class="nav-dd-text"><div class="nav-dd-text-title">Forex</div><div class="nav-dd-text-sub">Trade major, minor, and exotic currency pairs</div></div>
-        </a>
-        <a href="#" class="nav-dd-item">
-          <div class="nav-dd-icon"><img src="assets/nav-indices.svg" alt="Indices"/></div>
-          <div class="nav-dd-text"><div class="nav-dd-text-title">Indices</div><div class="nav-dd-text-sub">Trade top indices like DJI 30, S&amp;P 500 and DAX</div></div>
-        </a>
-        <a href="#" class="nav-dd-item">
-          <div class="nav-dd-icon"><img src="assets/nav-commodities.svg" alt="Commodities"/></div>
-          <div class="nav-dd-text"><div class="nav-dd-text-title">Commodities</div><div class="nav-dd-text-sub">Trade raw materials like gold, oil, and silver</div></div>
-        </a>
-        <a href="#" class="nav-dd-item">
-          <div class="nav-dd-icon"><img src="assets/nav-shares.svg" alt="Shares CFD"/></div>
-          <div class="nav-dd-text"><div class="nav-dd-text-title">Shares CFD</div><div class="nav-dd-text-sub">Trade shares of global companies in the US, UK, EU and AU</div></div>
-        </a>
-        <a href="#" class="nav-dd-item">
-          <div class="nav-dd-icon"><img src="assets/nav-etf.svg" alt="ETFs"/></div>
-          <div class="nav-dd-text"><div class="nav-dd-text-title">ETFs</div><div class="nav-dd-text-sub">Diversify with baskets of stocks, commodities, or bonds</div></div>
-        </a>
-        <a href="#" class="nav-dd-item">
-          <div class="nav-dd-icon"><img src="assets/nav-bonds.svg" alt="Bonds"/></div>
-          <div class="nav-dd-text"><div class="nav-dd-text-title">Bonds</div><div class="nav-dd-text-sub">Trade debt securities, including US 10-year Treasury bonds</div></div>
-        </a>
+        <div class="nav-dropdown-inner">
+          <a href="#" class="nav-dd-item">
+            <div class="nav-dd-icon"><img src="assets/nav-forex.svg" alt="Forex"/></div>
+            <div class="nav-dd-text"><div class="nav-dd-text-title">Forex</div><div class="nav-dd-text-sub">Trade major, minor, and exotic currency pairs</div></div>
+          </a>
+          <a href="#" class="nav-dd-item">
+            <div class="nav-dd-icon"><img src="assets/nav-indices.svg" alt="Indices"/></div>
+            <div class="nav-dd-text"><div class="nav-dd-text-title">Indices</div><div class="nav-dd-text-sub">Trade top indices like DJI 30, S&amp;P 500 and DAX</div></div>
+          </a>
+          <a href="#" class="nav-dd-item">
+            <div class="nav-dd-icon"><img src="assets/nav-commodities.svg" alt="Commodities"/></div>
+            <div class="nav-dd-text"><div class="nav-dd-text-title">Commodities</div><div class="nav-dd-text-sub">Trade raw materials like gold, oil, and silver</div></div>
+          </a>
+          <a href="#" class="nav-dd-item">
+            <div class="nav-dd-icon"><img src="assets/nav-shares.svg" alt="Shares CFD"/></div>
+            <div class="nav-dd-text"><div class="nav-dd-text-title">Shares CFD</div><div class="nav-dd-text-sub">Trade shares of global companies in the US, UK, EU and AU</div></div>
+          </a>
+          <a href="#" class="nav-dd-item">
+            <div class="nav-dd-icon"><img src="assets/nav-etf.svg" alt="ETFs"/></div>
+            <div class="nav-dd-text"><div class="nav-dd-text-title">ETFs</div><div class="nav-dd-text-sub">Diversify with baskets of stocks, commodities, or bonds</div></div>
+          </a>
+          <a href="#" class="nav-dd-item">
+            <div class="nav-dd-icon"><img src="assets/nav-bonds.svg" alt="Bonds"/></div>
+            <div class="nav-dd-text"><div class="nav-dd-text-title">Bonds</div><div class="nav-dd-text-sub">Trade debt securities, including US 10-year Treasury bonds</div></div>
+          </a>
+        </div>
       </div>
     </li>
 
     <!-- Platforms dropdown -->
     <li>
       <a href="#">Platforms <span class="nav-caret"></span></a>
-      <div class="nav-dropdown" style="min-width:240px;">
-        <a href="#" class="nav-dd-item">
-          <div class="nav-dd-icon"><img src="assets/nav-speedverse.svg" alt="SpeedVerse"/></div>
-          <div class="nav-dd-text"><div class="nav-dd-text-title">SpeedVerse Platform</div><div class="nav-dd-text-sub">Our powerful proprietary trading platform</div></div>
-        </a>
-        <a href="#" class="nav-dd-item">
-          <div class="nav-dd-icon"><img src="assets/nav-tradingview.svg" alt="TradingView"/></div>
-          <div class="nav-dd-text"><div class="nav-dd-text-title">TradingView Platform</div><div class="nav-dd-text-sub">Advanced charting with TradingView integration</div></div>
-        </a>
+      <div class="nav-dropdown" style="min-width:260px;">
+        <div class="nav-dropdown-inner">
+          <a href="#" class="nav-dd-item">
+            <div class="nav-dd-icon"><img src="assets/nav-speedverse.svg" alt="SpeedVerse"/></div>
+            <div class="nav-dd-text"><div class="nav-dd-text-title">SpeedVerse Platform</div><div class="nav-dd-text-sub">Our powerful proprietary trading platform</div></div>
+          </a>
+          <a href="#" class="nav-dd-item">
+            <div class="nav-dd-icon"><img src="assets/nav-tradingview.svg" alt="TradingView"/></div>
+            <div class="nav-dd-text"><div class="nav-dd-text-title">TradingView Platform</div><div class="nav-dd-text-sub">Advanced charting with TradingView integration</div></div>
+          </a>
+        </div>
       </div>
     </li>
 
     <!-- Company dropdown -->
     <li>
       <a href="#">Company <span class="nav-caret"></span></a>
-      <div class="nav-dropdown" style="min-width:220px;">
-        <a href="#" class="nav-dd-item">
-          <div class="nav-dd-icon">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#E8530A" stroke-width="1.8"><circle cx="12" cy="7" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-          </div>
-          <div class="nav-dd-text"><div class="nav-dd-text-title">About SpeedVerse</div><div class="nav-dd-text-sub">Our story, mission and values</div></div>
-        </a>
-        <a href="#" class="nav-dd-item">
-          <div class="nav-dd-icon">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#E8530A" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          </div>
-          <div class="nav-dd-text"><div class="nav-dd-text-title">Privacy Policy</div><div class="nav-dd-text-sub">How we handle your data</div></div>
-        </a>
-        <a href="#" class="nav-dd-item">
-          <div class="nav-dd-icon">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#E8530A" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
-          </div>
-          <div class="nav-dd-text"><div class="nav-dd-text-title">Terms</div><div class="nav-dd-text-sub">Terms and conditions of use</div></div>
-        </a>
-        <a href="#" class="nav-dd-item">
-          <div class="nav-dd-icon">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#E8530A" stroke-width="1.8"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.05 1.18 2 2 0 012.03 1h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
-          </div>
-          <div class="nav-dd-text"><div class="nav-dd-text-title">Contact Us</div><div class="nav-dd-text-sub">Get in touch with our team</div></div>
-        </a>
+      <div class="nav-dropdown" style="min-width:240px;">
+        <div class="nav-dropdown-inner">
+          <a href="#" class="nav-dd-item">
+            <div class="nav-dd-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#E8530A" stroke-width="1.8"><circle cx="12" cy="7" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg></div>
+            <div class="nav-dd-text"><div class="nav-dd-text-title">About SpeedVerse</div><div class="nav-dd-text-sub">Our story, mission and values</div></div>
+          </a>
+          <a href="#" class="nav-dd-item">
+            <div class="nav-dd-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#E8530A" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+            <div class="nav-dd-text"><div class="nav-dd-text-title">Privacy Policy</div><div class="nav-dd-text-sub">How we handle your data</div></div>
+          </a>
+          <a href="#" class="nav-dd-item">
+            <div class="nav-dd-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#E8530A" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/></svg></div>
+            <div class="nav-dd-text"><div class="nav-dd-text-title">Terms</div><div class="nav-dd-text-sub">Terms and conditions of use</div></div>
+          </a>
+          <a href="#" class="nav-dd-item">
+            <div class="nav-dd-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#E8530A" stroke-width="1.8"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.05 1.18 2 2 0 012.03 1h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg></div>
+            <div class="nav-dd-text"><div class="nav-dd-text-title">Contact Us</div><div class="nav-dd-text-sub">Get in touch with our team</div></div>
+          </a>
+        </div>
       </div>
     </li>
   </ul>
