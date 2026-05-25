@@ -445,11 +445,10 @@ const MARKET_DEFS = {
   crypto: {
     url:     `${TV_BASE}/crypto/scan`,
     label:   'Crypto',
-    cols:    ['name','description','close','change','change_abs','volume','market_cap_basic','high','low'],
+    cols:    ['name','description','close','change','change_abs','volume','market_cap_calc','high','low'],
     ci:      {name:0,desc:1,price:2,pct:3,abs:4,vol:5,cap:6,high:7,low:8},
     body:    {
-      filter:  [{left:'market_cap_basic',operation:'nempty'}],
-      sort:    {sortBy:'market_cap_basic',sortOrder:'desc'},
+      sort:    {sortBy:'market_cap_calc',sortOrder:'desc'},
       range:   [0, 100]
     },
     headers: ['#','Name','Price','24H %','24H Change','24H High','24H Low','Volume','Mkt Cap',''],

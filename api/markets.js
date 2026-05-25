@@ -2,9 +2,8 @@ const MARKET_DEFS = {
   crypto: {
     url:  'https://scanner.tradingview.com/crypto/scan',
     body: {
-      filter:  [{ left: 'market_cap_basic', operation: 'nempty' }],
-      columns: ['name','description','close','change','change_abs','volume','market_cap_basic','high','low'],
-      sort:    { sortBy: 'market_cap_basic', sortOrder: 'desc' },
+      columns: ['name','description','close','change','change_abs','volume','market_cap_calc','high','low'],
+      sort:    { sortBy: 'market_cap_calc', sortOrder: 'desc' },
       range:   [0, 100],
     },
   },
@@ -32,11 +31,11 @@ const MARKET_DEFS = {
     url:  'https://scanner.tradingview.com/global/scan',
     body: {
       symbols: { tickers: [
-        'FOREXCOM:SPXUSD','FOREXCOM:NSXUSD','CURRENCYCOM:US30',
-        'INDEX:NKY','INDEX:DAX','INDEX:FTSE','FOREXCOM:EU50USD',
-        'INDEX:HSI','INDEX:CAC40','CURRENCYCOM:AU200',
-        'INDEX:SENSEX','CURRENCYCOM:CN50','INDEX:TAIEX','INDEX:KOSPI',
-        'INDEX:STI','INDEX:BVSP','INDEX:MXX','INDEX:IBEX35','INDEX:FTSEMIB','INDEX:SMI',
+        'TVC:SPX','TVC:NDX','TVC:DJI','TVC:RUT',
+        'TVC:NI225','TVC:DAX','TVC:FTSE','TVC:SX5E',
+        'TVC:HSI','TVC:CAC40','TVC:ASX200',
+        'TVC:SENSEX','TVC:SHCOMP','TVC:KOSPI',
+        'TVC:STI','TVC:IBOV','TVC:MXX','TVC:IBEX35','TVC:FTSEMIB','TVC:SMI',
       ]},
       columns: ['name','description','close','change','change_abs','volume','high','low'],
     },
@@ -45,10 +44,11 @@ const MARKET_DEFS = {
     url:  'https://scanner.tradingview.com/global/scan',
     body: {
       symbols: { tickers: [
-        'COMEX:GC1!','NYMEX:CL1!','COMEX:SI1!','NYMEX:NG1!',
-        'CBOT:C1!','CBOT:W1!','CBOT:S1!','COMEX:HG1!',
-        'NYMEX:RB1!','NYMEX:HO1!','NYMEX:PL1!','COMEX:PA1!',
-        'NYMEX:BZ1!','CBOT:BO1!','ICE:CC1!','ICE:KC1!','ICE:CT1!','ICE:SB1!',
+        'COMEX:GC1!',   'NYMEX:CL1!',  'COMEX:SI1!',  'NYMEX:NG1!',
+        'CBOT:C1!',     'CBOT:W1!',    'CBOT:S1!',    'COMEX:HG1!',
+        'NYMEX:RB1!',   'NYMEX:HO1!',  'NYMEX:PL1!',  'COMEX:PA1!',
+        'ICEEUR:BRN1!', 'CBOT:BO1!',   'ICEUS:CC1!',  'ICEUS:KC1!',
+        'ICEUS:CT1!',   'ICEUS:SB1!',
       ]},
       columns: ['name','description','close','change','change_abs','volume','high','low'],
     },
