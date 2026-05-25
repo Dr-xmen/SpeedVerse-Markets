@@ -603,13 +603,8 @@ function isDark(hex) {
    ═══════════════════════════════════════════════════════ */
 async function fetchMarket(mkt) {
   const def = MARKET_DEFS[mkt];
-  const body = { ...def.body, columns: def.cols };
 
-  const res = await fetch(def.url, {
-    method:  'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body:    JSON.stringify(body),
-  });
+  const res = await fetch(`/api/markets?market=${mkt}`);
   if(!res.ok) throw new Error(`HTTP ${res.status}`);
   const json = await res.json();
   // TradingView scanner response: { count: N, data: [{s:"EXCH:SYM", d:[...values]}] }
@@ -810,9 +805,7 @@ function showError(err) {
     <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
     <div class="tbl-state-title" style="color:var(--red);">Unable to fetch market data</div>
     <div class="tbl-state-sub">
-      TradingView data could not be reached from this context.<br/>
-      This typically means the page is being opened as a local file (<code>file://</code>).<br/>
-      Serve the site over HTTP/HTTPS for live data to work. If hosted on GitHub Pages, this will work automatically.<br/><br/>
+      Could not reach the market data server. Please check your connection and try again.<br/><br/>
       <span class="tbl-state-link" onclick="manualRefresh()">Try again</span>
     </div>
   </div></td></tr>`;
