@@ -618,7 +618,26 @@ const CURRENCY_FLAG = {
   CNY:'cn',MXN:'mx',ZAR:'za',TRY:'tr',PLN:'pl',CZK:'cz',HUF:'hu',
   KRW:'kr',INR:'in',BRL:'br',THB:'th',SAR:'sa',AED:'ae',
 };
-function buildIcon(mkt, rowName, base, bg, txt, init) {
+const INDEX_FLAG = {
+  'TVC:SPX':'us','TVC:NDX':'us','TVC:DJI':'us','TVC:RUT':'us',
+  'TVC:NI225':'jp','TVC:DAX':'de','TVC:FTSE':'gb','TVC:SX5E':'eu',
+  'TVC:HSI':'hk','TVC:CAC40':'fr','TVC:ASX200':'au',
+  'TVC:SENSEX':'in','TVC:SHCOMP':'cn','TVC:KOSPI':'kr',
+  'TVC:STI':'sg','TVC:IBOV':'br','TVC:MXX':'mx',
+  'TVC:IBEX35':'es','TVC:FTSEMIB':'it','TVC:SMI':'ch',
+};
+function tvSlug(desc) {
+  return (desc||'')
+    .toLowerCase()
+    .replace(/\.com\b/g,'')
+    .replace(/['']/g,'')
+    .replace(/&/g,'')
+    .replace(/\b(incorporated|inc|corporation|corp|limited|ltd|llc|plc|co|company|group|holdings?|international|technologies|technology|systems|solutions|services|trust|fund|class\s[a-z]|the)\b\.?/g,'')
+    .replace(/[^a-z0-9]+/g,'-')
+    .replace(/-+/g,'-')
+    .replace(/^-+|-+$/g,'');
+}
+function buildIcon(mkt, rowS, rowName, rowDesc, base, bg, txt, init) {
   if (mkt === 'crypto') {
     const cb = cryptoBase(rowName || base).toLowerCase();
     const src = `https://cdn.jsdelivr.net/npm/cryptocurrency-icons/32/color/${cb}.png`;
@@ -627,9 +646,17 @@ function buildIcon(mkt, rowName, base, bg, txt, init) {
   if (mkt === 'forex') {
     const cur = (rowName||base).toUpperCase().slice(0,3);
     const cc = CURRENCY_FLAG[cur];
-    if (cc) {
-      const src = `https://flagcdn.com/32x24/${cc}.png`;
-      return `<img class="sym-icon" src="${src}" onerror="iconFallback(this)" data-bg="${bg}" data-txt="${txt}" data-init="${init}" alt="${cur}" style="object-fit:cover;border-radius:4px;">`;
+    if (cc) return `<img class="sym-icon" src="https://flagcdn.com/32x24/${cc}.png" onerror="iconFallback(this)" data-bg="${bg}" data-txt="${txt}" data-init="${init}" alt="${cur}" style="object-fit:cover;border-radius:4px;">`;
+  }
+  if (mkt === 'indices') {
+    const cc = INDEX_FLAG[rowS];
+    if (cc) return `<img class="sym-icon" src="https://flagcdn.com/32x24/${cc}.png" onerror="iconFallback(this)" data-bg="${bg}" data-txt="${txt}" data-init="${init}" alt="${cc}" style="object-fit:cover;border-radius:4px;">`;
+  }
+  if (mkt === 'stocks' || mkt === 'etf') {
+    const slug = tvSlug(rowDesc || rowName || base);
+    if (slug) {
+      const src = `https://s3-symbol-logo.tradingview.com/${slug}--big.svg`;
+      return `<img class="sym-icon" src="${src}" onerror="iconFallback(this)" data-bg="${bg}" data-txt="${txt}" data-init="${init}" alt="${slug}" style="object-fit:contain;background:#fff;padding:3px;">`;
     }
   }
   return `<div class="sym-icon" style="background:${bg};color:${txt};">${init}</div>`;
@@ -789,7 +816,7 @@ function renderTable() {
       <td>
         <div class="sym-cell">
           <svg class="star-btn ${wl?'on':''}" width="14" height="14" viewBox="0 0 24 24" fill="${wl?'var(--gold)':'none'}" stroke="${wl?'var(--gold)':'var(--muted)'}" stroke-width="2" stroke-linecap="round" onclick="toggleWatchlist('${row.s}',this)"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26 12,2"/></svg>
-          ${buildIcon(currentMarket, row.name, base, bg, txt, init)}
+          ${buildIcon(currentMarket, row.s, row.name, row.desc, base, bg, txt, init)}
           <div>
             <div class="sym-name">${row.name||base}</div>
             <div class="sym-desc">${row.desc||''}</div>
