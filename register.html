@@ -26,7 +26,7 @@ input,select{font-family:inherit;}
 .page{flex:1;display:grid;grid-template-columns:1fr 500px;min-height:calc(100vh - 64px);}
 
 /* LEFT PANEL */
-.panel-left{position:relative;display:flex;flex-direction:column;justify-content:flex-end;padding:60px 56px;color:#fff;overflow:hidden;background:#060e18;}
+.panel-left{position:relative;display:flex;flex-direction:column;justify-content:flex-start;padding:60px 56px;color:#fff;overflow:hidden;background:#060e18;}
 .panel-left-video{position:absolute;inset:0;z-index:0;}
 .panel-left-video video{width:100%;height:100%;object-fit:cover;opacity:.3;}
 .panel-left-overlay{position:absolute;inset:0;background:linear-gradient(160deg,rgba(6,14,24,.95) 0%,rgba(10,20,14,.85) 50%,rgba(200,72,0,.55) 85%,rgba(232,83,10,.45) 100%);z-index:1;}
@@ -58,10 +58,13 @@ input,select{font-family:inherit;}
 .form-title{font-size:20px;font-weight:800;color:#111;margin-bottom:3px;}
 .form-subtitle{font-size:13px;color:#888;margin-bottom:20px;}
 
-/* Tabs */
-.form-tabs{display:flex;background:#f4f6f9;border-radius:8px;padding:4px;margin-bottom:18px;gap:4px;}
-.ftab{flex:1;text-align:center;padding:8px 0;font-size:13px;font-weight:600;color:#888;border-radius:6px;cursor:pointer;transition:all .2s;border:none;background:transparent;}
-.ftab.active{background:#fff;color:#E8530A;box-shadow:0 2px 8px rgba(0,0,0,.08);}
+/* Google button */
+.btn-google{width:100%;height:44px;background:#fff;border:1.5px solid #e0e3e8;border-radius:8px;display:flex;align-items:center;justify-content:center;gap:10px;font-size:13.5px;font-weight:600;color:#333;cursor:pointer;transition:border-color .2s,box-shadow .2s;margin-bottom:4px;}
+.btn-google:hover{border-color:#bbb;box-shadow:0 2px 8px rgba(0,0,0,.08);}
+
+/* Divider */
+.form-divider{display:flex;align-items:center;gap:12px;margin:14px 0;color:#ccc;font-size:11.5px;}
+.form-divider::before,.form-divider::after{content:'';flex:1;height:1px;background:#e8e8e8;}
 
 /* Form */
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
@@ -94,10 +97,6 @@ input,select{font-family:inherit;}
 .check-group label{font-size:11.5px;color:#777;line-height:1.55;cursor:pointer;}
 .check-group label a{color:#E8530A;}
 .check-group label a:hover{text-decoration:underline;}
-
-/* Tab panels */
-.tab-panel{display:none;}
-.tab-panel.active{display:block;}
 
 /* Submit */
 .btn-submit{width:100%;height:48px;background:#E8530A;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;transition:background .15s;letter-spacing:.3px;margin-top:4px;}
@@ -187,17 +186,16 @@ input,select{font-family:inherit;}
 
   <!-- RIGHT PANEL -->
   <div class="panel-right">
-    <div class="form-logo">
-      <img src="assets/logo.png" alt="SpeedVerse Markets"/>
-    </div>
     <div class="form-title">Open Live Account</div>
     <div class="form-subtitle">Join 5,000,000+ traders worldwide</div>
 
-    <!-- Tabs -->
-    <div class="form-tabs">
-      <button class="ftab active" onclick="switchTab('email')">Email Address</button>
-      <button class="ftab" onclick="switchTab('phone')">Phone Number</button>
-    </div>
+    <!-- Google -->
+    <button class="btn-google" onclick="return false;">
+      <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg"><g><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/><path d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 6.29C4.672 4.163 6.656 3.58 9 3.58z" fill="#EA4335"/></g></svg>
+      Continue with Google
+    </button>
+
+    <div class="form-divider">or</div>
 
     <!-- Name row -->
     <div class="form-row">
@@ -251,31 +249,27 @@ input,select{font-family:inherit;}
       </select>
     </div>
 
-    <!-- Email panel -->
-    <div class="tab-panel active" id="panel-email">
-      <div class="form-group">
-        <label class="form-label">Email Address *</label>
-        <input class="form-input" type="email" placeholder="your@email.com"/>
-      </div>
+    <!-- Email -->
+    <div class="form-group">
+      <label class="form-label">Email Address *</label>
+      <input class="form-input" type="email" placeholder="your@email.com"/>
     </div>
 
-    <!-- Phone panel -->
-    <div class="tab-panel" id="panel-phone">
-      <div class="form-group">
-        <label class="form-label">Phone Number *</label>
-        <div class="phone-row">
-          <select class="phone-code">
-            <option>🇿🇦 +27</option>
-            <option>🇳🇬 +234</option>
-            <option>🇰🇪 +254</option>
-            <option>🇧🇼 +267</option>
-            <option>🇬🇭 +233</option>
-            <option>🇺🇸 +1</option>
-            <option>🇬🇧 +44</option>
-            <option>🇦🇺 +61</option>
-          </select>
-          <input class="form-input phone-input" type="tel" placeholder="Phone number"/>
-        </div>
+    <!-- Phone -->
+    <div class="form-group">
+      <label class="form-label">Phone Number *</label>
+      <div class="phone-row">
+        <select class="phone-code">
+          <option>🇿🇦 +27</option>
+          <option>🇳🇬 +234</option>
+          <option>🇰🇪 +254</option>
+          <option>🇧🇼 +267</option>
+          <option>🇬🇭 +233</option>
+          <option>🇺🇸 +1</option>
+          <option>🇬🇧 +44</option>
+          <option>🇦🇺 +61</option>
+        </select>
+        <input class="form-input phone-input" type="tel" placeholder="Phone number"/>
       </div>
     </div>
 
@@ -311,10 +305,6 @@ input,select{font-family:inherit;}
 
     <!-- Checkboxes -->
     <div class="check-group">
-      <input type="checkbox" id="chk1"/>
-      <label for="chk1">I am not a US resident</label>
-    </div>
-    <div class="check-group">
       <input type="checkbox" id="chk2"/>
       <label for="chk2">I confirm that I am of legal age and allowed to use this website and its services</label>
     </div>
@@ -326,8 +316,6 @@ input,select{font-family:inherit;}
     <button class="btn-submit">Create Account</button>
 
     <div class="form-footer">
-      <span class="form-footer-link"><a href="#">Practice with Demo</a></span>
-      <span class="footer-sep">|</span>
       <span class="form-footer-link">Have an account? <a href="login.html">Log In</a></span>
     </div>
   </div>
@@ -335,11 +323,6 @@ input,select{font-family:inherit;}
 </div>
 
 <script>
-function switchTab(tab) {
-  document.querySelectorAll('.ftab').forEach((t,i) => t.classList.toggle('active', (tab==='email'&&i===0)||(tab==='phone'&&i===1)));
-  document.getElementById('panel-email').classList.toggle('active', tab==='email');
-  document.getElementById('panel-phone').classList.toggle('active', tab==='phone');
-}
 function togglePwd(id, btn) {
   const input = document.getElementById(id);
   const isText = input.type === 'text';
