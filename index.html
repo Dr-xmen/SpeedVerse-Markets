@@ -177,9 +177,14 @@ table.mkt tbody td{padding:13px 14px;white-space:nowrap;}
 /* EXCELLENCE */
 .excellence{padding:72px 0;background:#fff;border-top:1px solid #eee;}
 .exc-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:24px;}
-.exc-tabs{display:flex;border-bottom:2px solid #eee;overflow-x:auto;margin-bottom:24px;}
+.exc-tabs{display:flex;border-bottom:2px solid #eee;overflow-x:auto;margin-bottom:32px;}
 .etab{padding:13px 22px;font-size:14px;font-weight:600;color:#888;cursor:pointer;border:none;border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:color .15s;background:none;font-family:inherit;}
 .etab.active,.etab:hover{color:#E8530A;border-bottom-color:#E8530A;}
+.exc-content{display:grid;grid-template-columns:1fr 380px;gap:40px;align-items:center;}
+.exc-img-wrap{display:flex;align-items:center;justify-content:center;}
+.exc-market-img{width:100%;max-width:340px;height:auto;display:none;animation:fadeIn .35s ease;}
+.exc-market-img.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:scale(.95);}to{opacity:1;transform:scale(1);}}
 .price-up{color:#2e7d32;font-weight:600;}
 .price-dn{color:#c62828;font-weight:600;}
 
@@ -580,21 +585,32 @@ footer{background:#111;padding:60px 0 28px;}
       <button class="etab" onclick="switchExc(this,'soft')">Soft Commodities</button>
       <button class="etab" onclick="switchExc(this,'shares')">Shares</button>
     </div>
-    <div style="overflow-x:auto;">
-      <table class="mkt">
-        <thead>
-          <tr>
-            <th>Symbol</th>
-            <th>Bid</th>
-            <th>Ask</th>
-            <th>Change</th>
-            <th>High</th>
-            <th>Low</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody id="exc-body"></tbody>
-      </table>
+    <div class="exc-content">
+      <div style="overflow-x:auto;">
+        <table class="mkt">
+          <thead>
+            <tr>
+              <th>Symbol</th>
+              <th>Bid</th>
+              <th>Ask</th>
+              <th>Change</th>
+              <th>High</th>
+              <th>Low</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="exc-body"></tbody>
+        </table>
+      </div>
+      <div class="exc-img-wrap">
+        <img id="exc-img-forex"          class="exc-market-img active" src="assets/mkt-forex.webp"           alt="Forex"/>
+        <img id="exc-img-indices"        class="exc-market-img"        src="assets/mkt-indices.webp"         alt="Indices"/>
+        <img id="exc-img-gold"           class="exc-market-img"        src="assets/mkt-gold-silver.webp"     alt="Gold &amp; Silver"/>
+        <img id="exc-img-energy"         class="exc-market-img"        src="assets/mkt-energy.webp"          alt="Energy"/>
+        <img id="exc-img-etfs"           class="exc-market-img"        src="assets/mkt-etfs.webp"            alt="ETFs"/>
+        <img id="exc-img-soft"           class="exc-market-img"        src="assets/mkt-soft-commodities.webp" alt="Soft Commodities"/>
+        <img id="exc-img-shares"         class="exc-market-img"        src="assets/mkt-shares.webp"          alt="Shares"/>
+      </div>
     </div>
   </div>
 </section>
@@ -864,6 +880,9 @@ function switchExc(btn,cat){
   document.querySelectorAll('.etab').forEach(t=>t.classList.remove('active'));
   btn.classList.add('active');
   renderExc(cat);
+  document.querySelectorAll('.exc-market-img').forEach(i=>i.classList.remove('active'));
+  const img = document.getElementById('exc-img-'+cat);
+  if(img) img.classList.add('active');
 }
 
 renderSpreads('forex');
