@@ -143,8 +143,8 @@ table.mkt tbody td{padding:13px 14px;white-space:nowrap;}
 .trust-media-track{display:flex;gap:72px;animation:trustscroll 28s linear infinite;width:max-content;align-items:center;}
 .trust-media-track:hover{animation-play-state:paused;}
 .trust-media-logo{flex-shrink:0;display:flex;align-items:center;}
-.trust-media-logo img{height:36px;width:auto;object-fit:contain;filter:grayscale(100%);opacity:.6;transition:filter .3s,opacity .3s;}
-.trust-media-logo img:hover{filter:grayscale(0%);opacity:1;}
+.trust-media-logo img{height:36px;width:auto;object-fit:contain;transition:transform .2s ease;cursor:pointer;}
+.trust-media-logo img:active{transform:scale(1.4);}
 @keyframes trustscroll{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
 .trust-fade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,#fff 0%,transparent 14%,transparent 86%,#fff 100%);}
 
