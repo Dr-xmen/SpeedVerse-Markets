@@ -807,50 +807,64 @@ renderExc('forex');
   const footerText = document.getElementById('promo-footer-text');
   const origCards  = Array.from(track.querySelectorAll('.pcard'));
   const total      = origCards.length;
+  const DURATION   = 500;
 
   const captions = [
     '🎉🎉 Earn tickets as you trade and win exclusive prizes.',
-    '🎉🎉 Double your eligible deposit with a 100% bonus of up to USD1,000.* *Non-withdrawable trading credit. T&Cs apply.',
+    '🎉🎉 Double your eligible deposit with a 100% bonus of up to USD1,000.* Non-withdrawable trading credit. T&Cs apply.',
     '🎉🎉 Turn your trades into cashback. Earn USD2 cashback for every USD100,000 traded on eligible CFDs.* T&Cs apply.',
     '',
     '🎉🎉 Access your trades, charts, and positions in one secure platform—directly from your browser.',
     '🎉🎉 Boost your trades – Double your deposit with our 50% bonus offered for new deposits!',
   ];
 
-  // Clone cards for seamless loop
+  // Append clones for forward loop + prepend clones for backward loop
   origCards.forEach(c => track.appendChild(c.cloneNode(true)));
+  origCards.forEach(c => track.prepend(c.cloneNode(true)));
 
-  let idx = 0;
+  // Start at total so we're viewing the real set
+  let idx = total;
+  let busy = false;
   let auto;
 
   function cardW(){ return track.querySelector('.pcard').offsetWidth + 16; }
 
   function updateCaption(i){
-    const realIdx = ((i % total) + total) % total;
-    footerText.textContent = captions[realIdx] || '';
+    const real = ((i % total) + total) % total;
+    footerText.textContent = captions[real] || '';
   }
 
-  function goTo(i, animate){
-    track.style.transition = animate ? 'transform .5s ease' : 'none';
+  function jumpTo(i){
+    track.style.transition = 'none';
+    track.style.transform  = `translateX(-${i * cardW()}px)`;
+    idx = i;
+  }
+
+  function slideTo(i){
+    if(busy) return;
+    busy = true;
+    track.style.transition = `transform ${DURATION}ms ease`;
     track.style.transform  = `translateX(-${i * cardW()}px)`;
     idx = i;
     updateCaption(i);
+    setTimeout(()=>{
+      // Seamlessly reset if we slid into clone territory
+      if(idx >= total * 2){ jumpTo(idx - total); }
+      if(idx < total)     { jumpTo(idx + total); }
+      busy = false;
+    }, DURATION + 20);
   }
 
-  track.addEventListener('transitionend', ()=>{
-    if(idx >= total){ goTo(idx - total, false); }
-    if(idx < 0)     { goTo(idx + total, false); }
-  });
-
-  function startAuto(){ auto = setInterval(()=> goTo(idx + 1, true), 3500); }
+  function startAuto(){ auto = setInterval(()=> slideTo(idx + 1), 3500); }
   function stopAuto() { clearInterval(auto); }
 
-  prev.addEventListener('click', ()=>{ stopAuto(); goTo(idx - 1, true); startAuto(); });
-  next.addEventListener('click', ()=>{ stopAuto(); goTo(idx + 1, true); startAuto(); });
+  prev.addEventListener('click', ()=>{ stopAuto(); slideTo(idx - 1); startAuto(); });
+  next.addEventListener('click', ()=>{ stopAuto(); slideTo(idx + 1); startAuto(); });
   track.parentElement.addEventListener('mouseenter', stopAuto);
   track.parentElement.addEventListener('mouseleave', startAuto);
 
-  goTo(0, false);
+  jumpTo(total);
+  updateCaption(total);
   startAuto();
 })();
 </script>
