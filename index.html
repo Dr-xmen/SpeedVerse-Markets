@@ -161,7 +161,11 @@ table.mkt tbody td{padding:13px 14px;white-space:nowrap;}
 .trade-store-row img{height:48px;width:auto;cursor:pointer;border-radius:8px;}
 .trade-right{position:relative;min-height:520px;}
 .trade-man{position:absolute;bottom:0;right:-20px;height:540px;width:auto;object-fit:contain;}
-.trade-earnings{position:absolute;top:20px;right:20px;width:200px;border-radius:14px;box-shadow:0 8px 32px rgba(0,0,0,.13);}
+.trade-earnings-card{position:absolute;top:20px;right:10px;width:210px;background:#fff;border-radius:14px;box-shadow:0 8px 32px rgba(0,0,0,.13);padding:16px 18px;}
+.tec-label{font-size:13px;font-weight:700;color:#1a1a1a;margin-bottom:2px;}
+.tec-sub{font-size:10px;color:#aaa;margin-bottom:10px;}
+.tec-amount{font-size:18px;font-weight:800;color:#E8530A;margin-bottom:12px;}
+.tec-chart{width:100%;height:50px;display:block;}
 .trade-support{position:absolute;bottom:120px;left:0;width:160px;border-radius:14px;box-shadow:0 8px 32px rgba(0,0,0,.13);}
 
 /* EXCELLENCE */
@@ -523,7 +527,21 @@ footer{background:#111;padding:60px 0 28px;}
       </div>
       <div class="trade-right">
         <img class="trade-man" src="assets/trade-man.webp" alt="Trader with laptop"/>
-        <img class="trade-earnings" src="assets/trade-earnings.webp" alt="Earnings"/>
+        <div class="trade-earnings-card">
+          <div class="tec-label">Earnings</div>
+          <div class="tec-sub">Trading Performance</div>
+          <div class="tec-amount">125,324.23 USD</div>
+          <svg class="tec-chart" viewBox="0 0 200 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <polyline points="0,45 30,38 60,30 90,35 120,20 150,15 180,8 200,5" stroke="#E8530A" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <polyline points="0,45 30,38 60,30 90,35 120,20 150,15 180,8 200,5 200,50 0,50" fill="rgba(232,83,10,0.08)"/>
+            <text x="0" y="50" font-size="8" fill="#bbb">APR</text>
+            <text x="33" y="50" font-size="8" fill="#bbb">MAY</text>
+            <text x="66" y="50" font-size="8" fill="#bbb">JUN</text>
+            <text x="99" y="50" font-size="8" fill="#bbb">JUL</text>
+            <text x="132" y="50" font-size="8" fill="#bbb">AUG</text>
+            <text x="165" y="50" font-size="8" fill="#bbb">SEPT</text>
+          </svg>
+        </div>
         <img class="trade-support" src="assets/trade-support.webp" alt="24/7 Customer Support"/>
       </div>
     </div>
