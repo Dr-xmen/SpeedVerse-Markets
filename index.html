@@ -160,13 +160,19 @@ table.mkt tbody td{padding:13px 14px;white-space:nowrap;}
 .trade-store-row{display:flex;gap:14px;flex-wrap:wrap;}
 .trade-store-row img{height:48px;width:auto;cursor:pointer;border-radius:8px;}
 .trade-right{position:relative;min-height:520px;}
-.trade-man{position:absolute;bottom:0;right:-20px;height:540px;width:auto;object-fit:contain;}
-.trade-earnings-card{position:absolute;top:20px;right:10px;width:210px;background:#fff;border-radius:14px;box-shadow:0 8px 32px rgba(0,0,0,.13);padding:16px 18px;}
+/* bg decorations */
+.trade-bg-oval{position:absolute;width:400px;height:480px;background:#fff;border-radius:50%;top:20px;right:-40px;z-index:0;}
+.trade-bg-orange1{position:absolute;top:-10px;right:30px;width:60px;height:130px;background:#E8530A;border-radius:6px;transform:rotate(12deg);z-index:0;opacity:.9;}
+.trade-bg-orange2{position:absolute;top:20px;right:0px;width:50px;height:110px;background:#c94400;border-radius:6px;transform:rotate(12deg);z-index:0;opacity:.85;}
+.trade-bg-teal{position:absolute;bottom:-10px;right:-10px;width:160px;height:100px;background:#1a4a58;border-radius:6px;transform:rotate(-8deg);z-index:0;}
+/* content z-index layers */
+.trade-earnings-card{position:absolute;top:30px;right:60px;width:210px;background:#fff;border-radius:14px;box-shadow:0 8px 32px rgba(0,0,0,.13);padding:16px 18px;z-index:1;}
 .tec-label{font-size:13px;font-weight:700;color:#1a1a1a;margin-bottom:2px;}
 .tec-sub{font-size:10px;color:#aaa;margin-bottom:10px;}
 .tec-amount{font-size:18px;font-weight:800;color:#E8530A;margin-bottom:12px;}
 .tec-chart{width:100%;height:50px;display:block;}
-.trade-support{position:absolute;bottom:120px;left:0;width:160px;border-radius:14px;box-shadow:0 8px 32px rgba(0,0,0,.13);}
+.trade-man{position:absolute;bottom:0;right:-20px;height:540px;width:auto;object-fit:contain;z-index:2;}
+.trade-support{position:absolute;bottom:120px;left:0;width:160px;border-radius:14px;box-shadow:0 8px 32px rgba(0,0,0,.13);z-index:3;}
 
 /* EXCELLENCE */
 .excellence{padding:72px 0;background:#fff;border-top:1px solid #eee;}
@@ -526,6 +532,10 @@ footer{background:#111;padding:60px 0 28px;}
         </div>
       </div>
       <div class="trade-right">
+        <div class="trade-bg-oval"></div>
+        <div class="trade-bg-orange1"></div>
+        <div class="trade-bg-orange2"></div>
+        <div class="trade-bg-teal"></div>
         <img class="trade-man" src="assets/trade-man.webp" alt="Trader with laptop"/>
         <div class="trade-earnings-card">
           <div class="tec-label">Earnings</div>
