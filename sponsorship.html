@@ -171,9 +171,7 @@ nav{position:sticky;top:0;z-index:9999;background:#fff;border-bottom:1px solid #
 .sp-news-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
 .sp-news-card{background:#fff;border-radius:20px;overflow:hidden;transition:box-shadow .2s,transform .2s;cursor:pointer;}
 .sp-news-card:hover{box-shadow:0 12px 40px rgba(0,0,0,.1);transform:translateY(-5px);}
-.sp-news-img{width:100%;height:220px;background:linear-gradient(135deg,#1a2640,#0d1117);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;position:relative;}
-.sp-news-img svg{opacity:.2;}
-.sp-news-img-ph{font-size:10px;color:rgba(255,255,255,.3);letter-spacing:1.5px;text-transform:uppercase;}
+.sp-news-img{width:100%;height:220px;background:#0d1117;position:relative;overflow:hidden;}
 .sp-news-cat{position:absolute;top:16px;left:16px;background:#E8530A;border-radius:50px;padding:4px 12px;font-size:10px;font-weight:700;color:#fff;letter-spacing:.8px;text-transform:uppercase;}
 .sp-news-body{padding:24px 24px 28px;}
 .sp-news-date{font-size:11px;color:#aaa;font-weight:600;letter-spacing:.8px;text-transform:uppercase;margin-bottom:10px;}
@@ -618,42 +616,192 @@ footer{background:#111;padding:60px 0 28px;}
     </div>
     <div class="sp-news-grid">
 
+      <!-- Card 1: Announcement -->
       <div class="sp-news-card reveal">
-        <div class="sp-news-img">
-          <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>
-          <span class="sp-news-img-ph">Image coming soon</span>
+        <div class="sp-news-img" style="background:#060000;overflow:hidden;">
+          <svg width="100%" height="100%" viewBox="0 0 400 220" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;">
+            <defs>
+              <radialGradient id="rg1" cx="50%" cy="58%" r="55%">
+                <stop offset="0%" stop-color="#c00000" stop-opacity="0.9"/>
+                <stop offset="45%" stop-color="#5a0000" stop-opacity="0.7"/>
+                <stop offset="100%" stop-color="#060000" stop-opacity="1"/>
+              </radialGradient>
+            </defs>
+            <rect width="400" height="220" fill="url(#rg1)"/>
+            <!-- Speed rays -->
+            <g stroke="rgba(255,255,255,0.055)" stroke-width="1.2">
+              <line x1="200" y1="125" x2="-20" y2="-10"/><line x1="200" y1="125" x2="70" y2="-10"/>
+              <line x1="200" y1="125" x2="155" y2="-10"/><line x1="200" y1="125" x2="245" y2="-10"/>
+              <line x1="200" y1="125" x2="330" y2="-10"/><line x1="200" y1="125" x2="420" y2="-10"/>
+              <line x1="200" y1="125" x2="420" y2="80"/><line x1="200" y1="125" x2="420" y2="230"/>
+              <line x1="200" y1="125" x2="-20" y2="230"/><line x1="200" y1="125" x2="-20" y2="80"/>
+            </g>
+            <!-- F1 car silhouette -->
+            <g transform="translate(68,85)">
+              <!-- main body -->
+              <ellipse cx="132" cy="32" rx="110" ry="20" fill="rgba(232,83,10,0.22)"/>
+              <ellipse cx="132" cy="26" rx="70" ry="14" fill="rgba(232,83,10,0.35)"/>
+              <!-- cockpit halo -->
+              <path d="M100,18 Q132,8 164,18" stroke="rgba(255,255,255,0.4)" stroke-width="3" fill="none" stroke-linecap="round"/>
+              <!-- front wing -->
+              <rect x="225" y="37" width="28" height="7" rx="3" fill="rgba(255,255,255,0.25)"/>
+              <rect x="220" y="40" width="8" height="12" rx="2" fill="rgba(255,255,255,0.15)"/>
+              <!-- rear wing -->
+              <rect x="-20" y="28" width="32" height="6" rx="3" fill="rgba(255,255,255,0.25)"/>
+              <rect x="6" y="34" width="6" height="12" rx="2" fill="rgba(255,255,255,0.15)"/>
+              <!-- tyres -->
+              <circle cx="44" cy="44" r="14" fill="#111" stroke="rgba(255,255,255,0.12)" stroke-width="2"/>
+              <circle cx="44" cy="44" r="7" fill="rgba(255,255,255,0.06)"/>
+              <circle cx="218" cy="44" r="14" fill="#111" stroke="rgba(255,255,255,0.12)" stroke-width="2"/>
+              <circle cx="218" cy="44" r="7" fill="rgba(255,255,255,0.06)"/>
+              <!-- exhaust glow -->
+              <ellipse cx="-15" cy="34" rx="18" ry="6" fill="#E8530A" opacity="0.4"/>
+              <ellipse cx="-28" cy="34" rx="8" ry="3" fill="#E8530A" opacity="0.2"/>
+            </g>
+            <!-- Checkered strip bottom -->
+            <g opacity="0.18">
+              <rect x="0" y="203" width="400" height="17" fill="#000"/>
+              <rect x="0" y="203" width="20" height="9" fill="#fff"/><rect x="40" y="203" width="20" height="9" fill="#fff"/>
+              <rect x="80" y="203" width="20" height="9" fill="#fff"/><rect x="120" y="203" width="20" height="9" fill="#fff"/>
+              <rect x="160" y="203" width="20" height="9" fill="#fff"/><rect x="200" y="203" width="20" height="9" fill="#fff"/>
+              <rect x="240" y="203" width="20" height="9" fill="#fff"/><rect x="280" y="203" width="20" height="9" fill="#fff"/>
+              <rect x="320" y="203" width="20" height="9" fill="#fff"/><rect x="360" y="203" width="20" height="9" fill="#fff"/>
+              <rect x="20" y="212" width="20" height="8" fill="#fff"/><rect x="60" y="212" width="20" height="8" fill="#fff"/>
+              <rect x="100" y="212" width="20" height="8" fill="#fff"/><rect x="140" y="212" width="20" height="8" fill="#fff"/>
+              <rect x="180" y="212" width="20" height="8" fill="#fff"/><rect x="220" y="212" width="20" height="8" fill="#fff"/>
+              <rect x="260" y="212" width="20" height="8" fill="#fff"/><rect x="300" y="212" width="20" height="8" fill="#fff"/>
+              <rect x="340" y="212" width="20" height="8" fill="#fff"/><rect x="380" y="212" width="20" height="8" fill="#fff"/>
+            </g>
+            <!-- Faint "2025" -->
+            <text x="200" y="175" font-size="68" font-weight="900" text-anchor="middle" fill="rgba(255,255,255,0.04)" font-family="Inter,sans-serif" letter-spacing="-2">2025</text>
+          </svg>
           <span class="sp-news-cat">Announcement</span>
         </div>
         <div class="sp-news-body">
-          <div class="sp-news-date">Coming soon</div>
+          <div class="sp-news-date">May 2025</div>
           <div class="sp-news-title">SpeedVerse Markets Announces Official Ferrari Partnership</div>
           <p class="sp-news-excerpt">SpeedVerse Markets takes a bold step forward, uniting the world's most iconic F1 team with 5 million global traders in a landmark partnership with Scuderia Ferrari HP.</p>
           <span class="sp-news-read">Read More</span>
         </div>
       </div>
 
+      <!-- Card 2: Event / Pit Lane -->
       <div class="sp-news-card reveal">
-        <div class="sp-news-img">
-          <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>
-          <span class="sp-news-img-ph">Image coming soon</span>
+        <div class="sp-news-img" style="background:#040d0a;overflow:hidden;">
+          <svg width="100%" height="100%" viewBox="0 0 400 220" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;">
+            <defs>
+              <radialGradient id="rg2" cx="30%" cy="50%" r="60%">
+                <stop offset="0%" stop-color="#E8530A" stop-opacity="0.35"/>
+                <stop offset="100%" stop-color="#040d0a" stop-opacity="1"/>
+              </radialGradient>
+              <filter id="blur2"><feGaussianBlur stdDeviation="3"/></filter>
+            </defs>
+            <rect width="400" height="220" fill="url(#rg2)"/>
+            <!-- Circuit track outline (Monza-style) -->
+            <g fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M60,160 L60,80 Q60,50 90,50 L200,50 Q240,50 240,80 L240,100 Q240,120 260,120 L320,120 Q350,120 350,90 L350,70 Q350,50 330,50 L290,50"/>
+              <path d="M60,160 Q60,185 85,185 L310,185 Q340,185 340,160 L340,140 Q340,120 320,120"/>
+            </g>
+            <!-- Glowing track (inner) -->
+            <g fill="none" stroke="rgba(232,83,10,0.5)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" filter="url(#blur2)">
+              <path d="M60,160 L60,80 Q60,50 90,50 L200,50 Q240,50 240,80 L240,100 Q240,120 260,120 L320,120 Q350,120 350,90 L350,70 Q350,50 330,50 L290,50"/>
+              <path d="M60,160 Q60,185 85,185 L310,185 Q340,185 340,160 L340,140 Q340,120 320,120"/>
+            </g>
+            <!-- Moving car dot on track -->
+            <circle cx="170" cy="50" r="6" fill="#E8530A" opacity="0.9"/>
+            <circle cx="170" cy="50" r="12" fill="#E8530A" opacity="0.25"/>
+            <!-- Start/finish line -->
+            <rect x="56" y="120" width="8" height="30" fill="rgba(255,255,255,0.35)" rx="1"/>
+            <!-- Grid marks -->
+            <g stroke="rgba(255,255,255,0.08)" stroke-width="1">
+              <line x1="0" y1="40" x2="400" y2="40"/>
+              <line x1="0" y1="80" x2="400" y2="80"/>
+              <line x1="0" y1="120" x2="400" y2="120"/>
+              <line x1="0" y1="160" x2="400" y2="160"/>
+              <line x1="0" y1="200" x2="400" y2="200"/>
+              <line x1="80" y1="0" x2="80" y2="220"/>
+              <line x1="160" y1="0" x2="160" y2="220"/>
+              <line x1="240" y1="0" x2="240" y2="220"/>
+              <line x1="320" y1="0" x2="320" y2="220"/>
+            </g>
+            <!-- "MARANELLO" faint label -->
+            <text x="200" y="210" font-size="11" font-weight="700" text-anchor="middle" fill="rgba(255,255,255,0.15)" font-family="Inter,sans-serif" letter-spacing="4">MARANELLO PIT LANE</text>
+          </svg>
           <span class="sp-news-cat">Event</span>
         </div>
         <div class="sp-news-body">
-          <div class="sp-news-date">Coming soon</div>
+          <div class="sp-news-date">May 2025</div>
           <div class="sp-news-title">Behind the Scenes: SpeedVerse at the Ferrari Garage</div>
           <p class="sp-news-excerpt">Go behind the pit wall with SpeedVerse Markets and Scuderia Ferrari HP for an exclusive look at how the partnership came to life — and what it means for Hamilton, Leclerc, and our global traders.</p>
           <span class="sp-news-read">Read More</span>
         </div>
       </div>
 
+      <!-- Card 3: Insight / Strategy -->
       <div class="sp-news-card reveal">
-        <div class="sp-news-img">
-          <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>
-          <span class="sp-news-img-ph">Image coming soon</span>
+        <div class="sp-news-img" style="background:#04080f;overflow:hidden;">
+          <svg width="100%" height="100%" viewBox="0 0 400 220" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;">
+            <defs>
+              <radialGradient id="rg3a" cx="25%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#c00000" stop-opacity="0.3"/>
+                <stop offset="100%" stop-color="#04080f" stop-opacity="0"/>
+              </radialGradient>
+              <radialGradient id="rg3b" cx="75%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#E8530A" stop-opacity="0.25"/>
+                <stop offset="100%" stop-color="#04080f" stop-opacity="0"/>
+              </radialGradient>
+              <filter id="blur3"><feGaussianBlur stdDeviation="2.5"/></filter>
+            </defs>
+            <rect width="400" height="220" fill="#04080f"/>
+            <rect width="400" height="220" fill="url(#rg3a)"/>
+            <rect width="400" height="220" fill="url(#rg3b)"/>
+            <!-- Centre divider -->
+            <line x1="200" y1="20" x2="200" y2="200" stroke="rgba(255,255,255,0.07)" stroke-width="1" stroke-dasharray="4 4"/>
+            <!-- LEFT SIDE: Racing circuit curve -->
+            <g fill="none" stroke="rgba(180,0,0,0.5)" stroke-width="8" stroke-linecap="round">
+              <path d="M30,180 Q30,40 100,40 Q170,40 170,110 Q170,175 100,175"/>
+            </g>
+            <g fill="none" stroke="rgba(232,83,10,0.9)" stroke-width="2.5" stroke-linecap="round" filter="url(#blur3)">
+              <path d="M30,180 Q30,40 100,40 Q170,40 170,110 Q170,175 100,175"/>
+            </g>
+            <!-- Car position dot on circuit -->
+            <circle cx="100" cy="40" r="5" fill="#E8530A"/>
+            <circle cx="100" cy="40" r="10" fill="#E8530A" opacity="0.3"/>
+            <!-- LEFT label -->
+            <text x="28" y="205" font-size="9" font-weight="700" fill="rgba(255,60,60,0.6)" font-family="Inter,sans-serif" letter-spacing="2">RACE STRATEGY</text>
+            <!-- RIGHT SIDE: Candlestick chart -->
+            <!-- Candle 1 - down -->
+            <g transform="translate(220,0)">
+              <line x1="15" y1="55" x2="15" y2="170" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+              <line x1="45" y1="55" x2="45" y2="170" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+              <line x1="75" y1="55" x2="75" y2="170" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+              <line x1="105" y1="55" x2="105" y2="170" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+              <line x1="135" y1="55" x2="135" y2="170" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+              <!-- candles -->
+              <line x1="10" y1="90" x2="10" y2="155" stroke="#e05050" stroke-width="1.5"/>
+              <rect x="4" y="105" width="12" height="35" fill="#e05050" rx="1"/>
+              <line x1="40" y1="75" x2="40" y2="145" stroke="#E8530A" stroke-width="1.5"/>
+              <rect x="34" y="88" width="12" height="40" fill="#E8530A" rx="1"/>
+              <line x1="70" y1="65" x2="70" y2="125" stroke="#4caf80" stroke-width="1.5"/>
+              <rect x="64" y="75" width="12" height="30" fill="#4caf80" rx="1"/>
+              <line x1="100" y1="55" x2="100" y2="115" stroke="#4caf80" stroke-width="1.5"/>
+              <rect x="94" y="60" width="12" height="35" fill="#4caf80" rx="1"/>
+              <line x1="130" y1="45" x2="130" y2="100" stroke="#4caf80" stroke-width="1.5"/>
+              <rect x="124" y="50" width="12" height="28" fill="#4caf80" rx="1"/>
+              <!-- trend line -->
+              <polyline points="10,130 40,110 70,88 100,78 130,62" fill="none" stroke="#E8530A" stroke-width="1.5" stroke-dasharray="3 2" opacity="0.7"/>
+              <!-- glow on trend -->
+              <polyline points="10,130 40,110 70,88 100,78 130,62" fill="none" stroke="#E8530A" stroke-width="4" opacity="0.15" filter="url(#blur3)"/>
+            </g>
+            <!-- RIGHT label -->
+            <text x="220" y="205" font-size="9" font-weight="700" fill="rgba(232,83,10,0.6)" font-family="Inter,sans-serif" letter-spacing="2">MARKET STRATEGY</text>
+            <!-- "VS" centre -->
+            <text x="200" y="118" font-size="13" font-weight="900" text-anchor="middle" fill="rgba(255,255,255,0.55)" font-family="Inter,sans-serif">VS</text>
+          </svg>
           <span class="sp-news-cat">Insight</span>
         </div>
         <div class="sp-news-body">
-          <div class="sp-news-date">Coming soon</div>
+          <div class="sp-news-date">May 2025</div>
           <div class="sp-news-title">Ferrari's Pit Stop vs. a Market Trade: The Parallels That Drive Us</div>
           <p class="sp-news-excerpt">What does Ferrari's race strategy have in common with a winning trading plan? More than you think. Explore the shared philosophy behind SpeedVerse's partnership with the Prancing Horse.</p>
           <span class="sp-news-read">Read More</span>
