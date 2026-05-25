@@ -621,7 +621,7 @@ const CURRENCY_FLAG = {
 function buildIcon(mkt, rowName, base, bg, txt, init) {
   if (mkt === 'crypto') {
     const cb = cryptoBase(rowName || base).toLowerCase();
-    const src = `https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1.0.0/32/color/${cb}.png`;
+    const src = `https://cdn.jsdelivr.net/npm/cryptocurrency-icons/32/color/${cb}.png`;
     return `<img class="sym-icon" src="${src}" onerror="iconFallback(this)" data-bg="${bg}" data-txt="${txt}" data-init="${init}" alt="${cb}" style="object-fit:contain;background:transparent;">`;
   }
   if (mkt === 'forex') {
