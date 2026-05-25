@@ -284,6 +284,143 @@ footer{background:#111;padding:60px 0 28px;}
 
 /* CHAT */
 .chat-btn{position:fixed;bottom:22px;right:22px;width:48px;height:48px;background:#E8530A;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:22px;cursor:pointer;box-shadow:0 4px 20px rgba(232,83,10,.45);z-index:300;}
+
+/* HAMBURGER */
+.nav-hamburger{display:none;flex-direction:column;justify-content:center;gap:5px;width:36px;height:36px;cursor:pointer;padding:4px;border:none;background:none;margin-left:auto;flex-shrink:0;}
+.nav-hamburger span{display:block;height:2.5px;border-radius:2px;background:#1a1a1a;transition:transform .3s,opacity .3s;}
+.nav-hamburger.open span:nth-child(1){transform:translateY(7.5px) rotate(45deg);}
+.nav-hamburger.open span:nth-child(2){opacity:0;}
+.nav-hamburger.open span:nth-child(3){transform:translateY(-7.5px) rotate(-45deg);}
+/* Mobile nav drawer */
+.mobile-nav{display:none;position:fixed;top:70px;left:0;right:0;bottom:0;background:#fff;z-index:9998;overflow-y:auto;padding:16px 0 40px;}
+.mobile-nav.open{display:block;}
+.mnav-item{display:block;font-size:16px;font-weight:600;color:#222;padding:14px 24px;border-bottom:1px solid #f0f0f0;text-decoration:none;}
+.mnav-item.orange{color:#E8530A;}
+.mnav-group-title{font-size:11px;font-weight:700;color:#aaa;letter-spacing:1.5px;text-transform:uppercase;padding:20px 24px 8px;}
+.mnav-sub{display:flex;align-items:center;gap:12px;padding:11px 24px;border-bottom:1px solid #f8f8f8;text-decoration:none;color:inherit;}
+.mnav-sub-icon{width:28px;height:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.mnav-sub-icon img,.mnav-sub-icon svg{width:24px;height:24px;object-fit:contain;}
+.mnav-sub-title{font-size:14px;font-weight:700;color:#1a1a1a;}
+.mnav-sub-title::after{content:' ›';color:#E8530A;}
+.mnav-sub-desc{font-size:11px;color:#888;margin-top:1px;}
+.mnav-btns{display:flex;gap:10px;padding:20px 24px 0;}
+.mnav-btns .btn-register{flex:1;justify-content:center;}
+.mnav-btns .btn-login{flex:1;justify-content:center;border:1.5px solid #ddd;border-radius:7px;}
+
+/* ===================== MOBILE RESPONSIVE ===================== */
+@media(max-width:768px){
+
+  /* NAV */
+  nav{padding:0 16px;}
+  .nav-logo img{height:72px;}
+  .nav-links,.nav-right{display:none;}
+  .nav-hamburger{display:flex;}
+
+  /* HERO */
+  .hero{height:auto;min-height:380px;padding-bottom:40px;}
+  .hero-overlay{background:linear-gradient(180deg,rgba(0,0,0,.55) 0%,rgba(0,0,0,.72) 100%);}
+  .hero-content{padding:0 20px;max-width:100%;}
+  .hero-title{font-size:30px;letter-spacing:-.5px;margin-bottom:10px;}
+  .hero-sub{font-size:13px;margin-bottom:20px;}
+  .hero-form-row{flex-direction:column;align-items:stretch;gap:10px;}
+  .hero-input-wrap{width:100%;}
+  .btn-signup{width:100%;}
+  .btn-qr{display:none;}
+
+  /* PROMO CARDS */
+  .promos-inner{padding:0 16px;}
+  .promos-footer{padding:0 4px;}
+  .pcard{flex:0 0 calc(100% - 0px);}
+  .promo-arrow{width:30px;height:30px;font-size:15px;}
+
+  /* SHARED */
+  .si{padding:0 16px;}
+  .sec-h{font-size:26px;}
+  .sec-p{font-size:14px;}
+
+  /* SPREADS */
+  .spreads{padding:40px 0 30px;}
+  .spreads-heading{font-size:22px;margin-bottom:16px;}
+  .cmp-table{font-size:12px;}
+  .cmp-td-us,.cmp-td-mkt{font-size:13px;padding:12px 10px;}
+  .cmp-td-broker{padding:12px 10px;}
+  .cmp-logo-us,.cmp-logo-mkt{padding:14px 10px;}
+  .cmp-logo-us img{height:52px !important;}
+
+  /* AWARDS */
+  .awards{padding:48px 0;}
+  .awards-brand,.awards-title{font-size:24px;}
+  .awards-stats{flex-wrap:wrap;gap:0;}
+  .awards-stat{flex:1 1 calc(50% - 2px);max-width:none;padding:16px 10px;border-left:none;border-bottom:1px solid #ddd;}
+  .awards-stat:nth-child(2){border-left:1px solid #ddd;}
+  .awards-stat:nth-child(4){border-left:1px solid #ddd;}
+  .awards-stat-num{font-size:20px;}
+  .awards-features{grid-template-columns:1fr;gap:28px;margin-bottom:16px;}
+  .awards-feature-icon{width:100px;height:100px;}
+  .awards-feature-icon img{width:70px;height:70px;}
+
+  /* TRUST */
+  .trust{padding:48px 0 32px;}
+  .trust-grid{grid-template-columns:repeat(2,1fr);gap:12px;max-width:100%;padding:0 16px;}
+  .trust-media-logo img{height:26px;}
+
+  /* TRADE ANYWHERE */
+  .trade{padding:48px 0 0;}
+  .trade-wrap{grid-template-columns:1fr;gap:0;}
+  .trade-left{padding-bottom:24px;padding:0 16px 24px;}
+  .trade-left h2{font-size:26px;}
+  .trade-right{min-height:300px;overflow:hidden;}
+  .trade-bg-oval{width:280px;height:320px;right:-20px;top:10px;}
+  .trade-man{height:320px;right:-10px;}
+  .trade-earnings-card{width:160px;top:16px;right:40px;padding:10px 12px;}
+  .tec-amount{font-size:14px;}
+  .trade-support{width:110px;bottom:60px;}
+  .trade-store-row img{height:36px;}
+
+  /* EXCELLENCE */
+  .excellence{padding:48px 0;}
+  .exc-wrap{grid-template-columns:1fr;gap:28px;}
+  .exc-heading{font-size:26px;margin-bottom:20px;}
+  .exc-tabs{gap:0;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:2px;}
+  .exc-tabs::-webkit-scrollbar{height:3px;}
+  .exc-tabs::-webkit-scrollbar-thumb{background:#E8530A;border-radius:2px;}
+  .etab{flex-shrink:0;font-size:11px;padding:8px 0;margin-right:16px;}
+  .exc-panel-desc{font-size:13px;}
+  .exc-img-wrap{order:-1;}
+  .exc-market-img{max-width:100%;}
+
+  /* SUPPORT */
+  .support{padding:48px 0;}
+  .sup-head h2{font-size:24px;}
+  .sup-grid{grid-template-columns:1fr;gap:16px;}
+  .sup-card{padding:28px 20px;}
+
+  /* START NOW */
+  .startnow{padding:56px 0;}
+  .sn-title{font-size:26px;margin-bottom:32px;}
+  .sn-stats{flex-wrap:wrap;gap:0;}
+  .sn-stat{flex:1 1 calc(50% - 2px);padding:16px 10px;border-right:none;border-bottom:1px solid rgba(255,255,255,.2);}
+  .sn-stat:nth-child(2){border-right:1px solid rgba(255,255,255,.2);}
+  .sn-stat:nth-child(4){border-right:none;}
+  .sn-stat:nth-child(3),.sn-stat:nth-child(4){border-bottom:none;}
+  .sn-stat-num{font-size:22px;}
+  .sn-start-btn{font-size:14px;padding:15px 28px;}
+
+  /* FOOTER */
+  .ft-top{grid-template-columns:1fr;gap:32px;}
+  .ft-cols{grid-template-columns:repeat(2,1fr);gap:20px;}
+  .ft-bottom{flex-direction:column;align-items:flex-start;gap:8px;}
+
+  /* CHAT BTN */
+  .chat-btn{bottom:16px;right:16px;width:42px;height:42px;font-size:19px;}
+}
+
+@media(max-width:400px){
+  .hero-title{font-size:26px;}
+  .awards-stat-num{font-size:17px;}
+  .ft-cols{grid-template-columns:1fr;}
+  .trust-grid{grid-template-columns:repeat(2,1fr);}
+}
 </style>
 </head>
 <body>
@@ -383,7 +520,62 @@ footer{background:#111;padding:60px 0 28px;}
       Login
     </a>
   </div>
+  <button class="nav-hamburger" id="nav-hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+
+<!-- MOBILE NAV DRAWER -->
+<div class="mobile-nav" id="mobile-nav">
+  <a href="#" class="mnav-item orange">🏁 Sponsorship</a>
+
+  <div class="mnav-group-title">Markets</div>
+  <a href="#" class="mnav-sub">
+    <div class="mnav-sub-icon"><img src="assets/nav-forex.svg" alt=""/></div>
+    <div><div class="mnav-sub-title">Forex</div><div class="mnav-sub-desc">Trade major, minor, and exotic currency pairs</div></div>
+  </a>
+  <a href="#" class="mnav-sub">
+    <div class="mnav-sub-icon"><img src="assets/nav-indices.svg" alt=""/></div>
+    <div><div class="mnav-sub-title">Indices</div><div class="mnav-sub-desc">Trade top indices like DJI 30, S&amp;P 500 and DAX</div></div>
+  </a>
+  <a href="#" class="mnav-sub">
+    <div class="mnav-sub-icon"><img src="assets/nav-commodities.svg" alt=""/></div>
+    <div><div class="mnav-sub-title">Commodities</div><div class="mnav-sub-desc">Trade raw materials like gold, oil, and silver</div></div>
+  </a>
+  <a href="#" class="mnav-sub">
+    <div class="mnav-sub-icon"><img src="assets/nav-shares.svg" alt=""/></div>
+    <div><div class="mnav-sub-title">Shares CFD</div><div class="mnav-sub-desc">Trade shares of global companies worldwide</div></div>
+  </a>
+  <a href="#" class="mnav-sub">
+    <div class="mnav-sub-icon"><img src="assets/nav-etf.svg" alt=""/></div>
+    <div><div class="mnav-sub-title">ETFs</div><div class="mnav-sub-desc">Diversify with baskets of stocks and bonds</div></div>
+  </a>
+  <a href="#" class="mnav-sub">
+    <div class="mnav-sub-icon"><img src="assets/nav-bonds.svg" alt=""/></div>
+    <div><div class="mnav-sub-title">Bonds</div><div class="mnav-sub-desc">Trade US Treasury bonds and more</div></div>
+  </a>
+
+  <div class="mnav-group-title">Platforms</div>
+  <a href="#" class="mnav-sub">
+    <div class="mnav-sub-icon"><img src="assets/nav-speedverse.svg" alt=""/></div>
+    <div><div class="mnav-sub-title">SpeedVerse Platform</div><div class="mnav-sub-desc">Our powerful proprietary trading platform</div></div>
+  </a>
+  <a href="#" class="mnav-sub">
+    <div class="mnav-sub-icon"><img src="assets/nav-tradingview.svg" alt=""/></div>
+    <div><div class="mnav-sub-title">TradingView Platform</div><div class="mnav-sub-desc">Advanced charting with TradingView integration</div></div>
+  </a>
+
+  <div class="mnav-group-title">Company</div>
+  <a href="#" class="mnav-item" style="padding:11px 24px;font-size:14px;font-weight:600;">About SpeedVerse</a>
+  <a href="#" class="mnav-item" style="padding:11px 24px;font-size:14px;font-weight:600;">Privacy Policy</a>
+  <a href="#" class="mnav-item" style="padding:11px 24px;font-size:14px;font-weight:600;">Terms</a>
+  <a href="#" class="mnav-item" style="padding:11px 24px;font-size:14px;font-weight:600;">Contact Us</a>
+
+  <div class="mnav-btns">
+    <a href="#" class="btn-register">Register</a>
+    <a href="#" class="btn-login">Login</a>
+  </div>
+</div>
 
 
 <!-- HERO -->
@@ -1115,6 +1307,25 @@ renderSpreads('forex');
 
   document.querySelectorAll('.img-zoom,.img-slide,.img-pop').forEach(el=>{
     imgObserver.observe(el);
+  });
+})();
+
+// Hamburger mobile menu
+(function(){
+  var btn = document.getElementById('nav-hamburger');
+  var drawer = document.getElementById('mobile-nav');
+  if(!btn||!drawer) return;
+  btn.addEventListener('click', function(){
+    btn.classList.toggle('open');
+    drawer.classList.toggle('open');
+    document.body.style.overflow = drawer.classList.contains('open') ? 'hidden' : '';
+  });
+  drawer.querySelectorAll('a').forEach(function(a){
+    a.addEventListener('click', function(){
+      btn.classList.remove('open');
+      drawer.classList.remove('open');
+      document.body.style.overflow = '';
+    });
   });
 })();
 
