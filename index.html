@@ -823,7 +823,9 @@ const spreadsData = {
 };
 
 function renderSpreads(cat){
-  document.getElementById('spreads-body').innerHTML = (spreadsData[cat]||spreadsData.forex).map(r=>`
+  const sbody = document.getElementById('spreads-body');
+  if(!sbody) return;
+  sbody.innerHTML = (spreadsData[cat]||spreadsData.forex).map(r=>`
     <tr>
       <td><div class="sym"><span class="sym-icon">${r.icon}</span><strong>${r.sym}</strong></div></td>
       <td><strong>${r.spread}</strong></td>
