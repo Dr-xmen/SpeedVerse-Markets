@@ -76,11 +76,30 @@ nav{position:sticky;top:0;z-index:500;background:#fff;border-bottom:1px solid #e
 .obtn svg{width:16px;height:16px;fill:none;stroke:#fff;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
 
 /* SPREADS */
-.spreads{padding:72px 0;background:#fff;}
-.spreads-wrap{display:grid;grid-template-columns:260px 1fr;gap:64px;align-items:start;}
-.spreads-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
-.stab{padding:7px 18px;border-radius:50px;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid #ddd;color:#555;background:#fff;transition:all .15s;font-family:inherit;}
-.stab.active,.stab:hover{background:#E8530A;color:#fff;border-color:#E8530A;}
+.spreads{padding:60px 0 50px;background:#fff;}
+.spreads-heading{font-size:36px;font-weight:800;color:#1a1a1a;margin-bottom:32px;letter-spacing:-.5px;}
+.spreads-heading em{font-style:normal;color:#E8530A;}
+.cmp-table{width:100%;border-collapse:collapse;}
+.cmp-table th,.cmp-table td{padding:0;}
+.cmp-col-broker{width:37%;}
+.cmp-col-us{width:31.5%;}
+.cmp-col-mkt{width:31.5%;}
+.cmp-head-row th{vertical-align:bottom;}
+.cmp-head-broker{background:#fff;padding:14px 24px;font-size:13px;font-weight:600;color:#555;text-align:left;border:1px solid #e8e8e8;border-right:none;}
+.cmp-head-us{background:#f5f5f5;padding:20px 24px;text-align:center;border-top:4px solid #E8530A;border-left:1px solid #e8e8e8;border-right:1px solid #e8e8e8;}
+.cmp-head-mkt{background:#f5f5f5;padding:20px 24px;text-align:center;font-size:14px;font-weight:700;color:#1a1a1a;border-top:4px solid #bbb;border-left:none;border-right:1px solid #e8e8e8;border-bottom:1px solid #e8e8e8;}
+.cmp-body tr td{border-bottom:1px solid #e8e8e8;border-left:1px solid #e8e8e8;}
+.cmp-body tr td:last-child{border-right:1px solid #e8e8e8;}
+.cmp-body tr:last-child td{border-bottom:1px solid #e8e8e8;}
+.cmp-td-broker{padding:14px 24px;background:#fff;}
+.cmp-instr{font-size:14px;font-weight:700;color:#1a1a1a;}
+.cmp-cat{font-size:12px;color:#aaa;margin-top:2px;}
+.cmp-td-us{padding:14px 24px;background:#f5f5f5;text-align:center;font-size:16px;font-weight:700;color:#1a1a1a;}
+.cmp-td-mkt{padding:14px 24px;background:#f5f5f5;text-align:center;font-size:16px;color:#555;border-left:none;}
+.cmp-crown{font-size:14px;margin-right:4px;}
+.cmp-notes{margin-top:20px;list-style:disc;padding-left:20px;}
+.cmp-notes li{font-size:13px;color:#555;margin-bottom:4px;line-height:1.5;}
+.cmp-notes li:nth-child(2){color:#E8530A;}
 table.mkt{width:100%;border-collapse:collapse;font-size:14px;}
 table.mkt thead th{padding:10px 14px;text-align:left;font-size:10px;font-weight:700;color:#aaa;letter-spacing:.8px;text-transform:uppercase;border-bottom:2px solid #eee;white-space:nowrap;}
 table.mkt tbody tr{border-bottom:1px solid #f0f0f0;}
@@ -335,39 +354,50 @@ footer{background:#111;padding:60px 0 28px;}
 <!-- SPREADS SECTION -->
 <section class="spreads">
   <div class="si">
-    <div class="spreads-wrap">
-      <div>
-        <span class="tag">Live Markets</span>
-        <h2 class="sec-h">See Our Competitive Spreads</h2>
-        <p class="sec-p">Trade on ultra-tight spreads across Forex, Indices, Commodities, and more with lightning-fast execution.</p>
-        <a href="#" class="obtn">
-          View All Markets
-          <svg viewBox="0 0 24 24"><polyline points="9,18 15,12 9,6"/></svg>
-        </a>
-      </div>
-      <div>
-        <div class="spreads-tabs">
-          <button class="stab active" onclick="switchSpreads(this,'forex')">Forex</button>
-          <button class="stab" onclick="switchSpreads(this,'indices')">Indices</button>
-          <button class="stab" onclick="switchSpreads(this,'commodities')">Commodities</button>
-          <button class="stab" onclick="switchSpreads(this,'crypto')">Crypto</button>
-        </div>
-        <div style="overflow-x:auto;">
-          <table class="mkt" id="spreads-tbl">
-            <thead>
-              <tr>
-                <th>Symbol</th>
-                <th>Spread from</th>
-                <th>Leverage up to</th>
-                <th>Sentiment</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody id="spreads-body"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+    <h2 class="spreads-heading">See Our <em>Competitive Spreads</em></h2>
+    <table class="cmp-table">
+      <thead>
+        <tr class="cmp-head-row">
+          <th class="cmp-col-broker cmp-head-broker">Broker</th>
+          <th class="cmp-col-us cmp-head-us">
+            <!-- logo placeholder — will be replaced -->
+          </th>
+          <th class="cmp-col-mkt cmp-head-mkt">Market Average</th>
+        </tr>
+      </thead>
+      <tbody class="cmp-body">
+        <tr>
+          <td class="cmp-td-broker"><div class="cmp-instr">XAUUSD</div><div class="cmp-cat">Gold</div></td>
+          <td class="cmp-td-us"><span class="cmp-crown">👑</span>0.75</td>
+          <td class="cmp-td-mkt">0.89</td>
+        </tr>
+        <tr>
+          <td class="cmp-td-broker"><div class="cmp-instr">GBP/CHF</div><div class="cmp-cat">Forex</div></td>
+          <td class="cmp-td-us"><span class="cmp-crown">👑</span>0.90</td>
+          <td class="cmp-td-mkt">1.30</td>
+        </tr>
+        <tr>
+          <td class="cmp-td-broker"><div class="cmp-instr">GBP/NZD</div><div class="cmp-cat">Forex</div></td>
+          <td class="cmp-td-us"><span class="cmp-crown">👑</span>2.65</td>
+          <td class="cmp-td-mkt">3.31</td>
+        </tr>
+        <tr>
+          <td class="cmp-td-broker"><div class="cmp-instr">HK50</div><div class="cmp-cat">Indices</div></td>
+          <td class="cmp-td-us"><span class="cmp-crown">👑</span>0.41</td>
+          <td class="cmp-td-mkt">1.99</td>
+        </tr>
+        <tr>
+          <td class="cmp-td-broker"><div class="cmp-instr">UKOUSD</div><div class="cmp-cat">Energy</div></td>
+          <td class="cmp-td-us"><span class="cmp-crown">👑</span>2.30</td>
+          <td class="cmp-td-mkt">3.34</td>
+        </tr>
+      </tbody>
+    </table>
+    <ul class="cmp-notes">
+      <li>Spreads are in pips.</li>
+      <li>Last updated on 25 May 2026.</li>
+      <li>All spreads (in pips) are for indicative purposes only as net costs may differ at any time of the day.</li>
+    </ul>
   </div>
 </section>
 
