@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx plugins *)",
+      "Bash(gh auth *)",
+      "mcp__plugin_supabase_supabase__list_projects",
+      "Bash(winget install *)",
+      "PowerShell(gh auth *)",
+      "PowerShell(gh repo *)",
+      "PowerShell($env:PATH = [System.Environment]::GetEnvironmentVariable\\(\"PATH\", \"Machine\"\\) + \";\" + [System.Environment]::GetEnvironmentVariable\\(\"PATH\", \"User\"\\); gh repo view Dr-xmen/SpeedVerse-Markets --json name,description,defaultBranchRef,isEmpty 2>&1)",
+      "mcp__plugin_supabase_supabase__get_project",
+      "PowerShell(git pull *)",
+      "PowerShell(git *)",
+      "Skill(update-config)"
+    ]
+  }
+}

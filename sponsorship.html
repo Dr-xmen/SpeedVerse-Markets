@@ -66,11 +66,12 @@ nav{position:sticky;top:0;z-index:9999;background:#fff;border-bottom:1px solid #
 .sp-hero-content{position:relative;z-index:2;max-width:1280px;margin:0 auto;padding:0 64px;height:100%;display:flex;align-items:center;}
 .sp-hero-left{max-width:520px;}
 /* Logo lockup */
-.sp-lockup-img{height:72px;width:auto;object-fit:contain;margin-bottom:32px;display:block;}
+.sp-lockup-img{height:72px;width:auto;object-fit:contain;margin-bottom:32px;display:block;opacity:0;animation:heroUp .7s ease .1s forwards;}
 /* Headline */
-.sp-hero-h1{font-size:66px;font-weight:800;line-height:1.05;letter-spacing:-1px;color:#fff;margin-bottom:20px;}
+.sp-hero-h1{font-size:66px;font-weight:800;line-height:1.05;letter-spacing:-1px;color:#fff;margin-bottom:20px;opacity:0;animation:heroUp .7s ease .28s forwards;}
 .sp-hero-h1 em{font-style:normal;color:#E8530A;display:block;}
-.sp-hero-sub{font-size:15px;color:rgba(255,255,255,.72);line-height:1.75;margin-bottom:36px;max-width:440px;}
+@keyframes heroUp{from{opacity:0;transform:translateY(32px);}to{opacity:1;transform:translateY(0);}}
+.sp-hero-sub{font-size:15px;color:rgba(255,255,255,.72);line-height:1.75;margin-bottom:36px;max-width:440px;opacity:0;animation:heroUp .7s ease .44s forwards;}
 .sp-hero-btns{display:flex;gap:14px;flex-wrap:wrap;}
 .btn-primary{display:inline-flex;align-items:center;gap:8px;background:#E8530A;color:#fff;padding:14px 32px;border-radius:50px;font-size:14px;font-weight:700;transition:background .15s;}
 .btn-primary:hover{background:#c94400;}
@@ -431,19 +432,19 @@ footer{background:#111;padding:60px 0 28px;}
 <div class="sp-statsbar">
   <div class="sp-statsbar-inner">
     <div class="sp-stat">
-      <div class="sp-stat-num">5<em>M</em>+</div>
+      <div class="sp-stat-num"><span class="count-up" data-target="5" data-suffix="M+">0M+</span></div>
       <div class="sp-stat-label">Global Traders<br/>Reached</div>
     </div>
     <div class="sp-stat">
-      <div class="sp-stat-num">170<em>+</em></div>
+      <div class="sp-stat-num"><span class="count-up" data-target="170" data-suffix="+">0+</span></div>
       <div class="sp-stat-label">Countries<br/>Covered</div>
     </div>
     <div class="sp-stat">
-      <div class="sp-stat-num">15<em>+</em></div>
+      <div class="sp-stat-num"><span class="count-up" data-target="15" data-suffix="+">0+</span></div>
       <div class="sp-stat-label">Years of<br/>Market Expertise</div>
     </div>
     <div class="sp-stat">
-      <div class="sp-stat-num">1<em>K</em>+</div>
+      <div class="sp-stat-num"><span class="count-up" data-target="1" data-suffix="K+">0K+</span></div>
       <div class="sp-stat-label">CFD Instruments<br/>Available</div>
     </div>
   </div>
@@ -862,6 +863,29 @@ const io = new IntersectionObserver(entries => {
   entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
 }, { threshold: 0.12 });
 revealEls.forEach(el => io.observe(el));
+
+// Count-up animation
+const countEls = document.querySelectorAll('.count-up');
+const countObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    const el = e.target;
+    const target = +el.dataset.target;
+    const suffix = el.dataset.suffix;
+    const duration = 1800;
+    const start = performance.now();
+    const tick = now => {
+      const p = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.floor(eased * target) + suffix;
+      if (p < 1) requestAnimationFrame(tick);
+      else el.textContent = target + suffix;
+    };
+    requestAnimationFrame(tick);
+    countObs.unobserve(el);
+  });
+}, { threshold: 0.6 });
+countEls.forEach(el => countObs.observe(el));
 </script>
 </body>
 </html>
