@@ -21,10 +21,10 @@ nav{position:sticky;top:0;z-index:500;background:#fff;border-bottom:1px solid #e
 .nav-links>li>a:hover{color:#E8530A;}
 .nav-links .sponsorship>a{color:#E8530A;font-weight:600;}
 .nav-caret{display:inline-block;width:10px;height:10px;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolyline points='1,1 5,5 9,1' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") center/contain no-repeat;transition:transform .2s;}
-.nav-links>li:hover .nav-caret{transform:rotate(180deg);}
+.nav-links>li:hover .nav-caret,.nav-links>li.dd-open .nav-caret{transform:rotate(180deg);}
 /* Dropdown */
 .nav-dropdown{position:absolute;top:calc(100% + 12px);left:0;background:#fff;border-radius:12px;box-shadow:0 8px 40px rgba(0,0,0,.13);padding:12px;min-width:280px;opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .2s,transform .2s;z-index:600;}
-.nav-links>li:hover .nav-dropdown{opacity:1;pointer-events:all;transform:translateY(0);}
+.nav-links>li:hover .nav-dropdown,.nav-links>li.dd-open .nav-dropdown{opacity:1;pointer-events:all;transform:translateY(0);}
 .nav-dd-item{display:flex;align-items:center;gap:14px;padding:10px 14px;border-radius:8px;text-decoration:none;transition:background .15s;}
 .nav-dd-item:hover{background:#fff6f2;}
 .nav-dd-icon{width:32px;height:32px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
@@ -336,15 +336,11 @@ footer{background:#111;padding:60px 0 28px;}
       <a href="#">Platforms <span class="nav-caret"></span></a>
       <div class="nav-dropdown" style="min-width:240px;">
         <a href="#" class="nav-dd-item">
-          <div class="nav-dd-icon">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#E8530A" stroke-width="1.8"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-          </div>
+          <div class="nav-dd-icon"><img src="assets/nav-speedverse.svg" alt="SpeedVerse"/></div>
           <div class="nav-dd-text"><div class="nav-dd-text-title">SpeedVerse Platform</div><div class="nav-dd-text-sub">Our powerful proprietary trading platform</div></div>
         </a>
         <a href="#" class="nav-dd-item">
-          <div class="nav-dd-icon">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#E8530A" stroke-width="1.8"><polyline points="22,7 13.5,15.5 8.5,10.5 2,17"/><polyline points="16,7 22,7 22,13"/></svg>
-          </div>
+          <div class="nav-dd-icon"><img src="assets/nav-tradingview.svg" alt="TradingView"/></div>
           <div class="nav-dd-text"><div class="nav-dd-text-title">TradingView Platform</div><div class="nav-dd-text-sub">Advanced charting with TradingView integration</div></div>
         </a>
       </div>
@@ -1122,6 +1118,28 @@ renderSpreads('forex');
 
   document.querySelectorAll('.img-zoom,.img-slide,.img-pop').forEach(el=>{
     imgObserver.observe(el);
+  });
+})();
+
+// Dropdown: open on click + close on outside click (works on touch/mobile too)
+(function(){
+  var navItems = document.querySelectorAll('.nav-links>li');
+  navItems.forEach(function(li){
+    var dd = li.querySelector('.nav-dropdown');
+    var trigger = li.querySelector('a');
+    if(!dd || !trigger) return;
+    trigger.addEventListener('click', function(e){
+      e.preventDefault();
+      var isOpen = li.classList.contains('dd-open');
+      // close all
+      navItems.forEach(function(x){ x.classList.remove('dd-open'); });
+      if(!isOpen) li.classList.add('dd-open');
+    });
+  });
+  document.addEventListener('click', function(e){
+    if(!e.target.closest('.nav-links')) {
+      navItems.forEach(function(x){ x.classList.remove('dd-open'); });
+    }
   });
 })();
 </script>
