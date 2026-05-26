@@ -626,6 +626,17 @@ const INDEX_FLAG = {
   'TVC:STI':'sg','TVC:IBOV':'br','TVC:MXX':'mx',
   'TVC:IBEX35':'es','TVC:FTSEMIB':'it','TVC:SMI':'ch',
 };
+const COMMODITY_SLUG = {
+  'COMEX:GC1!':   'gold',
+  'COMEX:SI1!':   'silver',
+  'NYMEX:CL1!':   'crude-oil',
+  'ICEEUR:BRN1!': 'crude-oil',
+  'NYMEX:NG1!':   'natural-gas',
+  'NYMEX:RB1!':   'crude-oil',
+  'NYMEX:HO1!':   'crude-oil',
+  'CBOT:W1!':     'wheat',
+  'ICEUS:KC1!':   'coffee',
+};
 function tvSlug(desc) {
   return (desc||'')
     .toLowerCase()
@@ -638,26 +649,33 @@ function tvSlug(desc) {
     .replace(/^-+|-+$/g,'');
 }
 function buildIcon(mkt, rowS, rowName, rowDesc, base, bg, txt, init) {
+  const img = (src, alt, style) =>
+    `<img class="sym-icon" src="${src}" onerror="iconFallback(this)" data-bg="${bg}" data-txt="${txt}" data-init="${init}" alt="${alt}" style="${style}">`;
+  const TV = 'https://s3-symbol-logo.tradingview.com';
+
   if (mkt === 'crypto') {
     const cb = cryptoBase(rowName || base).toLowerCase();
-    const src = `https://cdn.jsdelivr.net/npm/cryptocurrency-icons/32/color/${cb}.png`;
-    return `<img class="sym-icon" src="${src}" onerror="iconFallback(this)" data-bg="${bg}" data-txt="${txt}" data-init="${init}" alt="${cb}" style="object-fit:contain;background:transparent;">`;
+    return img(`https://cdn.jsdelivr.net/npm/cryptocurrency-icons/32/color/${cb}.png`, cb, 'object-fit:contain;background:transparent;');
   }
   if (mkt === 'forex') {
-    const cur = (rowName||base).toUpperCase().slice(0,3);
-    const cc = CURRENCY_FLAG[cur];
-    if (cc) return `<img class="sym-icon" src="https://flagcdn.com/32x24/${cc}.png" onerror="iconFallback(this)" data-bg="${bg}" data-txt="${txt}" data-init="${init}" alt="${cur}" style="object-fit:cover;border-radius:4px;">`;
+    const cc = CURRENCY_FLAG[(rowName||base).toUpperCase().slice(0,3)];
+    if (cc) return img(`https://flagcdn.com/32x24/${cc}.png`, cc, 'object-fit:cover;border-radius:4px;');
   }
   if (mkt === 'indices') {
     const cc = INDEX_FLAG[rowS];
-    if (cc) return `<img class="sym-icon" src="https://flagcdn.com/32x24/${cc}.png" onerror="iconFallback(this)" data-bg="${bg}" data-txt="${txt}" data-init="${init}" alt="${cc}" style="object-fit:cover;border-radius:4px;">`;
+    if (cc) return img(`https://flagcdn.com/32x24/${cc}.png`, cc, 'object-fit:cover;border-radius:4px;');
   }
-  if (mkt === 'stocks' || mkt === 'etf') {
+  if (mkt === 'stocks') {
     const slug = tvSlug(rowDesc || rowName || base);
-    if (slug) {
-      const src = `https://s3-symbol-logo.tradingview.com/${slug}--big.svg`;
-      return `<img class="sym-icon" src="${src}" onerror="iconFallback(this)" data-bg="${bg}" data-txt="${txt}" data-init="${init}" alt="${slug}" style="object-fit:contain;background:#fff;padding:3px;">`;
-    }
+    if (slug) return img(`${TV}/${slug}--big.svg`, slug, 'object-fit:contain;background:#fff;padding:3px;');
+  }
+  if (mkt === 'etf') {
+    const provider = (rowDesc||'').trim().split(/\s+/)[0].toLowerCase().replace(/[^a-z]/g,'');
+    if (provider) return img(`${TV}/${provider}--big.svg`, provider, 'object-fit:contain;background:#fff;padding:3px;');
+  }
+  if (mkt === 'commodities') {
+    const slug = COMMODITY_SLUG[rowS];
+    if (slug) return img(`${TV}/${slug}--big.svg`, slug, 'object-fit:contain;background:#fff;padding:3px;');
   }
   return `<div class="sym-icon" style="background:${bg};color:${txt};">${init}</div>`;
 }
