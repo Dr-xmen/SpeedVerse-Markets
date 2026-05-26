@@ -175,24 +175,43 @@ body.light input,body.light select{color:var(--text);}
 .empty-state svg{opacity:.18;}
 .empty-state p{font-size:13px;color:var(--sub);}
 
+/* ─── OVERFLOW GUARD ─── */
+html,body{overflow-x:hidden;max-width:100%;}
+
 /* ─── SIDEBAR OVERLAY ─── */
 .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:199;-webkit-tap-highlight-color:transparent;}
 .sidebar-overlay.open{display:block;}
 
 @media(max-width:900px){
-  .sidebar{position:fixed;left:calc(-1 * var(--sidebar));top:0;bottom:0;z-index:200;transition:left .25s cubic-bezier(.4,0,.2,1);box-shadow:4px 0 24px rgba(0,0,0,.5);}
+  .sidebar{
+    position:fixed;left:calc(-1 * var(--sidebar));top:0;bottom:0;height:100%;
+    z-index:200;overflow-y:auto;overflow-x:hidden;
+    transition:left .25s cubic-bezier(.4,0,.2,1);
+    box-shadow:4px 0 24px rgba(0,0,0,.5);
+  }
   .sidebar.mob-open{left:0;}
+  /* Layout: block so fixed sidebar has no footprint */
+  .layout{display:block;height:calc(100vh - var(--header));overflow-y:auto;}
+  .main{width:100%;max-width:100%;padding:20px 16px;}
   .hdr-nav{display:none;}
   .hdr-search{display:none;}
-  .main{padding:16px;}
 }
 @media(max-width:640px){
-  .convert-card{padding:16px;border-radius:12px;}
-  .cv-amount-input{font-size:20px;}
-  .cv-readonly-amount{font-size:20px;}
-  .cv-coin-btn{min-width:120px;padding:6px 10px;}
+  .hdr{padding:0 8px 0 0;height:52px;}
+  .hdr-logo-wrap{width:auto;border-right:none;padding:0 6px;}
+  .hdr-logo-wrap img{height:28px;}
+  .main{padding:14px 12px;}
+  .convert-wrap{max-width:100%;}
+  .convert-card{padding:16px 14px;border-radius:12px;}
+  .cv-amount-input{font-size:22px;}
+  .cv-readonly-amount{font-size:22px;}
+  .cv-coin-btn{min-width:110px;padding:7px 10px;}
+  .cv-input-row{padding:12px 10px;gap:8px;}
   .page-title{font-size:18px;}
+  .page-title-row{margin-bottom:16px;}
   .recent-section{margin-top:16px;}
+  .rtx-table th,.rtx-table td{padding:8px 10px;font-size:12px;}
+  .breadcrumb{margin-bottom:14px;}
 }
 </style>
 </head>

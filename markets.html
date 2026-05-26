@@ -232,26 +232,56 @@ input{font-family:inherit;border:none;outline:none;background:none;color:var(--t
 }
 @keyframes shimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
 
+/* ─── OVERFLOW GUARD ─── */
+html,body{overflow-x:hidden;max-width:100%;}
+
 /* ─── SIDEBAR OVERLAY ─── */
 .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:199;-webkit-tap-highlight-color:transparent;}
 .sidebar-overlay.open{display:block;}
 
 @media(max-width:900px){
-  /* Sidebar drawer */
-  .sidebar{position:fixed;left:-200px;top:0;bottom:0;z-index:200;width:var(--sidebar)!important;transition:left .25s cubic-bezier(.4,0,.2,1);box-shadow:4px 0 24px rgba(0,0,0,.5);}
+  .sidebar{
+    position:fixed;left:-200px;top:0;bottom:0;height:100%;
+    z-index:200;overflow-y:auto;overflow-x:hidden;
+    transition:left .25s cubic-bezier(.4,0,.2,1);
+    box-shadow:4px 0 24px rgba(0,0,0,.5);
+  }
   .sidebar.mob-open{left:0;}
-  .hdr-search{max-width:200px;}
+  /* Layout: block so sidebar has zero footprint */
+  .layout{display:block;height:calc(100vh - 60px);overflow:hidden;}
+  .main{width:100%;max-width:100%;display:flex;flex-direction:column;height:100%;overflow:hidden;}
+  .hdr-search{max-width:180px;}
+  .hdr-spacer{flex:1;}
 }
 @media(max-width:640px){
+  .hdr{padding:0 8px 0 0;}
+  .hdr-logo-wrap{width:auto;border-right:none;padding:0 6px;}
+  .hdr-logo-wrap img{height:28px;}
   .hdr-search{display:none;}
-  .market-tabs{padding:0 8px;}
-  .filter-bar{padding:0 10px;gap:4px;}
-  .ftab{padding:4px 10px;font-size:12px;}
-  .tbl-search{width:160px;}
+  /* Market tabs: scrollable row */
+  .market-tabs{padding:0 8px;height:auto;min-height:46px;overflow-x:auto;}
+  .market-tabs::-webkit-scrollbar{display:none;}
+  .mtab{padding:6px 10px;font-size:12px;flex-shrink:0;}
+  /* Filter bar */
+  .filter-bar{padding:0 8px;gap:4px;height:auto;min-height:42px;}
+  .ftab{padding:4px 8px;font-size:12px;}
+  .tbl-search{width:130px;height:28px;}
+  .refresh-btn{padding:4px 8px;font-size:11px;}
+  /* Table: hide less critical columns */
   .mkt-table th:first-child,.mkt-table td:first-child{display:none;}
-  /* Hide less important columns on small screens */
   .mkt-table th:nth-child(5),.mkt-table td:nth-child(5),
   .mkt-table th:nth-child(6),.mkt-table td:nth-child(6){display:none;}
+  /* Tighter cells */
+  .mkt-table th,.mkt-table td{padding:8px 8px;}
+  .sym-icon{width:26px;height:26px;font-size:10px;}
+  .sym-name{font-size:12px;}
+  .sym-desc{font-size:10px;max-width:120px;}
+  .sym-exchange{display:none;}
+  .price-val{font-size:12px;}
+  .chg-badge{font-size:11px;padding:2px 6px;}
+  .vol-val,.mktcap-val{font-size:11.5px;}
+  /* Status bar */
+  .status-bar{padding:0 10px;gap:8px;font-size:10.5px;}
 }
 </style>
 </head>
