@@ -251,106 +251,92 @@ select{font-family:inherit;background:none;color:var(--text);border:none;outline
 .empty-orders svg{opacity:.13;}
 .empty-orders p{font-size:12px;color:var(--sub);}
 
-/* ─── OVERFLOW GUARD (all screen sizes) ─── */
+/* ─── OVERFLOW GUARD ─── */
 html,body{overflow-x:hidden;max-width:100%;}
 
 /* ─── SIDEBAR OVERLAY ─── */
-.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:199;-webkit-tap-highlight-color:transparent;}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:199;}
 .sidebar-overlay.open{display:block;}
 
 /* ─── MOBILE BOTTOM NAV ─── */
 .mob-nav{display:none;height:56px;flex-shrink:0;background:var(--s1);border-top:1px solid var(--b);flex-direction:row;z-index:100;padding-bottom:env(safe-area-inset-bottom,0px);}
-.mob-nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:var(--sub);font-size:9.5px;font-weight:600;cursor:pointer;transition:color .15s;padding:6px 0;min-height:44px;-webkit-tap-highlight-color:transparent;}
+.mob-nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:var(--sub);font-size:9.5px;font-weight:600;cursor:pointer;padding:6px 0;min-height:44px;}
 .mob-nav-btn.active{color:var(--accent);}
 
-@media(max-width:768px){
-  /* ── Sidebar: off-screen drawer ── */
+@media screen and (max-width:960px){
+  /* ── Sidebar: hidden by default, slides in as overlay ── */
   .sidebar{
-    position:fixed;left:calc(-1 * var(--sidebar));top:0;bottom:0;height:100%;
+    display:none;
+    position:fixed;top:0;left:0;bottom:0;height:100%;width:var(--sidebar);
     z-index:200;overflow-y:auto;overflow-x:hidden;
-    transition:left .25s cubic-bezier(.4,0,.2,1);
-    box-shadow:4px 0 24px rgba(0,0,0,.5);
+    box-shadow:4px 0 24px rgba(0,0,0,.6);
   }
-  .sidebar.mob-open{left:0;}
+  .sidebar.mob-open{display:flex;flex-direction:column;}
 
-  /* ── Layout: block so fixed sidebar has zero footprint ── */
+  /* ── Layout: single block column, sidebar has zero footprint ── */
   .layout{display:block;height:calc(100vh - 52px);overflow:hidden;}
-  .main{width:100%;max-width:100%;display:flex;flex-direction:column;height:100%;overflow:hidden;}
+  .main{width:100%;display:flex;flex-direction:column;height:100%;overflow:hidden;}
 
-  /* ── Header compact ── */
-  .hdr{padding:0 8px 0 0;height:52px;}
+  /* ── Header: compact ── */
+  .hdr{height:52px;padding:0 10px 0 0;}
   .hdr-logo-wrap{width:auto;border-right:none;padding:0 6px;}
   .hdr-logo-wrap img{height:28px;}
   .hdr-nav{display:none;}
   .hdr-search{display:none;}
   .theme-btn{display:none;}
 
-  /* ── Stats bar: scrollable strip ── */
-  .stats-bar{
-    height:42px;flex-shrink:0;
-    padding:0 10px;gap:0;
-    overflow-x:auto;overflow-y:hidden;
-    scrollbar-width:none;-ms-overflow-style:none;
-    flex-wrap:nowrap;
-  }
+  /* ── Stats bar: compact scrollable strip ── */
+  .stats-bar{height:42px;flex-shrink:0;padding:0 10px;gap:0;overflow-x:auto;overflow-y:hidden;flex-wrap:nowrap;scrollbar-width:none;}
   .stats-bar::-webkit-scrollbar{display:none;}
   .sb-pair-wrap{flex-shrink:0;padding-right:8px;}
   .sb-last-price{font-size:15px;min-width:0;margin-left:8px;flex-shrink:0;}
-  .sb-change{min-width:0;margin:0 6px;font-size:12px;flex-shrink:0;}
+  .sb-change{min-width:0;font-size:12px;margin:0 6px;flex-shrink:0;}
   .sb-stat{padding:0 8px;flex-shrink:0;}
   .pair-pills{display:none;}
 
-  /* ── Trading layout ── */
+  /* ── Trading body ── */
   .trading-body{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0;}
-  .trading-columns{
-    flex:1;min-height:0;
-    display:block;        /* not flex — avoids desktop flex sizing */
-    position:relative;
-    overflow:hidden;
-  }
 
-  /* ── All 4 panels hidden; active one fills the column ── */
-  .pairs-panel,
-  .chart-col,
-  .order-col,
-  .right-panel{
-    position:absolute;top:0;left:0;right:0;bottom:0;
-    display:none;overflow:hidden;
-    width:100%;max-width:100%;
+  /* ── Trading columns: block container (kills the 4-col flex row) ── */
+  .trading-columns{flex:1;min-height:0;display:block;position:relative;overflow:hidden;}
+
+  /* ── Each panel: hidden by default, fills container when active ── */
+  .pairs-panel,.chart-col,.order-col,.right-panel{
+    position:absolute;inset:0;display:none;overflow:hidden;
   }
   .pairs-panel.mob-active{display:flex;flex-direction:column;}
   .chart-col.mob-active{display:flex;flex-direction:column;}
   .order-col.mob-active{display:flex;flex-direction:column;overflow-y:auto;}
   .right-panel.mob-active{display:flex;flex-direction:column;}
 
-  /* ── Hide desktop-only sections ── */
+  /* ── Desktop-only sections hidden on mobile ── */
   .open-orders{display:none;}
 
   /* ── Bottom nav ── */
   .mob-nav{display:flex;}
 
   /* ── Order form ── */
-  .of-body{padding:14px;overflow-y:auto;}
-  .of-submit{height:48px;font-size:15px;}
-  .of-field-input{height:44px;}
+  .of-body{padding:16px;overflow-y:auto;}
+  .of-submit{height:50px;font-size:16px;}
+  .of-field-input{height:46px;}
   .of-field-input input{font-size:14px;}
-  .of-type-pill{padding:6px 12px;font-size:12px;}
+  .of-type-pill{padding:7px 14px;font-size:13px;}
+  .of-avail-row{font-size:12px;}
 
   /* ── Pairs panel ── */
-  .pairs-search-inp{height:34px;font-size:13px;}
-  .market-tab{font-size:10px;padding:6px 2px;}
-  .pair-row{min-height:48px;padding:8px 10px;}
+  .pairs-search-inp{height:36px;font-size:13px;}
+  .market-tab{font-size:10.5px;padding:6px 2px;}
+  .pair-row{min-height:50px;padding:10px 12px;}
   .pair-row-sym{font-size:13px;}
-  .pair-row-price{font-size:12px;}
+  .pair-row-price{font-size:12.5px;}
   .pair-row-chg{font-size:11px;}
 
   /* ── Order book / trades ── */
-  .ob-row{min-height:22px;padding:3px 10px;}
-  .ob-price,.ob-qty{font-size:12px;}
+  .rp-tab{padding:12px 4px;font-size:13px;}
+  .ob-row{min-height:24px;padding:4px 10px;}
+  .ob-price,.ob-qty{font-size:12.5px;}
   .trade-row{min-height:28px;padding:4px 10px;}
-  .trade-price{font-size:12px;}
-  .rp-tabs{flex-shrink:0;}
-  .rp-tab{padding:11px 4px;font-size:13px;}
+  .trade-price{font-size:12.5px;}
 }
 
 /* LIGHT THEME */
@@ -708,7 +694,7 @@ function toggleTheme(){
   document.getElementById('theme-icon-light').style.display=l?'':'none';
 }
 function toggleSidebar(){
-  if(window.innerWidth<=768){
+  if(window.innerWidth<=960){
     const open=document.getElementById('sidebar').classList.toggle('mob-open');
     document.getElementById('sb-overlay').classList.toggle('open',open);
   }else{
@@ -1200,7 +1186,7 @@ loadChart(activePair.tv);
 fetchTVTickers();
 startPolling(activePair);
 setInterval(fetchTVTickers, 15000);
-if(window.innerWidth<=768) mobSetTab('chart');
+if(window.innerWidth<=960) mobSetTab('chart');
 </script>
 </body>
 </html>

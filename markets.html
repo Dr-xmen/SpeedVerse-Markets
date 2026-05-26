@@ -236,52 +236,54 @@ input{font-family:inherit;border:none;outline:none;background:none;color:var(--t
 html,body{overflow-x:hidden;max-width:100%;}
 
 /* ─── SIDEBAR OVERLAY ─── */
-.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:199;-webkit-tap-highlight-color:transparent;}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:199;}
 .sidebar-overlay.open{display:block;}
 
-@media(max-width:900px){
+@media screen and (max-width:960px){
+  /* Sidebar: hidden by default, overlay when opened */
   .sidebar{
-    position:fixed;left:-200px;top:0;bottom:0;height:100%;
+    display:none;
+    position:fixed;top:0;left:0;bottom:0;height:100%;width:var(--sidebar);
     z-index:200;overflow-y:auto;overflow-x:hidden;
-    transition:left .25s cubic-bezier(.4,0,.2,1);
-    box-shadow:4px 0 24px rgba(0,0,0,.5);
+    box-shadow:4px 0 24px rgba(0,0,0,.6);
   }
-  .sidebar.mob-open{left:0;}
-  /* Layout: block so sidebar has zero footprint */
+  .sidebar.mob-open{display:flex;flex-direction:column;}
+  /* Layout: single column */
   .layout{display:block;height:calc(100vh - 60px);overflow:hidden;}
-  .main{width:100%;max-width:100%;display:flex;flex-direction:column;height:100%;overflow:hidden;}
-  .hdr-search{max-width:180px;}
-  .hdr-spacer{flex:1;}
-}
-@media(max-width:640px){
-  .hdr{padding:0 8px 0 0;}
+  .main{width:100%;display:flex;flex-direction:column;height:100%;overflow:hidden;}
+  /* Header */
+  .hdr{padding:0 10px 0 0;}
   .hdr-logo-wrap{width:auto;border-right:none;padding:0 6px;}
-  .hdr-logo-wrap img{height:28px;}
+  .hdr-logo-wrap img{height:30px;}
+  .hdr-search{max-width:180px;}
+}
+@media screen and (max-width:640px){
   .hdr-search{display:none;}
-  /* Market tabs: scrollable row */
-  .market-tabs{padding:0 8px;height:auto;min-height:46px;overflow-x:auto;}
+  .hdr-logo-wrap img{height:28px;}
+  /* Market tabs */
+  .market-tabs{padding:0 8px;height:auto;min-height:46px;overflow-x:auto;scrollbar-width:none;}
   .market-tabs::-webkit-scrollbar{display:none;}
-  .mtab{padding:6px 10px;font-size:12px;flex-shrink:0;}
+  .mtab{padding:7px 10px;font-size:12px;flex-shrink:0;}
+  .mtab-divider{display:none;}
   /* Filter bar */
-  .filter-bar{padding:0 8px;gap:4px;height:auto;min-height:42px;}
-  .ftab{padding:4px 8px;font-size:12px;}
-  .tbl-search{width:130px;height:28px;}
-  .refresh-btn{padding:4px 8px;font-size:11px;}
-  /* Table: hide less critical columns */
+  .filter-bar{padding:0 8px;gap:4px;height:auto;min-height:42px;overflow-x:auto;}
+  .ftab{padding:5px 10px;font-size:12px;flex-shrink:0;white-space:nowrap;}
+  .tbl-search{width:140px;height:30px;}
+  .refresh-btn{padding:5px 8px;font-size:11px;flex-shrink:0;}
+  /* Table */
   .mkt-table th:first-child,.mkt-table td:first-child{display:none;}
   .mkt-table th:nth-child(5),.mkt-table td:nth-child(5),
   .mkt-table th:nth-child(6),.mkt-table td:nth-child(6){display:none;}
-  /* Tighter cells */
-  .mkt-table th,.mkt-table td{padding:8px 8px;}
-  .sym-icon{width:26px;height:26px;font-size:10px;}
-  .sym-name{font-size:12px;}
-  .sym-desc{font-size:10px;max-width:120px;}
+  .mkt-table th,.mkt-table td{padding:9px 8px;}
+  .sym-icon{width:28px;height:28px;font-size:11px;}
+  .sym-name{font-size:12.5px;}
+  .sym-desc{font-size:10.5px;max-width:110px;}
   .sym-exchange{display:none;}
-  .price-val{font-size:12px;}
-  .chg-badge{font-size:11px;padding:2px 6px;}
+  .price-val{font-size:12.5px;}
+  .chg-badge{font-size:11.5px;padding:2px 6px;}
   .vol-val,.mktcap-val{font-size:11.5px;}
-  /* Status bar */
   .status-bar{padding:0 10px;gap:8px;font-size:10.5px;}
+  .range-wrap{display:none;}
 }
 </style>
 </head>
@@ -1036,7 +1038,7 @@ function startAutoRefresh() {
    SIDEBAR TOGGLE & NAV SUBS
    ═══════════════════════════════════════════════════════ */
 function toggleSidebar(){
-  if(window.innerWidth<=900){
+  if(window.innerWidth<=960){
     const open=document.getElementById('sidebar').classList.toggle('mob-open');
     document.getElementById('sb-overlay').classList.toggle('open',open);
   }else{

@@ -179,30 +179,31 @@ body.light input,body.light select{color:var(--text);}
 html,body{overflow-x:hidden;max-width:100%;}
 
 /* ─── SIDEBAR OVERLAY ─── */
-.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:199;-webkit-tap-highlight-color:transparent;}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:199;}
 .sidebar-overlay.open{display:block;}
 
-@media(max-width:900px){
+@media screen and (max-width:960px){
+  /* Sidebar: hidden by default, shown as overlay when opened */
   .sidebar{
-    position:fixed;left:calc(-1 * var(--sidebar));top:0;bottom:0;height:100%;
+    display:none;
+    position:fixed;top:0;left:0;bottom:0;height:100%;width:var(--sidebar);
     z-index:200;overflow-y:auto;overflow-x:hidden;
-    transition:left .25s cubic-bezier(.4,0,.2,1);
-    box-shadow:4px 0 24px rgba(0,0,0,.5);
+    box-shadow:4px 0 24px rgba(0,0,0,.6);
   }
-  .sidebar.mob-open{left:0;}
-  /* Layout: block so fixed sidebar has no footprint */
-  .layout{display:block;height:calc(100vh - var(--header));overflow-y:auto;}
-  .main{width:100%;max-width:100%;padding:20px 16px;}
+  .sidebar.mob-open{display:flex;flex-direction:column;}
+  /* Layout: single column */
+  .layout{display:block;overflow-y:auto;min-height:calc(100vh - 60px);}
+  .main{width:100%;padding:20px 16px;}
   .hdr-nav{display:none;}
   .hdr-search{display:none;}
 }
-@media(max-width:640px){
-  .hdr{padding:0 8px 0 0;height:52px;}
+@media screen and (max-width:640px){
+  .hdr{padding:0 10px 0 0;height:52px;}
   .hdr-logo-wrap{width:auto;border-right:none;padding:0 6px;}
   .hdr-logo-wrap img{height:28px;}
   .main{padding:14px 12px;}
   .convert-wrap{max-width:100%;}
-  .convert-card{padding:16px 14px;border-radius:12px;}
+  .convert-card{padding:18px 14px;border-radius:12px;}
   .cv-amount-input{font-size:22px;}
   .cv-readonly-amount{font-size:22px;}
   .cv-coin-btn{min-width:110px;padding:7px 10px;}
@@ -511,7 +512,7 @@ function toggleTheme(){
 
 /* ── Sidebar ── */
 function toggleSidebar(){
-  if(window.innerWidth<=900){
+  if(window.innerWidth<=960){
     const open=document.getElementById('sidebar').classList.toggle('mob-open');
     document.getElementById('sb-overlay').classList.toggle('open',open);
   }else{
