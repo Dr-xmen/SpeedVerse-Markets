@@ -842,38 +842,46 @@ function fmtCompact(n) {
 function pColor(pct) { return Number(pct) >= 0 ? 'var(--green)' : 'var(--red)'; }
 
 /* ════════════════════════════════════════════════════════
-   FETCH — Binance public REST (no API key needed)
+   FETCH — OKX public REST (global, no CORS restrictions)
    ════════════════════════════════════════════════════════ */
-const BINANCE = 'https://api.binance.com/api/v3';
+const OKX = 'https://www.okx.com/api/v5';
+const CG  = 'https://api.coingecko.com/api/v3';
+
+// Convert "BTCUSDT" → "BTC-USDT" for OKX
+function toOkx(sym) { return sym.endsWith('USDT') ? sym.slice(0,-4)+'-USDT' : sym; }
+// OKX bar codes: 1h→"1H", 4h→"4H", 1d→"1D"
+function toOkxBar(iv) { return iv==='1d'?'1D':iv==='4h'?'4H':iv==='1h'?'1H':iv.toUpperCase(); }
 
 async function fetchMarketData() {
-  const encoded = encodeURIComponent(JSON.stringify(ALL_SYMBOLS));
-  const res = await fetch(`${BINANCE}/ticker/24hr?symbols=${encoded}`);
-  if(!res.ok) throw new Error('ticker fetch failed');
-  const arr = await res.json();
-  arr.forEach(t => {
-    marketData[t.symbol] = {
-      price:              parseFloat(t.lastPrice),
-      priceChange:        parseFloat(t.priceChange),
-      priceChangePercent: parseFloat(t.priceChangePercent),
-      volume:             parseFloat(t.quoteVolume),
-      high:               parseFloat(t.highPrice),
-      low:                parseFloat(t.lowPrice),
+  const res = await fetch(`${OKX}/market/tickers?instType=SPOT`);
+  if(!res.ok) throw new Error('OKX ticker fetch failed');
+  const { data } = await res.json();
+  data.forEach(t => {
+    const sym = t.instId.replace('-',''); // "BTC-USDT" → "BTCUSDT"
+    if(!ALL_SYMBOLS.includes(sym)) return;
+    const last = parseFloat(t.last);
+    const open = parseFloat(t.open24h);
+    marketData[sym] = {
+      price:              last,
+      priceChange:        last - open,
+      priceChangePercent: open ? (last - open) / open * 100 : 0,
+      volume:             parseFloat(t.volCcy24h),
+      high:               parseFloat(t.high24h),
+      low:                parseFloat(t.low24h),
     };
   });
 }
 
 async function fetchKlines(symbol, interval='4h', limit=12) {
-  const res = await fetch(`${BINANCE}/klines?symbol=${symbol}&interval=${interval}&limit=${limit}`);
+  const res = await fetch(`${OKX}/market/candles?instId=${toOkx(symbol)}&bar=${toOkxBar(interval)}&limit=${limit}`);
   if(!res.ok) return;
-  const arr = await res.json();
-  klineData[symbol] = arr.map(k => parseFloat(k[4])); // close price
+  const { data } = await res.json();
+  // OKX returns newest-first — reverse to chronological order
+  klineData[symbol] = data.map(k => parseFloat(k[4])).reverse();
 }
 
 async function fetchAllKlines() {
   await Promise.all(WATCHLIST_CFG.map(c => fetchKlines(c.symbol)));
-  // fetch BTC klines for the PnL mini chart (1d, 7 days)
-  await fetchKlines('BTCUSDT', '1d', 7);
 }
 
 /* ════════════════════════════════════════════════════════
@@ -1031,16 +1039,17 @@ let perfKlines = {}; // period -> close array
 let perfPeriod = '1D';
 
 async function fetchPerfKlines() {
-  // Fetch BTC 1h (last 30 days) + 1d (90 days) as portfolio proxy
+  const parse = arr => arr.map(k=>parseFloat(k[4])).reverse();
   const [h1, d1] = await Promise.all([
-    fetch(`${BINANCE}/klines?symbol=BTCUSDT&interval=1h&limit=168`).then(r=>r.json()).catch(()=>[]),
-    fetch(`${BINANCE}/klines?symbol=BTCUSDT&interval=1d&limit=90`).then(r=>r.json()).catch(()=>[])
+    fetch(`${OKX}/market/candles?instId=BTC-USDT&bar=1H&limit=168`).then(r=>r.json()).then(j=>j.data||[]).catch(()=>[]),
+    fetch(`${OKX}/market/candles?instId=BTC-USDT&bar=1D&limit=90`).then(r=>r.json()).then(j=>j.data||[]).catch(()=>[])
   ]);
-  perfKlines['1D'] = h1.slice(-24).map(k=>parseFloat(k[4]));
-  perfKlines['1W'] = h1.map(k=>parseFloat(k[4]));
-  perfKlines['1M'] = d1.slice(-30).map(k=>parseFloat(k[4]));
-  perfKlines['3M'] = d1.map(k=>parseFloat(k[4]));
-  perfKlines['ALL'] = d1.map(k=>parseFloat(k[4]));
+  const h = parse(h1), d = parse(d1);
+  perfKlines['1D']  = h.slice(-24);
+  perfKlines['1W']  = h;
+  perfKlines['1M']  = d.slice(-30);
+  perfKlines['3M']  = d;
+  perfKlines['ALL'] = d;
 }
 
 function setPerfPeriod(btn, period) {
@@ -1200,26 +1209,23 @@ function renderRecentOrders() {
    ════════════════════════════════════════════════════════ */
 let _allTickers = [];
 
+const STABLES = new Set(['USDT','USDC','BUSD','DAI','TUSD','USDP','FRAX','LUSD','UST','USDD','FDUSD','PYUSD']);
+
 async function fetchTopMovers() {
   try {
-    const res = await fetch(`${BINANCE}/ticker/24hr`);
-    if(!res.ok) throw new Error();
+    const res = await fetch(`${CG}/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=1&sparkline=false&price_change_percentage=24h`);
+    if(!res.ok) throw new Error('CG movers failed');
     const data = await res.json();
-    // filter: USDT pairs only, min $1M 24h volume, valid price
     _allTickers = data
-      .filter(t => t.symbol.endsWith('USDT')
-               && parseFloat(t.quoteVolume) > 1e6
-               && parseFloat(t.lastPrice) > 0
-               && !t.symbol.includes('UP') && !t.symbol.includes('DOWN')
-               && !t.symbol.includes('BULL') && !t.symbol.includes('BEAR'))
-      .map(t => ({
-        sym: t.symbol.replace('USDT',''),
-        price: parseFloat(t.lastPrice),
-        priceChangePercent: parseFloat(t.priceChangePercent),
-        volume: parseFloat(t.quoteVolume)
+      .filter(c => c.price_change_percentage_24h != null && !STABLES.has(c.symbol.toUpperCase()))
+      .map(c => ({
+        sym:               c.symbol.toUpperCase(),
+        price:             c.current_price || 0,
+        priceChangePercent: c.price_change_percentage_24h || 0,
+        volume:            c.total_volume || 0
       }));
   } catch(e) {
-    // use already-fetched subset if full fetch fails
+    // fall back to OKX marketData subset already in memory
     _allTickers = Object.entries(marketData)
       .filter(([s]) => s.endsWith('USDT'))
       .map(([s, d]) => ({ sym: s.replace('USDT',''), ...d }))

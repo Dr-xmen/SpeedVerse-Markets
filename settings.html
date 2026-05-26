@@ -237,7 +237,7 @@ body.light input,body.light select{color:var(--text);}
 .kyc-lv-val{font-size:12px;font-weight:600;color:var(--text);}
 
 
-@media(max-width:768px){.settings-layout{flex-direction:column;}.settings-nav{width:100%;}.form-grid{grid-template-columns:1fr;}.form-group.full{grid-column:auto;}.kyc-levels{grid-template-columns:1fr;}}
+@media(max-width:768px){.settings-layout{flex-direction:column;}.settings-nav{width:100%;}.form-grid{grid-template-columns:1fr;}.form-group.full{grid-column:auto;}.kyc-levels{grid-template-columns:1fr;}.set-card{padding:16px;}.security-row{flex-wrap:wrap;gap:8px;}.sec-row-btn{font-size:12px;padding:5px 12px;}}
 
 /* ── MOBILE (html.mob set synchronously before render) ── */
 .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:199;}
@@ -249,8 +249,13 @@ html.mob .hdr-search{display:none !important;}
 html.mob .hdr-nav{display:none !important;}
 html.mob .sidebar{display:none !important;position:fixed;top:0;left:0;bottom:0;height:100%;width:var(--sidebar);z-index:200;overflow-y:auto;overflow-x:hidden;box-shadow:4px 0 24px rgba(0,0,0,.6);}
 html.mob .sidebar.mob-open{display:flex !important;flex-direction:column;}
-html.mob .layout{display:block !important;overflow-y:auto;}
-html.mob .main{width:100% !important;padding:20px 16px;}</style>
+html.mob .layout{display:block !important;overflow-y:auto;overflow-x:hidden;}
+html.mob .main{width:100% !important;padding:20px 16px;overflow-x:hidden;}
+html.mob .set-card{padding:16px;}
+html.mob .security-row{flex-wrap:wrap;gap:8px;}
+html.mob .sec-row-btn{font-size:12px;padding:5px 12px;}
+html.mob .settings-layout{flex-direction:column;}
+html.mob .settings-nav{width:100%;}</style>
 <script>if(window.innerWidth<=960||screen.width<=960)document.documentElement.classList.add('mob');</script>
 </head>
 <body>
@@ -534,41 +539,9 @@ html.mob .main{width:100% !important;padding:20px 16px;}</style>
 
         <div class="set-card">
           <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:14px;">Recent Login Activity</div>
-          <div style="overflow-x:auto;">
-            <table class="login-table">
-              <thead>
-                <tr>
-                  <th>Time</th>
-                  <th>Device</th>
-                  <th>IP Address</th>
-                  <th>Location</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td style="font-family:'Inter',sans-serif;font-size:12px;">2026-05-26 09:14</td>
-                  <td>Chrome / Windows 11</td>
-                  <td style="font-family:'Inter',sans-serif;font-size:12px;">104.28.14.59</td>
-                  <td>New York, US</td>
-                  <td><span class="badge-green">Success</span></td>
-                </tr>
-                <tr>
-                  <td style="font-family:'Inter',sans-serif;font-size:12px;">2026-05-25 22:47</td>
-                  <td>Safari / iPhone 15</td>
-                  <td style="font-family:'Inter',sans-serif;font-size:12px;">104.28.14.59</td>
-                  <td>New York, US</td>
-                  <td><span class="badge-green">Success</span></td>
-                </tr>
-                <tr>
-                  <td style="font-family:'Inter',sans-serif;font-size:12px;">2026-05-24 14:32</td>
-                  <td>Chrome / macOS</td>
-                  <td style="font-family:'Inter',sans-serif;font-size:12px;">198.51.100.44</td>
-                  <td>Los Angeles, US</td>
-                  <td><span class="badge-green">Success</span></td>
-                </tr>
-              </tbody>
-            </table>
+          <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 0;gap:10px;color:var(--sub);">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <div style="font-size:13px;">No login history available</div>
           </div>
         </div>
       </div>
