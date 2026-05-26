@@ -483,24 +483,51 @@ function toggleSub(el, subId){
   el.classList.toggle('open', isOpen);
 }
 
-/* ── Coins & Prices ── */
+/* ── Coins (prices loaded live from /api/spot) ── */
 const COINS = [
-  { sym:'USDT', name:'Tether',    price:1,        bg:'#26a17b', txt:'#fff' },
-  { sym:'BTC',  name:'Bitcoin',   price:67400,     bg:'#f7931a', txt:'#fff' },
-  { sym:'ETH',  name:'Ethereum',  price:3540,      bg:'#627eea', txt:'#fff' },
-  { sym:'BNB',  name:'BNB',       price:585,       bg:'#f3ba2f', txt:'#fff' },
-  { sym:'XRP',  name:'Ripple',    price:0.58,      bg:'#346aa9', txt:'#fff' },
-  { sym:'SOL',  name:'Solana',    price:168,       bg:'#9945ff', txt:'#fff' },
-  { sym:'ADA',  name:'Cardano',   price:0.44,      bg:'#0033ad', txt:'#fff' },
-  { sym:'DOGE', name:'Dogecoin',  price:0.17,      bg:'#c2a633', txt:'#fff' },
-  { sym:'MATIC',name:'Polygon',   price:0.72,      bg:'#8247e5', txt:'#fff' },
-  { sym:'AVAX', name:'Avalanche', price:37,        bg:'#e84142', txt:'#fff' },
-  { sym:'ATOM', name:'Cosmos',    price:9.2,       bg:'#2e3148', txt:'#7b8cde' },
-  { sym:'LINK', name:'Chainlink', price:14.5,      bg:'#2a5ada', txt:'#fff' },
-  { sym:'TRX',  name:'TRON',      price:0.12,      bg:'#ff0013', txt:'#fff' },
-  { sym:'DOT',  name:'Polkadot',  price:8.5,       bg:'#e6007a', txt:'#fff' },
-  { sym:'UNI',  name:'Uniswap',   price:7.2,       bg:'#ff007a', txt:'#fff' },
+  { sym:'USDT', name:'Tether',         price:1, bg:'#26a17b', txt:'#fff' },
+  { sym:'BTC',  name:'Bitcoin',         price:0, bg:'#f7931a', txt:'#fff' },
+  { sym:'ETH',  name:'Ethereum',        price:0, bg:'#627eea', txt:'#fff' },
+  { sym:'BNB',  name:'BNB',             price:0, bg:'#f3ba2f', txt:'#fff' },
+  { sym:'SOL',  name:'Solana',          price:0, bg:'#9945ff', txt:'#fff' },
+  { sym:'XRP',  name:'Ripple',          price:0, bg:'#346aa9', txt:'#fff' },
+  { sym:'ADA',  name:'Cardano',         price:0, bg:'#0033ad', txt:'#fff' },
+  { sym:'DOGE', name:'Dogecoin',        price:0, bg:'#c2a633', txt:'#fff' },
+  { sym:'AVAX', name:'Avalanche',       price:0, bg:'#e84142', txt:'#fff' },
+  { sym:'LINK', name:'Chainlink',       price:0, bg:'#2a5ada', txt:'#fff' },
+  { sym:'DOT',  name:'Polkadot',        price:0, bg:'#e6007a', txt:'#fff' },
+  { sym:'ATOM', name:'Cosmos',          price:0, bg:'#2e3148', txt:'#7b8cde' },
+  { sym:'TRX',  name:'TRON',            price:0, bg:'#ff0013', txt:'#fff' },
+  { sym:'UNI',  name:'Uniswap',         price:0, bg:'#ff007a', txt:'#fff' },
+  { sym:'LTC',  name:'Litecoin',        price:0, bg:'#bfbbbb', txt:'#1a1a1a' },
+  { sym:'NEAR', name:'NEAR Protocol',   price:0, bg:'#00c08b', txt:'#fff' },
 ];
+
+/* ── Live price fetch from TradingView Scanner via proxy ── */
+async function fetchPrices(){
+  try {
+    const r = await fetch('/api/spot');
+    if (!r.ok) return;
+    const j = await r.json();
+    (j.data || []).forEach(row => {
+      const [name,,price] = row.d;
+      if (!price) return;
+      const sym = name.replace('USDT', '');
+      const coin = COINS.find(c => c.sym === sym);
+      if (coin) coin.price = price;
+    });
+    updateRateDisplay();
+    updateConvert();
+  } catch(e) {}
+}
+
+function fmtPrice(p){
+  if (!p) return '…';
+  if (p >= 10000) return p.toLocaleString('en-US',{maximumFractionDigits:2});
+  if (p >= 1)     return p.toFixed(2);
+  if (p >= 0.001) return p.toFixed(4);
+  return p.toFixed(6);
+}
 
 function coinIcon(c, size=28){
   const url = `https://cdn.jsdelivr.net/npm/cryptocurrency-icons/32/color/${c.sym.toLowerCase()}.png`;
@@ -509,7 +536,6 @@ function coinIcon(c, size=28){
 
 let fromCoin = COINS.find(c=>c.sym==='USDT');
 let toCoin   = COINS.find(c=>c.sym==='BTC');
-let dropFilters = { from:'', to:'' };
 
 /* ── Render coin buttons ── */
 function renderCoinBtn(side){
@@ -529,11 +555,9 @@ function buildDropList(side, filter=''){
   el.innerHTML = list.map(c=>`
     <div class="cv-drop-item${c.sym===current.sym?' selected':''}" onclick="pickCoin('${side}','${c.sym}')">
       <div class="cv-drop-item-icon">${coinIcon(c,28)}</div>
-      <div>
-        <div class="cv-drop-item-sym">${c.sym}</div>
-        <div class="cv-drop-item-name">${c.name}</div>
-      </div>
-      ${c.sym===current.sym?`<div class="cv-drop-item-check"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20,6 9,17 4,12"/></svg></div>`:''}
+      <div><div class="cv-drop-item-sym">${c.sym}</div><div class="cv-drop-item-name">${c.name}</div></div>
+      <div style="margin-left:auto;text-align:right;font-size:11.5px;font-weight:600;color:var(--text);font-family:'JetBrains Mono',monospace;">$${fmtPrice(c.price)}</div>
+      ${c.sym===current.sym?`<div class="cv-drop-item-check" style="margin-left:8px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20,6 9,17 4,12"/></svg></div>`:''}
     </div>`).join('');
 }
 
@@ -553,15 +577,11 @@ function openDropdown(side, e){
   }
 }
 
-function filterDrop(side, val){
-  dropFilters[side] = val;
-  buildDropList(side, val);
-}
+function filterDrop(side, val){ buildDropList(side, val); }
 
 function pickCoin(side, sym){
   const coin = COINS.find(c=>c.sym===sym);
   if(side==='from'){
-    // if same as to, swap
     if(coin.sym === toCoin.sym) toCoin = fromCoin;
     fromCoin = coin;
     document.getElementById('from-dropdown').style.display='none';
@@ -577,7 +597,7 @@ function pickCoin(side, sym){
   updateRateDisplay();
 }
 
-function closeAllDropdowns(e){
+function closeAllDropdowns(){
   document.getElementById('from-dropdown').style.display='none';
   document.getElementById('to-dropdown').style.display='none';
 }
@@ -589,10 +609,15 @@ function updateFromBalance(){
 
 /* ── Rate display ── */
 function updateRateDisplay(){
+  if(!fromCoin.price || !toCoin.price){
+    document.getElementById('rate-display').textContent = 'Fetching live rate…';
+    return;
+  }
   const rate = fromCoin.price / toCoin.price;
   let rateStr;
-  if(rate < 0.001) rateStr = rate.toFixed(8);
-  else if(rate < 1) rateStr = rate.toFixed(6);
+  if(rate < 0.0001) rateStr = rate.toFixed(8);
+  else if(rate < 0.01) rateStr = rate.toFixed(6);
+  else if(rate < 1) rateStr = rate.toFixed(4);
   else rateStr = rate.toFixed(4);
   document.getElementById('rate-display').textContent = `1 ${fromCoin.sym} = ${rateStr} ${toCoin.sym}`;
 }
@@ -600,6 +625,17 @@ function updateRateDisplay(){
 /* ── Convert calculation ── */
 function updateConvert(){
   const amt = parseFloat(document.getElementById('from-amount').value) || 0;
+  const btn = document.getElementById('convert-btn');
+
+  if(!fromCoin.price || !toCoin.price){
+    document.getElementById('from-usd').textContent = '≈ Fetching price…';
+    document.getElementById('to-usd').textContent   = '≈ Fetching price…';
+    document.getElementById('to-amount-display').textContent = '—';
+    btn.disabled = true;
+    btn.textContent = 'Fetching prices…';
+    return;
+  }
+
   const fromUSD = amt * fromCoin.price;
   const feeUSD  = fromUSD * 0.001;
   const netUSD  = fromUSD - feeUSD;
@@ -610,13 +646,12 @@ function updateConvert(){
 
   let toStr;
   if(toAmt === 0) toStr = (0).toFixed(8);
-  else if(toCoin.price > 100) toStr = toAmt.toFixed(8);
-  else if(toCoin.price > 1) toStr = toAmt.toFixed(6);
-  else toStr = toAmt.toFixed(4);
+  else if(toCoin.price > 1000) toStr = toAmt.toFixed(8);
+  else if(toCoin.price > 1)    toStr = toAmt.toFixed(6);
+  else                          toStr = toAmt.toFixed(4);
 
   document.getElementById('to-amount-display').textContent = toStr;
 
-  const btn = document.getElementById('convert-btn');
   if(amt > 0){
     btn.disabled = false;
     btn.textContent = `Convert ${amt} ${fromCoin.sym} → ${toStr} ${toCoin.sym}`;
@@ -628,33 +663,25 @@ function updateConvert(){
 
 /* ── Swap coins ── */
 function swapCoins(){
-  const tmp = fromCoin;
-  fromCoin = toCoin;
-  toCoin = tmp;
+  [fromCoin, toCoin] = [toCoin, fromCoin];
   renderCoinBtn('from');
   renderCoinBtn('to');
   updateFromBalance();
   updateRateDisplay();
-  // reset amount
   document.getElementById('from-amount').value = '';
   document.getElementById('to-amount-display').textContent = '0.00000000';
   document.getElementById('from-usd').textContent = '≈ $0.00 USD';
-  document.getElementById('to-usd').textContent = '≈ $0.00 USD';
+  document.getElementById('to-usd').textContent   = '≈ $0.00 USD';
   document.getElementById('convert-btn').disabled = true;
   document.getElementById('convert-btn').textContent = 'Enter Amount to Convert';
 }
 
-/* ── Countdown ── */
+/* ── Countdown — refreshes prices when it hits 0 ── */
 let countdownVal = 30;
-function tickCountdown(){
+setInterval(()=>{
   document.getElementById('countdown').textContent = countdownVal + 's';
-  countdownVal--;
-  if(countdownVal < 0){
-    countdownVal = 30;
-    updateRateDisplay(); // refresh quote
-  }
-}
-setInterval(tickCountdown, 1000);
+  if(--countdownVal < 0){ countdownVal = 30; fetchPrices(); }
+}, 1000);
 
 /* ── Convert action ── */
 function doConvert(){
@@ -678,6 +705,7 @@ renderCoinBtn('from');
 renderCoinBtn('to');
 updateFromBalance();
 updateRateDisplay();
+fetchPrices();
 </script>
 </body>
 </html>
