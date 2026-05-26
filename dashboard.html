@@ -142,16 +142,16 @@ input{font-family:inherit;border:none;outline:none;background:none;color:var(--t
   animation:sc-spin 5s linear infinite;pointer-events:none;
 }
 /* Card 1 — Today's PnL (blue) */
-.stat-card:nth-child(1){background:linear-gradient(145deg,#0c1219 0%,rgba(33,150,243,.13) 100%);--sc-c:rgba(33,150,243,.75);}
+.stat-card:nth-child(1){background:linear-gradient(145deg,rgba(6,10,20,.82) 0%,rgba(8,14,30,.90) 100%),url('assets/stat-pnl-bg.jpg') center/cover no-repeat;--sc-c:rgba(33,150,243,.75);}
 .stat-card:nth-child(1) .sc-label svg{stroke:#2196f3;}
 /* Card 2 — Open Positions (purple) */
-.stat-card:nth-child(2){background:linear-gradient(145deg,#0e0d1a 0%,rgba(123,97,255,.13) 100%);--sc-c:rgba(123,97,255,.75);}
+.stat-card:nth-child(2){background:linear-gradient(145deg,rgba(8,6,20,.82) 0%,rgba(12,8,28,.90) 100%),url('assets/stat-positions-bg.jpg') center/cover no-repeat;--sc-c:rgba(123,97,255,.75);}
 .stat-card:nth-child(2) .sc-label svg{stroke:#7b61ff;}
 /* Card 3 — Open Orders (emerald) */
-.stat-card:nth-child(3){background:linear-gradient(145deg,#0a1411 0%,rgba(14,203,129,.11) 100%);--sc-c:rgba(14,203,129,.75);}
+.stat-card:nth-child(3){background:linear-gradient(145deg,rgba(4,14,12,.82) 0%,rgba(6,18,16,.90) 100%),url('assets/stat-orders-bg.jpg') center/cover no-repeat;--sc-c:rgba(14,203,129,.75);}
 .stat-card:nth-child(3) .sc-label svg{stroke:#0ecb81;}
 /* Card 4 — 30D Volume (gold) */
-.stat-card:nth-child(4){background:linear-gradient(145deg,#14110a 0%,rgba(240,185,11,.11) 100%);--sc-c:rgba(240,185,11,.75);}
+.stat-card:nth-child(4){background:linear-gradient(145deg,rgba(16,10,4,.82) 0%,rgba(22,14,4,.90) 100%),url('assets/stat-volume-bg.jpg') center/cover no-repeat;--sc-c:rgba(240,185,11,.75);}
 .stat-card:nth-child(4) .sc-label svg{stroke:#f0b90b;}
 
 .sc-label{font-size:11px;color:var(--sub);display:flex;align-items:center;gap:5px;margin-bottom:6px;}
