@@ -652,13 +652,13 @@ html.mob .full-sec{margin-left:0 !important;margin-right:0 !important;}
           <div class="movers-head movers-up">
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="18,15 12,9 6,15"/></svg>Top Gainers
           </div>
-          <div id="gainers-list"></div>
+          <div id="gainers-list"><div class="mover-row"><span class="skel" style="width:48px;height:12px;border-radius:3px;"></span><span class="skel" style="width:36px;height:12px;border-radius:3px;margin-left:auto;"></span></div><div class="mover-row"><span class="skel" style="width:54px;height:12px;border-radius:3px;"></span><span class="skel" style="width:32px;height:12px;border-radius:3px;margin-left:auto;"></span></div><div class="mover-row"><span class="skel" style="width:44px;height:12px;border-radius:3px;"></span><span class="skel" style="width:38px;height:12px;border-radius:3px;margin-left:auto;"></span></div><div class="mover-row"><span class="skel" style="width:52px;height:12px;border-radius:3px;"></span><span class="skel" style="width:34px;height:12px;border-radius:3px;margin-left:auto;"></span></div><div class="mover-row"><span class="skel" style="width:46px;height:12px;border-radius:3px;"></span><span class="skel" style="width:40px;height:12px;border-radius:3px;margin-left:auto;"></span></div></div>
         </div>
         <div class="movers-col" style="border-left:1px solid var(--b);">
           <div class="movers-head movers-dn">
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6,9 12,15 18,9"/></svg>Top Losers
           </div>
-          <div id="losers-list"></div>
+          <div id="losers-list"><div class="mover-row"><span class="skel" style="width:48px;height:12px;border-radius:3px;"></span><span class="skel" style="width:36px;height:12px;border-radius:3px;margin-left:auto;"></span></div><div class="mover-row"><span class="skel" style="width:54px;height:12px;border-radius:3px;"></span><span class="skel" style="width:32px;height:12px;border-radius:3px;margin-left:auto;"></span></div><div class="mover-row"><span class="skel" style="width:44px;height:12px;border-radius:3px;"></span><span class="skel" style="width:38px;height:12px;border-radius:3px;margin-left:auto;"></span></div><div class="mover-row"><span class="skel" style="width:52px;height:12px;border-radius:3px;"></span><span class="skel" style="width:34px;height:12px;border-radius:3px;margin-left:auto;"></span></div><div class="mover-row"><span class="skel" style="width:46px;height:12px;border-radius:3px;"></span><span class="skel" style="width:40px;height:12px;border-radius:3px;margin-left:auto;"></span></div></div>
         </div>
       </div>
     </div>
@@ -1380,6 +1380,10 @@ async function tick() {
 }
 
 async function init() {
+  // Fire movers fetch immediately — don't wait for market tick first
+  fetchTopMovers();
+  setInterval(fetchTopMovers, 60000);
+
   await tick();
   // Load sparklines + performance chart klines in parallel
   try {
@@ -1387,9 +1391,6 @@ async function init() {
     renderWatchlist();
     drawPerfChart();
   } catch(e) {}
-  // Fetch full ticker list for movers, refresh every 60s
-  fetchTopMovers();
-  setInterval(fetchTopMovers, 60000);
   // Poll prices every 5 seconds
   setInterval(tick, 5000);
   // Refresh klines every 5 minutes
@@ -1461,7 +1462,7 @@ function toggleTheme() {
   }
 })();
 
-window.addEventListener('load', init);
+document.addEventListener('DOMContentLoaded', init);
 window.addEventListener('resize', () => { drawPnlMini(); });
 </script>
 </body>
