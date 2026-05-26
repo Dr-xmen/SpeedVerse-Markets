@@ -130,6 +130,16 @@ select{font-family:inherit;background:none;color:var(--text);border:none;outline
 .pair-row-chg.pos{color:var(--green);}
 .pair-row-chg.neg{color:var(--red);}
 
+/* MARKET SELECTOR */
+.market-tabs{display:flex;border-bottom:1px solid var(--b);overflow-x:auto;flex-shrink:0;}
+.market-tabs::-webkit-scrollbar{height:0;}
+.market-tab{flex:1;padding:5px 3px;font-size:9.5px;font-weight:700;color:var(--sub);cursor:pointer;text-align:center;white-space:nowrap;transition:all .15s;border-bottom:2px solid transparent;letter-spacing:.2px;}
+.market-tab:hover{color:var(--text);}
+.market-tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+.rp-nobook{display:none;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:20px;text-align:center;gap:10px;}
+.rp-nobook svg{opacity:.25;}
+.rp-nobook p{font-size:12px;color:var(--sub);line-height:1.5;}
+
 /* CHART COLUMN — takes all remaining center space, full height */
 .chart-col{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;background:var(--bg);}
 #tv-chart-container{flex:1;width:100%;height:100%;display:flex;flex-direction:column;}
@@ -176,6 +186,8 @@ select{font-family:inherit;background:none;color:var(--text);border:none;outline
 
 /* RIGHT PANEL (order book + trades) */
 .right-panel{width:260px;flex-shrink:0;background:var(--s1);border-left:1px solid var(--b);display:flex;flex-direction:column;overflow:hidden;}
+#rp-live{display:flex;flex-direction:column;flex:1;overflow:hidden;min-height:0;}
+.rp-nobook{flex:1;}
 .rp-tabs{display:flex;border-bottom:1px solid var(--b);flex-shrink:0;}
 .rp-tab{flex:1;padding:9px 4px;font-size:12px;font-weight:600;color:var(--sub);cursor:pointer;text-align:center;transition:all .15s;border-bottom:2px solid transparent;}
 .rp-tab:hover{color:var(--text);}
@@ -420,7 +432,15 @@ body.light input,body.light select{color:var(--text);}
             <input class="pairs-search-inp" type="text" placeholder="Search" oninput="filterPairs(this.value)"/>
           </div>
         </div>
-        <div class="pairs-tabs">
+        <div class="market-tabs">
+          <div class="market-tab active" data-mkt="crypto"      onclick="selectMarket('crypto')">Crypto</div>
+          <div class="market-tab"        data-mkt="forex"       onclick="selectMarket('forex')">Forex</div>
+          <div class="market-tab"        data-mkt="stocks"      onclick="selectMarket('stocks')">Stocks</div>
+          <div class="market-tab"        data-mkt="indices"     onclick="selectMarket('indices')">Indices</div>
+          <div class="market-tab"        data-mkt="commodities" onclick="selectMarket('commodities')">Commod.</div>
+          <div class="market-tab"        data-mkt="etf"         onclick="selectMarket('etf')">ETFs</div>
+        </div>
+        <div class="pairs-tabs" id="crypto-subtabs">
           <div class="pairs-tab active" onclick="setPairsTab(this,'favs')">★ Favs</div>
           <div class="pairs-tab" onclick="setPairsTab(this,'all')">All</div>
           <div class="pairs-tab" onclick="setPairsTab(this,'usdt')">USDT</div>
@@ -487,38 +507,42 @@ body.light input,body.light select{color:var(--text);}
 
       <!-- RIGHT: ORDER BOOK + TRADES -->
       <div class="right-panel">
-        <div class="rp-tabs">
-          <div class="rp-tab active" id="rp-tab-ob" onclick="setRpTab('ob')">Order Book</div>
-          <div class="rp-tab"        id="rp-tab-tr" onclick="setRpTab('tr')">Trades</div>
+        <!-- live order book (crypto only) -->
+        <div id="rp-live">
+          <div class="rp-tabs">
+            <div class="rp-tab active" id="rp-tab-ob" onclick="setRpTab('ob')">Order Book</div>
+            <div class="rp-tab"        id="rp-tab-tr" onclick="setRpTab('tr')">Trades</div>
+          </div>
+          <div class="ob-container" id="ob-panel">
+            <div class="ob-header">
+              <div class="ob-hcol">Price(USDT)</div>
+              <div class="ob-hcol" style="width:74px;text-align:right;">Amount</div>
+              <div class="ob-hcol" style="width:64px;text-align:right;">Total</div>
+            </div>
+            <div class="ob-asks" id="ob-asks"><div style="padding:8px;text-align:center;font-size:11px;color:var(--sub);">Loading…</div></div>
+            <div class="ob-depth-bar">
+              <div class="ob-depth-bid" id="ob-dbid" style="width:50%;"></div>
+              <div class="ob-depth-ask" id="ob-dask" style="width:50%;"></div>
+            </div>
+            <div class="ob-mid">
+              <span class="ob-mid-price pos" id="ob-mid-price">—</span>
+              <span class="ob-spread-lbl" id="ob-spread">Spread: —</span>
+            </div>
+            <div class="ob-bids" id="ob-bids"></div>
+          </div>
+          <div class="trades-container" id="tr-panel" style="display:none;">
+            <div class="trades-hdr">
+              <div class="trades-hcol">Time</div>
+              <div class="trades-hcol">Price(USDT)</div>
+              <div class="trades-hcol">Amount</div>
+            </div>
+            <div class="trades-list" id="trades-list"></div>
+          </div>
         </div>
-
-        <!-- ORDER BOOK -->
-        <div class="ob-container" id="ob-panel">
-          <div class="ob-header">
-            <div class="ob-hcol">Price(USDT)</div>
-            <div class="ob-hcol" style="width:74px;text-align:right;">Amount</div>
-            <div class="ob-hcol" style="width:64px;text-align:right;">Total</div>
-          </div>
-          <div class="ob-asks" id="ob-asks"><div style="padding:8px;text-align:center;font-size:11px;color:var(--sub);">Connecting…</div></div>
-          <div class="ob-depth-bar">
-            <div class="ob-depth-bid" id="ob-dbid" style="width:50%;"></div>
-            <div class="ob-depth-ask" id="ob-dask" style="width:50%;"></div>
-          </div>
-          <div class="ob-mid">
-            <span class="ob-mid-price pos" id="ob-mid-price">—</span>
-            <span class="ob-spread-lbl" id="ob-spread">Spread: —</span>
-          </div>
-          <div class="ob-bids" id="ob-bids"></div>
-        </div>
-
-        <!-- RECENT TRADES -->
-        <div class="trades-container" id="tr-panel" style="display:none;">
-          <div class="trades-hdr">
-            <div class="trades-hcol">Time</div>
-            <div class="trades-hcol">Price(USDT)</div>
-            <div class="trades-hcol">Amount</div>
-          </div>
-          <div class="trades-list" id="trades-list"></div>
+        <!-- placeholder for non-crypto markets -->
+        <div class="rp-nobook" id="rp-placeholder">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          <p>Order book data is only<br>available for Crypto markets</p>
         </div>
       </div>
 
@@ -596,8 +620,9 @@ let pollBookTimer=null, pollTradesTimer=null, pollTickerTimer=null;
 function fp(p){
   p=parseFloat(p);
   if(isNaN(p)) return '—';
-  if(p>=10000) return p.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-  if(p>=1)     return p.toFixed(4);
+  if(p>=1000) return p.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  if(p>=10)   return p.toFixed(2);
+  if(p>=1)    return p.toFixed(4);
   return p.toFixed(6);
 }
 function fv(v){
@@ -720,7 +745,7 @@ function applyTicker(t){
 
   if(high) document.getElementById('sb-high').textContent=fp(high);
   if(low)  document.getElementById('sb-low').textContent=fp(low);
-  if(vol)  document.getElementById('sb-vol').textContent=fv(vol)+' '+activePair.sym;
+  if(vol)  document.getElementById('sb-vol').textContent=fv(vol)+(activeMarket==='crypto'?' '+activePair.sym:'');
   if(turn) document.getElementById('sb-turnover').textContent='$'+fv(turn);
 
   document.getElementById('ob-mid-price').className='ob-mid-price '+(chgPct>=0?'pos':'neg');
@@ -775,6 +800,7 @@ function renderTrades(){
 
 /* ═══════════════════ PAIRS LIST ═══════════════════ */
 function renderPairsList(){
+  if(activeMarket!=='crypto'){ renderNcList(); return; }
   const el=document.getElementById('pairs-list');
   let list=PAIRS;
   if(pairsFilter){ const q=pairsFilter.toLowerCase(); list=PAIRS.filter(p=>p.sym.toLowerCase().includes(q)); }
@@ -817,6 +843,7 @@ function setPairsTab(el,mode){ document.querySelectorAll('.pairs-tab').forEach(t
 
 /* ═══════════════════ PAIR SELECTION ═══════════════════ */
 function selectPair(sym){
+  if(activeMarket!=='crypto') selectMarket('crypto');
   const pair=PAIRS.find(p=>p.sym===sym);
   if(!pair||pair===activePair) return;
   activePair=pair; lastPrice=0; tradesData=[];
@@ -902,6 +929,126 @@ function updateSubmitBtn(){
   btn.className='of-submit '+(orderSide==='buy'?'buy':'sell');
 }
 function submitOrder(){ alert('Log in to place orders.'); }
+
+/* ═══════════════════ MULTI-MARKET ═══════════════════ */
+let activeMarket  = 'crypto';
+let nonCryptoData = [];
+let activeNcKey   = null;
+let ncFetchTimer  = null;
+
+function selectMarket(mkt){
+  if(activeMarket===mkt) return;
+  activeMarket=mkt;
+  document.querySelectorAll('.market-tab').forEach(t=>t.classList.toggle('active',t.dataset.mkt===mkt));
+  const isCrypto=mkt==='crypto';
+  document.getElementById('crypto-subtabs').style.display=isCrypto?'':'none';
+  document.getElementById('rp-live').style.display=isCrypto?'flex':'none';
+  document.getElementById('rp-placeholder').style.display=isCrypto?'none':'flex';
+  clearTimeout(ncFetchTimer);
+  if(isCrypto){
+    nonCryptoData=[];activeNcKey=null;
+    fetchTVTickers();
+    startPolling(activePair);
+  } else {
+    stopPolling();
+    nonCryptoData=[];activeNcKey=null;
+    document.getElementById('pairs-list').innerHTML='<div style="padding:16px;text-align:center;font-size:12px;color:var(--sub);">Loading…</div>';
+    fetchNcMarket(mkt);
+  }
+}
+
+async function fetchNcMarket(mkt){
+  if(activeMarket!==mkt) return;
+  try{
+    const r=await fetch('/api/markets?market='+mkt);
+    if(!r.ok) return;
+    const j=await r.json();
+    nonCryptoData=(j.data||[]).map(row=>{
+      const d=row.d, n=d.length;
+      return{
+        s:row.s, key:row.s,
+        name:String(d[0]||row.s),
+        label:String(d[1]||''),
+        price:parseFloat(d[2])||0,
+        change:parseFloat(d[3])||0,
+        high:parseFloat(d[n-2])||0,
+        low:parseFloat(d[n-1])||0,
+        volume:parseFloat(d[5])||0,
+      };
+    });
+    renderNcList();
+    if(!activeNcKey&&nonCryptoData.length) selectNcPair(nonCryptoData[0]);
+    else if(activeNcKey){
+      const cur=nonCryptoData.find(p=>p.key===activeNcKey);
+      if(cur) applyNcTicker(cur);
+    }
+  }catch(e){console.warn('NC market fetch failed:',e);}
+  if(activeMarket===mkt) ncFetchTimer=setTimeout(()=>fetchNcMarket(mkt),20000);
+}
+
+function selectNcPair(pair){
+  activeNcKey=pair.key;
+  renderNcList();
+  document.getElementById('sb-pair-name').textContent=pair.label||pair.name;
+  const img=document.getElementById('sb-coin-img');
+  img.style.opacity=0;
+  ['sb-last-price','sb-change','sb-high','sb-low','sb-vol','sb-turnover'].forEach(id=>document.getElementById(id).textContent='—');
+  document.getElementById('sb-last-price').className='sb-last-price';
+  lastPrice=0;
+  document.getElementById('of-tab-buy').textContent='Buy '+pair.name;
+  document.getElementById('of-tab-sell').textContent='Sell '+pair.name;
+  document.getElementById('of-amount-unit').textContent=pair.name;
+  document.getElementById('of-price').value='';
+  document.getElementById('of-amount').value='';
+  document.getElementById('of-total').textContent='0.00 USDT';
+  document.getElementById('of-best-ask').textContent='Best Ask: —';
+  document.querySelectorAll('.pair-pill').forEach(p=>p.classList.remove('active'));
+  applyNcTicker(pair);
+  loadChart(pair.s);
+}
+
+function selectNcPairByKey(key){
+  const pair=nonCryptoData.find(p=>p.key===key);
+  if(pair) selectNcPair(pair);
+}
+
+function applyNcTicker(pair){
+  const prEl=document.getElementById('sb-last-price');
+  prEl.textContent=pair.price?fp(pair.price):'—';
+  const pct=pair.change||0;
+  const chEl=document.getElementById('sb-change');
+  chEl.textContent=(pct>=0?'+':'')+pct.toFixed(2)+'%';
+  chEl.className='sb-change '+(pct>=0?'pos':'neg');
+  if(pair.high) document.getElementById('sb-high').textContent=fp(pair.high);
+  if(pair.low)  document.getElementById('sb-low').textContent=fp(pair.low);
+  if(pair.volume) document.getElementById('sb-vol').textContent=fv(pair.volume);
+  document.getElementById('sb-turnover').textContent='—';
+}
+
+function renderNcList(){
+  const el=document.getElementById('pairs-list');
+  let list=nonCryptoData;
+  if(pairsFilter){const q=pairsFilter.toLowerCase();list=list.filter(p=>p.name.toLowerCase().includes(q)||(p.label||'').toLowerCase().includes(q));}
+  if(!list.length){el.innerHTML='<div style="padding:16px;text-align:center;font-size:12px;color:var(--sub);">No pairs</div>';return;}
+  el.innerHTML=list.map(p=>{
+    const price=p.price?fp(p.price):'—';
+    const pct=p.change||0;
+    const pos=pct>=0;
+    const isAct=activeNcKey===p.key;
+    const safeKey=p.key.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    const abbr=p.name.slice(0,4);
+    return `<div class="pair-row${isAct?' active':''}" onclick="selectNcPairByKey('${safeKey}')">
+      <div class="pair-row-left">
+        <div class="pair-row-icon" style="background:var(--s3);display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:700;color:var(--sub);">${abbr}</div>
+        <div class="pair-row-sym" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;">${p.name}</div>
+      </div>
+      <div class="pair-row-right">
+        <div class="pair-row-price">${price}</div>
+        <div class="pair-row-chg ${pos?'pos':'neg'}">${p.price?(pos?'+':'')+pct.toFixed(2)+'%':'—'}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
 
 /* ═══════════════════ INIT ═══════════════════ */
 loadChart(activePair.tv);
