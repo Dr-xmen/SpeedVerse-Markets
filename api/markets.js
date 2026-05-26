@@ -4,7 +4,7 @@ const MARKET_DEFS = {
     body: {
       columns: ['name','description','close','change','change_abs','volume','market_cap_calc','high','low'],
       sort:    { sortBy: 'market_cap_calc', sortOrder: 'desc' },
-      range:   [0, 500],
+      range:   [0, 100],
     },
   },
   forex: {
@@ -67,15 +67,6 @@ const MARKET_DEFS = {
   },
 };
 
-// Extract base coin from a trading pair name (e.g. BTCUSDT -> BTC)
-const QUOTES = ['USDT','USDC','BUSD','TUSD','USDP','DAI','USD','BTC','ETH','BNB'];
-function extractBase(name) {
-  const n = (name || '').toUpperCase();
-  for (const q of QUOTES) {
-    if (n.endsWith(q) && n.length > q.length) return n.slice(0, -q.length);
-  }
-  return n;
-}
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -107,22 +98,6 @@ module.exports = async function handler(req, res) {
     }
 
     const data = await tvRes.json();
-
-    // Deduplicate crypto: keep only the highest-market-cap entry per base coin
-    if (market === 'crypto') {
-      const seen = new Set();
-      const deduped = [];
-      for (const item of (data.data || [])) {
-        const base = extractBase((item.d && item.d[0]) || '');
-        if (base && !seen.has(base)) {
-          seen.add(base);
-          deduped.push(item);
-          if (deduped.length >= 100) break;
-        }
-      }
-      data.data  = deduped;
-      data.count = deduped.length;
-    }
 
     res.setHeader('Cache-Control', 's-maxage=15, stale-while-revalidate=30');
     return res.status(200).json(data);
