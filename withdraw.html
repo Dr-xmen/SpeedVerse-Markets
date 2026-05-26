@@ -87,7 +87,8 @@ body.light{
   --text:#111827; --sub:#6b7280; --muted:#d1d5db;
 }
 body.light ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.15);}
-body.light input, body.light select{color:var(--text);}
+body.light input,body.light select{color:var(--text);}
+body.light select option{background:#fff;color:#111;}
 
 /* BREADCRUMB */
 .breadcrumb{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--sub);margin-bottom:24px;}
@@ -105,10 +106,17 @@ body.light input, body.light select{color:var(--text);}
 .tab-switch-btn.on{background:var(--accent);color:#fff;}
 .tab-switch-btn:not(.on):hover{color:var(--text);}
 
-/* WITHDRAW LAYOUT */
+/* LAYOUT */
 .wd-layout{display:grid;grid-template-columns:1fr 300px;gap:20px;max-width:960px;align-items:start;}
 .wd-card{background:var(--s1);border:1px solid var(--b);border-radius:16px;padding:28px;}
 .wd-summary{background:var(--s1);border:1px solid var(--b);border-radius:16px;padding:20px;position:sticky;top:0;}
+
+/* METHOD TOGGLE */
+.method-toggle{display:flex;gap:0;background:var(--s2);border:1.5px solid var(--b);border-radius:12px;overflow:hidden;margin-bottom:28px;}
+.method-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:13px 16px;font-size:13.5px;font-weight:600;color:var(--sub);cursor:pointer;transition:all .2s;border:none;background:none;}
+.method-btn:not(:last-child){border-right:1.5px solid var(--b);}
+.method-btn.active{background:rgba(240,90,26,.1);color:var(--accent);}
+.method-btn:hover:not(.active){color:var(--text);background:rgba(255,255,255,.03);}
 
 /* FORM */
 .form-sec{margin-bottom:24px;}
@@ -121,12 +129,15 @@ body.light input, body.light select{color:var(--text);}
 .form-input{width:100%;height:48px;background:var(--s2);border:1.5px solid var(--b);border-radius:10px;padding:0 14px;font-size:14px;color:var(--text);transition:border-color .2s;}
 .form-input:focus{border-color:var(--accent);outline:none;}
 .form-input::placeholder{color:var(--sub);}
+.form-select{width:100%;height:48px;background:var(--s2);border:1.5px solid var(--b);border-radius:10px;padding:0 14px;font-size:14px;color:var(--text);cursor:pointer;transition:border-color .2s;appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23848e9c' stroke-width='2.5' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolyline points='6,9 12,15 18,9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;}
+.form-select:focus{border-color:var(--accent);outline:none;}
 .form-input-suffix{position:absolute;right:12px;display:flex;align-items:center;gap:8px;}
 .form-input-tag{font-size:11.5px;font-weight:700;color:var(--sub);background:var(--s3);padding:3px 8px;border-radius:5px;}
 .max-btn{padding:4px 10px;border-radius:5px;background:rgba(240,90,26,.15);color:var(--accent);font-size:11.5px;font-weight:700;cursor:pointer;transition:all .15s;border:none;}
 .max-btn:hover{background:rgba(240,90,26,.25);}
 .addr-book-btn{position:absolute;right:12px;color:var(--sub);cursor:pointer;transition:color .15s;}
 .addr-book-btn:hover{color:var(--accent);}
+.input-hint{font-size:11.5px;color:var(--sub);margin-top:5px;}
 
 /* COIN SELECTOR */
 .coin-selector{display:flex;align-items:center;gap:10px;height:48px;background:var(--s2);border:1.5px solid var(--b);border-radius:10px;padding:0 14px;cursor:pointer;transition:border-color .2s;position:relative;}
@@ -160,8 +171,9 @@ body.light input, body.light select{color:var(--text);}
 .net-pill:hover{border-color:var(--b2);color:var(--text);}
 .net-pill.selected{border-color:var(--accent);color:var(--accent);background:rgba(240,90,26,.08);}
 
-/* FEE INFO ROW */
-.fee-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+/* FEE INFO */
+.fee-box{background:var(--s2);border:1px solid var(--b);border-radius:10px;padding:14px;}
+.fee-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.04);}
 .fee-row:last-child{border-bottom:none;}
 .fee-lbl{font-size:12.5px;color:var(--sub);}
 .fee-val{font-size:12.5px;font-weight:600;color:var(--text);font-family:var(--mono);}
@@ -173,45 +185,66 @@ body.light input, body.light select{color:var(--text);}
 .sum-row:last-child{border-bottom:none;}
 .sum-lbl{font-size:12px;color:var(--sub);}
 .sum-val{font-size:12px;font-weight:600;color:var(--text);font-family:var(--mono);text-align:right;}
-.sum-val.green{color:var(--green);}
 .sum-val.red{color:var(--red);}
 .sum-total{display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:14px;border-top:1.5px solid var(--b2);}
 .sum-total-lbl{font-size:14px;font-weight:700;color:var(--text);}
 .sum-total-val{font-size:16px;font-weight:800;font-family:var(--mono);color:var(--text);}
 
 /* SUBMIT BTN */
-.submit-btn{width:100%;height:50px;background:var(--accent);color:#fff;border-radius:10px;font-size:15px;font-weight:700;border:none;cursor:pointer;transition:background .15s;margin-top:16px;display:flex;align-items:center;justify-content:center;gap:8px;}
+.submit-btn{width:100%;height:50px;background:var(--accent);color:#fff;border-radius:10px;font-size:15px;font-weight:700;border:none;cursor:pointer;transition:background .15s;margin-top:20px;display:flex;align-items:center;justify-content:center;gap:8px;}
 .submit-btn:hover{background:#d94e10;}
 .submit-btn:disabled{background:var(--s3);color:var(--sub);cursor:not-allowed;}
 
-/* VERIFICATION MODAL */
+/* NOTICE */
+.notice{display:flex;gap:10px;border-radius:10px;padding:14px 16px;margin-top:20px;}
+.notice.warn{background:rgba(246,70,93,.06);border:1px solid rgba(246,70,93,.2);}
+.notice.info{background:rgba(240,185,11,.06);border:1px solid rgba(240,185,11,.2);}
+.notice-icon{flex-shrink:0;margin-top:1px;}
+.notice-title-red{font-size:12.5px;font-weight:700;color:var(--red);margin-bottom:5px;}
+.notice-title-gold{font-size:12.5px;font-weight:700;color:var(--gold);margin-bottom:5px;}
+.notice ul{list-style:none;display:flex;flex-direction:column;gap:4px;}
+.notice li{font-size:12px;color:var(--sub);display:flex;align-items:flex-start;gap:6px;}
+.notice li::before{content:'•';flex-shrink:0;margin-top:1px;}
+.notice.warn li::before{color:var(--red);}
+.notice.info li::before{color:var(--gold);}
+
+/* MODAL */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
-.modal{background:var(--s1);border:1px solid var(--b2);border-radius:16px;padding:28px;width:420px;max-width:96vw;}
+.modal{background:var(--s1);border:1px solid var(--b2);border-radius:16px;padding:28px;width:440px;max-width:96vw;max-height:90vh;overflow-y:auto;}
 .modal-title{font-size:18px;font-weight:800;color:var(--text);margin-bottom:6px;}
 .modal-sub{font-size:13px;color:var(--sub);margin-bottom:22px;}
 .modal-field{margin-bottom:14px;}
 .modal-label{font-size:12px;font-weight:600;color:var(--sub);margin-bottom:7px;}
+.modal-hint{font-size:11.5px;color:var(--sub);margin-bottom:8px;}
 .modal-input-wrap{display:flex;gap:8px;}
 .modal-input{flex:1;height:44px;background:var(--s2);border:1.5px solid var(--b);border-radius:8px;padding:0 12px;font-size:14px;color:var(--text);transition:border-color .2s;}
 .modal-input:focus{border-color:var(--accent);outline:none;}
 .send-code-btn{height:44px;padding:0 14px;border-radius:8px;background:var(--s3);border:1.5px solid var(--b2);font-size:12.5px;font-weight:600;color:var(--text);cursor:pointer;white-space:nowrap;transition:all .15s;}
 .send-code-btn:hover{border-color:var(--accent);color:var(--accent);}
+.send-code-btn:disabled{opacity:.5;cursor:not-allowed;}
+.modal-summary{background:var(--s2);border:1px solid var(--b);border-radius:10px;padding:12px;margin-bottom:4px;}
+.modal-sum-row{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:4px;}
+.modal-sum-row:last-child{margin-bottom:0;}
 .modal-actions{display:flex;gap:10px;margin-top:20px;}
 .modal-cancel{flex:1;height:46px;background:var(--s3);border:1.5px solid var(--b2);border-radius:9px;font-size:14px;font-weight:600;color:var(--sub);cursor:pointer;transition:all .15s;}
-.modal-cancel:hover{border-color:var(--b2);color:var(--text);}
+.modal-cancel:hover{color:var(--text);}
 .modal-confirm{flex:2;height:46px;background:var(--accent);color:#fff;border-radius:9px;font-size:14px;font-weight:700;border:none;cursor:pointer;transition:background .15s;}
 .modal-confirm:hover{background:#d94e10;}
 
-/* NOTICE */
-.notice{display:flex;gap:10px;background:rgba(246,70,93,.06);border:1px solid rgba(246,70,93,.2);border-radius:10px;padding:14px 16px;margin-top:20px;}
-.notice-icon{flex-shrink:0;margin-top:1px;}
-.notice-title{font-size:12.5px;font-weight:700;color:var(--red);margin-bottom:5px;}
-.notice ul{list-style:none;display:flex;flex-direction:column;gap:4px;}
-.notice li{font-size:12px;color:var(--sub);display:flex;align-items:flex-start;gap:6px;}
-.notice li::before{content:'•';color:var(--red);flex-shrink:0;margin-top:1px;}
+/* BANK STEP INDICATOR */
+.bank-steps{display:flex;align-items:center;gap:0;margin-bottom:24px;}
+.bstep{display:flex;align-items:center;gap:8px;}
+.bstep-circle{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
+.bstep-circle.done{background:var(--green);color:#fff;}
+.bstep-circle.active{background:var(--accent);color:#fff;}
+.bstep-circle.idle{background:var(--s3);color:var(--sub);border:1.5px solid var(--b2);}
+.bstep-lbl{font-size:12px;font-weight:600;color:var(--sub);}
+.bstep-lbl.active{color:var(--text);}
+.bstep-line{flex:1;height:1.5px;background:var(--b2);margin:0 6px;}
+.bstep-line.done{background:var(--green);}
 
 /* RECENT TABLE */
-.rtx-table{width:100%;border-collapse:collapse;margin-top:0;}
+.rtx-table{width:100%;border-collapse:collapse;}
 .rtx-table th{font-size:10.5px;font-weight:600;letter-spacing:.4px;text-transform:uppercase;color:var(--sub);padding:10px 14px;text-align:left;background:var(--s2);border-bottom:1px solid var(--b);}
 .rtx-table td{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.04);font-size:12.5px;vertical-align:middle;}
 .rtx-table tr:last-child td{border-bottom:none;}
@@ -220,13 +253,12 @@ body.light input, body.light select{color:var(--text);}
 .badge-green{background:rgba(14,203,129,.12);color:var(--green);}
 .badge-yellow{background:rgba(240,185,11,.12);color:var(--gold);}
 .badge-red{background:rgba(246,70,93,.12);color:var(--red);}
-.badge-gray{background:var(--s3);color:var(--sub);}
 .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;gap:10px;}
 .empty-state svg{opacity:.18;}
 .empty-state p{font-size:13px;color:var(--sub);}
 
 @media(max-width:900px){.sidebar{display:none;}.wd-layout{grid-template-columns:1fr;}.wd-summary{position:static;}.main{padding:20px 16px;}}
-@media(max-width:640px){.wd-card{padding:18px;}.net-row{flex-wrap:wrap;}}
+@media(max-width:640px){.wd-card{padding:18px;}.net-row{flex-wrap:wrap;}.method-btn{font-size:12px;padding:11px 10px;}}
 </style>
 </head>
 <body>
@@ -352,7 +384,6 @@ body.light input, body.light select{color:var(--text);}
 <!-- MAIN -->
 <main class="main">
 
-  <!-- Breadcrumb -->
   <div class="breadcrumb">
     <a href="dashboard.html">Home</a>
     <span class="breadcrumb-sep">›</span>
@@ -361,170 +392,404 @@ body.light input, body.light select{color:var(--text);}
     <span class="breadcrumb-cur">Withdraw</span>
   </div>
 
-  <!-- Title Row -->
   <div class="page-title-row">
     <div>
-      <div class="page-title">Withdraw Crypto</div>
-      <div class="page-subtitle">Send crypto to an external wallet or exchange</div>
+      <div class="page-title" id="page-title">Withdraw</div>
+      <div class="page-subtitle" id="page-subtitle">Choose how you'd like to withdraw your funds</div>
     </div>
     <div class="tab-switch">
       <div class="tab-switch-btn" onclick="location.href='deposit.html'">Deposit</div>
-      <div class="tab-switch-btn on" onclick="location.href='withdraw.html'">Withdraw</div>
+      <div class="tab-switch-btn on">Withdraw</div>
     </div>
   </div>
 
-  <!-- LAYOUT: form + summary -->
   <div class="wd-layout">
 
     <!-- LEFT: FORM -->
     <div class="wd-card">
 
-      <!-- COIN -->
-      <div class="form-sec">
-        <div class="form-sec-title">Coin</div>
-        <div class="coin-selector" id="coin-selector" onclick="toggleCoinDropdown()">
-          <div class="coin-selector-icon" id="sel-icon">
-            <img id="sel-icon-img" src="" width="26" height="26" style="border-radius:50%;object-fit:contain;" onerror="this.style.display='none';document.getElementById('sel-icon-fb').style.display='flex'"/>
-            <span id="sel-icon-fb" style="display:none;width:26px;height:26px;border-radius:50%;align-items:center;justify-content:center;font-size:11px;font-weight:700;"></span>
-          </div>
-          <div class="coin-selector-text">
-            <div class="coin-selector-sym" id="sel-sym">Select Coin</div>
-            <div class="coin-selector-name" id="sel-name">Choose the cryptocurrency to withdraw</div>
-          </div>
-          <div class="coin-selector-chevron">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6,9 12,15 18,9"/></svg>
-          </div>
-
-          <!-- DROPDOWN -->
-          <div class="coin-dropdown" id="coin-dropdown" style="display:none;" onclick="event.stopPropagation()">
-            <div class="cd-search-wrap">
-              <input class="cd-search" id="cd-search" type="text" placeholder="Search coin…" oninput="filterDropdown(this.value)"/>
-            </div>
-            <div class="cd-list" id="cd-list"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- NETWORK -->
-      <div class="form-sec" id="network-sec" style="display:none;">
-        <div class="form-sec-title">Network</div>
-        <div class="net-row" id="net-row"></div>
-        <div style="font-size:11.5px;color:var(--sub);margin-top:8px;">Ensure the network matches the recipient's address format.</div>
-      </div>
-
-      <!-- ADDRESS -->
-      <div class="form-sec" id="address-sec" style="display:none;">
-        <div class="form-sec-title">Recipient Address</div>
-        <div class="form-field">
-          <div class="form-input-wrap">
-            <input class="form-input" id="addr-input" type="text" placeholder="Enter wallet address" style="padding-right:44px;" oninput="updateSummary()"/>
-            <div class="addr-book-btn" title="Address Book">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-            </div>
-          </div>
-        </div>
-
-        <!-- MEMO (XRP/ATOM/BNB BEP2) -->
-        <div class="form-field" id="memo-field" style="display:none;">
-          <div class="form-label-row">
-            <span class="form-label">Memo / Tag <span style="color:var(--red);">*</span></span>
-            <span class="form-label-right" style="color:var(--red);font-size:11.5px;">Required for this network</span>
-          </div>
-          <input class="form-input" id="memo-input" type="text" placeholder="Enter memo / tag"/>
-        </div>
-
-        <!-- AMOUNT -->
-        <div class="form-field">
-          <div class="form-label-row">
-            <span class="form-label">Amount</span>
-            <span class="form-label-right">Available: <strong id="avail-bal" style="color:var(--text);">0.00</strong> <span id="avail-sym">USDT</span></span>
-          </div>
-          <div class="form-input-wrap">
-            <input class="form-input" id="amount-input" type="number" placeholder="0.00" style="padding-right:100px;" oninput="updateSummary()"/>
-            <div class="form-input-suffix">
-              <span class="form-input-tag" id="amount-sym">USDT</span>
-              <button class="max-btn" onclick="setMax()">MAX</button>
-            </div>
-          </div>
-          <div style="display:flex;justify-content:space-between;margin-top:7px;font-size:11.5px;color:var(--sub);">
-            <span>Min withdrawal: <strong id="min-wd" style="color:var(--text);">—</strong></span>
-            <span>≈ <strong id="usd-equiv" style="color:var(--text);">$0.00</strong></span>
-          </div>
-        </div>
-
-        <!-- FEE INFO -->
-        <div style="background:var(--s2);border:1px solid var(--b);border-radius:10px;padding:14px;">
-          <div class="fee-row">
-            <span class="fee-lbl">Network Fee</span>
-            <span class="fee-val accent" id="fee-val">—</span>
-          </div>
-          <div class="fee-row">
-            <span class="fee-lbl">Processing Time</span>
-            <span class="fee-val" id="eta-val">—</span>
-          </div>
-          <div class="fee-row">
-            <span class="fee-lbl">You Will Receive</span>
-            <span class="fee-val green" id="receive-val">—</span>
-          </div>
-        </div>
-
-        <div class="notice">
-          <div style="flex-shrink:0;margin-top:1px;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          </div>
-          <div>
-            <div class="notice-title">Warning</div>
-            <ul>
-              <li>Double-check the address. Crypto transactions are irreversible.</li>
-              <li>SpeedVerse is not liable for funds sent to incorrect addresses.</li>
-              <li>Large withdrawals may require additional identity verification.</li>
-            </ul>
-          </div>
-        </div>
-
-        <button class="submit-btn" id="submit-btn" onclick="openVerifyModal()" disabled>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          Withdraw
+      <!-- METHOD TOGGLE -->
+      <div class="method-toggle">
+        <button class="method-btn active" id="btn-crypto" onclick="switchMethod('crypto')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          Crypto Withdrawal
+        </button>
+        <button class="method-btn" id="btn-bank" onclick="switchMethod('bank')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12,2 2,7 22,7"/></svg>
+          Bank Transfer
         </button>
       </div>
+
+      <!-- ══════════════ CRYPTO PANEL ══════════════ -->
+      <div id="crypto-panel">
+
+        <div class="form-sec">
+          <div class="form-sec-title">Coin</div>
+          <div class="coin-selector" id="coin-selector" onclick="toggleCoinDropdown()">
+            <div class="coin-selector-icon">
+              <img id="sel-icon-img" src="" width="26" height="26" style="border-radius:50%;object-fit:contain;" onerror="this.style.display='none';document.getElementById('sel-icon-fb').style.display='flex'"/>
+              <span id="sel-icon-fb" style="display:none;width:26px;height:26px;border-radius:50%;align-items:center;justify-content:center;font-size:11px;font-weight:700;"></span>
+            </div>
+            <div class="coin-selector-text">
+              <div class="coin-selector-sym" id="sel-sym">Select Coin</div>
+              <div class="coin-selector-name" id="sel-name">Choose the cryptocurrency to withdraw</div>
+            </div>
+            <div class="coin-selector-chevron">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6,9 12,15 18,9"/></svg>
+            </div>
+            <div class="coin-dropdown" id="coin-dropdown" style="display:none;" onclick="event.stopPropagation()">
+              <div class="cd-search-wrap">
+                <input class="cd-search" id="cd-search" type="text" placeholder="Search coin…" oninput="filterDropdown(this.value)"/>
+              </div>
+              <div class="cd-list" id="cd-list"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-sec" id="network-sec" style="display:none;">
+          <div class="form-sec-title">Network</div>
+          <div class="net-row" id="net-row"></div>
+          <div class="input-hint" style="margin-top:8px;">Ensure the network matches the recipient's address format.</div>
+        </div>
+
+        <div class="form-sec" id="address-sec" style="display:none;">
+          <div class="form-sec-title">Recipient Details</div>
+
+          <div class="form-field">
+            <div class="form-label-row"><span class="form-label">Wallet Address</span></div>
+            <div class="form-input-wrap">
+              <input class="form-input" id="addr-input" type="text" placeholder="Enter wallet address" style="padding-right:44px;" oninput="updateSummary()"/>
+              <div class="addr-book-btn" title="Address Book">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-field" id="memo-field" style="display:none;">
+            <div class="form-label-row">
+              <span class="form-label">Memo / Tag <span style="color:var(--red);">*</span></span>
+              <span class="form-label-right" style="color:var(--red);font-size:11.5px;">Required for this network</span>
+            </div>
+            <input class="form-input" id="memo-input" type="text" placeholder="Enter memo / tag"/>
+          </div>
+
+          <div class="form-field">
+            <div class="form-label-row">
+              <span class="form-label">Amount</span>
+              <span class="form-label-right">Available: <strong id="avail-bal" style="color:var(--text);">0.00</strong> <span id="avail-sym">—</span></span>
+            </div>
+            <div class="form-input-wrap">
+              <input class="form-input" id="amount-input" type="number" min="0" placeholder="0.00" style="padding-right:110px;" oninput="updateSummary()"/>
+              <div class="form-input-suffix">
+                <span class="form-input-tag" id="amount-sym">—</span>
+                <button class="max-btn" onclick="setMax()">MAX</button>
+              </div>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-top:6px;">
+              <span class="input-hint">Min: <strong id="min-wd" style="color:var(--text);">—</strong></span>
+              <span class="input-hint">≈ <strong id="usd-equiv" style="color:var(--text);">$0.00</strong></span>
+            </div>
+          </div>
+
+          <div class="fee-box">
+            <div class="fee-row"><span class="fee-lbl">Network Fee</span><span class="fee-val accent" id="fee-val">—</span></div>
+            <div class="fee-row"><span class="fee-lbl">Processing Time</span><span class="fee-val" id="eta-val">—</span></div>
+            <div class="fee-row"><span class="fee-lbl">You Will Receive</span><span class="fee-val green" id="receive-val">—</span></div>
+          </div>
+
+          <div class="notice warn">
+            <div class="notice-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+            <div>
+              <div class="notice-title-red">Warning</div>
+              <ul>
+                <li>Double-check the address. Crypto transactions are irreversible.</li>
+                <li>SpeedVerse is not liable for funds sent to incorrect addresses.</li>
+                <li>Large withdrawals may require additional identity verification.</li>
+              </ul>
+            </div>
+          </div>
+
+          <button class="submit-btn" id="crypto-submit-btn" onclick="openVerifyModal('crypto')" disabled>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Withdraw Crypto
+          </button>
+        </div>
+
+      </div><!-- /crypto-panel -->
+
+      <!-- ══════════════ BANK PANEL ══════════════ -->
+      <div id="bank-panel" style="display:none;">
+
+        <!-- Step indicator -->
+        <div class="bank-steps" id="bank-steps">
+          <div class="bstep">
+            <div class="bstep-circle active" id="bs1">1</div>
+            <span class="bstep-lbl active" id="bs1-lbl">Amount</span>
+          </div>
+          <div class="bstep-line" id="bline1"></div>
+          <div class="bstep">
+            <div class="bstep-circle idle" id="bs2">2</div>
+            <span class="bstep-lbl" id="bs2-lbl">Bank Details</span>
+          </div>
+          <div class="bstep-line" id="bline2"></div>
+          <div class="bstep">
+            <div class="bstep-circle idle" id="bs3">3</div>
+            <span class="bstep-lbl" id="bs3-lbl">Review</span>
+          </div>
+        </div>
+
+        <!-- BANK STEP 1: Amount & Currency -->
+        <div id="bank-step1">
+          <div class="form-sec">
+            <div class="form-sec-title">Withdrawal Currency & Amount</div>
+
+            <div class="form-field">
+              <div class="form-label-row"><span class="form-label">Currency</span></div>
+              <select class="form-select" id="bank-currency" onchange="updateBankSummary()">
+                <option value="USD">🇺🇸 USD — US Dollar</option>
+                <option value="EUR">🇪🇺 EUR — Euro</option>
+                <option value="GBP">🇬🇧 GBP — British Pound</option>
+                <option value="AUD">🇦🇺 AUD — Australian Dollar</option>
+                <option value="CAD">🇨🇦 CAD — Canadian Dollar</option>
+                <option value="CHF">🇨🇭 CHF — Swiss Franc</option>
+                <option value="JPY">🇯🇵 JPY — Japanese Yen</option>
+                <option value="SGD">🇸🇬 SGD — Singapore Dollar</option>
+                <option value="HKD">🇭🇰 HKD — Hong Kong Dollar</option>
+                <option value="AED">🇦🇪 AED — UAE Dirham</option>
+                <option value="NGN">🇳🇬 NGN — Nigerian Naira</option>
+                <option value="ZAR">🇿🇦 ZAR — South African Rand</option>
+              </select>
+            </div>
+
+            <div class="form-field">
+              <div class="form-label-row">
+                <span class="form-label">Amount</span>
+                <span class="form-label-right">Available: <strong style="color:var(--text);">$0.00</strong> USD</span>
+              </div>
+              <div class="form-input-wrap">
+                <input class="form-input" id="bank-amount" type="number" min="0" placeholder="0.00" style="padding-right:70px;" oninput="updateBankSummary()"/>
+                <div class="form-input-suffix">
+                  <span class="form-input-tag" id="bank-ccy-tag">USD</span>
+                </div>
+              </div>
+              <div style="display:flex;justify-content:space-between;margin-top:6px;">
+                <span class="input-hint">Min: <strong style="color:var(--text);" id="bank-min">$100.00</strong></span>
+                <span class="input-hint">Max per day: <strong style="color:var(--text);">$50,000.00</strong></span>
+              </div>
+            </div>
+
+            <div class="fee-box" style="margin-bottom:20px;">
+              <div class="fee-row"><span class="fee-lbl">Processing Fee</span><span class="fee-val accent" id="bank-fee-val">—</span></div>
+              <div class="fee-row"><span class="fee-lbl">Exchange Rate</span><span class="fee-val" id="bank-rate-val">1 USD = 1.00 USD</span></div>
+              <div class="fee-row"><span class="fee-lbl">Processing Time</span><span class="fee-val">1 – 3 business days</span></div>
+              <div class="fee-row"><span class="fee-lbl">You Will Receive</span><span class="fee-val green" id="bank-receive-val">—</span></div>
+            </div>
+
+            <button class="submit-btn" id="bank-next-btn" onclick="bankGoStep(2)" disabled style="margin-top:0;">
+              Continue to Bank Details
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9,18 15,12 9,6"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- BANK STEP 2: Bank Details -->
+        <div id="bank-step2" style="display:none;">
+          <div class="form-sec">
+            <div class="form-sec-title">Your Bank Details</div>
+
+            <div class="form-field">
+              <div class="form-label-row"><span class="form-label">Account Holder Name</span></div>
+              <input class="form-input" id="bank-holder" type="text" placeholder="Full legal name as on bank account" oninput="checkBankStep2()"/>
+            </div>
+
+            <div class="form-field">
+              <div class="form-label-row"><span class="form-label">Bank Name</span></div>
+              <input class="form-input" id="bank-name" type="text" placeholder="e.g. Barclays, Chase, HSBC" oninput="checkBankStep2()"/>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+              <div class="form-field">
+                <div class="form-label-row"><span class="form-label">Account Number</span></div>
+                <input class="form-input" id="bank-acct" type="text" placeholder="Account number" oninput="checkBankStep2()"/>
+              </div>
+              <div class="form-field">
+                <div class="form-label-row"><span class="form-label">Sort Code / Routing</span></div>
+                <input class="form-input" id="bank-sort" type="text" placeholder="e.g. 20-00-00" oninput="checkBankStep2()"/>
+              </div>
+            </div>
+
+            <div class="form-field">
+              <div class="form-label-row">
+                <span class="form-label">IBAN <span style="color:var(--sub);font-weight:400;">(if applicable)</span></span>
+              </div>
+              <input class="form-input" id="bank-iban" type="text" placeholder="e.g. GB29 NWBK 6016 1331 9268 19" oninput="checkBankStep2()"/>
+              <div class="input-hint">Required for SEPA / international transfers</div>
+            </div>
+
+            <div class="form-field">
+              <div class="form-label-row"><span class="form-label">SWIFT / BIC Code</span></div>
+              <input class="form-input" id="bank-swift" type="text" placeholder="e.g. BARCGB22" oninput="checkBankStep2()"/>
+            </div>
+
+            <div class="form-field">
+              <div class="form-label-row">
+                <span class="form-label">Bank Country</span>
+              </div>
+              <select class="form-select" id="bank-country" onchange="checkBankStep2()">
+                <option value="">Select country…</option>
+                <option>United Kingdom</option>
+                <option>United States</option>
+                <option>European Union</option>
+                <option>Australia</option>
+                <option>Canada</option>
+                <option>Switzerland</option>
+                <option>Japan</option>
+                <option>Singapore</option>
+                <option>Hong Kong</option>
+                <option>United Arab Emirates</option>
+                <option>Nigeria</option>
+                <option>South Africa</option>
+                <option>Other</option>
+              </select>
+            </div>
+
+            <div class="form-field">
+              <div class="form-label-row">
+                <span class="form-label">Reference <span style="color:var(--sub);font-weight:400;">(optional)</span></span>
+              </div>
+              <input class="form-input" id="bank-ref" type="text" placeholder="Payment reference for your records"/>
+            </div>
+
+            <div class="notice info" style="margin-bottom:20px;">
+              <div class="notice-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+              <div>
+                <div class="notice-title-gold">Important</div>
+                <ul>
+                  <li>Bank account must be in your name. Third-party accounts are not accepted.</li>
+                  <li>Identity verification (KYC) must be completed before bank withdrawals.</li>
+                  <li>Incorrect bank details may result in delays or loss of funds.</li>
+                </ul>
+              </div>
+            </div>
+
+            <div style="display:flex;gap:10px;">
+              <button onclick="bankGoStep(1)" style="flex:1;height:48px;background:var(--s3);border:1.5px solid var(--b2);border-radius:10px;font-size:13.5px;font-weight:600;color:var(--sub);cursor:pointer;transition:all .15s;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--sub)'">← Back</button>
+              <button class="submit-btn" id="bank-step2-btn" onclick="bankGoStep(3)" disabled style="flex:3;margin-top:0;">
+                Review Withdrawal
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9,18 15,12 9,6"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- BANK STEP 3: Review & Confirm -->
+        <div id="bank-step3" style="display:none;">
+          <div class="form-sec">
+            <div class="form-sec-title">Review Your Withdrawal</div>
+
+            <div style="background:var(--s2);border:1px solid var(--b);border-radius:12px;overflow:hidden;margin-bottom:20px;">
+              <div style="padding:12px 16px;border-bottom:1px solid var(--b);font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--sub);">Amount</div>
+              <div id="review-amount-block" style="padding:16px;display:flex;align-items:center;justify-content:space-between;">
+                <span style="font-size:24px;font-weight:800;color:var(--text);font-family:var(--mono);" id="review-amount-big">—</span>
+                <div style="text-align:right;">
+                  <div style="font-size:12px;color:var(--sub);">After fee</div>
+                  <div style="font-size:15px;font-weight:700;color:var(--green);font-family:var(--mono);" id="review-receive-big">—</div>
+                </div>
+              </div>
+
+              <div style="border-top:1px solid var(--b);padding:12px 16px;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--sub);">Bank Details</div>
+              <div style="padding:12px 16px;display:flex;flex-direction:column;gap:8px;" id="review-bank-block">
+                <div style="display:flex;justify-content:space-between;font-size:12.5px;"><span style="color:var(--sub);">Account Holder</span><span style="font-weight:600;color:var(--text);" id="rv-holder">—</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:12.5px;"><span style="color:var(--sub);">Bank</span><span style="font-weight:600;color:var(--text);" id="rv-bank">—</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:12.5px;"><span style="color:var(--sub);">Account No.</span><span style="font-weight:600;color:var(--text);font-family:var(--mono);" id="rv-acct">—</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:12.5px;" id="rv-iban-row"><span style="color:var(--sub);">IBAN</span><span style="font-weight:600;color:var(--text);font-family:var(--mono);" id="rv-iban">—</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:12.5px;"><span style="color:var(--sub);">SWIFT / BIC</span><span style="font-weight:600;color:var(--text);font-family:var(--mono);" id="rv-swift">—</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:12.5px;"><span style="color:var(--sub);">Country</span><span style="font-weight:600;color:var(--text);" id="rv-country">—</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:12.5px;" id="rv-ref-row"><span style="color:var(--sub);">Reference</span><span style="font-weight:600;color:var(--text);" id="rv-ref">—</span></div>
+              </div>
+            </div>
+
+            <div class="notice warn" style="margin-bottom:20px;">
+              <div class="notice-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+              <div>
+                <div class="notice-title-red">Please verify your bank details carefully</div>
+                <ul>
+                  <li>Bank transfers cannot be reversed once submitted.</li>
+                  <li>Allow 1 – 3 business days for funds to arrive.</li>
+                  <li>For amounts above $10,000, additional AML checks may apply.</li>
+                </ul>
+              </div>
+            </div>
+
+            <div style="display:flex;gap:10px;">
+              <button onclick="bankGoStep(2)" style="flex:1;height:48px;background:var(--s3);border:1.5px solid var(--b2);border-radius:10px;font-size:13.5px;font-weight:600;color:var(--sub);cursor:pointer;transition:all .15s;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--sub)'">← Back</button>
+              <button class="submit-btn" onclick="openVerifyModal('bank')" style="flex:3;margin-top:0;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                Confirm Bank Withdrawal
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /bank-panel -->
 
     </div><!-- /wd-card -->
 
     <!-- RIGHT: SUMMARY -->
-    <div class="wd-summary">
+    <div class="wd-summary" id="summary-panel">
       <div style="font-size:13.5px;font-weight:700;color:var(--text);margin-bottom:14px;display:flex;align-items:center;gap:6px;">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
-        Transaction Summary
-      </div>
-      <div class="sum-row"><span class="sum-lbl">Coin</span><span class="sum-val" id="sum-coin">—</span></div>
-      <div class="sum-row"><span class="sum-lbl">Network</span><span class="sum-val" id="sum-net">—</span></div>
-      <div class="sum-row"><span class="sum-lbl">Address</span><span class="sum-val" id="sum-addr" style="max-width:160px;overflow:hidden;text-overflow:ellipsis;">—</span></div>
-      <div class="sum-row"><span class="sum-lbl">Amount</span><span class="sum-val" id="sum-amount">—</span></div>
-      <div class="sum-row"><span class="sum-lbl">Network Fee</span><span class="sum-val red" id="sum-fee">—</span></div>
-      <div class="sum-total">
-        <span class="sum-total-lbl">You Receive</span>
-        <span class="sum-total-val" id="sum-receive">—</span>
+        <span id="sum-title">Transaction Summary</span>
       </div>
 
+      <!-- crypto summary rows -->
+      <div id="crypto-sum-rows">
+        <div class="sum-row"><span class="sum-lbl">Method</span><span class="sum-val">Crypto</span></div>
+        <div class="sum-row"><span class="sum-lbl">Coin</span><span class="sum-val" id="sum-coin">—</span></div>
+        <div class="sum-row"><span class="sum-lbl">Network</span><span class="sum-val" id="sum-net">—</span></div>
+        <div class="sum-row"><span class="sum-lbl">Address</span><span class="sum-val" id="sum-addr" style="max-width:160px;overflow:hidden;text-overflow:ellipsis;">—</span></div>
+        <div class="sum-row"><span class="sum-lbl">Amount</span><span class="sum-val" id="sum-amount">—</span></div>
+        <div class="sum-row"><span class="sum-lbl">Network Fee</span><span class="sum-val red" id="sum-fee">—</span></div>
+        <div class="sum-total">
+          <span class="sum-total-lbl">You Receive</span>
+          <span class="sum-total-val" id="sum-receive">—</span>
+        </div>
+      </div>
+
+      <!-- bank summary rows -->
+      <div id="bank-sum-rows" style="display:none;">
+        <div class="sum-row"><span class="sum-lbl">Method</span><span class="sum-val">Bank Transfer</span></div>
+        <div class="sum-row"><span class="sum-lbl">Currency</span><span class="sum-val" id="bsum-ccy">—</span></div>
+        <div class="sum-row"><span class="sum-lbl">Amount</span><span class="sum-val" id="bsum-amount">—</span></div>
+        <div class="sum-row"><span class="sum-lbl">Processing Fee</span><span class="sum-val red" id="bsum-fee">—</span></div>
+        <div class="sum-row"><span class="sum-lbl">ETA</span><span class="sum-val">1–3 biz days</span></div>
+        <div class="sum-total">
+          <span class="sum-total-lbl">You Receive</span>
+          <span class="sum-total-val" id="bsum-receive">—</span>
+        </div>
+      </div>
+
+      <!-- limits -->
       <div style="margin-top:18px;background:rgba(240,90,26,.06);border:1px solid rgba(240,90,26,.15);border-radius:10px;padding:12px;">
-        <div style="font-size:11px;font-weight:700;color:var(--accent);margin-bottom:4px;">Withdrawal Limits</div>
-        <div style="font-size:11.5px;color:var(--sub);">Daily limit: <strong style="color:var(--text);">$100,000</strong></div>
+        <div style="font-size:11px;font-weight:700;color:var(--accent);margin-bottom:4px;" id="sum-limit-title">Withdrawal Limits</div>
+        <div style="font-size:11.5px;color:var(--sub);">Daily limit: <strong style="color:var(--text);" id="sum-daily-limit">$100,000</strong></div>
         <div style="font-size:11.5px;color:var(--sub);margin-top:2px;">Used today: <strong style="color:var(--text);">$0.00</strong></div>
         <div style="height:4px;background:var(--s3);border-radius:2px;margin-top:8px;overflow:hidden;"><div style="width:0%;height:100%;background:linear-gradient(90deg,var(--accent),var(--gold));border-radius:2px;"></div></div>
       </div>
 
+      <!-- trust -->
       <div style="margin-top:14px;display:flex;flex-direction:column;gap:7px;">
         <div style="display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--sub);">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><polyline points="20,6 9,17 4,12"/></svg>
-          Email verification required
-        </div>
-        <div style="display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--sub);">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><polyline points="20,6 9,17 4,12"/></svg>
-          Google Authenticator (2FA)
+          Email &amp; 2FA verification required
         </div>
         <div style="display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--sub);">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><polyline points="20,6 9,17 4,12"/></svg>
           Funds segregated &amp; insured
+        </div>
+        <div style="display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--sub);" id="sum-fca-row">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><polyline points="20,6 9,17 4,12"/></svg>
+          FCA regulated
         </div>
       </div>
     </div>
@@ -542,16 +807,15 @@ body.light input, body.light select{color:var(--text);}
         <thead>
           <tr>
             <th>Time</th>
-            <th>Coin</th>
-            <th>Network</th>
-            <th>Address</th>
+            <th>Type</th>
+            <th>Details</th>
             <th>Amount</th>
             <th>Fee</th>
             <th>Status</th>
           </tr>
         </thead>
-        <tbody id="recent-tbody">
-          <tr><td colspan="7">
+        <tbody>
+          <tr><td colspan="6">
             <div class="empty-state">
               <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17,8 12,3 7,8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
               <p>No withdrawal history</p>
@@ -570,11 +834,11 @@ body.light input, body.light select{color:var(--text);}
 <div class="modal-overlay" id="modal-overlay" style="display:none;" onclick="closeModal()">
   <div class="modal" onclick="event.stopPropagation()">
     <div class="modal-title">Security Verification</div>
-    <div class="modal-sub">Complete verification to confirm your withdrawal</div>
+    <div class="modal-sub" id="modal-sub">Verify your identity to complete this withdrawal</div>
 
     <div class="modal-field">
       <div class="modal-label">Email Verification Code</div>
-      <div style="font-size:11.5px;color:var(--sub);margin-bottom:8px;">Sent to j***@gmail.com</div>
+      <div class="modal-hint">Sent to j***@gmail.com</div>
       <div class="modal-input-wrap">
         <input class="modal-input" id="email-code" type="text" maxlength="6" placeholder="6-digit code"/>
         <button class="send-code-btn" id="send-code-btn" onclick="sendCode(this)">Send Code</button>
@@ -583,19 +847,19 @@ body.light input, body.light select{color:var(--text);}
 
     <div class="modal-field">
       <div class="modal-label">Google Authenticator (2FA)</div>
-      <input class="modal-input" id="totp-code" type="text" maxlength="6" placeholder="6-digit 2FA code" style="width:100%;"/>
+      <input class="modal-input" id="totp-code" type="text" maxlength="6" placeholder="6-digit code" style="width:100%;"/>
     </div>
 
-    <div style="background:var(--s2);border:1px solid var(--b);border-radius:10px;padding:12px;margin-top:6px;">
-      <div style="font-size:11px;color:var(--sub);margin-bottom:6px;font-weight:600;">WITHDRAWAL SUMMARY</div>
-      <div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:4px;"><span style="color:var(--sub);">Amount</span><span style="font-family:var(--mono);font-weight:700;color:var(--text);" id="modal-amount">—</span></div>
-      <div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:4px;"><span style="color:var(--sub);">Network Fee</span><span style="font-family:var(--mono);font-weight:700;color:var(--red);" id="modal-fee">—</span></div>
-      <div style="display:flex;justify-content:space-between;font-size:12.5px;"><span style="color:var(--sub);">You Receive</span><span style="font-family:var(--mono);font-weight:700;color:var(--green);" id="modal-receive">—</span></div>
+    <div class="modal-summary">
+      <div style="font-size:10.5px;color:var(--sub);margin-bottom:8px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;">Withdrawal Summary</div>
+      <div class="modal-sum-row"><span style="color:var(--sub);">Amount</span><span style="font-family:var(--mono);font-weight:700;color:var(--text);" id="modal-amount">—</span></div>
+      <div class="modal-sum-row"><span style="color:var(--sub);">Fee</span><span style="font-family:var(--mono);font-weight:700;color:var(--red);" id="modal-fee">—</span></div>
+      <div class="modal-sum-row"><span style="color:var(--sub);">You Receive</span><span style="font-family:var(--mono);font-weight:700;color:var(--green);" id="modal-receive">—</span></div>
     </div>
 
     <div class="modal-actions">
       <button class="modal-cancel" onclick="closeModal()">Cancel</button>
-      <button class="modal-confirm" onclick="confirmWithdraw()">Confirm Withdrawal</button>
+      <button class="modal-confirm" onclick="confirmWithdraw()">Confirm</button>
     </div>
   </div>
 </div>
@@ -604,10 +868,8 @@ body.light input, body.light select{color:var(--text);}
 /* ── Theme ── */
 (function(){
   const t = localStorage.getItem('sv_theme');
-  if(t === 'light') document.body.classList.add('light');
-  const dark = document.getElementById('theme-icon-dark');
-  const light = document.getElementById('theme-icon-light');
-  if(t === 'light'){ dark.style.display='none'; light.style.display=''; }
+  if(t==='light') document.body.classList.add('light');
+  if(t==='light'){ document.getElementById('theme-icon-dark').style.display='none'; document.getElementById('theme-icon-light').style.display=''; }
 })();
 function toggleTheme(){
   const isLight = document.body.classList.toggle('light');
@@ -615,244 +877,264 @@ function toggleTheme(){
   document.getElementById('theme-icon-dark').style.display = isLight ? 'none' : '';
   document.getElementById('theme-icon-light').style.display = isLight ? '' : 'none';
 }
+function toggleSidebar(){ const sb=document.getElementById('sidebar'); sb.style.display=sb.style.display==='none'?'':'none'; }
+function toggleSub(el,id){ const s=document.getElementById(id); const o=s.classList.toggle('open'); el.classList.toggle('open',o); }
 
-/* ── Sidebar ── */
-function toggleSidebar(){
-  const sb = document.getElementById('sidebar');
-  sb.style.display = sb.style.display === 'none' ? '' : 'none';
-}
-function toggleSub(el, subId){
-  const sub = document.getElementById(subId);
-  const isOpen = sub.classList.toggle('open');
-  el.classList.toggle('open', isOpen);
+/* ══════════════ METHOD SWITCH ══════════════ */
+let currentMethod = 'crypto';
+function switchMethod(m){
+  currentMethod = m;
+  document.getElementById('btn-crypto').classList.toggle('active', m==='crypto');
+  document.getElementById('btn-bank').classList.toggle('active', m==='bank');
+  document.getElementById('crypto-panel').style.display = m==='crypto' ? '' : 'none';
+  document.getElementById('bank-panel').style.display   = m==='bank'   ? '' : 'none';
+  document.getElementById('crypto-sum-rows').style.display = m==='crypto' ? '' : 'none';
+  document.getElementById('bank-sum-rows').style.display   = m==='bank'   ? '' : 'none';
+  if(m==='crypto'){
+    document.getElementById('page-title').textContent    = 'Withdraw Crypto';
+    document.getElementById('page-subtitle').textContent = 'Send crypto to an external wallet or exchange';
+    document.getElementById('sum-daily-limit').textContent = '$100,000';
+  } else {
+    document.getElementById('page-title').textContent    = 'Bank Withdrawal';
+    document.getElementById('page-subtitle').textContent = 'Withdraw funds directly to your bank account';
+    document.getElementById('sum-daily-limit').textContent = '$50,000';
+  }
 }
 
-/* ── Coin data ── */
+/* ══════════════ CRYPTO ══════════════ */
 const COINS = [
-  { sym:'USDT', name:'Tether',    bg:'#26a17b', txt:'#fff', bal:56918.35,  price:1,         icon:'https://cdn.jsdelivr.net/npm/cryptocurrency-icons/32/color/usdt.png',
-    networks:[
-      { id:'TRC20',  label:'TRON (TRC20)',      fee:1,    min:10,   eta:'~2 min'  },
-      { id:'ERC20',  label:'Ethereum (ERC20)',   fee:5,    min:20,   eta:'~5 min'  },
-      { id:'BEP20',  label:'BNB Chain (BEP20)',  fee:0.8,  min:10,   eta:'~3 min'  },
-      { id:'SOL',    label:'Solana',             fee:1,    min:10,   eta:'~30 sec' },
-    ]},
-  { sym:'BTC',  name:'Bitcoin',   bg:'#f7931a', txt:'#fff', bal:0,         price:67400,     icon:'https://cdn.jsdelivr.net/npm/cryptocurrency-icons/32/color/btc.png',
-    networks:[
-      { id:'BTC',    label:'Bitcoin (BTC)',       fee:0.0001, min:0.0002, eta:'~30 min' },
-    ]},
-  { sym:'ETH',  name:'Ethereum',  bg:'#627eea', txt:'#fff', bal:0,         price:3540,      icon:'https://cdn.jsdelivr.net/npm/cryptocurrency-icons/32/color/eth.png',
-    networks:[
-      { id:'ERC20',  label:'Ethereum (ERC20)',    fee:0.002, min:0.005, eta:'~5 min' },
-      { id:'ARBI',   label:'Arbitrum One',        fee:0.0005, min:0.001, eta:'~1 min'},
-    ]},
-  { sym:'BNB',  name:'BNB',       bg:'#f3ba2f', txt:'#fff', bal:0,         price:585,       icon:'https://cdn.jsdelivr.net/npm/cryptocurrency-icons/32/color/bnb.png',
-    networks:[
-      { id:'BEP20',  label:'BNB Chain (BEP20)',   fee:0.0005, min:0.002, eta:'~3 min', memo:false },
-      { id:'BEP2',   label:'Beacon Chain (BEP2)', fee:0.001,  min:0.002, eta:'~30 sec', memo:true  },
-    ]},
-  { sym:'XRP',  name:'Ripple',    bg:'#346aa9', txt:'#fff', bal:0,         price:0.58,      icon:'https://cdn.jsdelivr.net/npm/cryptocurrency-icons/32/color/xrp.png',
-    networks:[
-      { id:'XRP',    label:'Ripple (XRP)',        fee:0.1, min:1, eta:'~30 sec', memo:true },
-    ]},
-  { sym:'SOL',  name:'Solana',    bg:'#9945ff', txt:'#fff', bal:0,         price:168,       icon:'https://cdn.jsdelivr.net/npm/cryptocurrency-icons/32/color/sol.png',
-    networks:[
-      { id:'SOL',    label:'Solana (SOL)',        fee:0.01, min:0.02, eta:'~30 sec' },
-    ]},
-  { sym:'ADA',  name:'Cardano',   bg:'#0033ad', txt:'#fff', bal:0,         price:0.44,      icon:'https://cdn.jsdelivr.net/npm/cryptocurrency-icons/32/color/ada.png',
-    networks:[
-      { id:'ADA',    label:'Cardano (ADA)',       fee:1, min:2, eta:'~5 min' },
-    ]},
-  { sym:'DOGE', name:'Dogecoin',  bg:'#c2a633', txt:'#fff', bal:0,         price:0.17,      icon:'https://cdn.jsdelivr.net/npm/cryptocurrency-icons/32/color/doge.png',
-    networks:[
-      { id:'DOGE',   label:'Dogecoin (DOGE)',     fee:5, min:10, eta:'~5 min' },
-    ]},
-  { sym:'MATIC',name:'Polygon',   bg:'#8247e5', txt:'#fff', bal:0,         price:0.72,      icon:'https://cdn.jsdelivr.net/npm/cryptocurrency-icons/32/color/matic.png',
-    networks:[
-      { id:'MATIC',  label:'Polygon (MATIC)',     fee:0.1, min:1, eta:'~5 min' },
-    ]},
-  { sym:'AVAX', name:'Avalanche', bg:'#e84142', txt:'#fff', bal:0,         price:37,        icon:'https://cdn.jsdelivr.net/npm/cryptocurrency-icons/32/color/avax.png',
-    networks:[
-      { id:'AVAXC',  label:'Avalanche C-Chain',   fee:0.01, min:0.05, eta:'~2 min' },
-    ]},
-  { sym:'ATOM', name:'Cosmos',    bg:'#2e3148', txt:'#7b8cde', bal:0,      price:9.2,       icon:'https://cdn.jsdelivr.net/npm/cryptocurrency-icons/32/color/atom.png',
-    networks:[
-      { id:'ATOM',   label:'Cosmos (ATOM)',       fee:0.01, min:0.1, eta:'~30 sec', memo:true },
-    ]},
-  { sym:'LINK', name:'Chainlink', bg:'#2a5ada', txt:'#fff', bal:0,         price:14.5,      icon:'https://cdn.jsdelivr.net/npm/cryptocurrency-icons/32/color/link.png',
-    networks:[
-      { id:'ERC20',  label:'Ethereum (ERC20)',    fee:2, min:5, eta:'~5 min' },
-      { id:'BEP20',  label:'BNB Chain (BEP20)',   fee:0.5, min:2, eta:'~3 min' },
-    ]},
-  { sym:'TRX',  name:'TRON',      bg:'#ff0013', txt:'#fff', bal:0,         price:0.12,      icon:'https://cdn.jsdelivr.net/npm/cryptocurrency-icons/32/color/trx.png',
-    networks:[
-      { id:'TRC20',  label:'TRON (TRC20)',        fee:1, min:5, eta:'~2 min' },
-    ]},
+  { sym:'USDT', name:'Tether',    bg:'#26a17b', txt:'#fff', bal:0, price:1,      icon:'https://cdn.jsdelivr.net/npm/cryptocurrency-icons/32/color/usdt.png',
+    networks:[{id:'TRC20',label:'TRON (TRC20)',fee:1,min:10,eta:'~2 min'},{id:'ERC20',label:'Ethereum (ERC20)',fee:5,min:20,eta:'~5 min'},{id:'BEP20',label:'BNB Chain (BEP20)',fee:0.8,min:10,eta:'~3 min'},{id:'SOL',label:'Solana',fee:1,min:10,eta:'~30 sec'}]},
+  { sym:'BTC',  name:'Bitcoin',   bg:'#f7931a', txt:'#fff', bal:0, price:67400,  icon:'https://cdn.jsdelivr.net/npm/cryptocurrency-icons/32/color/btc.png',
+    networks:[{id:'BTC',label:'Bitcoin',fee:0.0001,min:0.0002,eta:'~30 min'}]},
+  { sym:'ETH',  name:'Ethereum',  bg:'#627eea', txt:'#fff', bal:0, price:3540,   icon:'https://cdn.jsdelivr.net/npm/cryptocurrency-icons/32/color/eth.png',
+    networks:[{id:'ERC20',label:'Ethereum (ERC20)',fee:0.002,min:0.005,eta:'~5 min'},{id:'ARBI',label:'Arbitrum One',fee:0.0005,min:0.001,eta:'~1 min'}]},
+  { sym:'BNB',  name:'BNB',       bg:'#f3ba2f', txt:'#fff', bal:0, price:585,    icon:'https://cdn.jsdelivr.net/npm/cryptocurrency-icons/32/color/bnb.png',
+    networks:[{id:'BEP20',label:'BNB Chain (BEP20)',fee:0.0005,min:0.002,eta:'~3 min'},{id:'BEP2',label:'Beacon Chain (BEP2)',fee:0.001,min:0.002,eta:'~30 sec',memo:true}]},
+  { sym:'XRP',  name:'Ripple',    bg:'#346aa9', txt:'#fff', bal:0, price:0.58,   icon:'https://cdn.jsdelivr.net/npm/cryptocurrency-icons/32/color/xrp.png',
+    networks:[{id:'XRP',label:'Ripple (XRP)',fee:0.1,min:1,eta:'~30 sec',memo:true}]},
+  { sym:'SOL',  name:'Solana',    bg:'#9945ff', txt:'#fff', bal:0, price:168,    icon:'https://cdn.jsdelivr.net/npm/cryptocurrency-icons/32/color/sol.png',
+    networks:[{id:'SOL',label:'Solana',fee:0.01,min:0.02,eta:'~30 sec'}]},
+  { sym:'ADA',  name:'Cardano',   bg:'#0033ad', txt:'#fff', bal:0, price:0.44,   icon:'https://cdn.jsdelivr.net/npm/cryptocurrency-icons/32/color/ada.png',
+    networks:[{id:'ADA',label:'Cardano',fee:1,min:2,eta:'~5 min'}]},
+  { sym:'DOGE', name:'Dogecoin',  bg:'#c2a633', txt:'#fff', bal:0, price:0.17,   icon:'https://cdn.jsdelivr.net/npm/cryptocurrency-icons/32/color/doge.png',
+    networks:[{id:'DOGE',label:'Dogecoin',fee:5,min:10,eta:'~5 min'}]},
+  { sym:'MATIC',name:'Polygon',   bg:'#8247e5', txt:'#fff', bal:0, price:0.72,   icon:'https://cdn.jsdelivr.net/npm/cryptocurrency-icons/32/color/matic.png',
+    networks:[{id:'MATIC',label:'Polygon',fee:0.1,min:1,eta:'~5 min'}]},
+  { sym:'AVAX', name:'Avalanche', bg:'#e84142', txt:'#fff', bal:0, price:37,     icon:'https://cdn.jsdelivr.net/npm/cryptocurrency-icons/32/color/avax.png',
+    networks:[{id:'AVAXC',label:'Avalanche C-Chain',fee:0.01,min:0.05,eta:'~2 min'}]},
+  { sym:'ATOM', name:'Cosmos',    bg:'#2e3148', txt:'#7b8cde', bal:0, price:9.2, icon:'https://cdn.jsdelivr.net/npm/cryptocurrency-icons/32/color/atom.png',
+    networks:[{id:'ATOM',label:'Cosmos',fee:0.01,min:0.1,eta:'~30 sec',memo:true}]},
+  { sym:'LINK', name:'Chainlink', bg:'#2a5ada', txt:'#fff', bal:0, price:14.5,   icon:'https://cdn.jsdelivr.net/npm/cryptocurrency-icons/32/color/link.png',
+    networks:[{id:'ERC20',label:'Ethereum (ERC20)',fee:2,min:5,eta:'~5 min'},{id:'BEP20',label:'BNB Chain (BEP20)',fee:0.5,min:2,eta:'~3 min'}]},
+  { sym:'TRX',  name:'TRON',      bg:'#ff0013', txt:'#fff', bal:0, price:0.12,   icon:'https://cdn.jsdelivr.net/npm/cryptocurrency-icons/32/color/trx.png',
+    networks:[{id:'TRC20',label:'TRON (TRC20)',fee:1,min:5,eta:'~2 min'}]},
 ];
 
-let selCoin = COINS[0];
+let selCoin = null;
 let selNet  = null;
 
-function coinIconHTML(c, size=26){
-  return `<img src="${c.icon}" width="${size}" height="${size}" style="border-radius:50%;object-fit:contain;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/><span style="display:none;width:${size}px;height:${size}px;border-radius:50%;background:${c.bg};color:${c.txt};font-size:${Math.round(size*.42)}px;font-weight:700;align-items:center;justify-content:center;">${c.sym.slice(0,2)}</span>`;
+function coinIconHTML(c,sz=26){
+  return `<img src="${c.icon}" width="${sz}" height="${sz}" style="border-radius:50%;object-fit:contain;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/><span style="display:none;width:${sz}px;height:${sz}px;border-radius:50%;background:${c.bg};color:${c.txt};font-size:${Math.round(sz*.42)}px;font-weight:700;align-items:center;justify-content:center;">${c.sym.slice(0,2)}</span>`;
 }
 
 function buildDropdown(filter=''){
   const q = filter.toLowerCase();
-  const list = document.getElementById('cd-list');
-  const coins = q ? COINS.filter(c => c.sym.toLowerCase().includes(q) || c.name.toLowerCase().includes(q)) : COINS;
-  list.innerHTML = coins.map(c => `
+  const coins = q ? COINS.filter(c=>c.sym.toLowerCase().includes(q)||c.name.toLowerCase().includes(q)) : COINS;
+  document.getElementById('cd-list').innerHTML = coins.map(c=>`
     <div class="cd-item${selCoin&&selCoin.sym===c.sym?' selected':''}" onclick="pickCoin('${c.sym}')">
       <div class="cd-item-icon">${coinIconHTML(c)}</div>
       <span class="cd-sym">${c.sym}</span>
       <span class="cd-name">${c.name}</span>
-      <span style="font-size:11.5px;color:var(--sub);font-family:var(--mono);">${c.bal.toLocaleString()}</span>
     </div>`).join('');
 }
-
 function filterDropdown(v){ buildDropdown(v); }
 
-let ddOpen = false;
+let ddOpen=false;
 function toggleCoinDropdown(){
-  ddOpen = !ddOpen;
-  const dd = document.getElementById('coin-dropdown');
-  const sel = document.getElementById('coin-selector');
-  dd.style.display = ddOpen ? '' : 'none';
-  sel.classList.toggle('open', ddOpen);
+  ddOpen=!ddOpen;
+  document.getElementById('coin-dropdown').style.display=ddOpen?'':'none';
+  document.getElementById('coin-selector').classList.toggle('open',ddOpen);
   if(ddOpen){ buildDropdown(); document.getElementById('cd-search').focus(); }
 }
-
-document.addEventListener('click', function(e){
-  if(!document.getElementById('coin-selector').contains(e.target)) closeDd();
-});
-function closeDd(){
-  ddOpen = false;
-  document.getElementById('coin-dropdown').style.display = 'none';
-  document.getElementById('coin-selector').classList.remove('open');
-}
+document.addEventListener('click',function(e){ if(!document.getElementById('coin-selector').contains(e.target)) closeDd(); });
+function closeDd(){ ddOpen=false; document.getElementById('coin-dropdown').style.display='none'; document.getElementById('coin-selector').classList.remove('open'); }
 
 function pickCoin(sym){
-  selCoin = COINS.find(c => c.sym===sym);
-  selNet  = null;
-  closeDd();
-  updateCoinDisplay();
+  selCoin=COINS.find(c=>c.sym===sym); selNet=null; closeDd();
+  document.getElementById('sel-sym').textContent=selCoin.sym;
+  document.getElementById('sel-name').textContent=selCoin.name;
+  const img=document.getElementById('sel-icon-img'), fb=document.getElementById('sel-icon-fb');
+  img.src=selCoin.icon; img.style.display='';
+  fb.textContent=selCoin.sym.slice(0,2); fb.style.background=selCoin.bg; fb.style.color=selCoin.txt;
+  document.getElementById('avail-bal').textContent='0.00';
+  document.getElementById('avail-sym').textContent=selCoin.sym;
+  document.getElementById('amount-sym').textContent=selCoin.sym;
   buildNetworks();
-  document.getElementById('network-sec').style.display = '';
-  document.getElementById('address-sec').style.display = 'none';
-  if(selCoin.networks.length === 1){
-    pickNet(selCoin.networks[0].id);
-  }
+  document.getElementById('network-sec').style.display='';
+  document.getElementById('address-sec').style.display='none';
+  if(selCoin.networks.length===1) pickNet(selCoin.networks[0].id);
   updateSummary();
-}
-
-function updateCoinDisplay(){
-  document.getElementById('sel-sym').textContent  = selCoin.sym;
-  document.getElementById('sel-name').textContent = selCoin.name;
-  const img = document.getElementById('sel-icon-img');
-  const fb  = document.getElementById('sel-icon-fb');
-  img.src = selCoin.icon;
-  img.style.display = '';
-  fb.textContent = selCoin.sym.slice(0,2);
-  fb.style.background = selCoin.bg;
-  fb.style.color = selCoin.txt;
-  document.getElementById('avail-bal').textContent = selCoin.bal.toLocaleString();
-  document.getElementById('avail-sym').textContent = selCoin.sym;
-  document.getElementById('amount-sym').textContent = selCoin.sym;
 }
 
 function buildNetworks(){
   if(!selCoin) return;
-  const row = document.getElementById('net-row');
-  row.innerHTML = selCoin.networks.map(n => `
-    <div class="net-pill${selNet&&selNet.id===n.id?' selected':''}" onclick="pickNet('${n.id}')">${n.id}</div>
-  `).join('');
+  document.getElementById('net-row').innerHTML=selCoin.networks.map(n=>`
+    <div class="net-pill${selNet&&selNet.id===n.id?' selected':''}" onclick="pickNet('${n.id}')">${n.id}</div>`).join('');
 }
 
 function pickNet(id){
-  selNet = selCoin.networks.find(n => n.id===id);
-  buildNetworks();
-  document.getElementById('address-sec').style.display = '';
-  document.getElementById('memo-field').style.display = selNet.memo ? '' : 'none';
-  document.getElementById('min-wd').textContent = selNet.min + ' ' + selCoin.sym;
-  document.getElementById('fee-val').textContent = selNet.fee + ' ' + selCoin.sym;
-  document.getElementById('eta-val').textContent = selNet.eta;
+  selNet=selCoin.networks.find(n=>n.id===id); buildNetworks();
+  document.getElementById('address-sec').style.display='';
+  document.getElementById('memo-field').style.display=selNet.memo?'':'none';
+  document.getElementById('min-wd').textContent=selNet.min+' '+selCoin.sym;
+  document.getElementById('fee-val').textContent=selNet.fee+' '+selCoin.sym;
+  document.getElementById('eta-val').textContent=selNet.eta;
   updateSummary();
 }
 
 function setMax(){
-  if(!selCoin || !selNet) return;
-  const max = Math.max(0, selCoin.bal - selNet.fee);
-  document.getElementById('amount-input').value = max.toFixed(6);
+  if(!selCoin||!selNet) return;
+  document.getElementById('amount-input').value=(0).toFixed(6);
   updateSummary();
 }
 
 function updateSummary(){
-  const amt    = parseFloat(document.getElementById('amount-input')?.value) || 0;
-  const addr   = document.getElementById('addr-input')?.value || '';
-  const coin   = selCoin ? selCoin.sym : '—';
-  const net    = selNet  ? selNet.id   : '—';
-  const fee    = selNet  ? selNet.fee  : 0;
-  const rcv    = Math.max(0, amt - fee);
-  const equiv  = selCoin ? (amt * selCoin.price) : 0;
+  const amt=parseFloat(document.getElementById('amount-input')?.value)||0;
+  const addr=document.getElementById('addr-input')?.value||'';
+  const coin=selCoin?selCoin.sym:'—';
+  const fee=selNet?selNet.fee:0;
+  const rcv=Math.max(0,amt-fee);
+  const equiv=selCoin?(amt*selCoin.price):0;
 
-  document.getElementById('sum-coin').textContent   = coin;
-  document.getElementById('sum-net').textContent    = net;
-  document.getElementById('sum-addr').textContent   = addr ? (addr.slice(0,8)+'…'+addr.slice(-6)) : '—';
-  document.getElementById('sum-amount').textContent = amt > 0 ? `${amt} ${coin}` : '—';
-  document.getElementById('sum-fee').textContent    = selNet ? `${fee} ${coin}` : '—';
-  document.getElementById('sum-receive').textContent= rcv > 0 ? `${rcv.toFixed(6)} ${coin}` : '—';
+  document.getElementById('sum-coin').textContent=coin;
+  document.getElementById('sum-net').textContent=selNet?selNet.id:'—';
+  document.getElementById('sum-addr').textContent=addr?(addr.slice(0,8)+'…'+addr.slice(-6)):'—';
+  document.getElementById('sum-amount').textContent=amt>0?`${amt} ${coin}`:'—';
+  document.getElementById('sum-fee').textContent=selNet?`${fee} ${coin}`:'—';
+  document.getElementById('sum-receive').textContent=rcv>0?`${rcv.toFixed(6)} ${coin}`:'—';
+  document.getElementById('receive-val').textContent=selNet?(rcv>0?`${rcv.toFixed(6)} ${coin}`:'—'):'—';
+  document.getElementById('usd-equiv').textContent='$'+equiv.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
 
-  document.getElementById('receive-val').textContent = selNet ? (rcv > 0 ? `${rcv.toFixed(6)} ${coin}` : '—') : '—';
-  document.getElementById('usd-equiv').textContent   = '$' + equiv.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+  document.getElementById('modal-amount').textContent=amt>0?`${amt} ${coin}`:'—';
+  document.getElementById('modal-fee').textContent=selNet?`${fee} ${coin}`:'—';
+  document.getElementById('modal-receive').textContent=rcv>0?`${rcv.toFixed(6)} ${coin}`:'—';
 
-  // modal fields
-  document.getElementById('modal-amount').textContent  = amt > 0 ? `${amt} ${coin}` : '—';
-  document.getElementById('modal-fee').textContent     = selNet ? `${fee} ${coin}` : '—';
-  document.getElementById('modal-receive').textContent = rcv > 0 ? `${rcv.toFixed(6)} ${coin}` : '—';
-
-  // enable/disable submit
-  const canSubmit = selCoin && selNet && addr.length > 5 && amt >= (selNet?.min||0);
-  document.getElementById('submit-btn').disabled = !canSubmit;
+  const ok=selCoin&&selNet&&addr.length>5&&amt>0&&amt>=(selNet?.min||0);
+  document.getElementById('crypto-submit-btn').disabled=!ok;
 }
 
-/* ── Modal ── */
-function openVerifyModal(){
-  document.getElementById('modal-overlay').style.display = 'flex';
+/* ══════════════ BANK ══════════════ */
+const BANK_FEES = { USD:15, EUR:10, GBP:10, AUD:20, CAD:20, CHF:12, JPY:1500, SGD:18, HKD:120, AED:55, NGN:5000, ZAR:180 };
+const BANK_MIN  = { USD:100, EUR:80, GBP:75, AUD:150, CAD:130, CHF:100, JPY:12000, SGD:140, HKD:800, AED:370, NGN:50000, ZAR:1800 };
+
+function updateBankSummary(){
+  const ccy=document.getElementById('bank-currency').value;
+  const amt=parseFloat(document.getElementById('bank-amount').value)||0;
+  const fee=BANK_FEES[ccy]||15;
+  const min=BANK_MIN[ccy]||100;
+  const rcv=Math.max(0,amt-fee);
+
+  document.getElementById('bank-ccy-tag').textContent=ccy;
+  document.getElementById('bank-min').textContent=min.toLocaleString()+' '+ccy;
+  document.getElementById('bank-fee-val').textContent=fee.toLocaleString()+' '+ccy;
+  document.getElementById('bank-rate-val').textContent=`1 ${ccy} = 1.00 ${ccy}`;
+  document.getElementById('bank-receive-val').textContent=rcv>0?`${rcv.toLocaleString()} ${ccy}`:'—';
+
+  document.getElementById('bsum-ccy').textContent=ccy;
+  document.getElementById('bsum-amount').textContent=amt>0?`${amt.toLocaleString()} ${ccy}`:'—';
+  document.getElementById('bsum-fee').textContent=`${fee.toLocaleString()} ${ccy}`;
+  document.getElementById('bsum-receive').textContent=rcv>0?`${rcv.toLocaleString()} ${ccy}`:'—';
+
+  document.getElementById('bank-next-btn').disabled=!(amt>=min);
 }
-function closeModal(){
-  document.getElementById('modal-overlay').style.display = 'none';
+
+function checkBankStep2(){
+  const ok=document.getElementById('bank-holder').value.trim().length>1
+    &&document.getElementById('bank-name').value.trim().length>1
+    &&document.getElementById('bank-acct').value.trim().length>3
+    &&document.getElementById('bank-swift').value.trim().length>=6
+    &&document.getElementById('bank-country').value!=='';
+  document.getElementById('bank-step2-btn').disabled=!ok;
 }
+
+let bankStep=1;
+function bankGoStep(n){
+  if(n===3) populateReview();
+  [1,2,3].forEach(i=>{
+    document.getElementById(`bank-step${i}`).style.display=i===n?'':'none';
+    const c=document.getElementById(`bs${i}`);
+    const l=document.getElementById(`bs${i}-lbl`);
+    if(i<n){ c.className='bstep-circle done'; c.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><polyline points="20,6 9,17 4,12"/></svg>'; }
+    else if(i===n){ c.className='bstep-circle active'; c.textContent=i; }
+    else{ c.className='bstep-circle idle'; c.textContent=i; }
+    l.className='bstep-lbl'+(i===n?' active':'');
+  });
+  const l1=document.getElementById('bline1'), l2=document.getElementById('bline2');
+  if(l1) l1.className='bstep-line'+(n>=2?' done':'');
+  if(l2) l2.className='bstep-line'+(n>=3?' done':'');
+  bankStep=n;
+}
+
+function populateReview(){
+  const ccy=document.getElementById('bank-currency').value;
+  const amt=parseFloat(document.getElementById('bank-amount').value)||0;
+  const fee=BANK_FEES[ccy]||15;
+  const rcv=Math.max(0,amt-fee);
+  document.getElementById('review-amount-big').textContent=`${amt.toLocaleString()} ${ccy}`;
+  document.getElementById('review-receive-big').textContent=`${rcv.toLocaleString()} ${ccy}`;
+  document.getElementById('rv-holder').textContent=document.getElementById('bank-holder').value;
+  document.getElementById('rv-bank').textContent=document.getElementById('bank-name').value;
+  document.getElementById('rv-acct').textContent=document.getElementById('bank-acct').value;
+  document.getElementById('rv-swift').textContent=document.getElementById('bank-swift').value;
+  document.getElementById('rv-country').textContent=document.getElementById('bank-country').value;
+  const iban=document.getElementById('bank-iban').value.trim();
+  document.getElementById('rv-iban-row').style.display=iban?'':'none';
+  document.getElementById('rv-iban').textContent=iban||'—';
+  const ref=document.getElementById('bank-ref').value.trim();
+  document.getElementById('rv-ref-row').style.display=ref?'':'none';
+  document.getElementById('rv-ref').textContent=ref||'—';
+
+  document.getElementById('modal-amount').textContent=`${amt.toLocaleString()} ${ccy}`;
+  document.getElementById('modal-fee').textContent=`${fee.toLocaleString()} ${ccy}`;
+  document.getElementById('modal-receive').textContent=`${rcv.toLocaleString()} ${ccy}`;
+}
+
+/* ══════════════ MODAL ══════════════ */
+let currentModalType='crypto';
+function openVerifyModal(type){
+  currentModalType=type;
+  document.getElementById('modal-sub').textContent=type==='bank'
+    ?'Verify your identity to complete this bank withdrawal'
+    :'Verify your identity to complete this crypto withdrawal';
+  document.getElementById('modal-overlay').style.display='flex';
+}
+function closeModal(){ document.getElementById('modal-overlay').style.display='none'; }
 
 let codeTimer;
 function sendCode(btn){
-  btn.textContent = '60s';
-  btn.disabled = true;
-  let s = 60;
-  codeTimer = setInterval(()=>{
-    s--;
-    btn.textContent = s + 's';
-    if(s<=0){ clearInterval(codeTimer); btn.textContent='Resend'; btn.disabled=false; }
-  }, 1000);
+  btn.textContent='60s'; btn.disabled=true;
+  let s=60;
+  codeTimer=setInterval(()=>{ s--; btn.textContent=s+'s'; if(s<=0){ clearInterval(codeTimer); btn.textContent='Resend'; btn.disabled=false; } },1000);
 }
 
 function confirmWithdraw(){
-  const ec = document.getElementById('email-code').value;
-  const tc = document.getElementById('totp-code').value;
-  if(ec.length<4 || tc.length<4){ alert('Please enter both verification codes.'); return; }
+  const ec=document.getElementById('email-code').value;
+  const tc=document.getElementById('totp-code').value;
+  if(ec.length<4||tc.length<4){ alert('Please enter both verification codes.'); return; }
   closeModal();
-  alert('Withdrawal submitted successfully.\n\nYou will receive an email confirmation shortly.');
+  const msg=currentModalType==='bank'
+    ?'Bank withdrawal submitted.\n\nFunds will arrive in 1–3 business days. You will receive a confirmation email shortly.'
+    :'Withdrawal submitted successfully.\n\nYou will receive an email confirmation shortly.';
+  alert(msg);
 }
 
 /* ── Init ── */
-updateCoinDisplay();
-buildNetworks();
-document.getElementById('network-sec').style.display = '';
-if(selCoin.networks.length===1) pickNet(selCoin.networks[0].id);
-updateSummary();
-
-// pre-select coin from URL param
-const urlParams = new URLSearchParams(location.search);
-const preSym = urlParams.get('coin');
-if(preSym && COINS.find(c => c.sym===preSym.toUpperCase())) pickCoin(preSym.toUpperCase());
+buildDropdown();
+updateBankSummary();
+const p=new URLSearchParams(location.search);
+if(p.get('method')==='bank') switchMethod('bank');
+if(p.get('coin')&&COINS.find(c=>c.sym===p.get('coin').toUpperCase())) pickCoin(p.get('coin').toUpperCase());
 </script>
 </body>
 </html>
