@@ -147,7 +147,7 @@ body.light .notif-time{color:var(--sub);}
 /* ── MOBILE (html.mob set synchronously before render) ── */
 .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:199;}
 .sidebar-overlay.open{display:block;}
-.sb-logo-area{padding:18px 16px;display:flex;align-items:center;border-bottom:1px solid var(--b);flex-shrink:0;}
+.sb-logo-area{padding:8px 16px;display:flex;align-items:center;border-bottom:1px solid var(--b);flex-shrink:0;}
 .sb-logo-area img{height:120px;width:auto;}
 html.mob .hdr-hamburger{margin-right:auto;}html.mob .hdr-logo-wrap{display:none !important;}
 html.mob .hdr-search{display:none !important;}
@@ -346,7 +346,8 @@ function toggleSub(el, subId){
 
 /* ── Notifications Data ── */
 const NOTIFS_ALL = [
-  {
+  /* notifications populated dynamically from backend */
+  /* {
     id:1, unread:true, cat:'trade',
     iconColor:'green',
     iconSvg:'<path d="M12 19V5M5 12l7-7 7 7"/>',
@@ -465,7 +466,7 @@ const NOTIFS_ALL = [
     title:'Password Changed',
     desc:'Your account password was changed successfully. All active sessions have been logged out.',
     time:'1 month ago'
-  },
+  }, */
 ];
 
 let notifications = NOTIFS_ALL.map(n => ({...n}));
