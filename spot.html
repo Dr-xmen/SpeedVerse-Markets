@@ -590,7 +590,7 @@ let tradesData  = [];
 let lastPrice   = 0;
 
 const book = { bids: new Map(), asks: new Map() };
-let ws=null, wsTimer=null, pingTimer=null;
+let pollBookTimer=null, pollTradesTimer=null, pollTickerTimer=null;
 
 /* ═══════════════════ FORMATTING ═══════════════════ */
 function fp(p){
@@ -641,51 +641,59 @@ async function fetchTVTickers(){
   }catch(e){ console.warn('TV ticker fetch failed:',e); }
 }
 
-/* ═══════════════════ OKX WEBSOCKET ═══════════════════ */
-function connectWS(pair){
-  if(ws){ try{ws.close();}catch(e){} ws=null; }
-  clearTimeout(wsTimer);
-  clearInterval(pingTimer);
+/* ═══════════════════ OKX POLLING via /api/marketdata proxy ═══════════════════ */
+function stopPolling(){ clearTimeout(pollBookTimer); clearTimeout(pollTradesTimer); clearTimeout(pollTickerTimer); }
+
+function startPolling(pair){
+  stopPolling();
   const instId=pair.okx;
-  try{
-    ws=new WebSocket('wss://ws.okx.com:8443/ws/v5/public');
-    ws.onopen=()=>{
-      ws.send(JSON.stringify({op:'subscribe',args:[
-        {channel:'books',instId},
-        {channel:'trades',instId},
-        {channel:'tickers',instId}
-      ]}));
-      pingTimer=setInterval(()=>{ if(ws&&ws.readyState===1) ws.send(JSON.stringify({op:'ping'})); },20000);
-    };
-    ws.onmessage=onWS;
-    ws.onerror=()=>{};
-    ws.onclose=()=>{ clearInterval(pingTimer); wsTimer=setTimeout(()=>connectWS(activePair),3000); };
-  }catch(e){ wsTimer=setTimeout(()=>connectWS(activePair),5000); }
-}
 
-function onWS(evt){
-  if(evt.data==='pong') return;
-  let msg;
-  try{ msg=JSON.parse(evt.data); }catch(e){ return; }
-  const ch=msg.arg?.channel;
-  if(!ch||!msg.data||!msg.data.length) return;
-
-  if(ch==='books'){
-    if(msg.action==='snapshot') applyBookSnapshot(msg.data[0]);
-    else if(msg.action==='update') applyBookDelta(msg.data[0]);
-  } else if(ch==='trades'){
-    msg.data.forEach(addTrade);
-  } else if(ch==='tickers'){
-    const t=msg.data[0];
-    if(t){
-      const last=parseFloat(t.last), open=parseFloat(t.open24h);
-      const pct=open>0?((last-open)/open*100):0;
-      const norm={price:last,change:pct,high:parseFloat(t.high24h),low:parseFloat(t.low24h),volume:parseFloat(t.vol24h),turnover:parseFloat(t.volCcy24h)};
-      tickerCache[activePair.okx]=Object.assign(tickerCache[activePair.okx]||{},norm);
-      applyTicker(norm);
-      updatePairRowTicker(activePair.okx,norm);
-    }
+  async function pollBook(){
+    try{
+      const r=await fetch(`/api/marketdata?type=book&instId=${instId}`);
+      const j=await r.json();
+      if(j.data&&j.data[0]&&activePair.okx===instId) applyBookSnapshot(j.data[0]);
+    }catch(e){}
+    if(activePair.okx===instId) pollBookTimer=setTimeout(pollBook,2000);
   }
+
+  async function pollTrades(){
+    try{
+      const r=await fetch(`/api/marketdata?type=trades&instId=${instId}`);
+      const j=await r.json();
+      if(j.data&&activePair.okx===instId){
+        tradesData=j.data.map(t=>({
+          side:t.side==='buy'?'buy':'sell',
+          price:parseFloat(t.px),
+          qty:parseFloat(t.sz),
+          time:new Date(parseInt(t.ts)).toTimeString().slice(0,8)
+        }));
+        if(document.getElementById('tr-panel').style.display!=='none') renderTrades();
+      }
+    }catch(e){}
+    if(activePair.okx===instId) pollTradesTimer=setTimeout(pollTrades,5000);
+  }
+
+  async function pollTicker(){
+    try{
+      const r=await fetch(`/api/marketdata?type=ticker&instId=${instId}`);
+      const j=await r.json();
+      if(j.data&&j.data[0]&&activePair.okx===instId){
+        const t=j.data[0];
+        const last=parseFloat(t.last), open=parseFloat(t.open24h);
+        const pct=open>0?((last-open)/open*100):0;
+        const norm={price:last,change:pct,high:parseFloat(t.high24h),low:parseFloat(t.low24h),volume:parseFloat(t.vol24h),turnover:parseFloat(t.volCcy24h)};
+        tickerCache[instId]=Object.assign(tickerCache[instId]||{},norm);
+        applyTicker(norm);
+        updatePairRowTicker(instId,norm);
+      }
+    }catch(e){}
+    if(activePair.okx===instId) pollTickerTimer=setTimeout(pollTicker,8000);
+  }
+
+  pollBook();
+  pollTrades();
+  pollTicker();
 }
 
 /* ═══════════════════ STATS BAR ═══════════════════ */
@@ -725,11 +733,6 @@ function applyBookSnapshot(data){
   (data.asks||[]).forEach(([p,q])=>book.asks.set(p,q));
   renderBook();
 }
-function applyBookDelta(data){
-  (data.bids||[]).forEach(([p,q])=>{ if(parseFloat(q)===0) book.bids.delete(p); else book.bids.set(p,q); });
-  (data.asks||[]).forEach(([p,q])=>{ if(parseFloat(q)===0) book.asks.delete(p); else book.asks.set(p,q); });
-  renderBook();
-}
 
 function renderBook(){
   const bids=[...book.bids.entries()].map(([p,q])=>[parseFloat(p),parseFloat(q)]).filter(r=>r[1]>0).sort((a,b)=>b[0]-a[0]).slice(0,22);
@@ -764,15 +767,6 @@ function renderBook(){
 }
 
 /* ═══════════════════ TRADES ═══════════════════ */
-function addTrade(d){
-  const isBuy=d.side==='buy';
-  const price=parseFloat(d.px);
-  const qty  =parseFloat(d.sz);
-  const time =new Date(parseInt(d.ts)).toTimeString().slice(0,8);
-  tradesData.unshift({side:isBuy?'buy':'sell',price,qty,time});
-  if(tradesData.length>80) tradesData.length=80;
-  if(document.getElementById('tr-panel').style.display!=='none') renderTrades();
-}
 function renderTrades(){
   document.getElementById('trades-list').innerHTML=tradesData.slice(0,50).map(t=>
     `<div class="trade-row"><div class="trade-time">${t.time}</div><div class="trade-price ${t.side}">${fp(t.price)}</div><div class="trade-qty">${fq(t.qty)}</div></div>`
@@ -857,7 +851,7 @@ function selectPair(sym){
 
   loadChart(pair.tv);
   renderPairsList();
-  connectWS(pair);
+  startPolling(pair);
 }
 
 /* ═══════════════════ UI TABS ═══════════════════ */
@@ -912,7 +906,7 @@ function submitOrder(){ alert('Log in to place orders.'); }
 /* ═══════════════════ INIT ═══════════════════ */
 loadChart(activePair.tv);
 fetchTVTickers();
-connectWS(activePair);
+startPolling(activePair);
 setInterval(fetchTVTickers, 15000);
 </script>
 </body>
