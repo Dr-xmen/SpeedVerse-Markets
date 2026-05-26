@@ -2,6 +2,7 @@ const MARKET_DEFS = {
   crypto: {
     url:  'https://scanner.tradingview.com/crypto/scan',
     body: {
+      filter:  [{ left: 'currency', operation: 'equal', right: 'USDT' }],
       columns: ['name','description','close','change','change_abs','volume','market_cap_calc','high','low'],
       sort:    { sortBy: 'market_cap_calc', sortOrder: 'desc' },
       range:   [0, 100],
