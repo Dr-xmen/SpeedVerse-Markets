@@ -165,6 +165,13 @@ input{font-family:inherit;border:none;outline:none;background:none;color:var(--t
 /* SECTION CARD */
 .sec-card{background:var(--s1);border:1px solid var(--b);border-radius:12px;overflow:hidden;}
 .sec-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 12px;border-bottom:1px solid var(--b);}
+#movers-card{background:linear-gradient(rgba(6,8,14,.80) 0%,rgba(8,12,22,.88) 60%,rgba(4,6,12,.93) 100%),url('assets/market-movers-bg.jpg') center/cover no-repeat;border-color:rgba(60,100,200,.18);}
+#movers-card .sec-head{background:rgba(0,0,0,.25);border-bottom-color:rgba(255,255,255,.07);backdrop-filter:blur(2px);}
+#movers-card .movers-col{background:transparent;}
+#movers-card .movers-col+.movers-col{border-left-color:rgba(255,255,255,.07) !important;}
+#movers-card .mover-row{border-bottom-color:rgba(255,255,255,.05);}
+#movers-card .mover-bar-wrap{background:rgba(255,255,255,.06);}
+#movers-card .skel{background:linear-gradient(90deg,rgba(255,255,255,.06) 25%,rgba(255,255,255,.12) 50%,rgba(255,255,255,.06) 75%);background-size:200% 100%;}
 .sec-title{font-size:13.5px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:6px;}
 .sec-title-sub{font-size:11px;color:var(--sub);font-weight:400;margin-left:4px;}
 .sec-link{font-size:12px;color:var(--accent);cursor:pointer;font-weight:500;}
@@ -640,7 +647,7 @@ html.mob .full-sec{margin-left:0 !important;margin-right:0 !important;}
 
   <!-- Market Movers + Recent Orders -->
   <div class="two-col" style="margin-bottom:20px;">
-    <div class="sec-card">
+    <div class="sec-card" id="movers-card">
       <div class="sec-head">
         <div class="sec-title">Market Movers</div>
         <span style="font-size:11px;color:var(--sub);display:flex;align-items:center;gap:4px;">
