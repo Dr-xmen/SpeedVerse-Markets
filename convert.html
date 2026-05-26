@@ -182,21 +182,12 @@ html,body{overflow-x:hidden;max-width:100%;}
 .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:199;}
 .sidebar-overlay.open{display:block;}
 
-@media screen and (max-width:960px){
-  /* Sidebar: hidden by default, shown as overlay when opened */
-  .sidebar{
-    display:none;
-    position:fixed;top:0;left:0;bottom:0;height:100%;width:var(--sidebar);
-    z-index:200;overflow-y:auto;overflow-x:hidden;
-    box-shadow:4px 0 24px rgba(0,0,0,.6);
-  }
-  .sidebar.mob-open{display:flex;flex-direction:column;}
-  /* Layout: single column */
-  .layout{display:block;overflow-y:auto;min-height:calc(100vh - 60px);}
-  .main{width:100%;padding:20px 16px;}
-  .hdr-nav{display:none;}
-  .hdr-search{display:none;}
-}
+html.mob .sidebar{display:none !important;position:fixed;top:0;left:0;bottom:0;height:100%;width:var(--sidebar);z-index:200;overflow-y:auto;overflow-x:hidden;box-shadow:4px 0 24px rgba(0,0,0,.6);}
+html.mob .sidebar.mob-open{display:flex !important;flex-direction:column;}
+html.mob .layout{display:block !important;overflow-y:auto;min-height:calc(100vh - 60px);}
+html.mob .main{width:100% !important;padding:20px 16px;}
+html.mob .hdr-nav{display:none !important;}
+html.mob .hdr-search{display:none !important;}
 @media screen and (max-width:640px){
   .hdr{padding:0 10px 0 0;height:52px;}
   .hdr-logo-wrap{width:auto;border-right:none;padding:0 6px;}
@@ -215,6 +206,7 @@ html,body{overflow-x:hidden;max-width:100%;}
   .breadcrumb{margin-bottom:14px;}
 }
 </style>
+<script>if(window.innerWidth<=960||screen.width<=960)document.documentElement.classList.add('mob');</script>
 </head>
 <body>
 <div class="page">

@@ -263,81 +263,49 @@ html,body{overflow-x:hidden;max-width:100%;}
 .mob-nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:var(--sub);font-size:9.5px;font-weight:600;cursor:pointer;padding:6px 0;min-height:44px;}
 .mob-nav-btn.active{color:var(--accent);}
 
-@media screen and (max-width:960px){
-  /* ── Sidebar: hidden by default, slides in as overlay ── */
-  .sidebar{
-    display:none;
-    position:fixed;top:0;left:0;bottom:0;height:100%;width:var(--sidebar);
-    z-index:200;overflow-y:auto;overflow-x:hidden;
-    box-shadow:4px 0 24px rgba(0,0,0,.6);
-  }
-  .sidebar.mob-open{display:flex;flex-direction:column;}
-
-  /* ── Layout: single block column, sidebar has zero footprint ── */
-  .layout{display:block;height:calc(100vh - 52px);overflow:hidden;}
-  .main{width:100%;display:flex;flex-direction:column;height:100%;overflow:hidden;}
-
-  /* ── Header: compact ── */
-  .hdr{height:52px;padding:0 10px 0 0;}
-  .hdr-logo-wrap{width:auto;border-right:none;padding:0 6px;}
-  .hdr-logo-wrap img{height:28px;}
-  .hdr-nav{display:none;}
-  .hdr-search{display:none;}
-  .theme-btn{display:none;}
-
-  /* ── Stats bar: compact scrollable strip ── */
-  .stats-bar{height:42px;flex-shrink:0;padding:0 10px;gap:0;overflow-x:auto;overflow-y:hidden;flex-wrap:nowrap;scrollbar-width:none;}
-  .stats-bar::-webkit-scrollbar{display:none;}
-  .sb-pair-wrap{flex-shrink:0;padding-right:8px;}
-  .sb-last-price{font-size:15px;min-width:0;margin-left:8px;flex-shrink:0;}
-  .sb-change{min-width:0;font-size:12px;margin:0 6px;flex-shrink:0;}
-  .sb-stat{padding:0 8px;flex-shrink:0;}
-  .pair-pills{display:none;}
-
-  /* ── Trading body ── */
-  .trading-body{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0;}
-
-  /* ── Trading columns: block container (kills the 4-col flex row) ── */
-  .trading-columns{flex:1;min-height:0;display:block;position:relative;overflow:hidden;}
-
-  /* ── Each panel: hidden by default, fills container when active ── */
-  .pairs-panel,.chart-col,.order-col,.right-panel{
-    position:absolute;inset:0;display:none;overflow:hidden;
-  }
-  .pairs-panel.mob-active{display:flex;flex-direction:column;}
-  .chart-col.mob-active{display:flex;flex-direction:column;}
-  .order-col.mob-active{display:flex;flex-direction:column;overflow-y:auto;}
-  .right-panel.mob-active{display:flex;flex-direction:column;}
-
-  /* ── Desktop-only sections hidden on mobile ── */
-  .open-orders{display:none;}
-
-  /* ── Bottom nav ── */
-  .mob-nav{display:flex;}
-
-  /* ── Order form ── */
-  .of-body{padding:16px;overflow-y:auto;}
-  .of-submit{height:50px;font-size:16px;}
-  .of-field-input{height:46px;}
-  .of-field-input input{font-size:14px;}
-  .of-type-pill{padding:7px 14px;font-size:13px;}
-  .of-avail-row{font-size:12px;}
-
-  /* ── Pairs panel ── */
-  .pairs-search-inp{height:36px;font-size:13px;}
-  .market-tab{font-size:10.5px;padding:6px 2px;}
-  .pair-row{min-height:50px;padding:10px 12px;}
-  .pair-row-sym{font-size:13px;}
-  .pair-row-price{font-size:12.5px;}
-  .pair-row-chg{font-size:11px;}
-
-  /* ── Order book / trades ── */
-  .rp-tab{padding:12px 4px;font-size:13px;}
-  .ob-row{min-height:24px;padding:4px 10px;}
-  .ob-price,.ob-qty{font-size:12.5px;}
-  .trade-row{min-height:28px;padding:4px 10px;}
-  .trade-price{font-size:12.5px;}
-}
+html.mob .sidebar{display:none !important;position:fixed;top:0;left:0;bottom:0;height:100%;width:var(--sidebar);z-index:200;overflow-y:auto;overflow-x:hidden;box-shadow:4px 0 24px rgba(0,0,0,.6);}
+html.mob .sidebar.mob-open{display:flex !important;flex-direction:column;}
+html.mob .layout{display:block !important;height:calc(100vh - 52px) !important;overflow:hidden !important;}
+html.mob .main{width:100% !important;display:flex;flex-direction:column;height:100%;overflow:hidden;}
+html.mob .hdr{height:52px !important;padding:0 10px 0 0;}
+html.mob .hdr-logo-wrap{width:auto !important;border-right:none !important;padding:0 6px;}
+html.mob .hdr-logo-wrap img{height:28px;}
+html.mob .hdr-nav{display:none !important;}
+html.mob .hdr-search{display:none !important;}
+html.mob .theme-btn{display:none !important;}
+html.mob .stats-bar{height:42px;flex-shrink:0;padding:0 10px;gap:0;overflow-x:auto;overflow-y:hidden;flex-wrap:nowrap;scrollbar-width:none;}
+html.mob .stats-bar::-webkit-scrollbar{display:none;}
+html.mob .sb-pair-wrap{flex-shrink:0;padding-right:8px;}
+html.mob .sb-last-price{font-size:15px;min-width:0;margin-left:8px;flex-shrink:0;}
+html.mob .sb-change{min-width:0;font-size:12px;margin:0 6px;flex-shrink:0;}
+html.mob .sb-stat{padding:0 8px;flex-shrink:0;}
+html.mob .pair-pills{display:none !important;}
+html.mob .trading-body{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0;}
+html.mob .trading-columns{flex:1;min-height:0;display:block !important;position:relative;overflow:hidden;}
+html.mob .pairs-panel,html.mob .chart-col,html.mob .order-col,html.mob .right-panel{position:absolute !important;inset:0;display:none !important;overflow:hidden;}
+html.mob .pairs-panel.mob-active{display:flex !important;flex-direction:column;}
+html.mob .chart-col.mob-active{display:flex !important;flex-direction:column;}
+html.mob .order-col.mob-active{display:flex !important;flex-direction:column;overflow-y:auto;}
+html.mob .right-panel.mob-active{display:flex !important;flex-direction:column;}
+html.mob .open-orders{display:none !important;}
+html.mob .mob-nav{display:flex !important;}
+html.mob .of-body{padding:16px;overflow-y:auto;}
+html.mob .of-submit{height:50px;font-size:16px;}
+html.mob .of-field-input{height:46px;}
+html.mob .of-field-input input{font-size:14px;}
+html.mob .of-type-pill{padding:7px 14px;font-size:13px;}
+html.mob .of-avail-row{font-size:12px;}
+html.mob .pairs-search-inp{height:36px;font-size:13px;}
+html.mob .market-tab{font-size:10.5px;padding:6px 2px;}
+html.mob .pair-row{min-height:50px;padding:10px 12px;}
+html.mob .pair-row-sym{font-size:13px;}
+html.mob .pair-row-price{font-size:12.5px;}
+html.mob .pair-row-chg{font-size:11px;}
+html.mob .rp-tab{padding:12px 4px;font-size:13px;}
+html.mob .ob-row{min-height:24px;padding:4px 10px;}
+html.mob .ob-price,html.mob .ob-qty{font-size:12.5px;}
+html.mob .trade-row{min-height:28px;padding:4px 10px;}
+html.mob .trade-price{font-size:12.5px;}
 
 /* LIGHT THEME */
 body.light{
@@ -348,6 +316,7 @@ body.light{
 body.light ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.15);}
 body.light input,body.light select{color:var(--text);}
 </style>
+<script>if(window.innerWidth<=960||screen.width<=960)document.documentElement.classList.add('mob');</script>
 </head>
 <body>
 <div class="page">
