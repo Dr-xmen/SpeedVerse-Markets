@@ -251,6 +251,65 @@ select{font-family:inherit;background:none;color:var(--text);border:none;outline
 .empty-orders svg{opacity:.13;}
 .empty-orders p{font-size:12px;color:var(--sub);}
 
+/* ─── SIDEBAR OVERLAY ─── */
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:199;-webkit-tap-highlight-color:transparent;}
+.sidebar-overlay.open{display:block;}
+
+/* ─── MOBILE BOTTOM NAV ─── */
+.mob-nav{display:none;height:56px;flex-shrink:0;background:var(--s1);border-top:1px solid var(--b);flex-direction:row;z-index:100;padding-bottom:env(safe-area-inset-bottom);}
+.mob-nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:var(--sub);font-size:9.5px;font-weight:600;cursor:pointer;transition:color .15s;padding:6px 0;-webkit-tap-highlight-color:transparent;}
+.mob-nav-btn.active{color:var(--accent);}
+
+@media(max-width:768px){
+  /* ── Sidebar drawer ── */
+  .sidebar{position:fixed;left:calc(-1 * var(--sidebar));top:0;bottom:0;z-index:200;transition:left .25s cubic-bezier(.4,0,.2,1);box-shadow:4px 0 24px rgba(0,0,0,.5);}
+  .sidebar.mob-open{left:0;}
+
+  /* ── Header ── */
+  .hdr{padding:0 8px 0 0;}
+  .hdr-logo-wrap{width:auto;border-right:none;padding:0 4px 0 0;}
+  .hdr-nav{display:none;}
+  .hdr-search{display:none;}
+  .hicon:not(:last-of-type):not([href]){display:none;}
+
+  /* ── Stats bar: compact horizontal scroll ── */
+  .stats-bar{height:44px;flex-wrap:nowrap;padding:0 8px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;gap:0;}
+  .stats-bar::-webkit-scrollbar{display:none;}
+  .sb-last-price{font-size:15px;min-width:unset;margin-left:8px;}
+  .sb-change{min-width:unset;margin:0 4px;}
+  .sb-stat{padding:0 8px;flex-shrink:0;}
+  .sb-stat:nth-child(n+7){display:none;}
+  .pair-pills{display:none;}
+
+  /* ── Trading body & columns ── */
+  .trading-body{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+  .trading-columns{flex:1;position:relative;overflow:hidden;}
+
+  /* All panels: hidden by default on mobile, absolute positioned */
+  .pairs-panel{position:absolute;inset:0;width:100%;display:none;z-index:10;}
+  .pairs-panel.mob-active{display:flex;}
+  .chart-col{position:absolute;inset:0;display:none;}
+  .chart-col.mob-active{display:flex;}
+  .order-col{position:absolute;inset:0;width:100%;display:none;overflow-y:auto;}
+  .order-col.mob-active{display:flex;flex-direction:column;}
+  .right-panel{position:absolute;inset:0;width:100%;display:none;}
+  .right-panel.mob-active{display:flex;}
+
+  /* ── Hide open orders (accessed via Trade tab on mobile) ── */
+  .open-orders{display:none;}
+
+  /* ── Bottom nav visible ── */
+  .mob-nav{display:flex;}
+
+  /* ── Order form mobile padding ── */
+  .of-body{padding:16px;}
+  .of-submit{height:48px;font-size:15px;}
+
+  /* ── Pairs panel full width search ── */
+  .pairs-search{padding:8px;}
+  .pairs-search-inp{height:34px;font-size:13px;}
+}
+
 /* LIGHT THEME */
 body.light{
   --bg:#f0f2f5; --s1:#ffffff; --s2:#f7f8fa; --s3:#eef0f3; --s4:#e4e7eb;
@@ -263,6 +322,7 @@ body.light input,body.light select{color:var(--text);}
 </head>
 <body>
 <div class="page">
+<div class="sidebar-overlay" id="sb-overlay" onclick="closeSidebar()"></div>
 
 <!-- HEADER -->
 <header class="hdr">
@@ -567,6 +627,26 @@ body.light input,body.light select{color:var(--text);}
     </div>
 
   </div><!-- /trading-body -->
+
+<!-- MOBILE BOTTOM NAV -->
+<nav class="mob-nav" id="mob-nav">
+  <div class="mob-nav-btn" data-tab="pairs" onclick="mobSetTab('pairs')">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+    Pairs
+  </div>
+  <div class="mob-nav-btn active" data-tab="chart" onclick="mobSetTab('chart')">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg>
+    Chart
+  </div>
+  <div class="mob-nav-btn" data-tab="trade" onclick="mobSetTab('trade')">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="3" width="20" height="18" rx="2"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="12" y1="8" x2="12" y2="16"/></svg>
+    Trade
+  </div>
+  <div class="mob-nav-btn" data-tab="book" onclick="mobSetTab('book')">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    Book
+  </div>
+</nav>
 </main>
 </div><!-- /layout -->
 </div><!-- /page -->
@@ -584,7 +664,29 @@ function toggleTheme(){
   document.getElementById('theme-icon-dark').style.display=l?'none':'';
   document.getElementById('theme-icon-light').style.display=l?'':'none';
 }
-function toggleSidebar(){ const sb=document.getElementById('sidebar'); sb.style.display=sb.style.display==='none'?'':'none'; }
+function toggleSidebar(){
+  if(window.innerWidth<=768){
+    const open=document.getElementById('sidebar').classList.toggle('mob-open');
+    document.getElementById('sb-overlay').classList.toggle('open',open);
+  }else{
+    const sb=document.getElementById('sidebar');
+    sb.style.display=sb.style.display==='none'?'':'none';
+  }
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('mob-open');
+  document.getElementById('sb-overlay').classList.remove('open');
+}
+function mobSetTab(tab){
+  document.querySelectorAll('.mob-nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
+  ['pairs-panel','chart-col','order-col','right-panel'].forEach(cls=>{
+    const el=document.querySelector('.'+cls);
+    if(el) el.classList.remove('mob-active');
+  });
+  const map={pairs:'pairs-panel',chart:'chart-col',trade:'order-col',book:'right-panel'};
+  const el=document.querySelector('.'+map[tab]);
+  if(el) el.classList.add('mob-active');
+}
 function toggleSub(el,id){ const s=document.getElementById(id); const o=s.classList.toggle('open'); el.classList.toggle('open',o); }
 
 /* ═══════════════════ PAIRS ═══════════════════ */
@@ -1055,6 +1157,7 @@ loadChart(activePair.tv);
 fetchTVTickers();
 startPolling(activePair);
 setInterval(fetchTVTickers, 15000);
+if(window.innerWidth<=768) mobSetTab('chart');
 </script>
 </body>
 </html>

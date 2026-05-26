@@ -232,19 +232,32 @@ input{font-family:inherit;border:none;outline:none;background:none;color:var(--t
 }
 @keyframes shimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
 
-/* responsive */
-@media(max-width:900px){.sidebar{display:none;}}
+/* ─── SIDEBAR OVERLAY ─── */
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:199;-webkit-tap-highlight-color:transparent;}
+.sidebar-overlay.open{display:block;}
+
+@media(max-width:900px){
+  /* Sidebar drawer */
+  .sidebar{position:fixed;left:-200px;top:0;bottom:0;z-index:200;width:var(--sidebar)!important;transition:left .25s cubic-bezier(.4,0,.2,1);box-shadow:4px 0 24px rgba(0,0,0,.5);}
+  .sidebar.mob-open{left:0;}
+  .hdr-search{max-width:200px;}
+}
 @media(max-width:640px){
   .hdr-search{display:none;}
-  .market-tabs{padding:0 10px;}
-  .filter-bar{padding:0 12px;}
-  .mkt-table th,.mkt-table td{padding:9px 10px;}
+  .market-tabs{padding:0 8px;}
+  .filter-bar{padding:0 10px;gap:4px;}
+  .ftab{padding:4px 10px;font-size:12px;}
+  .tbl-search{width:160px;}
   .mkt-table th:first-child,.mkt-table td:first-child{display:none;}
+  /* Hide less important columns on small screens */
+  .mkt-table th:nth-child(5),.mkt-table td:nth-child(5),
+  .mkt-table th:nth-child(6),.mkt-table td:nth-child(6){display:none;}
 }
 </style>
 </head>
 <body>
 <div class="page">
+<div class="sidebar-overlay" id="sb-overlay" onclick="closeSidebar()"></div>
 
 <!-- HEADER -->
 <header class="hdr">
@@ -992,10 +1005,19 @@ function startAutoRefresh() {
 /* ═══════════════════════════════════════════════════════
    SIDEBAR TOGGLE & NAV SUBS
    ═══════════════════════════════════════════════════════ */
-let sbOpen = true;
-function toggleSidebar() {
-  sbOpen = !sbOpen;
-  document.getElementById('sidebar').style.width = sbOpen ? 'var(--sidebar)' : '0';
+function toggleSidebar(){
+  if(window.innerWidth<=900){
+    const open=document.getElementById('sidebar').classList.toggle('mob-open');
+    document.getElementById('sb-overlay').classList.toggle('open',open);
+  }else{
+    const sb=document.getElementById('sidebar');
+    const open=sb.classList.toggle('sb-collapsed');
+    sb.style.width=open?'0':'var(--sidebar)';
+  }
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('mob-open');
+  document.getElementById('sb-overlay').classList.remove('open');
 }
 function toggleSub(el, subId) {
   const sub = document.getElementById(subId);
