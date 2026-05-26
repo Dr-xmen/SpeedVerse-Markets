@@ -273,12 +273,26 @@ body.light input{color:var(--text);}
 
 /* RESPONSIVE */
 @media(max-width:1200px){:root{--rp:270px;}.stat-strip{grid-template-columns:repeat(2,1fr);}.hdr-nav{display:none;}}
-@media(max-width:900px){.sidebar{display:none;}.rp{display:none;}.two-col{grid-template-columns:1fr;}}
 @media(max-width:640px){.welcome{flex-direction:column;gap:14px;padding:16px;}.wc-right{display:none;}.wc-balance{font-size:24px;}.stat-strip{grid-template-columns:1fr 1fr;}.two-col,.full-sec,.announce-strip,.stat-strip{margin-left:12px;margin-right:12px;}.welcome{margin:12px;}}
+
+/* ── MOBILE (html.mob set synchronously before render) ── */
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:199;}
+.sidebar-overlay.open{display:block;}
+html.mob .hdr-logo-wrap{display:none !important;}
+html.mob .hdr-search{display:none !important;}
+html.mob .hdr-nav{display:none !important;}
+html.mob .sidebar{display:none !important;position:fixed;top:0;left:0;bottom:0;height:100%;width:var(--sidebar);z-index:200;overflow-y:auto;overflow-x:hidden;box-shadow:4px 0 24px rgba(0,0,0,.6);}
+html.mob .sidebar.mob-open{display:flex !important;flex-direction:column;}
+html.mob .layout{display:block !important;overflow-y:auto;}
+html.mob .main{width:100% !important;padding:20px 16px;}
+html.mob .rp{display:none !important;}
+html.mob .two-col{grid-template-columns:1fr !important;}
 </style>
+<script>if(window.innerWidth<=960||screen.width<=960)document.documentElement.classList.add('mob');</script>
 </head>
 <body>
 <div class="page">
+<div class="sidebar-overlay" id="sb-overlay" onclick="closeSidebar()"></div>
 
 <!-- HEADER -->
 <header class="hdr">
@@ -1225,9 +1239,20 @@ async function init() {
    UI CONTROLS
    ════════════════════════════════════════════════════════ */
 let sbOpen = true;
-function toggleSidebar() {
-  sbOpen = !sbOpen;
-  document.getElementById('sidebar').style.width = sbOpen ? 'var(--sidebar)' : '0';
+function toggleSidebar(){
+  if(document.documentElement.classList.contains('mob')){
+    var open=document.getElementById('sidebar').classList.toggle('mob-open');
+    var ov=document.getElementById('sb-overlay');
+    if(ov)ov.classList.toggle('open',open);
+  }else{
+    sbOpen=!sbOpen;
+    document.getElementById('sidebar').style.width=sbOpen?'var(--sidebar)':'0';
+  }
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('mob-open');
+  var ov=document.getElementById('sb-overlay');
+  if(ov)ov.classList.remove('open');
 }
 function toggleSub(el, subId) {
   const sub = document.getElementById(subId);

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
@@ -215,12 +215,24 @@ body.light input{color:var(--text);}
 .empty-state p{font-size:13px;color:var(--sub);}
 
 /* RESPONSIVE */
-@media(max-width:900px){.sidebar{display:none;}.addr-qr-row{flex-direction:column;}.addr-qr{width:100%;}.main{padding:20px 16px;}}
+html.mob .addr-qr-row{flex-direction:column !important;}html.mob .addr-qr{width:100% !important;}
 @media(max-width:640px){.network-grid{grid-template-columns:1fr 1fr;}.coin-grid{grid-template-columns:repeat(3,1fr);}.dep-card{padding:18px;}}
-</style>
+
+/* ── MOBILE (html.mob set synchronously before render) ── */
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:199;}
+.sidebar-overlay.open{display:block;}
+html.mob .hdr-logo-wrap{display:none !important;}
+html.mob .hdr-search{display:none !important;}
+html.mob .hdr-nav{display:none !important;}
+html.mob .sidebar{display:none !important;position:fixed;top:0;left:0;bottom:0;height:100%;width:var(--sidebar);z-index:200;overflow-y:auto;overflow-x:hidden;box-shadow:4px 0 24px rgba(0,0,0,.6);}
+html.mob .sidebar.mob-open{display:flex !important;flex-direction:column;}
+html.mob .layout{display:block !important;overflow-y:auto;}
+html.mob .main{width:100% !important;padding:20px 16px;}</style>
+<script>if(window.innerWidth<=960||screen.width<=960)document.documentElement.classList.add('mob');</script>
 </head>
 <body>
 <div class="page">
+<div class="sidebar-overlay" id="sb-overlay" onclick="closeSidebar()"></div>
 
 <!-- HEADER -->
 <header class="hdr">
@@ -566,10 +578,8 @@ function toggleTheme(){
 }
 
 /* ── Sidebar ── */
-function toggleSidebar(){
-  const sb = document.getElementById('sidebar');
-  sb.style.display = sb.style.display === 'none' ? '' : 'none';
-}
+function toggleSidebar(){if(document.documentElement.classList.contains('mob')){var open=document.getElementById('sidebar').classList.toggle('mob-open');var ov=document.getElementById('sb-overlay');if(ov)ov.classList.toggle('open',open);}else{var sb=document.getElementById('sidebar');sb.style.display=sb.style.display===''?'none':'';}}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('mob-open');var ov=document.getElementById('sb-overlay');if(ov)ov.classList.remove('open');}
 function toggleSub(el, subId){
   const sub = document.getElementById(subId);
   const isOpen = sub.classList.toggle('open');
