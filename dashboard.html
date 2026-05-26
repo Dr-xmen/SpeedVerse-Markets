@@ -258,6 +258,19 @@ input{font-family:inherit;border:none;outline:none;background:none;color:var(--t
 .skel{background:linear-gradient(90deg,var(--s3) 25%,var(--s4) 50%,var(--s3) 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:4px;display:inline-block;}
 @keyframes shimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
 
+/* LIGHT THEME */
+body.light{
+  --bg:#f0f2f5; --s1:#ffffff; --s2:#f7f8fa; --s3:#eef0f3; --s4:#e4e7eb;
+  --b:rgba(0,0,0,.08); --b2:rgba(0,0,0,.14);
+  --text:#111827; --sub:#6b7280; --muted:#d1d5db;
+}
+body.light ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.15);}
+body.light input{color:var(--text);}
+
+/* THEME TOGGLE */
+.theme-btn{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--sub);cursor:pointer;transition:all .15s;flex-shrink:0;}
+.theme-btn:hover{background:var(--s3);color:var(--text);}
+
 /* RESPONSIVE */
 @media(max-width:1200px){:root{--rp:270px;}.stat-strip{grid-template-columns:repeat(2,1fr);}.hdr-nav{display:none;}}
 @media(max-width:900px){.sidebar{display:none;}.rp{display:none;}.two-col{grid-template-columns:1fr;}}
@@ -293,6 +306,10 @@ input{font-family:inherit;border:none;outline:none;background:none;color:var(--t
     <span class="live-dot"></span>Connecting…
   </div>
   <div class="hdr-right">
+    <div class="theme-btn" id="theme-btn" onclick="toggleTheme()" title="Toggle light/dark mode">
+      <svg id="theme-icon-dark" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <svg id="theme-icon-light" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="display:none;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </div>
     <div class="hicon">
       <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
       <span class="hicon-badge">3</span>
@@ -421,7 +438,7 @@ input{font-family:inherit;border:none;outline:none;background:none;color:var(--t
       <div class="wc-greet">Good day,</div>
       <div class="wc-name">SpeedVerse User 👋</div>
       <div class="wc-balance-label">Total Portfolio Value</div>
-      <div class="wc-balance" id="wc-total">— <span>USD</span></div>
+      <div class="wc-balance" id="wc-total">$0.00 <span>USD</span></div>
       <div class="wc-pnl" id="wc-pnl" style="color:var(--sub);">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="18,15 12,9 6,15"/></svg>
         Calculating…
@@ -451,7 +468,7 @@ input{font-family:inherit;border:none;outline:none;background:none;color:var(--t
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg>
         Today's PnL
       </div>
-      <div class="sc-val" id="stat-pnl-val">—</div>
+      <div class="sc-val" id="stat-pnl-val">$0.00</div>
       <div class="sc-sub" id="stat-pnl-sub" style="color:var(--sub);">Loading…</div>
     </div>
     <div class="stat-card">
@@ -460,23 +477,23 @@ input{font-family:inherit;border:none;outline:none;background:none;color:var(--t
         Open Positions
       </div>
       <div class="sc-val" id="stat-pos-val">4</div>
-      <div class="sc-sub" id="stat-pos-sub">Unrealized PnL: <span id="stat-unreal">—</span></div>
+      <div class="sc-sub" id="stat-pos-sub">Unrealized PnL: <span id="stat-unreal">$0.00</span></div>
     </div>
     <div class="stat-card">
       <div class="sc-label">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
         Open Orders
       </div>
-      <div class="sc-val">7</div>
-      <div class="sc-sub">3 Spot &nbsp;•&nbsp; 4 Derivatives</div>
+      <div class="sc-val">0</div>
+      <div class="sc-sub">0 Spot &nbsp;•&nbsp; 0 Derivatives</div>
     </div>
     <div class="stat-card">
       <div class="sc-label">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
         30D Volume
       </div>
-      <div class="sc-val">$2.41M</div>
-      <div class="sc-sub">Rank <span style="color:var(--gold);">Gold</span> Trader</div>
+      <div class="sc-val">$0.00</div>
+      <div class="sc-sub">Rank <span style="color:var(--gold);">Standard</span> Trader</div>
     </div>
   </div>
 
@@ -655,10 +672,10 @@ input{font-family:inherit;border:none;outline:none;background:none;color:var(--t
       <div style="font-size:11px;color:var(--sub);">Next: VIP 4</div>
     </div>
     <div class="vip-bar-wrap">
-      <div class="vip-bar-label"><span>30D Volume</span><span>$2.41M / $5M</span></div>
-      <div class="vip-bar-track"><div class="vip-bar-fill" style="width:48%;"></div></div>
+      <div class="vip-bar-label"><span>30D Volume</span><span>$0.00 / $5M</span></div>
+      <div class="vip-bar-track"><div class="vip-bar-fill" style="width:0%;"></div></div>
     </div>
-    <div style="font-size:11px;color:var(--sub);margin-top:7px;">Trade <span style="color:var(--text);font-weight:600;">$2.59M</span> more to reach VIP 4.</div>
+    <div style="font-size:11px;color:var(--sub);margin-top:7px;">Trade <span style="color:var(--text);font-weight:600;">$5.00M</span> more to reach VIP 4.</div>
   </div>
 
   <div class="rp-block" style="flex:1;">
@@ -1220,6 +1237,20 @@ function secTab(el) {
   el.parentElement.querySelectorAll('.sec-tab').forEach(t=>t.classList.remove('on'));
   el.classList.add('on');
 }
+
+function toggleTheme() {
+  const light = document.body.classList.toggle('light');
+  localStorage.setItem('sv_theme', light ? 'light' : 'dark');
+  document.getElementById('theme-icon-dark').style.display = light ? 'none' : '';
+  document.getElementById('theme-icon-light').style.display = light ? '' : 'none';
+}
+(function applyTheme() {
+  if (localStorage.getItem('sv_theme') === 'light') {
+    document.body.classList.add('light');
+    document.getElementById('theme-icon-dark').style.display = 'none';
+    document.getElementById('theme-icon-light').style.display = '';
+  }
+})();
 
 window.addEventListener('load', init);
 window.addEventListener('resize', () => { drawPnlMini(); });
