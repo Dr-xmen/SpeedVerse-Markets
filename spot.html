@@ -565,33 +565,31 @@ function toggleSub(el,id){ const s=document.getElementById(id); const o=s.classL
 
 /* ═══════════════════ PAIRS ═══════════════════ */
 const PAIRS=[
-  {sym:'BTC', tv:'BINANCE:BTCUSDT', bybit:'BTCUSDT', color:'#f7931a', favs:true},
-  {sym:'ETH', tv:'BINANCE:ETHUSDT', bybit:'ETHUSDT', color:'#627eea', favs:true},
-  {sym:'BNB', tv:'BINANCE:BNBUSDT', bybit:'BNBUSDT', color:'#f3ba2f', favs:true},
-  {sym:'SOL', tv:'BINANCE:SOLUSDT', bybit:'SOLUSDT', color:'#9945ff', favs:true},
-  {sym:'XRP', tv:'BINANCE:XRPUSDT', bybit:'XRPUSDT', color:'#346aa9', favs:false},
-  {sym:'ADA', tv:'BINANCE:ADAUSDT', bybit:'ADAUSDT', color:'#0033ad', favs:false},
-  {sym:'DOGE',tv:'BINANCE:DOGEUSDT',bybit:'DOGEUSDT',color:'#c2a633', favs:false},
-  {sym:'AVAX',tv:'BINANCE:AVAXUSDT',bybit:'AVAXUSDT',color:'#e84142', favs:false},
-  {sym:'LINK',tv:'BINANCE:LINKUSDT',bybit:'LINKUSDT',color:'#2a5ada', favs:false},
-  {sym:'DOT', tv:'BINANCE:DOTUSDT', bybit:'DOTUSDT', color:'#e6007a', favs:false},
-  {sym:'MATIC',tv:'BINANCE:MATICUSDT',bybit:'MATICUSDT',color:'#8247e5',favs:false},
-  {sym:'UNI', tv:'BINANCE:UNIUSDT', bybit:'UNIUSDT', color:'#ff007a', favs:false},
-  {sym:'LTC', tv:'BINANCE:LTCUSDT', bybit:'LTCUSDT', color:'#bfbbbb', favs:false},
-  {sym:'TRX', tv:'BINANCE:TRXUSDT', bybit:'TRXUSDT', color:'#ff0013', favs:false},
-  {sym:'ATOM',tv:'BINANCE:ATOMUSDT',bybit:'ATOMUSDT',color:'#7b8cde', favs:false},
+  {sym:'BTC', tv:'BINANCE:BTCUSDT', okx:'BTC-USDT',  color:'#f7931a', favs:true},
+  {sym:'ETH', tv:'BINANCE:ETHUSDT', okx:'ETH-USDT',  color:'#627eea', favs:true},
+  {sym:'BNB', tv:'BINANCE:BNBUSDT', okx:'BNB-USDT',  color:'#f3ba2f', favs:true},
+  {sym:'SOL', tv:'BINANCE:SOLUSDT', okx:'SOL-USDT',  color:'#9945ff', favs:true},
+  {sym:'XRP', tv:'BINANCE:XRPUSDT', okx:'XRP-USDT',  color:'#346aa9', favs:false},
+  {sym:'ADA', tv:'BINANCE:ADAUSDT', okx:'ADA-USDT',  color:'#0033ad', favs:false},
+  {sym:'DOGE',tv:'BINANCE:DOGEUSDT',okx:'DOGE-USDT', color:'#c2a633', favs:false},
+  {sym:'AVAX',tv:'BINANCE:AVAXUSDT',okx:'AVAX-USDT', color:'#e84142', favs:false},
+  {sym:'LINK',tv:'BINANCE:LINKUSDT',okx:'LINK-USDT', color:'#2a5ada', favs:false},
+  {sym:'DOT', tv:'BINANCE:DOTUSDT', okx:'DOT-USDT',  color:'#e6007a', favs:false},
+  {sym:'NEAR',tv:'BINANCE:NEARUSDT',okx:'NEAR-USDT', color:'#00c08b', favs:false},
+  {sym:'UNI', tv:'BINANCE:UNIUSDT', okx:'UNI-USDT',  color:'#ff007a', favs:false},
+  {sym:'LTC', tv:'BINANCE:LTCUSDT', okx:'LTC-USDT',  color:'#bfbbbb', favs:false},
+  {sym:'TRX', tv:'BINANCE:TRXUSDT', okx:'TRX-USDT',  color:'#ff0013', favs:false},
+  {sym:'ATOM',tv:'BINANCE:ATOMUSDT',okx:'ATOM-USDT', color:'#7b8cde', favs:false},
 ];
 
-let activePair   = PAIRS[0];
-let tabMode      = 'favs';
-let pairsFilter  = '';
-let tickerCache  = {};   // bybit symbol → ticker object
-let tradesData   = [];
-let lastPrice    = 0;
+let activePair  = PAIRS[0];
+let tabMode     = 'favs';
+let pairsFilter = '';
+let tickerCache = {};   // okx instId → { price, change, high, low, volume, turnover }
+let tradesData  = [];
+let lastPrice   = 0;
 
-/* local order book state for delta management */
 const book = { bids: new Map(), asks: new Map() };
-
 let ws=null, wsTimer=null, pingTimer=null;
 
 /* ═══════════════════ FORMATTING ═══════════════════ */
@@ -625,34 +623,37 @@ function loadChart(tvSym){
   c.appendChild(s);
 }
 
-/* ═══════════════════ BYBIT REST — initial tickers ═══════════════════ */
-async function fetchBybitTickers(){
+/* ═══════════════════ TV SCANNER — ticker data via /api/spot proxy ═══════════════════ */
+async function fetchTVTickers(){
   try{
-    const r=await fetch('https://api.bybit.com/v5/market/tickers?category=spot');
+    const r=await fetch('/api/spot');
+    if(!r.ok) return;
     const j=await r.json();
-    if(j.retCode===0 && j.result && j.result.list){
-      j.result.list.forEach(t=>{ tickerCache[t.symbol]=t; });
-      renderPairsList();
-      const cur=tickerCache[activePair.bybit];
-      if(cur) applyTicker(cur);
-    }
-  } catch(e){ console.warn('Bybit ticker fetch failed:',e); }
+    // columns: name, description, close, change, change_abs, volume, high, low
+    (j.data||[]).forEach(row=>{
+      const [name,,price,change,,volume,high,low]=row.d;
+      const sym=name.replace('USDT','');
+      tickerCache[sym+'-USDT']={price,change,volume,high,low};
+    });
+    renderPairsList();
+    const cur=tickerCache[activePair.okx];
+    if(cur) applyTicker(cur);
+  }catch(e){ console.warn('TV ticker fetch failed:',e); }
 }
 
-/* ═══════════════════ BYBIT WEBSOCKET ═══════════════════ */
+/* ═══════════════════ OKX WEBSOCKET ═══════════════════ */
 function connectWS(pair){
   if(ws){ try{ws.close();}catch(e){} ws=null; }
   clearTimeout(wsTimer);
   clearInterval(pingTimer);
-
-  const sym=pair.bybit;
+  const instId=pair.okx;
   try{
-    ws=new WebSocket('wss://stream.bybit.com/v5/public/spot');
+    ws=new WebSocket('wss://ws.okx.com:8443/ws/v5/public');
     ws.onopen=()=>{
       ws.send(JSON.stringify({op:'subscribe',args:[
-        `orderbook.50.${sym}`,
-        `publicTrade.${sym}`,
-        `tickers.${sym}`
+        {channel:'books',instId},
+        {channel:'trades',instId},
+        {channel:'tickers',instId}
       ]}));
       pingTimer=setInterval(()=>{ if(ws&&ws.readyState===1) ws.send(JSON.stringify({op:'ping'})); },20000);
     };
@@ -663,34 +664,43 @@ function connectWS(pair){
 }
 
 function onWS(evt){
+  if(evt.data==='pong') return;
   let msg;
   try{ msg=JSON.parse(evt.data); }catch(e){ return; }
-  if(!msg.topic) return;
+  const ch=msg.arg?.channel;
+  if(!ch||!msg.data||!msg.data.length) return;
 
-  if(msg.topic.startsWith('orderbook.')){
-    if(msg.type==='snapshot') applyBookSnapshot(msg.data);
-    else if(msg.type==='delta') applyBookDelta(msg.data);
-  } else if(msg.topic.startsWith('publicTrade.')){
-    (msg.data||[]).forEach(addTrade);
-  } else if(msg.topic.startsWith('tickers.')){
-    const d=msg.data;
-    if(d){ tickerCache[d.symbol]=Object.assign(tickerCache[d.symbol]||{},d); applyTicker(tickerCache[d.symbol]); updatePairRowTicker(d.symbol,d); }
+  if(ch==='books'){
+    if(msg.action==='snapshot') applyBookSnapshot(msg.data[0]);
+    else if(msg.action==='update') applyBookDelta(msg.data[0]);
+  } else if(ch==='trades'){
+    msg.data.forEach(addTrade);
+  } else if(ch==='tickers'){
+    const t=msg.data[0];
+    if(t){
+      const last=parseFloat(t.last), open=parseFloat(t.open24h);
+      const pct=open>0?((last-open)/open*100):0;
+      const norm={price:last,change:pct,high:parseFloat(t.high24h),low:parseFloat(t.low24h),volume:parseFloat(t.vol24h),turnover:parseFloat(t.volCcy24h)};
+      tickerCache[activePair.okx]=Object.assign(tickerCache[activePair.okx]||{},norm);
+      applyTicker(norm);
+      updatePairRowTicker(activePair.okx,norm);
+    }
   }
 }
 
 /* ═══════════════════ STATS BAR ═══════════════════ */
 function applyTicker(t){
-  const price = parseFloat(t.lastPrice||0);
-  const chgPct= parseFloat(t.price24hPcnt||0)*100;  // Bybit sends as decimal e.g. -0.0034
-  const high  = parseFloat(t.highPrice24h||0);
-  const low   = parseFloat(t.lowPrice24h||0);
-  const vol   = parseFloat(t.volume24h||0);
-  const turn  = parseFloat(t.turnover24h||0);
-  const isUp  = price>=lastPrice;
+  const price =parseFloat(t.price||0);
+  const chgPct=parseFloat(t.change||0);
+  const high  =parseFloat(t.high||0);
+  const low   =parseFloat(t.low||0);
+  const vol   =parseFloat(t.volume||0);
+  const turn  =parseFloat(t.turnover||0);
+  const isUp  =price>=lastPrice;
 
   const prEl=document.getElementById('sb-last-price');
   prEl.textContent=fp(price);
-  if(lastPrice && price!==lastPrice){
+  if(lastPrice&&price!==lastPrice){
     prEl.className='sb-last-price '+(isUp?'flash-up':'flash-down');
     setTimeout(()=>{ prEl.className='sb-last-price'; },300);
   }
@@ -700,25 +710,24 @@ function applyTicker(t){
   chEl.textContent=(chgPct>=0?'+':'')+chgPct.toFixed(2)+'%';
   chEl.className='sb-change '+(chgPct>=0?'pos':'neg');
 
-  document.getElementById('sb-high').textContent    = fp(high);
-  document.getElementById('sb-low').textContent     = fp(low);
-  document.getElementById('sb-vol').textContent     = fv(vol)+' '+activePair.sym;
-  document.getElementById('sb-turnover').textContent= '$'+fv(turn);
+  if(high) document.getElementById('sb-high').textContent=fp(high);
+  if(low)  document.getElementById('sb-low').textContent=fp(low);
+  if(vol)  document.getElementById('sb-vol').textContent=fv(vol)+' '+activePair.sym;
+  if(turn) document.getElementById('sb-turnover').textContent='$'+fv(turn);
 
-  // Sync best ask to order form
   document.getElementById('ob-mid-price').className='ob-mid-price '+(chgPct>=0?'pos':'neg');
 }
 
 /* ═══════════════════ ORDER BOOK ═══════════════════ */
 function applyBookSnapshot(data){
   book.bids.clear(); book.asks.clear();
-  (data.b||[]).forEach(([p,q])=>book.bids.set(p,q));
-  (data.a||[]).forEach(([p,q])=>book.asks.set(p,q));
+  (data.bids||[]).forEach(([p,q])=>book.bids.set(p,q));
+  (data.asks||[]).forEach(([p,q])=>book.asks.set(p,q));
   renderBook();
 }
 function applyBookDelta(data){
-  (data.b||[]).forEach(([p,q])=>{ if(parseFloat(q)===0) book.bids.delete(p); else book.bids.set(p,q); });
-  (data.a||[]).forEach(([p,q])=>{ if(parseFloat(q)===0) book.asks.delete(p); else book.asks.set(p,q); });
+  (data.bids||[]).forEach(([p,q])=>{ if(parseFloat(q)===0) book.bids.delete(p); else book.bids.set(p,q); });
+  (data.asks||[]).forEach(([p,q])=>{ if(parseFloat(q)===0) book.asks.delete(p); else book.asks.set(p,q); });
   renderBook();
 }
 
@@ -756,10 +765,10 @@ function renderBook(){
 
 /* ═══════════════════ TRADES ═══════════════════ */
 function addTrade(d){
-  const isBuy=d.S==='Buy';
-  const price=parseFloat(d.p);
-  const qty  =parseFloat(d.v);
-  const time =new Date(parseInt(d.T)).toTimeString().slice(0,8);
+  const isBuy=d.side==='buy';
+  const price=parseFloat(d.px);
+  const qty  =parseFloat(d.sz);
+  const time =new Date(parseInt(d.ts)).toTimeString().slice(0,8);
   tradesData.unshift({side:isBuy?'buy':'sell',price,qty,time});
   if(tradesData.length>80) tradesData.length=80;
   if(document.getElementById('tr-panel').style.display!=='none') renderTrades();
@@ -779,29 +788,29 @@ function renderPairsList(){
   if(!list.length){ el.innerHTML='<div style="padding:16px;text-align:center;font-size:12px;color:var(--sub);">No pairs</div>'; return; }
 
   el.innerHTML=list.map(p=>{
-    const d=tickerCache[p.bybit]||{};
-    const price=d.lastPrice?fp(parseFloat(d.lastPrice)):'—';
-    const pct=parseFloat(d.price24hPcnt||0)*100;
+    const d=tickerCache[p.okx]||{};
+    const price=d.price?fp(d.price):'—';
+    const pct=parseFloat(d.change||0);
     const pos=pct>=0;
     const isAct=activePair.sym===p.sym;
-    return `<div class="pair-row${isAct?' active':''}" id="pr-${p.bybit}" onclick="selectPair('${p.sym}')">
+    return `<div class="pair-row${isAct?' active':''}" id="pr-${p.okx}" onclick="selectPair('${p.sym}')">
       <div class="pair-row-left">
         <img class="pair-row-icon" src="${iconUrl(p.sym)}" onerror="this.style.background='${p.color}';this.src='data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs='"/>
         <div class="pair-row-sym">${p.sym}<span>/USDT</span></div>
       </div>
       <div class="pair-row-right">
         <div class="pair-row-price">${price}</div>
-        <div class="pair-row-chg ${pos?'pos':'neg'}">${pos?'+':''}${pct.toFixed(2)}%</div>
+        <div class="pair-row-chg ${pos?'pos':'neg'}">${d.price?(pos?'+':'')+pct.toFixed(2)+'%':'—'}</div>
       </div>
     </div>`;
   }).join('');
 }
 
-function updatePairRowTicker(bySym, d){
-  const el=document.getElementById('pr-'+bySym);
+function updatePairRowTicker(okxId, d){
+  const el=document.getElementById('pr-'+okxId);
   if(!el) return;
-  const price=fp(parseFloat(d.lastPrice||0));
-  const pct=parseFloat(d.price24hPcnt||0)*100;
+  const price=fp(parseFloat(d.price||0));
+  const pct=parseFloat(d.change||0);
   const pos=pct>=0;
   const pe=el.querySelector('.pair-row-price');
   const ce=el.querySelector('.pair-row-chg');
@@ -843,7 +852,7 @@ function selectPair(sym){
   document.getElementById('ob-mid-price').textContent='—';
   document.getElementById('ob-spread').textContent='Spread: —';
 
-  const cached=tickerCache[pair.bybit];
+  const cached=tickerCache[pair.okx];
   if(cached) applyTicker(cached);
 
   loadChart(pair.tv);
@@ -902,10 +911,9 @@ function submitOrder(){ alert('Log in to place orders.'); }
 
 /* ═══════════════════ INIT ═══════════════════ */
 loadChart(activePair.tv);
-fetchBybitTickers();
+fetchTVTickers();
 connectWS(activePair);
-/* Re-fetch ticker list every 30s to keep pairs list fresh */
-setInterval(fetchBybitTickers, 30000);
+setInterval(fetchTVTickers, 15000);
 </script>
 </body>
 </html>
