@@ -197,7 +197,7 @@ body.light select option{background:#fff;color:#111;}
 .fee-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.04);}
 .fee-row:last-child{border-bottom:none;}
 .fee-lbl{font-size:12.5px;color:var(--sub);}
-.fee-val{font-size:12.5px;font-weight:600;color:var(--text);font-family:var(--mono);}
+.fee-val{font-size:12.5px;font-weight:600;color:var(--text);font-family:'Inter',sans-serif;}
 .fee-val.green{color:var(--green);}
 .fee-val.accent{color:var(--accent);}
 
@@ -274,7 +274,7 @@ body.light select option{background:#fff;color:#111;}
 /* ── MOBILE (html.mob set synchronously before render) ── */
 .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:199;}
 .sidebar-overlay.open{display:block;}
-.sb-logo-area{padding:4px 16px;display:flex;align-items:center;border-bottom:1px solid var(--b);flex-shrink:0;}
+.sb-logo-area{padding:0 16px;display:flex;align-items:center;border-bottom:1px solid var(--b);flex-shrink:0;}
 .sb-logo-area img{height:120px;width:auto;}
 html.mob .hdr-hamburger{margin-right:auto;}html.mob .hdr-logo-wrap{display:none !important;}
 html.mob .hdr-search{display:none !important;}
@@ -743,19 +743,19 @@ html.mob .main{width:100% !important;padding:20px 16px;}</style>
           <div style="background:var(--s2);border:1px solid var(--b);border-radius:12px;overflow:hidden;margin-bottom:20px;">
             <div style="padding:12px 16px;border-bottom:1px solid var(--b);font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--sub);">Amount</div>
             <div style="padding:16px;display:flex;align-items:center;justify-content:space-between;">
-              <span style="font-size:24px;font-weight:800;color:var(--text);font-family:var(--mono);" id="review-amount-big">—</span>
+              <span style="font-size:24px;font-weight:800;color:var(--text);font-family:'Inter',sans-serif;" id="review-amount-big">—</span>
               <div style="text-align:right;">
                 <div style="font-size:12px;color:var(--sub);">After fee</div>
-                <div style="font-size:15px;font-weight:700;color:var(--green);font-family:var(--mono);" id="review-receive-big">—</div>
+                <div style="font-size:15px;font-weight:700;color:var(--green);font-family:'Inter',sans-serif;" id="review-receive-big">—</div>
               </div>
             </div>
             <div style="border-top:1px solid var(--b);padding:12px 16px;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--sub);">Bank Details</div>
             <div style="padding:12px 16px;display:flex;flex-direction:column;gap:8px;">
               <div style="display:flex;justify-content:space-between;font-size:12.5px;"><span style="color:var(--sub);">Account Holder</span><span style="font-weight:600;color:var(--text);" id="rv-holder">—</span></div>
               <div style="display:flex;justify-content:space-between;font-size:12.5px;"><span style="color:var(--sub);">Bank</span><span style="font-weight:600;color:var(--text);" id="rv-bank">—</span></div>
-              <div style="display:flex;justify-content:space-between;font-size:12.5px;"><span style="color:var(--sub);">Account No.</span><span style="font-weight:600;color:var(--text);font-family:var(--mono);" id="rv-acct">—</span></div>
-              <div style="display:flex;justify-content:space-between;font-size:12.5px;" id="rv-iban-row"><span style="color:var(--sub);">IBAN</span><span style="font-weight:600;color:var(--text);font-family:var(--mono);" id="rv-iban">—</span></div>
-              <div style="display:flex;justify-content:space-between;font-size:12.5px;"><span style="color:var(--sub);">SWIFT / BIC</span><span style="font-weight:600;color:var(--text);font-family:var(--mono);" id="rv-swift">—</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:12.5px;"><span style="color:var(--sub);">Account No.</span><span style="font-weight:600;color:var(--text);font-family:'Inter',sans-serif;" id="rv-acct">—</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:12.5px;" id="rv-iban-row"><span style="color:var(--sub);">IBAN</span><span style="font-weight:600;color:var(--text);font-family:'Inter',sans-serif;" id="rv-iban">—</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:12.5px;"><span style="color:var(--sub);">SWIFT / BIC</span><span style="font-weight:600;color:var(--text);font-family:'Inter',sans-serif;" id="rv-swift">—</span></div>
               <div style="display:flex;justify-content:space-between;font-size:12.5px;"><span style="color:var(--sub);">Country</span><span style="font-weight:600;color:var(--text);" id="rv-country">—</span></div>
               <div style="display:flex;justify-content:space-between;font-size:12.5px;" id="rv-ref-row"><span style="color:var(--sub);">Reference</span><span style="font-weight:600;color:var(--text);" id="rv-ref">—</span></div>
             </div>
@@ -838,9 +838,9 @@ html.mob .main{width:100% !important;padding:20px 16px;}</style>
     </div>
     <div class="modal-summary">
       <div style="font-size:10.5px;color:var(--sub);margin-bottom:8px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;">Withdrawal Summary</div>
-      <div class="modal-sum-row"><span style="color:var(--sub);">Amount</span><span style="font-family:var(--mono);font-weight:700;color:var(--text);" id="modal-amount">—</span></div>
-      <div class="modal-sum-row"><span style="color:var(--sub);">Fee</span><span style="font-family:var(--mono);font-weight:700;color:var(--red);" id="modal-fee">—</span></div>
-      <div class="modal-sum-row"><span style="color:var(--sub);">You Receive</span><span style="font-family:var(--mono);font-weight:700;color:var(--green);" id="modal-receive">—</span></div>
+      <div class="modal-sum-row"><span style="color:var(--sub);">Amount</span><span style="font-family:'Inter',sans-serif;font-weight:700;color:var(--text);" id="modal-amount">—</span></div>
+      <div class="modal-sum-row"><span style="color:var(--sub);">Fee</span><span style="font-family:'Inter',sans-serif;font-weight:700;color:var(--red);" id="modal-fee">—</span></div>
+      <div class="modal-sum-row"><span style="color:var(--sub);">You Receive</span><span style="font-family:'Inter',sans-serif;font-weight:700;color:var(--green);" id="modal-receive">—</span></div>
     </div>
     <div class="modal-actions">
       <button class="modal-cancel" onclick="closeModal()">Cancel</button>
