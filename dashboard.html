@@ -644,7 +644,7 @@ html.mob .full-sec{margin-left:0 !important;margin-right:0 !important;}
       <div class="sec-head">
         <div class="sec-title">Market Movers</div>
         <span style="font-size:11px;color:var(--sub);display:flex;align-items:center;gap:4px;">
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>24H • via TradingView
+          <span class="live-dot"></span>24H • All USDT pairs
         </span>
       </div>
       <div class="movers-grid" id="movers-grid">
@@ -1196,65 +1196,68 @@ function renderRecentOrders() {
 }
 
 /* ════════════════════════════════════════════════════════
-   MARKET MOVERS — TradingView scanner API
+   MARKET MOVERS — Binance all-tickers (live, no CORS issue)
    ════════════════════════════════════════════════════════ */
-const TV_SCAN = 'https://scanner.tradingview.com/crypto/scan';
+let _allTickers = [];
 
-function parseTVItem(item) {
-  const raw = (item.s||'').split(':').pop();
-  const sym = raw.replace(/USDT$|USD$|BUSD$|USDC$/,'').replace(/^1000/,'');
-  return { sym, price: item.d[1]||0, priceChangePercent: item.d[2]||0, volume: item.d[4]||0 };
-}
-
-async function fetchAndRenderMovers() {
-  const body = {
-    columns: ['name','close','change','change_abs','volume'],
-    options: {lang:'en'},
-    markets: ['crypto'],
-    filter: [{left:'volume',operation:'greater',right:2e6},{left:'close',operation:'greater',right:0.0001}],
-    range: [0, 5]
-  };
+async function fetchTopMovers() {
   try {
-    const [gRes, lRes] = await Promise.all([
-      fetch(TV_SCAN,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({...body,sort:{sortBy:'change',sortOrder:'desc'}})}),
-      fetch(TV_SCAN,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({...body,sort:{sortBy:'change',sortOrder:'asc'}})})
-    ]);
-    if(!gRes.ok || !lRes.ok) throw new Error('TV scan failed');
-    const [gData, lData] = await Promise.all([gRes.json(), lRes.json()]);
-    const gainers = (gData.data||[]).map(parseTVItem);
-    const losers  = (lData.data||[]).map(parseTVItem);
-    renderMoversList(gainers, losers);
+    const res = await fetch(`${BINANCE}/ticker/24hr`);
+    if(!res.ok) throw new Error();
+    const data = await res.json();
+    // filter: USDT pairs only, min $1M 24h volume, valid price
+    _allTickers = data
+      .filter(t => t.symbol.endsWith('USDT')
+               && parseFloat(t.quoteVolume) > 1e6
+               && parseFloat(t.lastPrice) > 0
+               && !t.symbol.includes('UP') && !t.symbol.includes('DOWN')
+               && !t.symbol.includes('BULL') && !t.symbol.includes('BEAR'))
+      .map(t => ({
+        sym: t.symbol.replace('USDT',''),
+        price: parseFloat(t.lastPrice),
+        priceChangePercent: parseFloat(t.priceChangePercent),
+        volume: parseFloat(t.quoteVolume)
+      }));
   } catch(e) {
-    // Fallback: derive from Binance data already in memory
-    const all = Object.entries(marketData)
-      .filter(([s])=>s.endsWith('USDT'))
-      .map(([s,d])=>({sym:s.replace('USDT',''),...d}))
-      .filter(d=>!isNaN(d.priceChangePercent));
-    const sorted = [...all].sort((a,b)=>b.priceChangePercent-a.priceChangePercent);
-    renderMoversList(sorted.slice(0,5), sorted.slice(-5).reverse());
+    // use already-fetched subset if full fetch fails
+    _allTickers = Object.entries(marketData)
+      .filter(([s]) => s.endsWith('USDT'))
+      .map(([s, d]) => ({ sym: s.replace('USDT',''), ...d }))
+      .filter(d => !isNaN(d.priceChangePercent));
   }
+  renderMovers();
 }
 
 function renderMoversList(gainers, losers) {
-  const maxPct = Math.max(...[...gainers,...losers].map(m=>Math.abs(m.priceChangePercent)), 1);
+  const maxPct = Math.max(...[...gainers,...losers].map(m => Math.abs(m.priceChangePercent)), 1);
   const moverRow = (m, up) => {
-    const barW = Math.min(Math.abs(m.priceChangePercent)/maxPct*100, 100).toFixed(1);
+    const barW = Math.min(Math.abs(m.priceChangePercent) / maxPct * 100, 100).toFixed(1);
     return `<div class="mover-row">
       <div>
         <div class="mover-name">${m.sym}</div>
         <div class="mover-price">$${fmtPrice(m.price)}</div>
       </div>
       <div class="mover-right">
-        <div class="mover-chg ${up?'mover-pos':'mover-neg'}">${up?'+':''}${Number(m.priceChangePercent).toFixed(2)}%</div>
+        <div class="mover-chg ${up?'mover-pos':'mover-neg'}">${up?'+':''}${m.priceChangePercent.toFixed(2)}%</div>
         <div class="mover-bar-wrap"><div class="mover-bar ${up?'mover-bar-up':'mover-bar-dn'}" style="width:${barW}%"></div></div>
       </div>
     </div>`;
   };
-  document.getElementById('gainers-list').innerHTML = gainers.map(m=>moverRow(m,true)).join('');
-  document.getElementById('losers-list').innerHTML  = losers.map(m=>moverRow(m,false)).join('');
+  document.getElementById('gainers-list').innerHTML = gainers.map(m => moverRow(m, true)).join('');
+  document.getElementById('losers-list').innerHTML  = losers.map(m => moverRow(m, false)).join('');
 }
 
-function renderMovers() { fetchAndRenderMovers(); }
+function renderMovers() {
+  // Prefer full ticker list; fall back to existing marketData subset
+  const pool = _allTickers.length > 0 ? _allTickers :
+    Object.entries(marketData)
+      .filter(([s]) => s.endsWith('USDT'))
+      .map(([s, d]) => ({ sym: s.replace('USDT',''), ...d }))
+      .filter(d => !isNaN(d.priceChangePercent));
+  if(!pool.length) return;
+  const sorted = [...pool].sort((a, b) => b.priceChangePercent - a.priceChangePercent);
+  renderMoversList(sorted.slice(0, 5), sorted.slice(-5).reverse());
+}
 
 /* ════════════════════════════════════════════════════════
    CANVAS — WATCHLIST SPARKLINE
@@ -1378,9 +1381,9 @@ async function init() {
     renderWatchlist();
     drawPerfChart();
   } catch(e) {}
-  // Refresh movers from TV every 60 seconds
-  fetchAndRenderMovers();
-  setInterval(fetchAndRenderMovers, 60000);
+  // Fetch full ticker list for movers, refresh every 60s
+  fetchTopMovers();
+  setInterval(fetchTopMovers, 60000);
   // Poll prices every 5 seconds
   setInterval(tick, 5000);
   // Refresh klines every 5 minutes
