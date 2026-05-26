@@ -279,18 +279,21 @@ body.light input{color:var(--text);}
 .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:199;}
 .sidebar-overlay.open{display:block;}
 .sb-logo-area{padding:18px 16px;display:flex;align-items:center;border-bottom:1px solid var(--b);flex-shrink:0;}
-.sb-logo-area img{height:30px;width:auto;}
+.sb-logo-area img{height:120px;width:auto;}
 html.mob .hdr-hamburger{margin-right:auto;}html.mob .hdr-logo-wrap{display:none !important;}
 html.mob .hdr-search{display:none !important;}
 html.mob .hdr-nav{display:none !important;}
 html.mob .sidebar{display:none !important;position:fixed;top:0;left:0;bottom:0;height:100%;width:var(--sidebar);z-index:200;overflow-y:auto;overflow-x:hidden;box-shadow:4px 0 24px rgba(0,0,0,.6);}
 html.mob .sidebar.mob-open{display:flex !important;flex-direction:column;}
 html.mob .layout{display:block !important;overflow-y:auto;}
-html.mob .main{width:100% !important;padding:20px 16px;}
+html.mob .main{width:100% !important;padding:12px 6px;}
 html.mob .rp{display:none !important;}
-html.mob .two-col{grid-template-columns:1fr !important;}
+html.mob .two-col{grid-template-columns:1fr !important;margin-left:0 !important;margin-right:0 !important;}
 html.mob .ticker{display:none !important;}
 html.mob .announce-strip{display:none !important;}
+html.mob .welcome{margin:0 0 8px !important;border-radius:10px;}
+html.mob .stat-strip{margin:0 0 8px !important;}
+html.mob .full-sec{margin-left:0 !important;margin-right:0 !important;}
 </style>
 <script>if(window.innerWidth<=960||screen.width<=960)document.documentElement.classList.add('mob');</script>
 </head>
