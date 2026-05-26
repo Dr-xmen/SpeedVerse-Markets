@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
@@ -268,7 +268,10 @@ html.mob .sidebar.mob-open{display:flex !important;flex-direction:column;}
 html.mob .layout{display:block !important;height:calc(100vh - 52px) !important;overflow:hidden !important;}
 html.mob .main{width:100% !important;display:flex;flex-direction:column;height:100%;overflow:hidden;}
 html.mob .hdr{height:52px !important;padding:0 10px 0 0;}
-html.mob .hdr-logo-wrap{display:none !important;}
+.sb-logo-area{padding:18px 16px;display:flex;align-items:center;border-bottom:1px solid var(--b);flex-shrink:0;}
+.sb-logo-area img{height:30px;width:auto;}
+html.mob .hdr{justify-content:flex-end !important;}
+html.mob .hdr-hamburger{order:10;}html.mob .hdr-logo-wrap{display:none !important;}
 html.mob .hdr-nav{display:none !important;}
 html.mob .hdr-search{display:none !important;}
 html.mob .theme-btn{display:none !important;}
@@ -358,6 +361,9 @@ body.light input,body.light select{color:var(--text);}
 
 <!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
+  <div class="sb-logo-area">
+    <img src="assets/logo.png" alt="SpeedVerse Markets"/>
+  </div>
   <nav class="sb-nav">
     <a class="nav-item" href="dashboard.html">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>

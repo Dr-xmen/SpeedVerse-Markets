@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
@@ -278,7 +278,10 @@ body.light input{color:var(--text);}
 /* ── MOBILE (html.mob set synchronously before render) ── */
 .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:199;}
 .sidebar-overlay.open{display:block;}
-html.mob .hdr-logo-wrap{display:none !important;}
+.sb-logo-area{padding:18px 16px;display:flex;align-items:center;border-bottom:1px solid var(--b);flex-shrink:0;}
+.sb-logo-area img{height:30px;width:auto;}
+html.mob .hdr{justify-content:flex-end !important;}
+html.mob .hdr-hamburger{order:10;}html.mob .hdr-logo-wrap{display:none !important;}
 html.mob .hdr-search{display:none !important;}
 html.mob .hdr-nav{display:none !important;}
 html.mob .sidebar{display:none !important;position:fixed;top:0;left:0;bottom:0;height:100%;width:var(--sidebar);z-index:200;overflow-y:auto;overflow-x:hidden;box-shadow:4px 0 24px rgba(0,0,0,.6);}
@@ -287,6 +290,8 @@ html.mob .layout{display:block !important;overflow-y:auto;}
 html.mob .main{width:100% !important;padding:20px 16px;}
 html.mob .rp{display:none !important;}
 html.mob .two-col{grid-template-columns:1fr !important;}
+html.mob .ticker{display:none !important;}
+html.mob .announce-strip{display:none !important;}
 </style>
 <script>if(window.innerWidth<=960||screen.width<=960)document.documentElement.classList.add('mob');</script>
 </head>
@@ -339,6 +344,9 @@ html.mob .two-col{grid-template-columns:1fr !important;}
 
 <!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
+  <div class="sb-logo-area">
+    <img src="assets/logo.png" alt="SpeedVerse Markets"/>
+  </div>
   <nav class="sb-nav">
     <div class="nav-item active">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
