@@ -53,7 +53,7 @@ input{font-family:inherit;border:none;outline:none;background:none;color:var(--t
 .layout{display:flex;flex:1;overflow:hidden;}
 
 /* SIDEBAR */
-.sidebar{width:var(--sidebar);flex-shrink:0;background:var(--s1);border-right:1px solid var(--b);display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;transition:width .25s ease;}
+.sidebar{width:var(--sidebar);flex-shrink:0;background:var(--s1);border-right:1px solid var(--b);display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;transition:width .48s cubic-bezier(0.4,0,0.2,1);}
 .sidebar::-webkit-scrollbar{width:0;}
 .sb-nav{flex:1;padding:8px 0;}
 .nav-group-label{font-size:10px;font-weight:600;letter-spacing:.8px;color:var(--muted);text-transform:uppercase;padding:14px 16px 4px;}
@@ -188,21 +188,18 @@ input{font-family:inherit;border:none;outline:none;background:none;color:var(--t
 .wl-chg{font-size:11px;font-weight:600;margin-top:2px;}
 .wl-pos{color:var(--green);} .wl-neg{color:var(--red);}
 
-/* ALLOCATION */
-.alloc-wrap{padding:16px;}
-.alloc-donut{display:flex;align-items:center;gap:16px;margin-bottom:14px;}
-.alloc-ring-wrap{position:relative;width:110px;height:110px;flex-shrink:0;}
-.alloc-ring{width:110px;height:110px;border-radius:50%;}
-.alloc-ring::after{content:'';position:absolute;inset:20%;border-radius:50%;background:var(--s1);}
-.alloc-center{position:absolute;inset:20%;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:1;}
-.ac-lbl{font-size:8px;color:var(--sub);}
-.ac-val{font-size:9.5px;font-weight:700;color:var(--text);text-align:center;}
-.alloc-legend{flex:1;display:flex;flex-direction:column;gap:6px;}
-.al-row{display:flex;align-items:center;gap:7px;}
-.al-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
-.al-name{font-size:11.5px;color:var(--sub);flex:1;}
-.al-pct{font-size:11.5px;font-weight:600;color:var(--text);min-width:36px;}
-.al-usd{font-size:10.5px;color:var(--sub);}
+/* PORTFOLIO PERFORMANCE */
+.perf-wrap{padding:12px 16px 14px;}
+.perf-summary{display:flex;align-items:baseline;gap:10px;margin-bottom:10px;}
+.perf-total{font-size:22px;font-weight:700;color:var(--text);}
+.perf-change{font-size:12.5px;font-weight:600;}
+.perf-tabs{display:flex;gap:2px;margin-bottom:10px;}
+.perf-tab{padding:4px 9px;font-size:11px;font-weight:600;border-radius:5px;border:none;background:none;color:var(--sub);cursor:pointer;transition:all .15s;}
+.perf-tab.active{background:var(--s3);color:var(--text);}
+.perf-tab:hover:not(.active){color:var(--text);}
+.perf-chart-area{position:relative;height:110px;margin-bottom:4px;}
+.perf-chart-area canvas{position:absolute;inset:0;width:100%!important;height:100%!important;}
+.perf-x{display:flex;justify-content:space-between;font-size:9.5px;color:var(--sub);}
 
 /* POSITIONS */
 .pos-table{width:100%;border-collapse:collapse;}
@@ -225,12 +222,17 @@ input{font-family:inherit;border:none;outline:none;background:none;color:var(--t
 .movers-col{background:var(--s1);padding:12px;}
 .movers-head{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px;display:flex;align-items:center;gap:5px;}
 .movers-up{color:var(--green);} .movers-dn{color:var(--red);}
-.mover-row{display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.mover-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04);}
 .mover-row:last-child{border-bottom:none;}
 .mover-name{font-size:12.5px;font-weight:600;color:var(--text);}
-.mover-price{font-size:11px;color:var(--sub);font-family:'Inter',sans-serif;margin-top:1px;}
+.mover-price{font-size:10.5px;color:var(--sub);margin-top:1px;}
+.mover-right{text-align:right;}
 .mover-chg{font-size:12.5px;font-weight:700;}
+.mover-bar-wrap{height:2px;background:rgba(255,255,255,.07);border-radius:1px;width:52px;margin-top:3px;margin-left:auto;}
+.mover-bar{height:100%;border-radius:1px;transition:width .5s ease;}
+.mover-bar-up{background:var(--green);} .mover-bar-dn{background:var(--red);}
 .mover-pos{color:var(--green);} .mover-neg{color:var(--red);}
+.tv-badge{font-size:8.5px;color:var(--sub);display:flex;align-items:center;gap:3px;margin-top:2px;opacity:.7;}
 
 /* FULL SEC */
 .full-sec{margin:0 20px 16px;}
@@ -303,15 +305,15 @@ body.light input{color:var(--text);}
 @media(max-width:640px){.welcome{flex-direction:column;gap:14px;padding:16px;}.wc-right{display:none;}.wc-balance{font-size:24px;}.stat-strip{grid-template-columns:1fr 1fr;}.two-col,.full-sec,.announce-strip,.stat-strip{margin-left:12px;margin-right:12px;}.welcome{margin:12px;}}
 
 /* ── MOBILE (html.mob set synchronously before render) ── */
-.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:199;}
-.sidebar-overlay.open{display:block;}
+.sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:199;opacity:0;pointer-events:none;transition:opacity .42s cubic-bezier(0.4,0,0.2,1);}
+.sidebar-overlay.open{opacity:1;pointer-events:auto;}
 .sb-logo-area{padding:0 16px;display:flex;align-items:center;border-bottom:1px solid var(--b);flex-shrink:0;}
 .sb-logo-area img{height:120px;width:auto;}
 html.mob .hdr-hamburger{margin-right:auto;}html.mob .hdr-logo-wrap{display:none !important;}
 html.mob .hdr-search{display:none !important;}
 html.mob .hdr-nav{display:none !important;}
-html.mob .sidebar{display:none !important;position:fixed;top:0;left:0;bottom:0;height:100%;width:var(--sidebar);z-index:200;overflow-y:auto;overflow-x:hidden;box-shadow:4px 0 24px rgba(0,0,0,.6);}
-html.mob .sidebar.mob-open{display:flex !important;flex-direction:column;}
+html.mob .sidebar{display:flex !important;flex-direction:column;position:fixed;top:0;left:0;bottom:0;height:100%;width:var(--sidebar);z-index:200;overflow-y:auto;overflow-x:hidden;transform:translateX(-105%);transition:transform .48s cubic-bezier(0.4,0,0.2,1),box-shadow .48s;box-shadow:none;}
+html.mob .sidebar.mob-open{transform:translateX(0);box-shadow:8px 0 48px rgba(0,0,0,.65);}
 html.mob .layout{display:block !important;overflow-y:auto;}
 html.mob .main{width:100% !important;padding:12px 6px;}
 html.mob .rp{display:none !important;}
@@ -349,9 +351,6 @@ html.mob .full-sec{margin-left:0 !important;margin-right:0 !important;}
     <div class="hdr-nav-item">Derivatives ▾</div>
     <div class="hdr-nav-item">Earn ▾</div>
     <div class="hdr-nav-item">Copy Trading</div>
-  </div>
-  <div class="api-status" id="api-status">
-    <span class="live-dot"></span>Connecting…
   </div>
   <div class="hdr-right">
     <div class="theme-btn" id="theme-btn" onclick="toggleTheme()" title="Toggle light/dark mode">
@@ -425,6 +424,14 @@ html.mob .full-sec{margin-left:0 !important;margin-right:0 !important;}
     </div>
     <div class="nav-divider"></div>
     <div class="nav-group-label">Finance</div>
+    <a class="nav-item" href="deposit.html" style="text-decoration:none;color:inherit;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      <span class="nav-item-label">Deposit</span>
+    </a>
+    <a class="nav-item" href="withdraw.html" style="text-decoration:none;color:inherit;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17,8 12,3 7,8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      <span class="nav-item-label">Withdraw</span>
+    </a>
     <div class="nav-item" onclick="toggleSub(this,'assets-sub')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
       <span class="nav-item-label">Assets</span>
@@ -449,10 +456,10 @@ html.mob .full-sec{margin-left:0 !important;margin-right:0 !important;}
     </div>
     <div class="nav-divider"></div>
     <div class="nav-group-label">Account</div>
-    <div class="nav-item">
+    <a class="nav-item" href="settings.html#security" style="text-decoration:none;color:inherit;">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
       <span class="nav-item-label">Security</span>
-    </div>
+    </a>
     <a class="nav-item" href="settings.html" style="text-decoration:none;color:inherit;">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       <span class="nav-item-label">Settings</span>
@@ -569,33 +576,30 @@ html.mob .full-sec{margin-left:0 !important;margin-right:0 !important;}
 
     <div class="sec-card">
       <div class="sec-head">
-        <div class="sec-title">Portfolio Allocation</div>
-        <span class="sec-link">View Assets</span>
+        <div class="sec-title">Portfolio Performance</div>
+        <span style="font-size:11px;color:var(--sub);" id="perf-live-badge">
+          <span class="live-dot" style="display:inline-block;margin-right:3px;"></span>Live
+        </span>
       </div>
-      <div class="alloc-wrap">
-        <div class="alloc-donut">
-          <div class="alloc-ring-wrap">
-            <div class="alloc-ring" id="alloc-ring"></div>
-            <div class="alloc-center">
-              <div class="ac-lbl">Total</div>
-              <div class="ac-val" id="alloc-total">—</div>
-            </div>
-          </div>
-          <div class="alloc-legend" id="alloc-legend"></div>
+      <div class="perf-wrap">
+        <div class="perf-summary">
+          <div class="perf-total" id="perf-total">$0.00</div>
+          <div class="perf-change" id="perf-change" style="color:var(--sub);">—</div>
         </div>
-        <div style="border-top:1px solid var(--b);padding-top:12px;margin-top:4px;">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-            <span style="font-size:12px;color:var(--sub);">24H Portfolio Change</span>
-            <span style="font-size:13px;font-weight:700;" id="alloc-pnl-val">—</span>
-          </div>
-          <div style="position:relative;height:70px;">
-            <canvas id="pnl-mini" style="position:absolute;inset:0;width:100% !important;height:100% !important;"></canvas>
-          </div>
-          <div style="display:flex;justify-content:space-between;margin-top:4px;">
-            <span style="font-size:9.5px;color:var(--sub);" id="pnl-lbl-l">—</span>
-            <span style="font-size:9.5px;color:var(--sub);" id="pnl-lbl-m">—</span>
-            <span style="font-size:9.5px;color:var(--sub);" id="pnl-lbl-r">—</span>
-          </div>
+        <div class="perf-tabs">
+          <button class="perf-tab active" onclick="setPerfPeriod(this,'1D')">1D</button>
+          <button class="perf-tab" onclick="setPerfPeriod(this,'1W')">1W</button>
+          <button class="perf-tab" onclick="setPerfPeriod(this,'1M')">1M</button>
+          <button class="perf-tab" onclick="setPerfPeriod(this,'3M')">3M</button>
+          <button class="perf-tab" onclick="setPerfPeriod(this,'ALL')">ALL</button>
+        </div>
+        <div class="perf-chart-area">
+          <canvas id="perf-canvas"></canvas>
+        </div>
+        <div class="perf-x">
+          <span id="perf-x-l">—</span>
+          <span id="perf-x-m">—</span>
+          <span id="perf-x-r">—</span>
         </div>
       </div>
     </div>
@@ -639,7 +643,9 @@ html.mob .full-sec{margin-left:0 !important;margin-right:0 !important;}
     <div class="sec-card">
       <div class="sec-head">
         <div class="sec-title">Market Movers</div>
-        <span style="font-size:11px;color:var(--sub);">24H • USDT pairs</span>
+        <span style="font-size:11px;color:var(--sub);display:flex;align-items:center;gap:4px;">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>24H • via TradingView
+        </span>
       </div>
       <div class="movers-grid" id="movers-grid">
         <div class="movers-col">
@@ -1019,36 +1025,107 @@ function renderWatchlist() {
 }
 
 /* ════════════════════════════════════════════════════════
-   RENDER — ALLOCATION DONUT
+   PORTFOLIO PERFORMANCE CHART
    ════════════════════════════════════════════════════════ */
-function renderAllocation() {
-  const { total, breakdown } = portfolioValue();
-  const colors = { USDT:'#f05a1a', BTC:'#f0b90b', ETH:'#627eea', SOL:'#0ecb81', XRP:'#346aa9', BNB:'#c2a633' };
-  let cum = 0;
-  const stops = [], legendHTML = [];
-  Object.entries(breakdown).forEach(([coin, d]) => {
-    const pct = total ? d.usd / total * 100 : 0;
-    stops.push(`${colors[coin]||'#4a5568'} ${cum.toFixed(2)}% ${(cum+pct).toFixed(2)}%`);
-    cum += pct;
-    legendHTML.push(`<div class="al-row">
-      <div class="al-dot" style="background:${colors[coin]||'#4a5568'};"></div>
-      <div class="al-name">${coin}</div>
-      <div class="al-pct">${pct.toFixed(1)}%</div>
-      <div class="al-usd">$${fmtCompact(d.usd)}</div>
-    </div>`);
-  });
-  document.getElementById('alloc-ring').style.background = `conic-gradient(${stops.join(',')})`;
-  document.getElementById('alloc-total').textContent = `$${fmtCompact(total)}`;
-  document.getElementById('alloc-legend').innerHTML = legendHTML.join('');
+let perfKlines = {}; // period -> close array
+let perfPeriod = '1D';
 
-  // PnL figure for allocation card
-  const { todayPnl } = portfolioValue();
-  const up = todayPnl >= 0;
-  const pnlValEl = document.getElementById('alloc-pnl-val');
-  pnlValEl.style.color = up ? 'var(--green)' : 'var(--red)';
-  pnlValEl.textContent = `${up?'+':''}$${fmtUSD(todayPnl)} (${up?'+':''}${total?(todayPnl/(total-todayPnl)*100).toFixed(2):'0.00'}%)`;
+async function fetchPerfKlines() {
+  // Fetch BTC 1h (last 30 days) + 1d (90 days) as portfolio proxy
+  const [h1, d1] = await Promise.all([
+    fetch(`${BINANCE}/klines?symbol=BTCUSDT&interval=1h&limit=168`).then(r=>r.json()).catch(()=>[]),
+    fetch(`${BINANCE}/klines?symbol=BTCUSDT&interval=1d&limit=90`).then(r=>r.json()).catch(()=>[])
+  ]);
+  perfKlines['1D'] = h1.slice(-24).map(k=>parseFloat(k[4]));
+  perfKlines['1W'] = h1.map(k=>parseFloat(k[4]));
+  perfKlines['1M'] = d1.slice(-30).map(k=>parseFloat(k[4]));
+  perfKlines['3M'] = d1.map(k=>parseFloat(k[4]));
+  perfKlines['ALL'] = d1.map(k=>parseFloat(k[4]));
+}
 
-  drawPnlMini();
+function setPerfPeriod(btn, period) {
+  document.querySelectorAll('.perf-tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  perfPeriod = period;
+  drawPerfChart();
+}
+
+function drawPerfChart() {
+  const canvas = document.getElementById('perf-canvas');
+  if(!canvas) return;
+  const raw = perfKlines[perfPeriod];
+  if(!raw?.length) return;
+
+  const { total } = portfolioValue();
+  const base = raw[0], last = raw[raw.length-1];
+  const pctChg = base ? (last - base) / base * 100 : 0;
+  const up = pctChg >= 0;
+  // Scale to portfolio value
+  const data = raw.map(c => total * (c / last));
+
+  // Update summary
+  document.getElementById('perf-total').textContent = `$${fmtUSD(total)}`;
+  const chgEl = document.getElementById('perf-change');
+  chgEl.style.color = up ? 'var(--green)' : 'var(--red)';
+  chgEl.textContent = `${up?'+':''}${pctChg.toFixed(2)}% (${up?'+':'−'}$${fmtUSD(Math.abs(total*pctChg/100))})`;
+
+  const W = canvas.parentElement.offsetWidth || 260, H = 110;
+  canvas.width = W * window.devicePixelRatio; canvas.height = H * window.devicePixelRatio;
+  canvas.style.width = W+'px'; canvas.style.height = H+'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+
+  const min = Math.min(...data), max = Math.max(...data);
+  const range = max - min || 1;
+  const pad = 6;
+  const toX = i => pad + i * (W - pad*2) / (data.length-1);
+  const toY = v => H - pad - ((v-min)/range) * (H - pad*2);
+
+  const color = up ? '#0ecb81' : '#f6465d';
+  const grad = ctx.createLinearGradient(0, 0, 0, H);
+  grad.addColorStop(0, up ? 'rgba(14,203,129,.22)' : 'rgba(246,70,93,.22)');
+  grad.addColorStop(1, 'rgba(0,0,0,0)');
+
+  // Filled area
+  ctx.beginPath();
+  ctx.moveTo(toX(0), toY(data[0]));
+  for(let i=1;i<data.length;i++){
+    const mx=(toX(i)+toX(i-1))/2;
+    ctx.bezierCurveTo(mx,toY(data[i-1]),mx,toY(data[i]),toX(i),toY(data[i]));
+  }
+  ctx.lineTo(toX(data.length-1),H); ctx.lineTo(toX(0),H); ctx.closePath();
+  ctx.fillStyle = grad; ctx.fill();
+
+  // Line
+  ctx.beginPath();
+  ctx.moveTo(toX(0), toY(data[0]));
+  for(let i=1;i<data.length;i++){
+    const mx=(toX(i)+toX(i-1))/2;
+    ctx.bezierCurveTo(mx,toY(data[i-1]),mx,toY(data[i]),toX(i),toY(data[i]));
+  }
+  ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.lineJoin = 'round'; ctx.stroke();
+
+  // End dot
+  const ex = toX(data.length-1), ey = toY(data[data.length-1]);
+  ctx.beginPath(); ctx.arc(ex, ey, 3.5, 0, Math.PI*2);
+  ctx.fillStyle = color; ctx.fill();
+
+  // X-axis labels
+  const now = new Date();
+  const fmt = (d) => d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  const fmtH = (d) => d.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+  const total_pts = data.length;
+  const label = (offset) => {
+    const d = new Date(now);
+    if(perfPeriod==='1D'||perfPeriod==='1W') {
+      d.setHours(d.getHours()-offset); return perfPeriod==='1D'?fmtH(d):fmt(d);
+    }
+    d.setDate(d.getDate()-offset); return fmt(d);
+  };
+  const hoursPerPt = perfPeriod==='1D'?1:perfPeriod==='1W'?1:24;
+  document.getElementById('perf-x-l').textContent = label((total_pts-1)*hoursPerPt);
+  document.getElementById('perf-x-m').textContent = label(Math.floor((total_pts/2)*hoursPerPt));
+  document.getElementById('perf-x-r').textContent = 'Now';
 }
 
 /* ════════════════════════════════════════════════════════
@@ -1119,29 +1196,65 @@ function renderRecentOrders() {
 }
 
 /* ════════════════════════════════════════════════════════
-   RENDER — MARKET MOVERS (sorted from fetched data)
+   MARKET MOVERS — TradingView scanner API
    ════════════════════════════════════════════════════════ */
-function renderMovers() {
-  const all = Object.entries(marketData)
-    .filter(([sym]) => sym.endsWith('USDT'))
-    .map(([sym, d]) => ({ sym: sym.replace('USDT',''), ...d }))
-    .filter(d => !isNaN(d.priceChangePercent));
+const TV_SCAN = 'https://scanner.tradingview.com/crypto/scan';
 
-  const sorted = [...all].sort((a,b) => b.priceChangePercent - a.priceChangePercent);
-  const gainers = sorted.slice(0,5);
-  const losers  = sorted.slice(-5).reverse();
+function parseTVItem(item) {
+  const raw = (item.s||'').split(':').pop();
+  const sym = raw.replace(/USDT$|USD$|BUSD$|USDC$/,'').replace(/^1000/,'');
+  return { sym, price: item.d[1]||0, priceChangePercent: item.d[2]||0, volume: item.d[4]||0 };
+}
 
-  const moverRow = (m, up) => `<div class="mover-row">
-    <div>
-      <div class="mover-name">${m.sym}</div>
-      <div class="mover-price">${fmtPrice(m.price)}</div>
-    </div>
-    <div class="mover-chg ${up?'mover-pos':'mover-neg'}">${up?'+':''}${m.priceChangePercent.toFixed(2)}%</div>
-  </div>`;
+async function fetchAndRenderMovers() {
+  const body = {
+    columns: ['name','close','change','change_abs','volume'],
+    options: {lang:'en'},
+    markets: ['crypto'],
+    filter: [{left:'volume',operation:'greater',right:2e6},{left:'close',operation:'greater',right:0.0001}],
+    range: [0, 5]
+  };
+  try {
+    const [gRes, lRes] = await Promise.all([
+      fetch(TV_SCAN,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({...body,sort:{sortBy:'change',sortOrder:'desc'}})}),
+      fetch(TV_SCAN,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({...body,sort:{sortBy:'change',sortOrder:'asc'}})})
+    ]);
+    if(!gRes.ok || !lRes.ok) throw new Error('TV scan failed');
+    const [gData, lData] = await Promise.all([gRes.json(), lRes.json()]);
+    const gainers = (gData.data||[]).map(parseTVItem);
+    const losers  = (lData.data||[]).map(parseTVItem);
+    renderMoversList(gainers, losers);
+  } catch(e) {
+    // Fallback: derive from Binance data already in memory
+    const all = Object.entries(marketData)
+      .filter(([s])=>s.endsWith('USDT'))
+      .map(([s,d])=>({sym:s.replace('USDT',''),...d}))
+      .filter(d=>!isNaN(d.priceChangePercent));
+    const sorted = [...all].sort((a,b)=>b.priceChangePercent-a.priceChangePercent);
+    renderMoversList(sorted.slice(0,5), sorted.slice(-5).reverse());
+  }
+}
 
+function renderMoversList(gainers, losers) {
+  const maxPct = Math.max(...[...gainers,...losers].map(m=>Math.abs(m.priceChangePercent)), 1);
+  const moverRow = (m, up) => {
+    const barW = Math.min(Math.abs(m.priceChangePercent)/maxPct*100, 100).toFixed(1);
+    return `<div class="mover-row">
+      <div>
+        <div class="mover-name">${m.sym}</div>
+        <div class="mover-price">$${fmtPrice(m.price)}</div>
+      </div>
+      <div class="mover-right">
+        <div class="mover-chg ${up?'mover-pos':'mover-neg'}">${up?'+':''}${Number(m.priceChangePercent).toFixed(2)}%</div>
+        <div class="mover-bar-wrap"><div class="mover-bar ${up?'mover-bar-up':'mover-bar-dn'}" style="width:${barW}%"></div></div>
+      </div>
+    </div>`;
+  };
   document.getElementById('gainers-list').innerHTML = gainers.map(m=>moverRow(m,true)).join('');
   document.getElementById('losers-list').innerHTML  = losers.map(m=>moverRow(m,false)).join('');
 }
+
+function renderMovers() { fetchAndRenderMovers(); }
 
 /* ════════════════════════════════════════════════════════
    CANVAS — WATCHLIST SPARKLINE
@@ -1233,20 +1346,14 @@ function renderAll() {
   renderWelcome();
   renderStats();
   renderWatchlist();
-  renderAllocation();
+  drawPerfChart();
   renderAccountSummary();
   renderPositions();
   renderRecentOrders();
   renderMovers();
 }
 
-/* ════════════════════════════════════════════════════════
-   API STATUS INDICATOR
-   ════════════════════════════════════════════════════════ */
-function setStatus(ok) {
-  const el = document.getElementById('api-status');
-  el.innerHTML = `<span class="live-dot" style="background:${ok?'var(--green)':'var(--red)'}"></span>${ok?'Live':'Reconnecting…'}`;
-}
+function setStatus(ok) { /* api-status removed from UI */ }
 
 /* ════════════════════════════════════════════════════════
    INIT & POLLING
@@ -1264,15 +1371,25 @@ async function tick() {
 }
 
 async function init() {
-  // First: fetch prices immediately
   await tick();
-  // Then fetch sparkline kline data (less urgent)
-  try { await fetchAllKlines(); renderWatchlist(); drawPnlMini(); } catch(e) {}
+  // Load sparklines + performance chart klines in parallel
+  try {
+    await Promise.all([fetchAllKlines(), fetchPerfKlines()]);
+    renderWatchlist();
+    drawPerfChart();
+  } catch(e) {}
+  // Refresh movers from TV every 60 seconds
+  fetchAndRenderMovers();
+  setInterval(fetchAndRenderMovers, 60000);
   // Poll prices every 5 seconds
   setInterval(tick, 5000);
   // Refresh klines every 5 minutes
   setInterval(async () => {
-    try { await fetchAllKlines(); renderWatchlist(); drawPnlMini(); } catch(e) {}
+    try {
+      await Promise.all([fetchAllKlines(), fetchPerfKlines()]);
+      renderWatchlist();
+      drawPerfChart();
+    } catch(e) {}
   }, 300000);
 }
 

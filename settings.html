@@ -923,6 +923,12 @@ function setLayout(val){
   });
 }
 
+// Hash-based section routing (e.g. settings.html#security)
+(function(){
+  const hash = location.hash.replace('#','');
+  if(hash) switchSection(hash);
+})();
+
 /* ── Notification toggles ── */
 function toggleNotif(key){
   const el = document.getElementById('tog-' + key);
