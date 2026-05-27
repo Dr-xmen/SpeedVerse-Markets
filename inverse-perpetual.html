@@ -98,13 +98,12 @@ html.mob .sb-overlay.open{display:block;}
 .coin-badge{display:inline-flex;align-items:center;background:rgba(123,97,255,.15);border:1px solid rgba(123,97,255,.3);border-radius:4px;padding:2px 8px;font-size:10px;font-weight:600;color:var(--purple);white-space:nowrap;}
 
 .trade-body{flex:1;display:flex;overflow:hidden;min-height:0;}
-.trade-left{flex:1;display:flex;flex-direction:column;border-right:1px solid var(--b);min-width:0;overflow:hidden;}
-.chart-area{flex:1;position:relative;min-height:0;overflow:hidden;}
-
-.orderbook-panel{height:280px;border-top:1px solid var(--b);display:flex;flex-direction:column;flex-shrink:0;}
-.ob-header{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-bottom:1px solid var(--b);}
-.ob-title{font-size:12px;font-weight:600;color:var(--text);}
-.ob-cols{display:grid;grid-template-columns:1fr 1fr 1fr;padding:4px 12px;font-size:10px;color:var(--text3);}
+.chart-area{flex:1;position:relative;min-height:0;}
+.orderbook-panel{width:260px;flex-shrink:0;border-left:1px solid var(--b);display:flex;flex-direction:column;overflow:hidden;}
+.ob-tabs{display:flex;flex-shrink:0;border-bottom:1px solid var(--b);}
+.ob-tab-btn{flex:1;padding:9px 4px;font-size:11px;font-weight:600;color:var(--text2);cursor:pointer;text-align:center;background:none;border:none;border-bottom:2px solid transparent;transition:color .15s,border-color .15s;}
+.ob-tab-btn.active{color:var(--text);border-bottom-color:var(--accent);}
+.ob-cols{display:grid;grid-template-columns:1fr 1fr 1fr;padding:4px 12px;font-size:10px;color:var(--text3);flex-shrink:0;}
 .ob-body{flex:1;overflow:hidden;display:flex;flex-direction:column;}
 .ob-asks{flex:1;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;}
 .ob-bids{flex:1;overflow:hidden;display:flex;flex-direction:column;}
@@ -117,9 +116,11 @@ html.mob .sb-overlay.open{display:block;}
 .ob-bid .ob-price{color:var(--green);}
 .ob-qty{color:var(--text2);}
 .ob-total{color:var(--text3);}
-.ob-spread{display:grid;grid-template-columns:1fr 1fr 1fr;padding:5px 12px;background:var(--s3);font-size:11px;font-weight:600;}
+.ob-spread{display:grid;grid-template-columns:1fr 1fr 1fr;padding:5px 12px;background:var(--s3);font-size:11px;font-weight:600;flex-shrink:0;}
 .ob-spread-price{color:var(--green);font-size:13px;}
 .ob-spread-val{color:var(--text3);font-size:10px;}
+.rt-row{display:grid;grid-template-columns:1fr 1fr auto;padding:3px 12px;font-size:11px;}
+.rt-time{color:var(--text3);font-size:10px;text-align:right;}
 
 .order-panel{width:320px;background:var(--s1);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--s4) transparent;}
 .order-panel::-webkit-scrollbar{width:4px;}
@@ -307,28 +308,31 @@ html.mob .sb-overlay.open{display:block;}
 
     <!-- TRADE BODY -->
     <div class="trade-body">
-      <!-- LEFT -->
-      <div class="trade-left">
-        <div class="chart-area" id="tv-chart"></div>
+      <div class="chart-area" id="tv-chart"></div>
 
-        <!-- ORDER BOOK -->
-        <div class="orderbook-panel">
-          <div class="ob-header">
-            <span class="ob-title">Order Book</span>
-            <span style="font-size:10px;color:var(--text3);" id="ob-label">BTC-USD-PERP</span>
-          </div>
+      <!-- ORDER BOOK + RECENT TRADES -->
+      <div class="orderbook-panel">
+        <div class="ob-tabs">
+          <button class="ob-tab-btn active" onclick="switchOBTab(this,'ob-content')">Order Book</button>
+          <button class="ob-tab-btn" onclick="switchOBTab(this,'rt-content')">Recent Trades</button>
+        </div>
+        <div id="ob-content" style="display:flex;flex-direction:column;flex:1;overflow:hidden;">
           <div class="ob-cols">
-            <span>Price (USD)</span><span style="text-align:right;">Size (Cont)</span><span style="text-align:right;">Total</span>
+            <span>Price (USD)</span><span style="text-align:right;">Size</span><span style="text-align:right;">Total</span>
           </div>
           <div class="ob-body">
             <div class="ob-asks" id="ob-asks"></div>
             <div class="ob-spread">
-              <span class="ob-spread-price" id="ob-spread-price">67,412.50</span>
-              <span class="ob-spread-val" id="ob-spread-val">Spread: 0.50</span>
+              <span class="ob-spread-price" id="ob-spread-price">—</span>
+              <span class="ob-spread-val" id="ob-spread-val">Spread: —</span>
               <span></span>
             </div>
             <div class="ob-bids" id="ob-bids"></div>
           </div>
+        </div>
+        <div id="rt-content" style="display:none;flex:1;overflow-y:auto;">
+          <div class="ob-cols"><span>Price</span><span style="text-align:right;">Size</span><span style="text-align:right;">Time</span></div>
+          <div id="rt-rows"></div>
         </div>
       </div>
 
@@ -517,6 +521,7 @@ function updateStatsBar(data, inst) {
   document.getElementById('stat-index').textContent = fmtPrice((px * 0.9998).toFixed(2), inst);
   document.getElementById('ob-spread-price').textContent = fmtPrice(data.last, inst);
   generateOrderBook(px, inst);
+  generateRecentTrades(px);
   updatePositionMark(px);
   const coin = baseCoins[inst];
   document.getElementById('avail-bal').textContent = inst === 'BTC-USD-SWAP' ? '0.15234 BTC' : inst === 'ETH-USD-SWAP' ? '2.40810 ETH' : '85.221 SOL';
@@ -604,6 +609,27 @@ function selectContract(el) {
   loadTVChart(activeInst);
 }
 
+function switchOBTab(el, showId) {
+  document.querySelectorAll('.ob-tab-btn').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('ob-content').style.display = showId === 'ob-content' ? 'flex' : 'none';
+  document.getElementById('rt-content').style.display = showId === 'rt-content' ? 'block' : 'none';
+}
+function generateRecentTrades(price) {
+  const el = document.getElementById('rt-rows');
+  if (!el || !price) return;
+  const now = new Date();
+  let html = '';
+  for (let i = 0; i < 30; i++) {
+    const buy = Math.random() > 0.48;
+    const px = (price * (1 + (Math.random() - 0.5) * 0.0008)).toFixed(1);
+    const qty = (Math.random() * 4 + 0.1).toFixed(3);
+    const t = new Date(now - i * Math.random() * 9000);
+    const ts = t.toTimeString().slice(0, 8);
+    html += `<div class="rt-row"><span class="ob-price ${buy?'ob-bid':'ob-ask'}">${px}</span><span style="text-align:right;color:var(--text2);">${qty}</span><span class="rt-time">${ts}</span></div>`;
+  }
+  el.innerHTML = html;
+}
 function setMarginMode(btn, mode) {
   document.querySelectorAll('.margin-tab').forEach(t => t.classList.remove('active'));
   btn.classList.add('active');
