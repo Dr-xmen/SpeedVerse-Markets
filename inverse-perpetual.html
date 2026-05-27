@@ -422,34 +422,14 @@ html.mob .sb-overlay.open{display:block;}
     <!-- BOTTOM PANEL -->
     <div class="bottom-panel">
       <div class="bp-tabs">
-        <button class="bp-tab active" onclick="setBpTab(this,'positions')">Positions (1)</button>
+        <button class="bp-tab active" onclick="setBpTab(this,'positions')">Positions (0)</button>
         <button class="bp-tab" onclick="setBpTab(this,'open-orders')">Open Orders (0)</button>
         <button class="bp-tab" onclick="setBpTab(this,'order-history')">Order History</button>
         <button class="bp-tab" onclick="setBpTab(this,'trade-history')">Trade History</button>
       </div>
       <div class="bp-content">
         <div id="tab-positions">
-          <table class="pos-table">
-            <thead>
-              <tr>
-                <th>Contract</th><th>Size</th><th>Side</th><th>Entry Price</th><th>Mark Price</th><th>Liq. Price</th><th>Margin</th><th>Unrealized PnL</th><th>ROE%</th><th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>BTC-USD-PERP</strong></td>
-                <td>100 Cont</td>
-                <td class="green">Long</td>
-                <td>66,840.00</td>
-                <td id="pos1-mark">67,412.50</td>
-                <td>60,590.44</td>
-                <td>0.00149 BTC</td>
-                <td class="green" id="pos1-pnl">+0.000013 BTC</td>
-                <td class="green">+8.57%</td>
-                <td><button class="pos-close-btn">Close</button></td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="empty-state">No open positions</div>
         </div>
         <div id="tab-open-orders" style="display:none;">
           <div class="empty-state">No open orders</div>
@@ -478,7 +458,7 @@ const contracts = ['BTC-USD-SWAP','ETH-USD-SWAP','SOL-USD-SWAP'];
 const contractNames = {'BTC-USD-SWAP':'BTC-USD-PERP','ETH-USD-SWAP':'ETH-USD-PERP','SOL-USD-SWAP':'SOL-USD-PERP'};
 const baseCoins = {'BTC-USD-SWAP':'BTC','ETH-USD-SWAP':'ETH','SOL-USD-SWAP':'SOL'};
 let activeInst = 'BTC-USD-SWAP';
-let currentPrice = 67412.50;
+let currentPrice = 0;
 let currentSide = 'long';
 let currentLeverage = 10;
 let oType = 'market';
@@ -507,21 +487,22 @@ function fmtVol(v) {
 }
 
 async function updateAllPills() {
-  for(const inst of contracts) {
-    const data = await fetchPrice(inst);
+  const results = await Promise.all(contracts.map(inst =>
+    fetchPrice(inst).then(data => ({inst, data})).catch(() => ({inst, data: null}))
+  ));
+  results.forEach(({inst, data}) => {
     const priceEl = document.getElementById('pill-'+inst);
     const chgEl = document.getElementById('pill-chg-'+inst);
-    if(data && priceEl) {
-      const px = parseFloat(data.last);
-      const open = parseFloat(data.open24h);
-      const chgPct = open ? ((px-open)/open*100) : 0;
-      priceEl.textContent = fmtPrice(data.last, inst);
-      priceEl.className = 'cp-price' + (chgPct >= 0 ? '' : ' red');
-      chgEl.textContent = (chgPct >= 0 ? '+' : '') + chgPct.toFixed(2) + '%';
-      chgEl.className = 'cp-chg' + (chgPct >= 0 ? ' green' : ' red');
-      if(inst === activeInst) updateStatsBar(data, inst);
-    }
-  }
+    if(!data || !priceEl) return;
+    const px = parseFloat(data.last);
+    const open = parseFloat(data.open24h);
+    const chgPct = open ? ((px-open)/open*100) : 0;
+    priceEl.textContent = fmtPrice(data.last, inst);
+    priceEl.className = 'cp-price' + (chgPct >= 0 ? '' : ' red');
+    chgEl.textContent = (chgPct >= 0 ? '+' : '') + chgPct.toFixed(2) + '%';
+    chgEl.className = 'cp-chg' + (chgPct >= 0 ? ' green' : ' red');
+    if(inst === activeInst) updateStatsBar(data, inst);
+  });
 }
 
 function updateStatsBar(data, inst) {

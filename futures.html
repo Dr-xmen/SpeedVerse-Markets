@@ -484,7 +484,7 @@ async function fetchPrice(inst) {
 
 async function fetchSpotPrice(inst) {
   try {
-    const r = await fetch('https://www.okx.com/api/v5/market/ticker?instId=' + inst + '-SWAP');
+    const r = await fetch('https://www.okx.com/api/v5/market/ticker?instId=' + inst);
     const d = await r.json();
     if(d.data && d.data[0]) return parseFloat(d.data[0].last);
   } catch(e) {}
@@ -505,25 +505,30 @@ function fmtVol(v) {
 }
 
 async function updateAllPills() {
-  for(const inst of contracts) {
+  const uniqueSpots = [...new Set(contracts.map(inst => contractMeta[inst].spotInst))];
+  const spotResults = await Promise.all(uniqueSpots.map(spotInst =>
+    fetchPrice(spotInst).then(data => ({spotInst, data})).catch(() => ({spotInst, data: null}))
+  ));
+  const spotMap = {};
+  spotResults.forEach(({spotInst, data}) => { if(data) spotMap[spotInst] = data; });
+
+  contracts.forEach(inst => {
     const meta = contractMeta[inst];
-    const spotInst = meta.spotInst + '-SWAP';
-    const data = await fetchPrice(spotInst);
+    const data = spotMap[meta.spotInst];
     const priceEl = document.getElementById('pill-'+inst);
     const chgEl = document.getElementById('pill-chg-'+inst);
-    if(data && priceEl) {
-      const px = parseFloat(data.last);
-      const basisAdj = inst.includes('250926') ? 1.0042 : 1.0015;
-      const futPx = px * basisAdj;
-      const open = parseFloat(data.open24h) * basisAdj;
-      const chgPct = open ? ((futPx-open)/open*100) : 0;
-      priceEl.textContent = fmtPrice(futPx, inst);
-      priceEl.className = 'cp-price' + (chgPct >= 0 ? '' : ' red');
-      chgEl.textContent = (chgPct >= 0 ? '+' : '') + chgPct.toFixed(2) + '%';
-      chgEl.className = 'cp-chg' + (chgPct >= 0 ? ' green' : ' red');
-      if(inst === activeInst) updateStatsBar(data, inst, futPx, basisAdj);
-    }
-  }
+    if(!data || !priceEl) return;
+    const px = parseFloat(data.last);
+    const basisAdj = inst.includes('250926') ? 1.0042 : 1.0015;
+    const futPx = px * basisAdj;
+    const open = parseFloat(data.open24h) * basisAdj;
+    const chgPct = open ? ((futPx-open)/open*100) : 0;
+    priceEl.textContent = fmtPrice(futPx, inst);
+    priceEl.className = 'cp-price' + (chgPct >= 0 ? '' : ' red');
+    chgEl.textContent = (chgPct >= 0 ? '+' : '') + chgPct.toFixed(2) + '%';
+    chgEl.className = 'cp-chg' + (chgPct >= 0 ? ' green' : ' red');
+    if(inst === activeInst) updateStatsBar(data, inst, futPx, basisAdj);
+  });
 }
 
 function updateStatsBar(data, inst, futPx, basisAdj) {
@@ -600,9 +605,8 @@ function selectContract(el) {
   document.getElementById('stat-expiry').textContent = meta.expiry;
   document.getElementById('stat-days').textContent = meta.days + ' days';
   document.getElementById('chart-expiry').textContent = 'Delivery contract — settles at expiry: ' + meta.expiry + ' (' + meta.days + ' days)';
-  const spotInst = meta.spotInst + '-SWAP';
   const basisAdj = activeInst.includes('250926') ? 1.0042 : 1.0015;
-  fetchPrice(spotInst).then(data => { if(data) updateStatsBar(data, activeInst, parseFloat(data.last)*basisAdj, basisAdj); });
+  fetchPrice(meta.spotInst).then(data => { if(data) updateStatsBar(data, activeInst, parseFloat(data.last)*basisAdj, basisAdj); });
 }
 
 function setMarginMode(btn, mode) {

@@ -330,7 +330,7 @@ html.mob .sb-overlay.open{display:block;}
       </div>
       <div class="stat-item">
         <span class="stat-lbl">Open Interest</span>
-        <span class="stat-val" id="stat-oi">$4.28B</span>
+        <span class="stat-val" id="stat-oi">—</span>
       </div>
       <div class="stat-funding">
         <span class="stat-lbl">Funding Rate</span>
@@ -373,8 +373,8 @@ html.mob .sb-overlay.open{display:block;}
           <div class="ob-body">
             <div class="ob-asks" id="ob-asks"></div>
             <div class="ob-spread">
-              <span class="ob-spread-price" id="ob-spread-price">67,412.50</span>
-              <span class="ob-spread-val" id="ob-spread-val">Spread: 0.50</span>
+              <span class="ob-spread-price" id="ob-spread-price">—</span>
+              <span class="ob-spread-val" id="ob-spread-val">Spread: —</span>
               <span></span>
             </div>
             <div class="ob-bids" id="ob-bids"></div>
@@ -454,46 +454,14 @@ html.mob .sb-overlay.open{display:block;}
     <!-- BOTTOM PANEL -->
     <div class="bottom-panel">
       <div class="bp-tabs">
-        <button class="bp-tab active" onclick="setBpTab(this,'positions')">Positions (2)</button>
+        <button class="bp-tab active" onclick="setBpTab(this,'positions')">Positions (0)</button>
         <button class="bp-tab" onclick="setBpTab(this,'open-orders')">Open Orders (0)</button>
         <button class="bp-tab" onclick="setBpTab(this,'order-history')">Order History</button>
         <button class="bp-tab" onclick="setBpTab(this,'trade-history')">Trade History</button>
       </div>
       <div class="bp-content">
         <div id="tab-positions">
-          <table class="pos-table">
-            <thead>
-              <tr>
-                <th>Contract</th><th>Size</th><th>Side</th><th>Entry Price</th><th>Mark Price</th><th>Liq. Price</th><th>Margin</th><th>Unrealized PnL</th><th>ROE%</th><th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>BTC-USDT-PERP</strong></td>
-                <td>0.50 BTC</td>
-                <td class="green">Long</td>
-                <td>66,840.00</td>
-                <td id="pos1-mark">67,412.50</td>
-                <td>60,234.18</td>
-                <td>3,342.00 USDT</td>
-                <td class="green" id="pos1-pnl">+286.25 USDT</td>
-                <td class="green">+8.57%</td>
-                <td><button class="pos-close-btn">Close</button></td>
-              </tr>
-              <tr>
-                <td><strong>ETH-USDT-PERP</strong></td>
-                <td>2.00 ETH</td>
-                <td class="red">Short</td>
-                <td>3,512.40</td>
-                <td>3,489.20</td>
-                <td>3,862.64</td>
-                <td>702.48 USDT</td>
-                <td class="green">+46.40 USDT</td>
-                <td class="green">+6.60%</td>
-                <td><button class="pos-close-btn">Close</button></td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="empty-state">No open positions</div>
         </div>
         <div id="tab-open-orders" style="display:none;">
           <div class="empty-state">No open orders</div>
@@ -553,21 +521,22 @@ function fmtVol(v) {
 }
 
 async function updateAllPills() {
-  for(const inst of contracts) {
-    const data = await fetchPrice(inst);
+  const results = await Promise.all(contracts.map(inst =>
+    fetchPrice(inst).then(data => ({inst, data})).catch(() => ({inst, data: null}))
+  ));
+  results.forEach(({inst, data}) => {
     const priceEl = document.getElementById('pill-'+inst);
     const chgEl = document.getElementById('pill-chg-'+inst);
-    if(data && priceEl) {
-      const px = parseFloat(data.last);
-      const open = parseFloat(data.open24h);
-      const chgPct = open ? ((px-open)/open*100) : 0;
-      priceEl.textContent = fmtPrice(data.last, inst);
-      priceEl.className = 'cp-price' + (chgPct >= 0 ? ' green' : ' red');
-      chgEl.textContent = (chgPct >= 0 ? '+' : '') + chgPct.toFixed(2) + '%';
-      chgEl.className = 'cp-chg' + (chgPct >= 0 ? ' green' : ' red');
-      if(inst === activeInst) updateStatsBar(data, inst);
-    }
-  }
+    if(!data || !priceEl) return;
+    const px = parseFloat(data.last);
+    const open = parseFloat(data.open24h);
+    const chgPct = open ? ((px-open)/open*100) : 0;
+    priceEl.textContent = fmtPrice(data.last, inst);
+    priceEl.className = 'cp-price' + (chgPct >= 0 ? ' green' : ' red');
+    chgEl.textContent = (chgPct >= 0 ? '+' : '') + chgPct.toFixed(2) + '%';
+    chgEl.className = 'cp-chg' + (chgPct >= 0 ? ' green' : ' red');
+    if(inst === activeInst) updateStatsBar(data, inst);
+  });
 }
 
 function updateStatsBar(data, inst) {
