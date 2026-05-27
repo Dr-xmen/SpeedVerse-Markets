@@ -1,0 +1,1617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SpeedVerse OPS — Admin Control Panel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="assets/logo.png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --orange:    #f05a1a;
+      --orange-dk: #d94d12;
+      --blue:      #1a5cff;
+      --blue-dk:   #1244cc;
+      --blue-lt:   #e8eeff;
+      --green:     #22a06b;
+      --green-lt:  #e6f7ef;
+      --red:       #e60023;
+      --orange2:   #f5a623;
+      --purple:    #7c3aed;
+      --purple-lt: #ede9fe;
+      --bg:        #f4f6f9;
+      --white:     #ffffff;
+      --text:      #111111;
+      --muted:     #666666;
+      --border:    #e0e3e8;
+      --sidebar-w: 260px;
+      --topbar-h:  64px;
+    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; overflow-x: clip; }
+    body { font-family: 'Inter', sans-serif; color: var(--text); background: var(--bg); font-size: 14px; line-height: 1.6; overflow-x: clip; }
+    img { display: block; max-width: 100%; }
+    a { text-decoration: none; color: inherit; }
+    button { font-family: inherit; cursor: pointer; }
+    ul { list-style: none; }
+    input, select, textarea { font-family: inherit; }
+
+    body.dark {
+      --bg:       #0f1117;
+      --white:    #1a1d27;
+      --text:     #e8eaf0;
+      --muted:    #8b90a0;
+      --border:   #2a2d3a;
+      --blue-lt:  #1a2444;
+      --green-lt: #0d2b1e;
+      --purple-lt:#2d1f5e;
+    }
+    body.dark .sidebar       { background: #080b13; }
+    body.dark .topbar,
+    body.dark .card,
+    body.dark .modal,
+    body.dark .data-table thead th { background: #1a1d27; }
+    body.dark .field input,
+    body.dark .field select,
+    body.dark .field textarea { background: #0f1117; color: var(--text); }
+    body.dark .stat-card      { background: #1a1d27; }
+    body.dark tbody tr:hover  { background: #0f1117; }
+    body.dark .tab-btn:hover  { background: #0f1117; }
+    body.dark .topbar__icon-btn { background: #0f1117; }
+
+    /* LAYOUT */
+    .layout { display: flex; min-height: 100vh; }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: var(--sidebar-w); background: #0a0e1a; color: #fff;
+      display: flex; flex-direction: column;
+      position: fixed; top: 0; left: 0; bottom: 0; z-index: 200;
+      transition: transform 0.25s ease;
+    }
+    .sidebar__logo {
+      height: var(--topbar-h); display: flex; align-items: center; gap: 10px;
+      padding: 0 20px; border-bottom: 1px solid rgba(255,255,255,0.07); flex-shrink: 0;
+    }
+    .sidebar__logo img { width: 32px; height: 32px; object-fit: contain; }
+    .sidebar__logo-badge {
+      background: var(--orange); color: #fff; font-size: 10px; font-weight: 800;
+      padding: 2px 7px; border-radius: 4px; letter-spacing: 0.08em;
+    }
+    .sidebar__logo-text { font-size: 15px; font-weight: 700; color: #fff; }
+    .sidebar__logo-sub  { font-size: 10px; color: rgba(255,255,255,0.35); }
+    .sidebar__nav { flex: 1; overflow-y: auto; padding: 8px 0; }
+    .sidebar__section-label { font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.3); padding: 14px 20px 5px; }
+    .nav-item {
+      display: flex; align-items: center; gap: 11px;
+      padding: 10px 20px; font-size: 13px; font-weight: 500;
+      color: rgba(255,255,255,0.6); cursor: pointer;
+      border: none; background: none; width: 100%; text-align: left;
+      transition: background 0.15s, color 0.15s;
+    }
+    .nav-item:hover  { background: rgba(255,255,255,0.06); color: #fff; }
+    .nav-item.active { background: rgba(240,90,26,0.18); color: #fff; border-left: 3px solid var(--orange); }
+    .nav-item svg    { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; flex-shrink: 0; }
+    .nav-item__badge { margin-left: auto; font-size: 10px; font-weight: 700; padding: 1px 7px; border-radius: 10px; }
+    .badge-red    { background: var(--red);     color: #fff; }
+    .badge-orange { background: var(--orange2); color: #fff; }
+    .badge-green  { background: var(--green);   color: #fff; }
+    .sidebar__footer {
+      padding: 14px 20px; border-top: 1px solid rgba(255,255,255,0.07);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .sidebar__avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--orange); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0; }
+    .sidebar__user-name { font-size: 13px; font-weight: 600; color: #fff; }
+    .sidebar__user-role { font-size: 10px; color: rgba(255,255,255,0.4); }
+    .sidebar__logout { margin-left: auto; background: none; border: none; color: rgba(255,255,255,0.35); padding: 4px; }
+    .sidebar__logout:hover { color: var(--red); }
+    .sidebar__logout svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2; }
+
+    /* MAIN */
+    .main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; min-height: 100vh; min-width: 0; }
+
+    /* TOPBAR */
+    .topbar {
+      height: var(--topbar-h); background: var(--white);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; padding: 0 24px; gap: 12px;
+      position: sticky; top: 0; z-index: 100; flex-shrink: 0;
+    }
+    .topbar__hamburger { display: none; background: none; border: none; flex-direction: column; gap: 4px; padding: 4px; }
+    .topbar__hamburger span { display: block; width: 20px; height: 2px; background: var(--text); border-radius: 2px; }
+    .topbar__title { font-size: 15px; font-weight: 700; }
+    .topbar__env { font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 4px; background: rgba(240,90,26,0.1); color: var(--orange); letter-spacing: 0.08em; }
+    .topbar__search { flex: 1; max-width: 280px; position: relative; }
+    .topbar__search input { width: 100%; height: 34px; border: 1.5px solid var(--border); border-radius: 20px; padding: 0 12px 0 34px; font-size: 13px; outline: none; background: var(--bg); color: var(--text); transition: border-color 0.15s; }
+    .topbar__search input:focus { border-color: var(--orange); background: var(--white); }
+    .topbar__search svg { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; fill: none; stroke: var(--muted); stroke-width: 2; }
+    .topbar__right { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+    .topbar__icon-btn { width: 34px; height: 34px; border-radius: 50%; background: var(--bg); border: none; display: flex; align-items: center; justify-content: center; position: relative; transition: background 0.15s; }
+    .topbar__icon-btn:hover { background: var(--border); }
+    .topbar__icon-btn svg { width: 16px; height: 16px; fill: none; stroke: var(--text); stroke-width: 2; }
+    .topbar__notif-dot { position: absolute; top: 5px; right: 5px; width: 7px; height: 7px; border-radius: 50%; background: var(--red); border: 2px solid var(--white); }
+    .topbar__avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--orange); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; }
+    .dark-toggle { width: 34px; height: 34px; border-radius: 50%; background: var(--bg); border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; }
+    .dark-toggle svg { width: 15px; height: 15px; fill: none; stroke: var(--text); stroke-width: 2; }
+
+    /* CONTENT */
+    .content { padding: 24px; flex: 1; min-width: 0; overflow-x: clip; }
+
+    .page-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 22px; flex-wrap: wrap; gap: 12px; }
+    .page-header__title { font-size: 20px; font-weight: 700; letter-spacing: -0.3px; }
+    .page-header__sub   { font-size: 13px; color: var(--muted); margin-top: 2px; }
+
+    /* BUTTONS */
+    .btn { display: inline-flex; align-items: center; gap: 6px; border-radius: 7px; font-size: 13px; font-weight: 600; padding: 8px 16px; border: none; cursor: pointer; transition: background 0.15s, opacity 0.15s; white-space: nowrap; }
+    .btn svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; }
+    .btn--primary { background: var(--orange);  color: #fff; }
+    .btn--primary:hover { background: var(--orange-dk); }
+    .btn--blue    { background: var(--blue);    color: #fff; }
+    .btn--blue:hover { background: var(--blue-dk); }
+    .btn--green   { background: var(--green);   color: #fff; }
+    .btn--green:hover { opacity: 0.88; }
+    .btn--red     { background: var(--red);     color: #fff; }
+    .btn--red:hover { opacity: 0.88; }
+    .btn--outline { background: var(--white);   color: var(--text); border: 1.5px solid var(--border); }
+    .btn--outline:hover { border-color: var(--orange); color: var(--orange); }
+    .btn--sm { padding: 5px 12px; font-size: 12px; border-radius: 6px; }
+
+    /* STAT CARDS */
+    .stat-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px,1fr)); gap: 14px; margin-bottom: 22px; }
+    .stat-card { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 18px; }
+    .stat-card__label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+    .stat-card__label svg { width: 13px; height: 13px; fill: none; stroke-width: 2; }
+    .stat-card__value  { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; line-height: 1; }
+    .stat-card__change { font-size: 12px; font-weight: 500; margin-top: 5px; }
+    .stat-card__change.up   { color: var(--green); }
+    .stat-card__change.down { color: var(--red); }
+    .stat-card--orange { background: var(--orange); border-color: var(--orange); color: #fff; }
+    .stat-card--orange .stat-card__label { color: rgba(255,255,255,0.7); }
+    .stat-card--orange .stat-card__change { color: rgba(255,255,255,0.8); }
+    .stat-card--blue   { background: var(--blue);   border-color: var(--blue);   color: #fff; }
+    .stat-card--blue .stat-card__label { color: rgba(255,255,255,0.7); }
+    .stat-card--blue .stat-card__change { color: rgba(255,255,255,0.8); }
+
+    /* CARD */
+    .card { background: var(--white); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 20px; }
+    .card__head { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 10px; }
+    .card__title { font-size: 14px; font-weight: 700; }
+    .card__body  { padding: 20px; }
+    .card__body--p0 { padding: 0; }
+
+    /* TABS */
+    .tabs { display: flex; gap: 4px; }
+    .tab-btn { padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; color: var(--muted); background: none; border: none; cursor: pointer; transition: background 0.12s, color 0.12s; }
+    .tab-btn:hover  { background: var(--bg); color: var(--text); }
+    .tab-btn.active { background: rgba(240,90,26,0.12); color: var(--orange); }
+
+    /* DATA TABLE */
+    .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; width: 100%; }
+    .data-table { width: 100%; border-collapse: collapse; min-width: 700px; }
+    .data-table thead th { text-align: left; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); padding: 10px 16px; border-bottom: 1px solid var(--border); background: var(--bg); white-space: nowrap; }
+    .data-table tbody td { padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: middle; }
+    .data-table tbody tr:last-child td { border-bottom: none; }
+    .data-table tbody tr:hover { background: var(--bg); cursor: pointer; }
+
+    /* BADGE PILLS */
+    .badge-pill { display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 9px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .pill-green  { background: var(--green-lt);  color: var(--green); }
+    .pill-red    { background: #fff0f0;           color: var(--red); }
+    .pill-blue   { background: var(--blue-lt);   color: var(--blue); }
+    .pill-orange { background: rgba(240,90,26,0.12); color: var(--orange); }
+    .pill-purple { background: var(--purple-lt); color: var(--purple); }
+    .pill-grey   { background: var(--bg);        color: var(--muted); }
+
+    /* USER CELL */
+    .user-cell { display: flex; align-items: center; gap: 10px; }
+    .user-avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0; }
+    .user-name  { font-size: 13px; font-weight: 600; }
+    .user-email { font-size: 11px; color: var(--muted); }
+    .row-actions { display: flex; gap: 6px; }
+
+    /* FORMS */
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-grid--3 { grid-template-columns: 1fr 1fr 1fr; }
+    .field { display: flex; flex-direction: column; gap: 5px; }
+    .field--full { grid-column: 1 / -1; }
+    .field label { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+    .field input, .field select, .field textarea { height: 40px; border: 1.5px solid var(--border); border-radius: 7px; padding: 0 12px; font-size: 13px; color: var(--text); background: var(--white); outline: none; transition: border-color 0.15s; }
+    .field textarea { height: auto; padding: 10px 12px; resize: vertical; min-height: 80px; }
+    .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--orange); }
+    .field select { appearance: none; background: var(--white) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 12px center; padding-right: 32px; }
+
+    /* TOGGLE */
+    .toggle-wrap { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); }
+    .toggle-wrap:last-child { border-bottom: none; }
+    .toggle-wrap__label { font-size: 13px; font-weight: 500; }
+    .toggle-wrap__sub   { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .toggle-switch { position: relative; width: 40px; height: 22px; flex-shrink: 0; }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider { position: absolute; inset: 0; background: var(--border); border-radius: 22px; cursor: pointer; transition: background 0.2s; }
+    .toggle-slider::before { content: ''; position: absolute; width: 16px; height: 16px; background: #fff; border-radius: 50%; top: 3px; left: 3px; transition: transform 0.2s; }
+    .toggle-switch input:checked + .toggle-slider { background: var(--orange); }
+    .toggle-switch input:checked + .toggle-slider::before { transform: translateX(18px); }
+
+    /* MODAL */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 500; align-items: center; justify-content: center; padding: 20px; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: var(--white); border-radius: 14px; width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto; }
+    .modal__head { display: flex; align-items: center; justify-content: space-between; padding: 18px 22px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--white); z-index: 1; }
+    .modal__title { font-size: 16px; font-weight: 700; }
+    .modal__close { background: none; border: none; color: var(--muted); padding: 4px; }
+    .modal__close:hover { color: var(--text); }
+    .modal__close svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; }
+    .modal__body { padding: 22px; }
+    .modal__foot { padding: 16px 22px; border-top: 1px solid var(--border); display: flex; gap: 10px; justify-content: flex-end; }
+
+    /* TOAST */
+    .toast { position: fixed; bottom: 24px; right: 24px; z-index: 600; background: var(--text); color: var(--white); padding: 12px 20px; border-radius: 8px; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.2); transform: translateY(80px); opacity: 0; transition: transform 0.3s, opacity 0.3s; max-width: 320px; }
+    .toast.show    { transform: translateY(0); opacity: 1; }
+    .toast.success { background: var(--green); }
+    .toast.error   { background: var(--red); }
+    .toast svg { width: 16px; height: 16px; fill: none; stroke: #fff; stroke-width: 2.5; flex-shrink: 0; }
+
+    /* PAGES */
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* ACTIVITY */
+    .activity-item { display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+    .activity-item:last-child { border-bottom: none; }
+    .activity-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
+    .activity-text { font-size: 13px; flex: 1; line-height: 1.5; }
+    .activity-time { font-size: 11px; color: var(--muted); white-space: nowrap; }
+
+    /* GRIDS */
+    .dash-grid    { display: grid; grid-template-columns: 1fr 340px; gap: 18px; }
+    .two-col-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .filter-bar   { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+    .filter-bar .filter-bar__search  { height: 34px; border: 1.5px solid var(--border); border-radius: 7px; padding: 0 12px; font-size: 13px; outline: none; width: 220px; color: var(--text); background: var(--white); }
+    .filter-bar .filter-bar__select  { height: 34px; border: 1.5px solid var(--border); border-radius: 7px; padding: 0 12px; font-size: 13px; outline: none; min-width: 140px; color: var(--text); background: var(--white); appearance: none; }
+
+    /* SIDEBAR OVERLAY */
+    .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 199; }
+    .sidebar-overlay.open { display: block; }
+
+    /* SCROLLBARS */
+    * { scrollbar-width: thin; scrollbar-color: var(--border) var(--bg); }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    /* PLAN OPTIONS */
+    .plan-option { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 10px; border: 1.5px solid var(--border); cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+    .plan-option:hover { border-color: var(--orange); background: rgba(240,90,26,0.05); }
+    .plan-option:has(input:checked) { border-color: var(--orange); background: rgba(240,90,26,0.08); }
+    .plan-option input[type=radio] { accent-color: var(--orange); flex-shrink: 0; }
+    .plan-option__name { display: block; font-size: 13px; font-weight: 600; }
+    .plan-option__desc { display: block; font-size: 11px; color: var(--muted); margin-top: 1px; }
+
+    @media (max-width: 900px) { .dash-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 768px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .main { margin-left: 0; width: 100vw; max-width: 100vw; }
+      .topbar { padding: 0 14px; gap: 8px; }
+      .topbar__hamburger { display: flex; }
+      .topbar__search, .topbar__env { display: none; }
+      .content { padding: 14px; overflow-x: clip; }
+      .stat-cards { grid-template-columns: 1fr 1fr; }
+      .form-grid, .form-grid--3, .two-col-grid, .dash-grid { grid-template-columns: 1fr; }
+      .page-header { flex-direction: column; align-items: flex-start; }
+      .toast { right: 14px; left: 14px; max-width: calc(100vw - 28px); bottom: 14px; }
+      .modal { max-width: calc(100vw - 32px); }
+    }
+    @media (max-width: 480px) { .stat-cards { grid-template-columns: 1fr 1fr; } .topbar__icon-btn { display: none; } }
+    @media (max-width: 360px) { .stat-cards { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+<div class="layout" id="main-app" style="visibility:hidden;">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar__logo">
+      <img src="assets/logo.png" alt="SV">
+      <div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="sidebar__logo-text">SpeedVerse</span>
+          <span class="sidebar__logo-badge">OPS</span>
+        </div>
+        <div class="sidebar__logo-sub">Admin Control Panel</div>
+      </div>
+    </div>
+
+    <nav class="sidebar__nav">
+      <div class="sidebar__section-label">Overview</div>
+      <button class="nav-item active" onclick="showPage('dashboard',this)">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </button>
+      <button class="nav-item" onclick="showPage('activity',this)">
+        <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Live Activity
+        <span class="nav-item__badge badge-red" id="activity-badge">0</span>
+      </button>
+
+      <div class="sidebar__section-label">Users</div>
+      <button class="nav-item" onclick="showPage('users',this)">
+        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        All Users
+        <span class="nav-item__badge badge-green" id="users-badge">—</span>
+      </button>
+      <button class="nav-item" onclick="showPage('verification',this)">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        KYC / Verification
+        <span class="nav-item__badge badge-orange" id="kyc-badge">—</span>
+      </button>
+
+      <div class="sidebar__section-label">Accounts</div>
+      <button class="nav-item" onclick="showPage('accounts',this)">
+        <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+        Trading Accounts
+      </button>
+      <button class="nav-item" onclick="showPage('balances',this)">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        Balances &amp; P&amp;L
+      </button>
+      <button class="nav-item" onclick="showPage('positions',this)">
+        <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Trades
+      </button>
+
+      <div class="sidebar__section-label">Finance</div>
+      <button class="nav-item" onclick="showPage('deposits',this)">
+        <svg viewBox="0 0 24 24"><path d="M12 2v20M17 7H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        Deposits
+        <span class="nav-item__badge badge-orange" id="dep-badge">—</span>
+      </button>
+      <button class="nav-item" onclick="showPage('withdrawals',this)">
+        <svg viewBox="0 0 24 24"><polyline points="17 11 12 6 7 11"/><line x1="12" y1="18" x2="12" y2="6"/></svg>
+        Withdrawals
+        <span class="nav-item__badge badge-red" id="wd-badge">—</span>
+      </button>
+      <button class="nav-item" onclick="showPage('transactions',this)">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        All Transactions
+      </button>
+
+      <div class="sidebar__section-label">Content</div>
+      <button class="nav-item" onclick="showPage('announcements',this)">
+        <svg viewBox="0 0 24 24"><path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3zm-8.27 4a2 2 0 0 1-3.46 0"/></svg>
+        Announcements
+      </button>
+      <button class="nav-item" onclick="showPage('markets-control',this)">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        Markets Control
+      </button>
+      <button class="nav-item" onclick="showPage('emails',this)">
+        <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        Email Users
+      </button>
+
+      <div class="sidebar__section-label">System</div>
+      <button class="nav-item" onclick="showPage('settings',this)">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        System Settings
+      </button>
+      <button class="nav-item" onclick="showPage('audit',this)">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        Audit Log
+      </button>
+    </nav>
+
+    <div class="sidebar__footer">
+      <div class="sidebar__avatar" id="sidebar-avatar">—</div>
+      <div>
+        <div class="sidebar__user-name" id="sidebar-name">—</div>
+        <div class="sidebar__user-role" id="sidebar-role">OPS</div>
+      </div>
+      <button class="sidebar__logout" onclick="doSignOut()" title="Sign out">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <div class="topbar">
+      <button class="topbar__hamburger" onclick="toggleSidebar()"><span></span><span></span><span></span></button>
+      <div class="topbar__title" id="page-title">Dashboard</div>
+      <span class="topbar__env">ADMIN · OPS</span>
+      <div class="topbar__search">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" placeholder="Search users, accounts…" oninput="globalSearch(this.value)">
+      </div>
+      <div class="topbar__right">
+        <button class="dark-toggle" onclick="toggleDark()">
+          <svg id="dark-icon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <button class="topbar__icon-btn">
+          <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <div class="topbar__notif-dot"></div>
+        </button>
+        <div class="topbar__avatar" id="topbar-avatar">—</div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- DASHBOARD -->
+      <div class="page active" id="page-dashboard">
+        <div class="page-header">
+          <div>
+            <div class="page-header__title">Admin Overview</div>
+            <div class="page-header__sub" id="dash-date"></div>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn--outline" onclick="loadDashStats()"><svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button>
+            <button class="btn btn--primary" onclick="showPage('users',document.querySelector('[onclick*=users]'));openModal('modal-add-user')">
+              <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add User
+            </button>
+          </div>
+        </div>
+        <div class="stat-cards">
+          <div class="stat-card stat-card--orange">
+            <div class="stat-card__label"><svg style="stroke:#fff" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Total Users</div>
+            <div class="stat-card__value" id="stat-users">—</div>
+            <div class="stat-card__change">Live data</div>
+          </div>
+          <div class="stat-card stat-card--blue">
+            <div class="stat-card__label"><svg style="stroke:#fff" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/></svg>Live Accounts</div>
+            <div class="stat-card__value" id="stat-live">—</div>
+            <div class="stat-card__change">Live data</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card__label"><svg style="stroke:var(--green)" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Total AUM</div>
+            <div class="stat-card__value" id="stat-aum">—</div>
+            <div class="stat-card__change">All accounts</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card__label"><svg style="stroke:var(--blue)" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Open Positions</div>
+            <div class="stat-card__value" id="stat-pos">—</div>
+            <div class="stat-card__change">Live data</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card__label"><svg style="stroke:var(--orange2)" viewBox="0 0 24 24"><path d="M12 2v20M17 7H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Pending Deposits</div>
+            <div class="stat-card__value" id="stat-dep">—</div>
+            <div class="stat-card__change down">Needs review</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card__label"><svg style="stroke:var(--red)" viewBox="0 0 24 24"><polyline points="17 11 12 6 7 11"/><line x1="12" y1="18" x2="12" y2="6"/></svg>Pending Withdrawals</div>
+            <div class="stat-card__value" id="stat-wd">—</div>
+            <div class="stat-card__change down">Needs approval</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card__label"><svg style="stroke:var(--orange2)" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>KYC Pending</div>
+            <div class="stat-card__value" id="stat-kyc">—</div>
+            <div class="stat-card__change down">Action required</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card__label"><svg style="stroke:var(--green)" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Today's Volume</div>
+            <div class="stat-card__value" id="stat-vol">—</div>
+            <div class="stat-card__change">Today's txns</div>
+          </div>
+        </div>
+        <div class="dash-grid">
+          <div class="card">
+            <div class="card__head">
+              <div class="card__title">Recent Registrations</div>
+              <button class="btn btn--sm btn--outline" onclick="showPage('users',document.querySelector('[onclick*=users]'))">View all</button>
+            </div>
+            <div class="card__body--p0 table-wrap">
+              <table class="data-table">
+                <thead><tr><th>User</th><th>Country</th><th>Joined</th><th>Status</th><th>KYC</th></tr></thead>
+                <tbody id="recent-users-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card__head"><div class="card__title">Live Activity</div></div>
+            <div class="card__body" id="dash-activity" style="padding:12px 20px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LIVE ACTIVITY -->
+      <div class="page" id="page-activity">
+        <div class="page-header">
+          <div><div class="page-header__title">Live Activity</div><div class="page-header__sub">Real-time platform events</div></div>
+          <button class="btn btn--outline" onclick="renderActivity()"><svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button>
+        </div>
+        <div class="card"><div class="card__body" id="activity-feed" style="padding:12px 20px;"></div></div>
+      </div>
+
+      <!-- ALL USERS -->
+      <div class="page" id="page-users">
+        <div class="page-header">
+          <div><div class="page-header__title">User Management</div><div class="page-header__sub" id="users-sub">Loading…</div></div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <button class="btn btn--outline" onclick="renderUsersLive()"><svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button>
+            <button class="btn btn--outline" onclick="exportCSV('users')"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export CSV</button>
+            <button class="btn btn--primary" onclick="openModal('modal-add-user')"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add User</button>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:16px;">
+          <div class="card__body" style="padding:14px 20px;">
+            <div class="filter-bar">
+              <div class="tabs">
+                <button class="tab-btn active" onclick="filterUsers('all',this)">All</button>
+                <button class="tab-btn" onclick="filterUsers('live',this)">Live</button>
+                <button class="tab-btn" onclick="filterUsers('demo',this)">Demo</button>
+                <button class="tab-btn" onclick="filterUsers('suspended',this)">Suspended</button>
+              </div>
+              <input type="text" placeholder="Search name or email…" class="filter-bar__search" oninput="searchUsers(this.value)">
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card__body--p0 table-wrap">
+            <table class="data-table" id="users-table">
+              <thead><tr><th><input type="checkbox" onchange="toggleSelectAll(this)"></th><th>User</th><th>Country</th><th>Account Type</th><th>Balance</th><th>Joined</th><th>Status</th><th>KYC</th><th>Plan</th><th>Actions</th></tr></thead>
+              <tbody id="users-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- KYC -->
+      <div class="page" id="page-verification">
+        <div class="page-header">
+          <div><div class="page-header__title">KYC / Verification Queue</div><div class="page-header__sub" id="kyc-sub">Loading…</div></div>
+          <button class="btn btn--outline" onclick="renderKYCLive()"><svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button>
+        </div>
+        <div class="card">
+          <div class="card__body--p0 table-wrap">
+            <table class="data-table">
+              <thead><tr><th>User</th><th>Submitted</th><th>Doc Type</th><th>Country</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody id="kyc-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TRADING ACCOUNTS -->
+      <div class="page" id="page-accounts">
+        <div class="page-header">
+          <div><div class="page-header__title">Trading Accounts</div><div class="page-header__sub" id="accts-sub">Loading…</div></div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn--outline" onclick="renderAccountsLive()"><svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button>
+            <button class="btn btn--primary" onclick="openModal('modal-add-account')"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New Account</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card__body--p0 table-wrap">
+            <table class="data-table">
+              <thead><tr><th>Account #</th><th>User</th><th>Type</th><th>Balance</th><th>Leverage</th><th>Status</th><th>Created</th><th>Actions</th></tr></thead>
+              <tbody id="accounts-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- BALANCES -->
+      <div class="page" id="page-balances">
+        <div class="page-header">
+          <div><div class="page-header__title">Balances &amp; P&amp;L</div><div class="page-header__sub">All account balances and equity</div></div>
+          <button class="btn btn--outline" onclick="renderBalancesLive()"><svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button>
+        </div>
+        <div class="card">
+          <div class="card__body--p0 table-wrap">
+            <table class="data-table">
+              <thead><tr><th>User</th><th>Account</th><th>Balance</th><th>Equity</th><th>Margin Used</th><th>P&amp;L</th><th>Actions</th></tr></thead>
+              <tbody id="balances-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TRADES / POSITIONS -->
+      <div class="page" id="page-positions">
+        <div class="page-header">
+          <div><div class="page-header__title">Trades</div><div class="page-header__sub">Open and recent positions</div></div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn--outline" onclick="renderPositionsLive()"><svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button>
+            <button class="btn btn--red" onclick="forceCloseAll()">Force Close All</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card__body--p0 table-wrap">
+            <table class="data-table">
+              <thead><tr><th>Ticket</th><th>User</th><th>Symbol</th><th>Side</th><th>Lots</th><th>Open Price</th><th>Current</th><th>P&amp;L</th><th>Opened</th><th>Actions</th></tr></thead>
+              <tbody id="positions-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- DEPOSITS -->
+      <div class="page" id="page-deposits">
+        <div class="page-header">
+          <div><div class="page-header__title">Deposits</div><div class="page-header__sub" id="dep-sub">Loading…</div></div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn--outline" onclick="renderDepositsLive()"><svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button>
+            <button class="btn btn--primary" onclick="openModal('modal-manual-deposit')">Manual Deposit</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card__body--p0 table-wrap">
+            <table class="data-table">
+              <thead><tr><th>User</th><th>Amount</th><th>Currency</th><th>Method</th><th>TxID</th><th>Submitted</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody id="deposits-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- WITHDRAWALS -->
+      <div class="page" id="page-withdrawals">
+        <div class="page-header">
+          <div><div class="page-header__title">Withdrawals</div><div class="page-header__sub" id="wd-sub">Loading…</div></div>
+          <button class="btn btn--outline" onclick="renderWithdrawalsLive()"><svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button>
+        </div>
+        <div class="card">
+          <div class="card__body--p0 table-wrap">
+            <table class="data-table">
+              <thead><tr><th>User</th><th>Amount</th><th>Method</th><th>Wallet / Bank</th><th>Requested</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody id="withdrawals-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TRANSACTIONS -->
+      <div class="page" id="page-transactions">
+        <div class="page-header">
+          <div><div class="page-header__title">All Transactions</div><div class="page-header__sub">Complete ledger</div></div>
+          <button class="btn btn--outline" onclick="renderTransactionsLive()"><svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button>
+        </div>
+        <div class="card">
+          <div class="card__body--p0 table-wrap">
+            <table class="data-table">
+              <thead><tr><th>User</th><th>Type</th><th>Amount</th><th>Currency</th><th>Date</th><th>Status</th></tr></thead>
+              <tbody id="transactions-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ANNOUNCEMENTS -->
+      <div class="page" id="page-announcements">
+        <div class="page-header">
+          <div><div class="page-header__title">Announcements</div><div class="page-header__sub">Publish platform-wide messages</div></div>
+        </div>
+        <div class="two-col-grid">
+          <div class="card">
+            <div class="card__head"><div class="card__title">New Announcement</div></div>
+            <div class="card__body">
+              <div class="form-grid" style="grid-template-columns:1fr;">
+                <div class="field"><label>Title</label><input type="text" id="ann-title" placeholder="Announcement title"></div>
+                <div class="field"><label>Message</label><textarea id="ann-body" rows="5" placeholder="Write your announcement…"></textarea></div>
+                <div class="field"><label>Type</label>
+                  <select id="ann-type">
+                    <option>Info</option><option>Warning</option><option>Success</option><option>Promo</option>
+                  </select>
+                </div>
+              </div>
+              <button class="btn btn--primary" style="margin-top:16px;width:100%;" onclick="publishAnnouncement()">Publish</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card__head"><div class="card__title">Recent Announcements</div></div>
+            <div class="card__body" id="ann-list"><div style="color:var(--muted);font-size:13px;">Loading…</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MARKETS CONTROL -->
+      <div class="page" id="page-markets-control">
+        <div class="page-header">
+          <div><div class="page-header__title">Markets Control</div><div class="page-header__sub">Enable/disable instruments and manage spreads</div></div>
+        </div>
+        <div class="two-col-grid">
+          <div class="card">
+            <div class="card__head"><div class="card__title">Instrument Toggles</div></div>
+            <div class="card__body" id="mkt-toggles"></div>
+          </div>
+          <div class="card">
+            <div class="card__head"><div class="card__title">Spread &amp; Leverage</div></div>
+            <div class="card__body">
+              <div class="form-grid" style="grid-template-columns:1fr;">
+                <div class="field"><label>Instrument</label><select id="spread-instrument"></select></div>
+                <div class="field"><label>Spread (pips)</label><input type="number" id="spread-value" placeholder="e.g. 1.2" step="0.1"></div>
+                <div class="field"><label>Max Leverage</label><select id="spread-leverage"><option>1:10</option><option>1:25</option><option>1:50</option><option>1:100</option><option>1:200</option><option>1:500</option></select></div>
+                <div class="field"><label>Trading Hours</label><input type="text" id="spread-hours" placeholder="e.g. 00:00-23:59 UTC"></div>
+              </div>
+              <button class="btn btn--primary" style="margin-top:16px;width:100%;" onclick="saveSpreadSettings()">Save Settings</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- EMAIL USERS -->
+      <div class="page" id="page-emails">
+        <div class="page-header">
+          <div><div class="page-header__title">Email Users</div><div class="page-header__sub">Send targeted emails to platform users</div></div>
+        </div>
+        <div class="card">
+          <div class="card__head"><div class="card__title">Compose Email</div></div>
+          <div class="card__body">
+            <div class="form-grid">
+              <div class="field"><label>To</label>
+                <select id="email-to"><option value="all">All Users</option><option value="live">Live Account Holders</option><option value="demo">Demo Users</option><option value="kyc-pending">KYC Pending</option></select>
+              </div>
+              <div class="field"><label>Subject</label><input type="text" id="email-subject" placeholder="Email subject"></div>
+              <div class="field field--full"><label>Body (HTML)</label><textarea id="email-body" rows="8" placeholder="Email content…"></textarea></div>
+            </div>
+            <button class="btn btn--primary" style="margin-top:16px;" onclick="sendEmail()">Send Email</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SYSTEM SETTINGS -->
+      <div class="page" id="page-settings">
+        <div class="page-header">
+          <div><div class="page-header__title">System Settings</div><div class="page-header__sub">Platform-wide configuration</div></div>
+          <button class="btn btn--primary" onclick="saveSystemSettings()">Save Changes</button>
+        </div>
+        <div class="two-col-grid">
+          <div class="card">
+            <div class="card__head"><div class="card__title">Platform Toggles</div></div>
+            <div class="card__body">
+              <div class="toggle-wrap"><div><div class="toggle-wrap__label">Registrations Open</div><div class="toggle-wrap__sub">Allow new user sign-ups</div></div><label class="toggle-switch"><input type="checkbox" id="toggle-reg" checked><span class="toggle-slider"></span></label></div>
+              <div class="toggle-wrap"><div><div class="toggle-wrap__label">Live Trading Enabled</div><div class="toggle-wrap__sub">Allow live account trades</div></div><label class="toggle-switch"><input type="checkbox" id="toggle-trading" checked><span class="toggle-slider"></span></label></div>
+              <div class="toggle-wrap"><div><div class="toggle-wrap__label">Deposits Enabled</div><div class="toggle-wrap__sub">Accept incoming deposits</div></div><label class="toggle-switch"><input type="checkbox" id="toggle-deposits" checked><span class="toggle-slider"></span></label></div>
+              <div class="toggle-wrap"><div><div class="toggle-wrap__label">Withdrawals Enabled</div><div class="toggle-wrap__sub">Process withdrawal requests</div></div><label class="toggle-switch"><input type="checkbox" id="toggle-withdrawals" checked><span class="toggle-slider"></span></label></div>
+              <div class="toggle-wrap"><div><div class="toggle-wrap__label">Maintenance Mode</div><div class="toggle-wrap__sub">Show maintenance page to users</div></div><label class="toggle-switch"><input type="checkbox" id="toggle-maintenance"><span class="toggle-slider"></span></label></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card__head"><div class="card__title">Deposit Addresses</div></div>
+            <div class="card__body">
+              <div class="form-grid" style="grid-template-columns:1fr;">
+                <div class="field"><label>USDT (TRC-20)</label><input type="text" id="addr-trc20" placeholder="TRC-20 wallet address"></div>
+                <div class="field"><label>USDT (ERC-20)</label><input type="text" id="addr-erc20" placeholder="ERC-20 wallet address"></div>
+                <div class="field"><label>Bitcoin (BTC)</label><input type="text" id="addr-btc" placeholder="Bitcoin wallet address"></div>
+                <div class="field"><label>Ethereum (ETH)</label><input type="text" id="addr-eth" placeholder="Ethereum wallet address"></div>
+              </div>
+              <button class="btn btn--primary" style="margin-top:16px;width:100%;" onclick="saveDepositAddresses()">Save Addresses</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AUDIT LOG -->
+      <div class="page" id="page-audit">
+        <div class="page-header">
+          <div><div class="page-header__title">Audit Log</div><div class="page-header__sub">All admin actions</div></div>
+          <button class="btn btn--outline" onclick="renderAuditLive()"><svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button>
+        </div>
+        <div class="card">
+          <div class="card__body--p0 table-wrap">
+            <table class="data-table">
+              <thead><tr><th>Admin</th><th>Action</th><th>Target</th><th>Details</th><th>Date</th></tr></thead>
+              <tbody id="audit-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /layout -->
+
+<!-- MODALS -->
+<div class="modal-overlay" id="modal-add-user">
+  <div class="modal">
+    <div class="modal__head"><div class="modal__title">Add New User</div><button class="modal__close" onclick="closeModal('modal-add-user')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div class="modal__body">
+      <div class="form-grid">
+        <div class="field"><label>First Name</label><input type="text" id="nu-fname" placeholder="First name"></div>
+        <div class="field"><label>Last Name</label><input type="text" id="nu-lname" placeholder="Last name"></div>
+        <div class="field field--full"><label>Email</label><input type="email" id="nu-email" placeholder="user@example.com"></div>
+        <div class="field"><label>Phone</label><input type="tel" id="nu-phone" placeholder="+1 000 000 0000"></div>
+        <div class="field"><label>Country</label><input type="text" id="nu-country" placeholder="United Kingdom"></div>
+        <div class="field"><label>Account Type</label><select id="nu-type"><option>live</option><option>demo</option></select></div>
+        <div class="field"><label>Initial Balance (USD)</label><input type="number" id="nu-balance" placeholder="0.00"></div>
+        <div class="field"><label>Plan</label><select id="nu-plan"><option>Standard</option><option>RAW+</option><option>ELITE</option><option>MASTER</option></select></div>
+      </div>
+    </div>
+    <div class="modal__foot">
+      <button class="btn btn--outline" onclick="closeModal('modal-add-user')">Cancel</button>
+      <button class="btn btn--primary" onclick="saveUser()">Create User</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-add-account">
+  <div class="modal">
+    <div class="modal__head"><div class="modal__title">Create Trading Account</div><button class="modal__close" onclick="closeModal('modal-add-account')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div class="modal__body">
+      <div class="form-grid">
+        <div class="field field--full"><label>User ID / Email</label><input type="text" id="na-user" placeholder="User ID or email"></div>
+        <div class="field"><label>Account Type</label><select id="na-type"><option>live</option><option>demo</option></select></div>
+        <div class="field"><label>Initial Balance</label><input type="number" id="na-balance" placeholder="0.00"></div>
+        <div class="field"><label>Leverage</label><select id="na-leverage"><option>1:100</option><option>1:200</option><option>1:500</option><option>1:50</option><option>1:25</option></select></div>
+      </div>
+    </div>
+    <div class="modal__foot">
+      <button class="btn btn--outline" onclick="closeModal('modal-add-account')">Cancel</button>
+      <button class="btn btn--primary" onclick="saveAccount()">Create Account</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-edit-user">
+  <div class="modal">
+    <div class="modal__head"><div class="modal__title">Edit User</div><button class="modal__close" onclick="closeModal('modal-edit-user')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div class="modal__body">
+      <input type="hidden" id="eu-id">
+      <div class="form-grid">
+        <div class="field"><label>First Name</label><input type="text" id="eu-fname"></div>
+        <div class="field"><label>Last Name</label><input type="text" id="eu-lname"></div>
+        <div class="field field--full"><label>Email</label><input type="email" id="eu-email"></div>
+        <div class="field"><label>Country</label><input type="text" id="eu-country"></div>
+        <div class="field"><label>Status</label><select id="eu-status"><option>active</option><option>suspended</option><option>pending</option></select></div>
+        <div class="field"><label>Plan</label><select id="eu-plan"><option>Standard</option><option>RAW+</option><option>ELITE</option><option>MASTER</option></select></div>
+      </div>
+    </div>
+    <div class="modal__foot">
+      <button class="btn btn--outline" onclick="closeModal('modal-edit-user')">Cancel</button>
+      <button class="btn btn--primary" onclick="updateUser()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-adjust-balance">
+  <div class="modal" style="max-width:420px;">
+    <div class="modal__head"><div class="modal__title">Adjust Balance</div><button class="modal__close" onclick="closeModal('modal-adjust-balance')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div class="modal__body">
+      <input type="hidden" id="adj-account-id">
+      <div style="font-size:13px;color:var(--muted);margin-bottom:16px;" id="adj-info"></div>
+      <div class="form-grid" style="grid-template-columns:1fr;">
+        <div class="field"><label>Adjustment Type</label><select id="adj-type"><option value="credit">Credit (add funds)</option><option value="debit">Debit (remove funds)</option></select></div>
+        <div class="field"><label>Amount (USD)</label><input type="number" id="adj-amount" placeholder="0.00" min="0" step="0.01"></div>
+        <div class="field"><label>Note</label><input type="text" id="adj-note" placeholder="Reason for adjustment"></div>
+      </div>
+    </div>
+    <div class="modal__foot">
+      <button class="btn btn--outline" onclick="closeModal('modal-adjust-balance')">Cancel</button>
+      <button class="btn btn--primary" onclick="applyAdjustment()">Apply</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-manual-deposit">
+  <div class="modal" style="max-width:420px;">
+    <div class="modal__head"><div class="modal__title">Manual Deposit</div><button class="modal__close" onclick="closeModal('modal-manual-deposit')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div class="modal__body">
+      <div class="form-grid" style="grid-template-columns:1fr;">
+        <div class="field"><label>User ID / Email</label><input type="text" id="md-user" placeholder="User ID or email"></div>
+        <div class="field"><label>Amount (USD)</label><input type="number" id="md-amount" placeholder="0.00" step="0.01"></div>
+        <div class="field"><label>Method</label><select id="md-method"><option>USDT TRC-20</option><option>USDT ERC-20</option><option>Bitcoin</option><option>Ethereum</option><option>Bank Transfer</option></select></div>
+        <div class="field"><label>TxID / Reference</label><input type="text" id="md-txid" placeholder="Transaction ID"></div>
+        <div class="field"><label>Note</label><input type="text" id="md-note" placeholder="Optional note"></div>
+      </div>
+    </div>
+    <div class="modal__foot">
+      <button class="btn btn--outline" onclick="closeModal('modal-manual-deposit')">Cancel</button>
+      <button class="btn btn--primary" onclick="opsManualDeposit()">Process Deposit</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">
+  <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+  <span id="toast-msg">Done</span>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./supabase.js"></script>
+<script>
+  /* ── Navigation ── */
+  const PAGE_TITLES = {
+    dashboard:'Dashboard', activity:'Live Activity', users:'User Management',
+    verification:'KYC / Verification', accounts:'Trading Accounts',
+    balances:'Balances & P&L', positions:'Trades',
+    deposits:'Deposits', withdrawals:'Withdrawals', transactions:'All Transactions',
+    announcements:'Announcements', 'markets-control':'Markets Control',
+    emails:'Email Users', settings:'System Settings', audit:'Audit Log',
+  };
+  function showPage(id, btn) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    const page = document.getElementById('page-' + id);
+    if (page) page.classList.add('active');
+    if (btn) btn.classList.add('active');
+    document.getElementById('page-title').textContent = PAGE_TITLES[id] || id;
+    document.getElementById('sidebar').classList.remove('open');
+    localStorage.setItem('sv-ops-page', id);
+  }
+
+  /* ── Modals ── */
+  function openModal(id) {
+    const overlay = document.getElementById(id);
+    overlay.classList.add('open');
+  }
+  function closeModal(id) {
+    document.getElementById(id).classList.remove('open');
+  }
+  document.querySelectorAll('.modal-overlay').forEach(el => {
+    el.addEventListener('click', e => { if (e.target === el) closeModal(el.id); });
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') document.querySelectorAll('.modal-overlay.open').forEach(el => closeModal(el.id));
+  });
+
+  /* ── Toast ── */
+  let _toastTimer;
+  function showToast(msg, type = 'success') {
+    const t = document.getElementById('toast');
+    const icons = {
+      success: `<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>`,
+      error:   `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`,
+    };
+    t.className = `toast ${type} show`;
+    t.innerHTML = (icons[type] || icons.success) + `<span>${msg}</span>`;
+    clearTimeout(_toastTimer);
+    _toastTimer = setTimeout(() => t.classList.remove('show'), 3200);
+  }
+
+  /* ── Dark mode ── */
+  const SUN  = `<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>`;
+  const MOON = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>`;
+  function toggleDark() {
+    const isDark = document.body.classList.toggle('dark');
+    document.getElementById('dark-icon').innerHTML = isDark ? SUN : MOON;
+    localStorage.setItem('sv-ops-theme', isDark ? 'dark' : 'light');
+  }
+  if (localStorage.getItem('sv-ops-theme') !== 'light') {
+    document.body.classList.add('dark');
+    document.getElementById('dark-icon').innerHTML = SUN;
+  }
+
+  /* ── Sidebar (mobile) ── */
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('sidebar-overlay').classList.toggle('open');
+  }
+  document.querySelectorAll('.nav-item').forEach(btn => {
+    btn.addEventListener('click', () => { if (window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('open'); });
+  });
+
+  /* ── Utilities ── */
+  function fmtDate(ts) { if (!ts) return '—'; return new Date(ts).toLocaleString('en-GB', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' }); }
+  function fmtMoney(n) { return '$' + parseFloat(n || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+  function avatarColor(str) { const colors = ['#f05a1a','#1a5cff','#22a06b','#7c3aed','#e60023','#f5a623']; let h = 0; for (let c of (str||'')) h = (h * 31 + c.charCodeAt(0)) % colors.length; return colors[h]; }
+  function initials(name) { return (name || '?').split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase(); }
+  function toggleSelectAll(cb) { document.querySelectorAll('#users-tbody input[type=checkbox]').forEach(c => c.checked = cb.checked); }
+  function exportCSV(type) { showToast(`${type}.csv exported`); }
+  function globalSearch(v) { if (v.length > 2) { showPage('users', document.querySelector('[onclick*="users"]')); searchUsers(v); } }
+
+  /* ── Instruments ── */
+  const INSTRUMENTS = [
+    'EUR/USD','GBP/USD','USD/JPY','AUD/USD','USD/CAD','NZD/USD',
+    'BTC/USD','ETH/USD','SOL/USD','XRP/USD','BNB/USD','DOGE/USD',
+    'XAU/USD','XAG/USD','WTI Oil','Brent Oil',
+    'US30','SPX500','NAS100','GER40','UK100',
+    'AAPL','MSFT','NVDA','TSLA','AMZN',
+  ];
+  function renderMarketsControl() {
+    const el = document.getElementById('mkt-toggles');
+    if (el) el.innerHTML = INSTRUMENTS.map(m => `
+      <div class="toggle-wrap">
+        <div><div class="toggle-wrap__label">${m}</div></div>
+        <label class="toggle-switch">
+          <input type="checkbox" checked onchange="saveMarketState('${m}',this.checked)">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>`).join('');
+    const sel = document.getElementById('spread-instrument');
+    if (sel) sel.innerHTML = INSTRUMENTS.map(m => `<option>${m}</option>`).join('');
+  }
+  function saveMarketState(inst, enabled) {
+    showToast(`${inst} ${enabled ? 'enabled' : 'disabled'}`, enabled ? 'success' : 'error');
+    const db = window.SV_DB;
+    if (db) db.from('market_settings').upsert({ instrument: inst, enabled }, { onConflict: 'instrument' }).catch(() => {});
+  }
+  function saveSpreadSettings() {
+    const inst = document.getElementById('spread-instrument')?.value;
+    const spread = parseFloat(document.getElementById('spread-value')?.value) || null;
+    const leverage = document.getElementById('spread-leverage')?.value;
+    const hours = document.getElementById('spread-hours')?.value;
+    if (!inst) { showToast('Select an instrument', 'error'); return; }
+    const db = window.SV_DB;
+    if (db) {
+      db.from('market_settings').upsert({ instrument: inst, spread, leverage, trading_hours: hours }, { onConflict: 'instrument' })
+        .then(({ error }) => error ? showToast('Error: ' + error.message, 'error') : showToast('Settings saved'));
+    } else { showToast('Settings saved'); }
+  }
+
+  /* ── Dashboard date ── */
+  (function() {
+    const el = document.getElementById('dash-date');
+    if (!el) return;
+    el.textContent = new Date().toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' }) + ' · All systems operational';
+  })();
+
+  /* ── Stubs (overridden by Supabase layer) ── */
+  let _adminUser = null;
+  let _allUsers  = [];
+  function renderAll() {}
+  function renderUsersLive() {}
+  function renderKYCLive() {}
+  function renderAccountsLive() {}
+  function renderBalancesLive() {}
+  function renderPositionsLive() {}
+  function renderDepositsLive() {}
+  function renderWithdrawalsLive() {}
+  function renderTransactionsLive() {}
+  function renderAuditLive() {}
+  function renderActivity() {}
+  function filterUsers() {}
+  function searchUsers() {}
+  function saveUser() { showToast('Auth loading…', 'error'); }
+  function saveAccount() { showToast('Auth loading…', 'error'); }
+  function updateUser() { showToast('Auth loading…', 'error'); }
+  function applyAdjustment() { showToast('Auth loading…', 'error'); }
+  function opsManualDeposit() { showToast('Auth loading…', 'error'); }
+  function publishAnnouncement() { showToast('Auth loading…', 'error'); }
+  function sendEmail() { showToast('Auth loading…', 'error'); }
+  function saveSystemSettings() { showToast('Settings saved'); }
+  function saveDepositAddresses() { showToast('Auth loading…', 'error'); }
+  function forceCloseAll() { if (confirm('Force close ALL open positions?')) showToast('Use per-position close buttons', 'error'); }
+  function loadDashStats() {}
+</script>
+
+<script>
+/* ============================================================
+   SUPABASE DATA LAYER
+============================================================ */
+(async function init() {
+  const db = window.SV_DB;
+  if (!db) return;
+
+  /* ── Session check ── */
+  const { data: { session } } = await db.auth.getSession();
+  if (!session) { window.location.href = 'ops-login.html'; return; }
+
+  const { data: adminRow } = await db.from('admin_users').select('id,email,role').eq('id', session.user.id).maybeSingle();
+  if (!adminRow) { await db.auth.signOut(); window.location.href = 'ops-login.html'; return; }
+
+  _adminUser = { id: session.user.id, email: session.user.email, role: adminRow.role || 'admin' };
+  const ini = session.user.email.slice(0,2).toUpperCase();
+  document.getElementById('sidebar-avatar').textContent = ini;
+  document.getElementById('sidebar-name').textContent   = session.user.email.split('@')[0];
+  document.getElementById('sidebar-role').textContent   = _adminUser.role.toUpperCase() + ' · OPS';
+  document.getElementById('topbar-avatar').textContent  = ini;
+  document.getElementById('main-app').style.visibility = 'visible';
+
+  /* ── Restore last page ── */
+  const savedPage = localStorage.getItem('sv-ops-page') || 'dashboard';
+  const savedBtn  = document.querySelector(`.nav-item[onclick*="'${savedPage}'"]`);
+  showPage(savedPage, savedBtn);
+
+  renderMarketsControl();
+  await loadDashStats();
+  await renderAll();
+})();
+
+async function doSignOut() {
+  const db = window.SV_DB;
+  if (db) await db.auth.signOut();
+  window.location.href = 'ops-login.html';
+}
+
+async function logAudit(action, target, details) {
+  const db = window.SV_DB; if (!db || !_adminUser?.id) return;
+  await db.from('audit_log').insert({ admin_id: _adminUser.id, admin_email: _adminUser.email, action, target: String(target||'').slice(0,100), details: String(details||'').slice(0,255) });
+}
+
+/* ── Dashboard Stats ── */
+window.loadDashStats = async function() {
+  const db = window.SV_DB; if (!db) return;
+  const todayStart = new Date(); todayStart.setHours(0,0,0,0);
+  try {
+    const [
+      { count: userCount }, { count: liveCount },
+      { count: pendingDep }, { count: pendingWd }, { count: pendingKyc },
+      { data: balData }, { count: openPos }, { data: volData },
+    ] = await Promise.all([
+      db.from('profiles').select('*', { count:'exact', head:true }),
+      db.from('trading_accounts').select('*', { count:'exact', head:true }).eq('type','live'),
+      db.from('deposit_requests').select('*', { count:'exact', head:true }).eq('status','pending'),
+      db.from('withdrawal_requests').select('*', { count:'exact', head:true }).eq('status','pending'),
+      db.from('kyc_submissions').select('*', { count:'exact', head:true }).eq('status','pending'),
+      db.from('trading_accounts').select('balance'),
+      db.from('positions').select('*', { count:'exact', head:true }).eq('status','open'),
+      db.from('transactions').select('amount').gte('created_at', todayStart.toISOString()),
+    ]);
+    const totalAUM = (balData||[]).reduce((s,a) => s + parseFloat(a.balance||0), 0);
+    const todayVol = (volData||[]).reduce((s,t) => s + Math.abs(parseFloat(t.amount||0)), 0);
+    const fmt = n => n == null ? '—' : n.toLocaleString();
+    document.getElementById('stat-users').textContent = fmt(userCount);
+    document.getElementById('stat-live').textContent  = fmt(liveCount);
+    document.getElementById('stat-aum').textContent   = fmtMoney(totalAUM);
+    document.getElementById('stat-pos').textContent   = fmt(openPos);
+    document.getElementById('stat-dep').textContent   = fmt(pendingDep);
+    document.getElementById('stat-wd').textContent    = fmt(pendingWd);
+    document.getElementById('stat-kyc').textContent   = fmt(pendingKyc);
+    document.getElementById('stat-vol').textContent   = fmtMoney(todayVol);
+    const badge = id => document.getElementById(id);
+    if (badge('dep-badge'))   badge('dep-badge').textContent   = pendingDep  ?? '—';
+    if (badge('wd-badge'))    badge('wd-badge').textContent    = pendingWd   ?? '—';
+    if (badge('kyc-badge'))   badge('kyc-badge').textContent   = pendingKyc  ?? '—';
+    if (badge('users-badge')) badge('users-badge').textContent = fmt(userCount);
+    const uSub = document.getElementById('users-sub');
+    if (uSub && userCount != null) uSub.textContent = `${userCount.toLocaleString()} registered users`;
+  } catch(e) { console.error('loadDashStats', e); }
+};
+
+/* ── renderAll ── */
+window.renderAll = async function() {
+  await Promise.all([
+    renderUsersLive(), renderRecentUsers(), renderActivityFeed(),
+    renderKYCLive(), renderDepositsLive(), renderWithdrawalsLive(),
+  ]);
+};
+
+/* ── Recent Users (dashboard) ── */
+async function renderRecentUsers() {
+  const db = window.SV_DB; if (!db) return;
+  const { data } = await db.from('profiles').select('*').order('created_at', { ascending:false }).limit(8);
+  const tbody = document.getElementById('recent-users-tbody');
+  if (!tbody) return;
+  if (!data?.length) { tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:20px;">No users yet</td></tr>`; return; }
+  tbody.innerHTML = data.map(u => {
+    const name = [u.first_name, u.last_name].filter(Boolean).join(' ') || u.email || '—';
+    const kycPill = u.kyc_status === 'approved' ? 'pill-green' : u.kyc_status === 'pending' ? 'pill-orange' : 'pill-grey';
+    const statusPill = u.status === 'active' ? 'pill-green' : u.status === 'suspended' ? 'pill-red' : 'pill-grey';
+    return `<tr>
+      <td><div class="user-cell"><div class="user-avatar" style="background:${avatarColor(name)}">${initials(name)}</div><div><div class="user-name">${name}</div><div class="user-email">${u.email||'—'}</div></div></div></td>
+      <td>${u.country||'—'}</td>
+      <td>${fmtDate(u.created_at)}</td>
+      <td><span class="badge-pill ${statusPill}">${u.status||'active'}</span></td>
+      <td><span class="badge-pill ${kycPill}">${u.kyc_status||'none'}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+/* ── Activity Feed ── */
+async function renderActivityFeed() {
+  const db = window.SV_DB; if (!db) return;
+  const { data } = await db.from('audit_log').select('*').order('created_at', { ascending:false }).limit(12);
+  const el = document.getElementById('dash-activity');
+  const el2 = document.getElementById('activity-feed');
+  const html = !data?.length ? `<div style="color:var(--muted);font-size:13px;">No activity yet</div>` :
+    data.map(a => `<div class="activity-item"><div class="activity-dot" style="background:var(--orange)"></div><div class="activity-text"><strong>${a.admin_email||'admin'}</strong> ${a.action||''} <span style="color:var(--muted)">${a.target||''}</span></div><div class="activity-time">${fmtDate(a.created_at)}</div></div>`).join('');
+  if (el)  el.innerHTML  = html;
+  if (el2) el2.innerHTML = html;
+}
+window.renderActivity = renderActivityFeed;
+
+/* ── All Users ── */
+window.renderUsersLive = async function() {
+  const db = window.SV_DB; if (!db) return;
+  const { data, error } = await db.from('profiles').select('*').order('created_at', { ascending:false });
+  if (error) { showToast('Error loading users: ' + error.message, 'error'); return; }
+  _allUsers = data || [];
+  renderUsersTable(_allUsers);
+  const sub = document.getElementById('users-sub');
+  if (sub) sub.textContent = `${_allUsers.length.toLocaleString()} registered users`;
+};
+function renderUsersTable(rows) {
+  const tbody = document.getElementById('users-tbody');
+  if (!tbody) return;
+  if (!rows.length) { tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;color:var(--muted);padding:24px;">No users found</td></tr>`; return; }
+  tbody.innerHTML = rows.map(u => {
+    const name = [u.first_name, u.last_name].filter(Boolean).join(' ') || u.email || '—';
+    const kycPill = u.kyc_status === 'approved' ? 'pill-green' : u.kyc_status === 'pending' ? 'pill-orange' : 'pill-grey';
+    const statusPill = u.status === 'active' ? 'pill-green' : u.status === 'suspended' ? 'pill-red' : 'pill-grey';
+    return `<tr onclick="openEditUser('${u.id}')">
+      <td onclick="event.stopPropagation()"><input type="checkbox"></td>
+      <td><div class="user-cell"><div class="user-avatar" style="background:${avatarColor(name)}">${initials(name)}</div><div><div class="user-name">${name}</div><div class="user-email">${u.email||'—'}</div></div></div></td>
+      <td>${u.country||'—'}</td>
+      <td><span class="badge-pill ${u.account_type==='live'?'pill-blue':'pill-grey'}">${u.account_type||'demo'}</span></td>
+      <td>${fmtMoney(u.balance||0)}</td>
+      <td>${fmtDate(u.created_at)}</td>
+      <td><span class="badge-pill ${statusPill}">${u.status||'active'}</span></td>
+      <td><span class="badge-pill ${kycPill}">${u.kyc_status||'none'}</span></td>
+      <td><span class="badge-pill pill-orange">${u.plan||'Standard'}</span></td>
+      <td onclick="event.stopPropagation()"><div class="row-actions">
+        <button class="btn btn--sm btn--outline" onclick="openEditUser('${u.id}')">Edit</button>
+        <button class="btn btn--sm ${u.status==='suspended'?'btn--green':'btn--red'}" onclick="toggleUserStatus('${u.id}','${u.status}')">${u.status==='suspended'?'Unsuspend':'Suspend'}</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+window.filterUsers = function(type, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  const filtered = type === 'all' ? _allUsers : _allUsers.filter(u => type === 'suspended' ? u.status === 'suspended' : u.account_type === type);
+  renderUsersTable(filtered);
+};
+window.searchUsers = function(val) {
+  const v = val.toLowerCase();
+  renderUsersTable(_allUsers.filter(u => (u.email||'').toLowerCase().includes(v) || ([u.first_name, u.last_name].join(' ')).toLowerCase().includes(v)));
+};
+function openEditUser(id) {
+  const u = _allUsers.find(x => x.id === id); if (!u) return;
+  document.getElementById('eu-id').value      = u.id;
+  document.getElementById('eu-fname').value   = u.first_name || '';
+  document.getElementById('eu-lname').value   = u.last_name  || '';
+  document.getElementById('eu-email').value   = u.email      || '';
+  document.getElementById('eu-country').value = u.country    || '';
+  document.getElementById('eu-status').value  = u.status     || 'active';
+  document.getElementById('eu-plan').value    = u.plan       || 'Standard';
+  openModal('modal-edit-user');
+}
+window.updateUser = async function() {
+  const db = window.SV_DB; if (!db) return;
+  const id = document.getElementById('eu-id').value;
+  const updates = {
+    first_name: document.getElementById('eu-fname').value,
+    last_name:  document.getElementById('eu-lname').value,
+    country:    document.getElementById('eu-country').value,
+    status:     document.getElementById('eu-status').value,
+    plan:       document.getElementById('eu-plan').value,
+  };
+  const { error } = await db.from('profiles').update(updates).eq('id', id);
+  if (error) { showToast('Error: ' + error.message, 'error'); return; }
+  await logAudit('update_user', id, JSON.stringify(updates));
+  showToast('User updated');
+  closeModal('modal-edit-user');
+  await renderUsersLive();
+};
+window.toggleUserStatus = async function(id, current) {
+  const db = window.SV_DB; if (!db) return;
+  const newStatus = current === 'suspended' ? 'active' : 'suspended';
+  const { error } = await db.from('profiles').update({ status: newStatus }).eq('id', id);
+  if (error) { showToast('Error: ' + error.message, 'error'); return; }
+  await logAudit('toggle_user_status', id, newStatus);
+  showToast(`User ${newStatus}`);
+  await renderUsersLive();
+};
+window.saveUser = async function() {
+  const db = window.SV_DB; if (!db) return;
+  const email   = document.getElementById('nu-email').value.trim();
+  const balance = parseFloat(document.getElementById('nu-balance').value) || 0;
+  if (!email) { showToast('Email required', 'error'); return; }
+  const newUser = {
+    email, first_name: document.getElementById('nu-fname').value,
+    last_name: document.getElementById('nu-lname').value,
+    phone: document.getElementById('nu-phone').value,
+    country: document.getElementById('nu-country').value,
+    account_type: document.getElementById('nu-type').value,
+    balance, plan: document.getElementById('nu-plan').value,
+    status: 'active', kyc_status: 'none',
+  };
+  const { error } = await db.from('profiles').insert(newUser);
+  if (error) { showToast('Error: ' + error.message, 'error'); return; }
+  await logAudit('create_user', email, `balance: ${balance}`);
+  showToast('User created');
+  closeModal('modal-add-user');
+  await renderUsersLive();
+};
+
+/* ── KYC ── */
+window.renderKYCLive = async function() {
+  const db = window.SV_DB; if (!db) return;
+  const { data } = await db.from('kyc_submissions').select('*').order('created_at', { ascending:false });
+  const tbody = document.getElementById('kyc-tbody');
+  if (!tbody) return;
+  const rows = data || [];
+  const sub = document.getElementById('kyc-sub');
+  if (sub) sub.textContent = `${rows.filter(r=>r.status==='pending').length} pending`;
+  if (!rows.length) { tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:24px;">No submissions</td></tr>`; return; }
+  tbody.innerHTML = rows.map(r => {
+    const pill = r.status === 'approved' ? 'pill-green' : r.status === 'rejected' ? 'pill-red' : 'pill-orange';
+    return `<tr>
+      <td>${r.user_email||r.user_id||'—'}</td>
+      <td>${fmtDate(r.created_at)}</td>
+      <td>${r.doc_type||'—'}</td>
+      <td>${r.country||'—'}</td>
+      <td><span class="badge-pill ${pill}">${r.status||'pending'}</span></td>
+      <td><div class="row-actions">
+        <button class="btn btn--sm btn--green" onclick="approveKYC('${r.id}')">Approve</button>
+        <button class="btn btn--sm btn--red" onclick="rejectKYC('${r.id}')">Reject</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+};
+async function approveKYC(id) {
+  const db = window.SV_DB; if (!db) return;
+  await db.from('kyc_submissions').update({ status:'approved' }).eq('id', id);
+  await logAudit('approve_kyc', id, '');
+  showToast('KYC approved');
+  renderKYCLive();
+}
+async function rejectKYC(id) {
+  const db = window.SV_DB; if (!db) return;
+  await db.from('kyc_submissions').update({ status:'rejected' }).eq('id', id);
+  await logAudit('reject_kyc', id, '');
+  showToast('KYC rejected', 'error');
+  renderKYCLive();
+}
+
+/* ── Accounts ── */
+window.renderAccountsLive = async function() {
+  const db = window.SV_DB; if (!db) return;
+  const { data } = await db.from('trading_accounts').select('*').order('created_at', { ascending:false });
+  const tbody = document.getElementById('accounts-tbody');
+  if (!tbody) return;
+  const rows = data || [];
+  const sub = document.getElementById('accts-sub');
+  if (sub) sub.textContent = `${rows.length.toLocaleString()} accounts`;
+  if (!rows.length) { tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:24px;">No accounts</td></tr>`; return; }
+  tbody.innerHTML = rows.map(a => {
+    const pill = a.status === 'active' ? 'pill-green' : 'pill-red';
+    return `<tr>
+      <td><code style="font-size:11px;">${a.account_number||a.id.slice(0,8)}</code></td>
+      <td>${a.user_email||a.user_id||'—'}</td>
+      <td><span class="badge-pill ${a.type==='live'?'pill-blue':'pill-grey'}">${a.type||'demo'}</span></td>
+      <td>${fmtMoney(a.balance||0)}</td>
+      <td>${a.leverage||'1:100'}</td>
+      <td><span class="badge-pill ${pill}">${a.status||'active'}</span></td>
+      <td>${fmtDate(a.created_at)}</td>
+      <td><div class="row-actions">
+        <button class="btn btn--sm btn--outline" onclick="openAdjustBalance('${a.id}','${a.user_email||a.user_id}',${a.balance||0})">Adjust</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+};
+function openAdjustBalance(id, user, balance) {
+  document.getElementById('adj-account-id').value = id;
+  document.getElementById('adj-info').innerHTML = `Account <strong>${id.slice(0,8)}</strong> &mdash; Current balance: <strong>${fmtMoney(balance)}</strong>`;
+  openModal('modal-adjust-balance');
+}
+window.applyAdjustment = async function() {
+  const db = window.SV_DB; if (!db) return;
+  const id     = document.getElementById('adj-account-id').value;
+  const type   = document.getElementById('adj-type').value;
+  const amount = parseFloat(document.getElementById('adj-amount').value);
+  const note   = document.getElementById('adj-note').value;
+  if (!amount || amount <= 0) { showToast('Enter a valid amount', 'error'); return; }
+  const { data: acc } = await db.from('trading_accounts').select('balance').eq('id', id).single();
+  const newBal = type === 'credit' ? (parseFloat(acc.balance)||0) + amount : (parseFloat(acc.balance)||0) - amount;
+  const { error } = await db.from('trading_accounts').update({ balance: newBal }).eq('id', id);
+  if (error) { showToast('Error: ' + error.message, 'error'); return; }
+  await db.from('transactions').insert({ account_id: id, type, amount, note, status: 'completed' });
+  await logAudit('adjust_balance', id, `${type} ${fmtMoney(amount)} — ${note}`);
+  showToast(`Balance adjusted: ${type} ${fmtMoney(amount)}`);
+  closeModal('modal-adjust-balance');
+  renderAccountsLive();
+};
+
+/* ── Balances ── */
+window.renderBalancesLive = async function() {
+  const db = window.SV_DB; if (!db) return;
+  const { data } = await db.from('trading_accounts').select('*');
+  const tbody = document.getElementById('balances-tbody');
+  if (!tbody) return;
+  if (!data?.length) { tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:24px;">No accounts</td></tr>`; return; }
+  tbody.innerHTML = data.map(a => {
+    const pnl = parseFloat(a.pnl||0);
+    return `<tr>
+      <td>${a.user_email||a.user_id||'—'}</td>
+      <td><code style="font-size:11px;">${a.account_number||a.id.slice(0,8)}</code></td>
+      <td>${fmtMoney(a.balance||0)}</td>
+      <td>${fmtMoney(a.equity||a.balance||0)}</td>
+      <td>${fmtMoney(a.margin_used||0)}</td>
+      <td style="color:${pnl>=0?'var(--green)':'var(--red)'}">${pnl>=0?'+':''}${fmtMoney(pnl)}</td>
+      <td><button class="btn btn--sm btn--outline" onclick="openAdjustBalance('${a.id}','${a.user_email||''}',${a.balance||0})">Adjust</button></td>
+    </tr>`;
+  }).join('');
+};
+
+/* ── Positions ── */
+window.renderPositionsLive = async function() {
+  const db = window.SV_DB; if (!db) return;
+  const { data } = await db.from('positions').select('*').order('opened_at', { ascending:false }).limit(100);
+  const tbody = document.getElementById('positions-tbody');
+  if (!tbody) return;
+  if (!data?.length) { tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;color:var(--muted);padding:24px;">No positions</td></tr>`; return; }
+  tbody.innerHTML = data.map(p => {
+    const pnl = parseFloat(p.pnl||0);
+    return `<tr>
+      <td><code style="font-size:11px;">#${p.ticket||p.id.slice(0,6)}</code></td>
+      <td>${p.user_email||p.user_id||'—'}</td>
+      <td>${p.symbol||'—'}</td>
+      <td><span class="badge-pill ${p.side==='buy'?'pill-green':'pill-red'}">${p.side||'—'}</span></td>
+      <td>${p.lots||'—'}</td>
+      <td>${p.open_price||'—'}</td>
+      <td>${p.current_price||'—'}</td>
+      <td style="color:${pnl>=0?'var(--green)':'var(--red)'}">${pnl>=0?'+':''}${fmtMoney(pnl)}</td>
+      <td>${fmtDate(p.opened_at)}</td>
+      <td><button class="btn btn--sm btn--red" onclick="forceClosePosition('${p.id}')">Close</button></td>
+    </tr>`;
+  }).join('');
+};
+async function forceClosePosition(id) {
+  const db = window.SV_DB; if (!db) return;
+  if (!confirm('Force close this position?')) return;
+  await db.from('positions').update({ status:'closed', closed_at: new Date().toISOString() }).eq('id', id);
+  await logAudit('force_close_position', id, 'admin force close');
+  showToast('Position closed');
+  renderPositionsLive();
+}
+
+/* ── Deposits ── */
+window.renderDepositsLive = async function() {
+  const db = window.SV_DB; if (!db) return;
+  const { data } = await db.from('deposit_requests').select('*').order('created_at', { ascending:false });
+  const tbody = document.getElementById('deposits-tbody');
+  if (!tbody) return;
+  const rows = data || [];
+  const sub = document.getElementById('dep-sub');
+  if (sub) sub.textContent = `${rows.filter(r=>r.status==='pending').length} pending`;
+  if (!rows.length) { tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:24px;">No deposits</td></tr>`; return; }
+  tbody.innerHTML = rows.map(d => {
+    const pill = d.status==='approved'?'pill-green':d.status==='rejected'?'pill-red':'pill-orange';
+    return `<tr>
+      <td>${d.user_email||d.user_id||'—'}</td>
+      <td>${fmtMoney(d.amount||0)}</td>
+      <td>${d.currency||'USD'}</td>
+      <td>${d.method||'—'}</td>
+      <td><code style="font-size:11px;">${(d.txid||'—').slice(0,16)}…</code></td>
+      <td>${fmtDate(d.created_at)}</td>
+      <td><span class="badge-pill ${pill}">${d.status||'pending'}</span></td>
+      <td><div class="row-actions">
+        ${d.status==='pending'?`<button class="btn btn--sm btn--green" onclick="approveDeposit('${d.id}')">Approve</button><button class="btn btn--sm btn--red" onclick="rejectDeposit('${d.id}')">Reject</button>`:''}
+      </div></td>
+    </tr>`;
+  }).join('');
+};
+async function approveDeposit(id) {
+  const db = window.SV_DB; if (!db) return;
+  await db.from('deposit_requests').update({ status:'approved' }).eq('id', id);
+  await logAudit('approve_deposit', id, '');
+  showToast('Deposit approved');
+  renderDepositsLive(); loadDashStats();
+}
+async function rejectDeposit(id) {
+  const db = window.SV_DB; if (!db) return;
+  await db.from('deposit_requests').update({ status:'rejected' }).eq('id', id);
+  await logAudit('reject_deposit', id, '');
+  showToast('Deposit rejected', 'error');
+  renderDepositsLive(); loadDashStats();
+}
+window.opsManualDeposit = async function() {
+  const db = window.SV_DB; if (!db) return;
+  const user   = document.getElementById('md-user').value.trim();
+  const amount = parseFloat(document.getElementById('md-amount').value);
+  const method = document.getElementById('md-method').value;
+  const txid   = document.getElementById('md-txid').value;
+  const note   = document.getElementById('md-note').value;
+  if (!user || !amount) { showToast('User and amount required', 'error'); return; }
+  const { error } = await db.from('deposit_requests').insert({ user_email: user, amount, method, txid, note, status:'approved', created_at: new Date().toISOString() });
+  if (error) { showToast('Error: ' + error.message, 'error'); return; }
+  await logAudit('manual_deposit', user, `${fmtMoney(amount)} via ${method}`);
+  showToast(`Manual deposit of ${fmtMoney(amount)} processed`);
+  closeModal('modal-manual-deposit');
+  renderDepositsLive(); loadDashStats();
+};
+
+/* ── Withdrawals ── */
+window.renderWithdrawalsLive = async function() {
+  const db = window.SV_DB; if (!db) return;
+  const { data } = await db.from('withdrawal_requests').select('*').order('created_at', { ascending:false });
+  const tbody = document.getElementById('withdrawals-tbody');
+  if (!tbody) return;
+  const rows = data || [];
+  const sub = document.getElementById('wd-sub');
+  if (sub) sub.textContent = `${rows.filter(r=>r.status==='pending').length} pending`;
+  if (!rows.length) { tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:24px;">No withdrawals</td></tr>`; return; }
+  tbody.innerHTML = rows.map(w => {
+    const pill = w.status==='approved'?'pill-green':w.status==='rejected'?'pill-red':'pill-orange';
+    return `<tr>
+      <td>${w.user_email||w.user_id||'—'}</td>
+      <td>${fmtMoney(w.amount||0)}</td>
+      <td>${w.method||'—'}</td>
+      <td><code style="font-size:11px;">${(w.wallet||w.bank_details||'—').slice(0,20)}</code></td>
+      <td>${fmtDate(w.created_at)}</td>
+      <td><span class="badge-pill ${pill}">${w.status||'pending'}</span></td>
+      <td><div class="row-actions">
+        ${w.status==='pending'?`<button class="btn btn--sm btn--green" onclick="approveWithdrawal('${w.id}')">Approve</button><button class="btn btn--sm btn--red" onclick="rejectWithdrawal('${w.id}')">Reject</button>`:''}
+      </div></td>
+    </tr>`;
+  }).join('');
+};
+async function approveWithdrawal(id) {
+  const db = window.SV_DB; if (!db) return;
+  await db.from('withdrawal_requests').update({ status:'approved' }).eq('id', id);
+  await logAudit('approve_withdrawal', id, '');
+  showToast('Withdrawal approved');
+  renderWithdrawalsLive(); loadDashStats();
+}
+async function rejectWithdrawal(id) {
+  const db = window.SV_DB; if (!db) return;
+  await db.from('withdrawal_requests').update({ status:'rejected' }).eq('id', id);
+  await logAudit('reject_withdrawal', id, '');
+  showToast('Withdrawal rejected', 'error');
+  renderWithdrawalsLive(); loadDashStats();
+}
+
+/* ── Transactions ── */
+window.renderTransactionsLive = async function() {
+  const db = window.SV_DB; if (!db) return;
+  const { data } = await db.from('transactions').select('*').order('created_at', { ascending:false }).limit(200);
+  const tbody = document.getElementById('transactions-tbody');
+  if (!tbody) return;
+  if (!data?.length) { tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:24px;">No transactions</td></tr>`; return; }
+  tbody.innerHTML = data.map(t => {
+    const pill = t.status==='completed'?'pill-green':t.status==='failed'?'pill-red':'pill-orange';
+    return `<tr>
+      <td>${t.user_email||t.user_id||'—'}</td>
+      <td>${t.type||'—'}</td>
+      <td>${fmtMoney(t.amount||0)}</td>
+      <td>${t.currency||'USD'}</td>
+      <td>${fmtDate(t.created_at)}</td>
+      <td><span class="badge-pill ${pill}">${t.status||'pending'}</span></td>
+    </tr>`;
+  }).join('');
+};
+
+/* ── Announcements ── */
+window.publishAnnouncement = async function() {
+  const db = window.SV_DB; if (!db) return;
+  const title = document.getElementById('ann-title').value.trim();
+  const body  = document.getElementById('ann-body').value.trim();
+  const type  = document.getElementById('ann-type').value;
+  if (!title || !body) { showToast('Title and message required', 'error'); return; }
+  const { error } = await db.from('announcements').insert({ title, body, type, published_by: _adminUser?.email, created_at: new Date().toISOString() });
+  if (error) { showToast('Error: ' + error.message, 'error'); return; }
+  await logAudit('publish_announcement', title, type);
+  showToast('Announcement published');
+  document.getElementById('ann-title').value = '';
+  document.getElementById('ann-body').value  = '';
+  loadAnnouncementList();
+};
+async function loadAnnouncementList() {
+  const db = window.SV_DB; if (!db) return;
+  const { data } = await db.from('announcements').select('*').order('created_at', { ascending:false }).limit(10);
+  const el = document.getElementById('ann-list');
+  if (!el) return;
+  if (!data?.length) { el.innerHTML = `<div style="color:var(--muted);font-size:13px;">No announcements yet</div>`; return; }
+  el.innerHTML = data.map(a => `
+    <div style="padding:12px 0;border-bottom:1px solid var(--border);">
+      <div style="font-size:13px;font-weight:600;">${a.title}</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:2px;">${fmtDate(a.created_at)} &middot; <span class="badge-pill pill-orange">${a.type||'info'}</span></div>
+    </div>`).join('');
+}
+
+/* ── Email ── */
+window.sendEmail = async function() {
+  const db = window.SV_DB; if (!db) return;
+  const to      = document.getElementById('email-to').value;
+  const subject = document.getElementById('email-subject').value.trim();
+  const body    = document.getElementById('email-body').value.trim();
+  if (!subject || !body) { showToast('Subject and body required', 'error'); return; }
+  const { error } = await db.from('email_queue').insert({ recipient_group: to, subject, body, sent_by: _adminUser?.email, created_at: new Date().toISOString() });
+  if (error) { showToast('Error: ' + error.message, 'error'); return; }
+  await logAudit('send_email', to, subject);
+  showToast(`Email queued for ${to} users`);
+};
+
+/* ── Audit Log ── */
+window.renderAuditLive = async function() {
+  const db = window.SV_DB; if (!db) return;
+  const { data } = await db.from('audit_log').select('*').order('created_at', { ascending:false }).limit(200);
+  const tbody = document.getElementById('audit-tbody');
+  if (!tbody) return;
+  if (!data?.length) { tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:24px;">No audit entries</td></tr>`; return; }
+  tbody.innerHTML = data.map(a => `<tr>
+    <td>${a.admin_email||'—'}</td>
+    <td><code style="font-size:11px;">${a.action||'—'}</code></td>
+    <td>${a.target||'—'}</td>
+    <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${a.details||'—'}</td>
+    <td>${fmtDate(a.created_at)}</td>
+  </tr>`).join('');
+};
+</script>
+</body>
+</html>
+
