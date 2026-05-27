@@ -98,14 +98,7 @@ html.mob .sb-overlay.open{display:block;}
 
 .trade-body{flex:1;display:flex;overflow:hidden;min-height:0;}
 .trade-left{flex:1;display:flex;flex-direction:column;border-right:1px solid var(--b);min-width:0;overflow:hidden;}
-.chart-area{flex:1;background:var(--bg);display:flex;align-items:center;justify-content:center;position:relative;min-height:0;overflow:hidden;}
-.chart-grid{position:absolute;inset:0;background-image:linear-gradient(var(--b) 1px,transparent 1px),linear-gradient(90deg,var(--b) 1px,transparent 1px);background-size:48px 40px;}
-.chart-placeholder{position:relative;z-index:1;text-align:center;}
-.chart-ph-sym{font-size:22px;font-weight:800;color:var(--text);margin-bottom:6px;}
-.chart-ph-price{font-size:36px;font-weight:700;color:var(--green);margin-bottom:6px;font-variant-numeric:tabular-nums;}
-.chart-ph-note{font-size:12px;color:var(--text3);}
-.chart-ph-badge{display:inline-block;background:var(--s3);border:1px solid var(--b);border-radius:4px;padding:3px 10px;font-size:11px;color:var(--text2);margin-top:8px;}
-.chart-ph-expiry{display:inline-block;margin-top:10px;background:rgba(240,185,11,.08);border:1px solid rgba(240,185,11,.2);border-radius:6px;padding:6px 14px;font-size:11px;color:var(--gold);}
+.chart-area{flex:1;position:relative;min-height:0;overflow:hidden;}
 
 .orderbook-panel{height:280px;border-top:1px solid var(--b);display:flex;flex-direction:column;flex-shrink:0;}
 .ob-header{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-bottom:1px solid var(--b);}
@@ -248,9 +241,6 @@ html.mob .sb-overlay.open{display:block;}
       </button>
     </header>
 
-    <!-- TRADINGVIEW TICKER TAPE -->
-    <div id="tv-ticker-fut" style="height:46px;overflow:hidden;flex-shrink:0;border-bottom:1px solid var(--b);"></div>
-
     <!-- CONTRACT SELECTOR BAR -->
     <div class="contract-bar" id="contractBar">
       <div class="contract-pill active" data-inst="BTC-USD-250627" data-expiry="Jun 27, 2026" data-days="32" onclick="selectContract(this)">
@@ -328,16 +318,7 @@ html.mob .sb-overlay.open{display:block;}
     <div class="trade-body">
       <!-- LEFT -->
       <div class="trade-left">
-        <div class="chart-area">
-          <div class="chart-grid"></div>
-          <div class="chart-placeholder">
-            <div class="chart-ph-sym" id="chart-sym">BTC Jun 27</div>
-            <div class="chart-ph-price" id="chart-price">—</div>
-            <div class="chart-ph-note">Quarterly Delivery Futures Contract</div>
-            <div class="chart-ph-badge">Chart powered by TradingView</div>
-            <div class="chart-ph-expiry" id="chart-expiry">Delivery contract — settles at expiry: Jun 27, 2026 (32 days)</div>
-          </div>
-        </div>
+        <div class="chart-area" id="tv-chart"></div>
 
         <!-- ORDER BOOK -->
         <div class="orderbook-panel">
@@ -566,8 +547,6 @@ function updateStatsBar(data, inst, futPx, basisAdj) {
   const meta = contractMeta[inst];
   document.getElementById('stat-expiry').textContent = meta.expiry;
   document.getElementById('stat-days').textContent = meta.days + ' days';
-  document.getElementById('chart-price').textContent = fmtPrice(px, inst);
-  document.getElementById('chart-price').className = 'chart-ph-price ' + (chgPct >= 0 ? 'green' : 'red');
   document.getElementById('ob-spread-price').textContent = fmtPrice(px, inst);
   document.getElementById('chart-expiry').textContent = 'Delivery contract — settles at expiry: ' + meta.expiry + ' (' + meta.days + ' days)';
   generateOrderBook(px, inst);
@@ -607,18 +586,42 @@ function generateOrderBook(price, inst) {
   document.getElementById('ob-spread-val').textContent = 'Spread: '+spread;
 }
 
+const tvSymbols = {
+  'BTC-USD-250627':'BINANCE:BTCUSDT','BTC-USD-250926':'BINANCE:BTCUSDT',
+  'ETH-USD-250627':'BINANCE:ETHUSDT','ETH-USD-250926':'BINANCE:ETHUSDT',
+};
+function loadTVChart(inst) {
+  const wrap = document.getElementById('tv-chart');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  const c = document.createElement('div');
+  c.className = 'tradingview-widget-container';
+  c.style.cssText = 'height:100%;width:100%';
+  const w = document.createElement('div');
+  w.style.cssText = 'height:100%;width:100%';
+  const s = document.createElement('script');
+  s.type = 'text/javascript';
+  s.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
+  s.async = true;
+  s.textContent = JSON.stringify({
+    autosize:true, symbol:tvSymbols[inst]||'BINANCE:BTCUSDT',
+    interval:'15', timezone:'Etc/UTC', theme:'dark', style:'1', locale:'en',
+    hide_top_toolbar:false, hide_legend:false, save_image:false,
+    support_host:'https://www.tradingview.com'
+  });
+  c.appendChild(w); c.appendChild(s); wrap.appendChild(c);
+}
 function selectContract(el) {
   document.querySelectorAll('.contract-pill').forEach(p => p.classList.remove('active'));
   el.classList.add('active');
   activeInst = el.dataset.inst;
   const meta = contractMeta[activeInst];
-  document.getElementById('chart-sym').textContent = meta.name;
   document.getElementById('ob-label').textContent = meta.name;
   document.getElementById('stat-expiry').textContent = meta.expiry;
   document.getElementById('stat-days').textContent = meta.days + ' days';
-  document.getElementById('chart-expiry').textContent = 'Delivery contract — settles at expiry: ' + meta.expiry + ' (' + meta.days + ' days)';
   const basisAdj = activeInst.includes('250926') ? 1.0042 : 1.0015;
   fetchPrice(meta.spotInst).then(data => { if(data) updateStatsBar(data, activeInst, parseFloat(data.last)*basisAdj, basisAdj); });
+  loadTVChart(activeInst);
 }
 
 function setMarginMode(btn, mode) {
@@ -689,43 +692,7 @@ function setBpTab(btn, tab) {
 updateAllPills();
 setInterval(updateAllPills, 10000);
 
-// TradingView Ticker Tape
-(function(){
-  var wrap=document.getElementById('tv-ticker-fut');
-  if(!wrap)return;
-  var c=document.createElement('div');
-  c.className='tradingview-widget-container';
-  c.style.cssText='height:100%;width:100%';
-  var w=document.createElement('div');
-  w.className='tradingview-widget-container__widget';
-  w.style.cssText='height:calc(100% + 32px);width:100%';
-  var s=document.createElement('script');
-  s.type='text/javascript';
-  s.src='https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js';
-  s.async=true;
-  s.textContent=JSON.stringify({
-    symbols:[
-      {proName:'BINANCE:BTCUSDT',title:'BTC'},
-      {proName:'BINANCE:ETHUSDT',title:'ETH'},
-      {proName:'BINANCE:SOLUSDT',title:'SOL'},
-      {proName:'BINANCE:BNBUSDT',title:'BNB'},
-      {proName:'BINANCE:XRPUSDT',title:'XRP'},
-      {proName:'OANDA:XAUUSD',title:'Gold'},
-      {proName:'FX:EURUSD',title:'EUR/USD'},
-      {proName:'FX:GBPUSD',title:'GBP/USD'},
-      {proName:'BINANCE:AVAXUSDT',title:'AVAX'},
-      {proName:'BINANCE:LINKUSDT',title:'LINK'}
-    ],
-    showSymbolLogo:true,
-    isTransparent:true,
-    displayMode:'adaptive',
-    colorTheme:'dark',
-    locale:'en'
-  });
-  c.appendChild(w);
-  c.appendChild(s);
-  wrap.appendChild(c);
-})();
+loadTVChart(activeInst);
 </script>
 </body>
 </html>
