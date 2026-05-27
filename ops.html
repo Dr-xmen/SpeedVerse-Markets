@@ -195,6 +195,11 @@
 
     /* BADGE PILLS */
     .badge-pill { display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 9px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .plan-opt { display:flex; align-items:center; gap:10px; padding:11px 14px; border:1.5px solid var(--border); border-radius:10px; cursor:pointer; transition:border-color .15s,background .15s; }
+    .plan-opt:has(input:checked) { border-color:var(--orange); background:rgba(240,90,26,.06); }
+    .plan-opt input[type=radio] { accent-color:var(--orange); flex-shrink:0; }
+    .plan-opt__name { font-size:13px; font-weight:700; flex:1; }
+    .plan-opt__desc { font-size:11.5px; color:var(--muted); }
     .pill-green  { background: var(--green-lt);  color: var(--green); }
     .pill-red    { background: #fff0f0;           color: var(--red); }
     .pill-blue   { background: var(--blue-lt);   color: var(--blue); }
@@ -817,7 +822,7 @@
         <div class="field"><label>Country</label><input type="text" id="nu-country" placeholder="United Kingdom"></div>
         <div class="field"><label>Account Type</label><select id="nu-type"><option>live</option><option>demo</option></select></div>
         <div class="field"><label>Initial Balance (USD)</label><input type="number" id="nu-balance" placeholder="0.00"></div>
-        <div class="field"><label>Plan</label><select id="nu-plan"><option>Standard</option><option>RAW+</option><option>ELITE</option><option>MASTER</option></select></div>
+        <div class="field"><label>Plan</label><select id="nu-plan"><option>Starter</option><option>Silver</option><option>Gold</option><option>Platinum</option><option>Elite</option></select></div>
       </div>
     </div>
     <div class="modal__foot">
@@ -856,7 +861,7 @@
         <div class="field field--full"><label>Email</label><input type="email" id="eu-email"></div>
         <div class="field"><label>Country</label><input type="text" id="eu-country"></div>
         <div class="field"><label>Status</label><select id="eu-status"><option>active</option><option>suspended</option><option>pending</option></select></div>
-        <div class="field"><label>Plan</label><select id="eu-plan"><option>Standard</option><option>RAW+</option><option>ELITE</option><option>MASTER</option></select></div>
+        <div class="field"><label>Plan</label><select id="eu-plan"><option>Starter</option><option>Silver</option><option>Gold</option><option>Platinum</option><option>Elite</option></select></div>
       </div>
     </div>
     <div class="modal__foot">
@@ -900,6 +905,27 @@
     <div class="modal__foot">
       <button class="btn btn--outline" onclick="closeModal('modal-manual-deposit')">Cancel</button>
       <button class="btn btn--primary" onclick="opsManualDeposit()">Process Deposit</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-upgrade-plan">
+  <div class="modal" style="max-width:420px;">
+    <div class="modal__head"><div class="modal__title">Upgrade Account Plan</div><button class="modal__close" onclick="closeModal('modal-upgrade-plan')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div class="modal__body">
+      <input type="hidden" id="up-user-id"/>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:14px;">Changing plan for <strong id="up-user-name" style="color:var(--text)"></strong></p>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <label class="plan-opt" data-plan="Starter"><input type="radio" name="up-plan" value="Starter"/> <span class="plan-opt__name">Starter</span><span class="plan-opt__desc">Default — free tier</span></label>
+        <label class="plan-opt" data-plan="Silver"><input type="radio" name="up-plan" value="Silver"/> <span class="plan-opt__name" style="color:#7eb8f7;">Silver</span><span class="plan-opt__desc">$1,000 min deposit · 25× leverage</span></label>
+        <label class="plan-opt" data-plan="Gold"><input type="radio" name="up-plan" value="Gold"/> <span class="plan-opt__name" style="color:var(--orange);">Gold</span><span class="plan-opt__desc">$10,000 min deposit · 50× leverage</span></label>
+        <label class="plan-opt" data-plan="Platinum"><input type="radio" name="up-plan" value="Platinum"/> <span class="plan-opt__name" style="color:var(--purple);">Platinum</span><span class="plan-opt__desc">$50,000 min deposit · 100× leverage</span></label>
+        <label class="plan-opt" data-plan="Elite"><input type="radio" name="up-plan" value="Elite"/> <span class="plan-opt__name" style="color:var(--blue);">Elite</span><span class="plan-opt__desc">$250,000+ or by invitation · 125× leverage</span></label>
+      </div>
+    </div>
+    <div class="modal__foot">
+      <button class="btn btn--outline" onclick="closeModal('modal-upgrade-plan')">Cancel</button>
+      <button class="btn btn--primary" onclick="saveUpgradePlan()">Save Plan</button>
     </div>
   </div>
 </div>
@@ -1220,9 +1246,10 @@ function renderUsersTable(rows) {
       <td>${fmtDate(u.created_at)}</td>
       <td><span class="badge-pill ${statusPill}">${u.status||'active'}</span></td>
       <td><span class="badge-pill ${kycPill}">${u.kyc_status||'none'}</span></td>
-      <td><span class="badge-pill pill-orange">${u.plan||'Standard'}</span></td>
+      <td><span class="badge-pill ${ u.plan==='Elite'?'pill-blue':u.plan==='Platinum'?'pill-purple':u.plan==='Gold'?'pill-orange':u.plan==='Silver'?'pill-blue':'pill-grey' }">${u.plan||'Starter'}</span></td>
       <td onclick="event.stopPropagation()"><div class="row-actions">
         <button class="btn btn--sm btn--outline" onclick="openEditUser('${u.id}')">Edit</button>
+        <button class="btn btn--sm btn--primary" onclick="openUpgradePlan('${u.id}','${(u.first_name||u.email||'User').replace(/'/g,"\\'")}','${u.plan||'Starter'}')">Upgrade</button>
         <button class="btn btn--sm ${u.status==='suspended'?'btn--green':'btn--red'}" onclick="toggleUserStatus('${u.id}','${u.status}')">${u.status==='suspended'?'Unsuspend':'Suspend'}</button>
       </div></td>
     </tr>`;
@@ -1246,7 +1273,7 @@ function openEditUser(id) {
   document.getElementById('eu-email').value   = u.email      || '';
   document.getElementById('eu-country').value = u.country    || '';
   document.getElementById('eu-status').value  = u.status     || 'active';
-  document.getElementById('eu-plan').value    = u.plan       || 'Standard';
+  document.getElementById('eu-plan').value    = u.plan       || 'Starter';
   openModal('modal-edit-user');
 }
 window.updateUser = async function() {
@@ -1534,6 +1561,28 @@ async function rejectWithdrawal(id) {
   showToast('Withdrawal rejected', 'error');
   renderWithdrawalsLive(); loadDashStats();
 }
+
+/* ── Upgrade Plan ── */
+window.openUpgradePlan = function(userId, userName, currentPlan) {
+  document.getElementById('up-user-id').value = userId;
+  document.getElementById('up-user-name').textContent = userName;
+  document.querySelectorAll('input[name=up-plan]').forEach(r => {
+    r.checked = r.value === (currentPlan || 'Starter');
+  });
+  openModal('modal-upgrade-plan');
+};
+window.saveUpgradePlan = async function() {
+  const db = window.SV_DB; if (!db) return;
+  const userId = document.getElementById('up-user-id').value;
+  const plan   = document.querySelector('input[name=up-plan]:checked')?.value;
+  if (!plan) { showToast('Please select a plan', 'error'); return; }
+  const { error } = await db.from('profiles').update({ plan }).eq('id', userId);
+  if (error) { showToast('Error: ' + error.message, 'error'); return; }
+  await logAudit('upgrade_plan', userId, `Plan set to ${plan}`);
+  showToast(`Plan upgraded to ${plan}`);
+  closeModal('modal-upgrade-plan');
+  await renderUsersLive();
+};
 
 /* ── Transactions ── */
 window.renderTransactionsLive = async function() {
