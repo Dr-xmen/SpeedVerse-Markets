@@ -398,6 +398,7 @@ async function doRegister() {
     account_type: acctType,
     status:       'active',
     kyc_status:   'none',
+    plan:         'Starter',
   }, { onConflict: 'id' });
 
   /* If Supabase returned a session immediately (email confirm disabled), go straight to dashboard.
