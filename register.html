@@ -319,6 +319,7 @@ input,select{font-family:inherit;}
     </div>
 
     <div id="r-error" style="display:none;background:#fff2f0;border:1px solid #ffd5cc;border-radius:8px;padding:10px 14px;font-size:12.5px;color:#c94400;margin-bottom:10px;"></div>
+    <div id="r-success" style="display:none;background:#f0fff8;border:1px solid #b3f0d5;border-radius:8px;padding:14px;font-size:13px;color:#0a7540;margin-bottom:10px;line-height:1.6;"></div>
     <button class="btn-submit" id="r-btn" onclick="doRegister()">Create Account</button>
 
     <div class="form-footer">
@@ -388,7 +389,7 @@ async function doRegister() {
   }
 
   await db.from('profiles').insert({
-    id: data.user.id,
+    id:           data.user.id,
     email,
     first_name:   fname,
     last_name:    lname,
@@ -399,7 +400,18 @@ async function doRegister() {
     kyc_status:   'none',
   });
 
-  window.location.href = 'dashboard.html';
+  /* If Supabase returned a session immediately (email confirm disabled), go straight to dashboard.
+     Otherwise show the "verify your email" message. */
+  if (data.session) {
+    window.location.href = 'dashboard.html';
+  } else {
+    btn.disabled    = false;
+    btn.textContent = 'Create Account';
+    const okEl = document.getElementById('r-success');
+    okEl.innerHTML  = `<strong>Account created!</strong><br>We've sent a verification link to <strong>${email}</strong>. Please check your inbox (and spam folder) and click the link to activate your account.`;
+    okEl.style.display = 'block';
+    document.getElementById('r-error').style.display = 'none';
+  }
 }
 
 function showErr(msg) {
