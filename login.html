@@ -152,7 +152,7 @@ input,select{font-family:inherit;}
     <!-- Email -->
     <div class="form-group">
       <label class="form-label">Email *</label>
-      <input class="form-input" type="email" placeholder="Enter your email"/>
+      <input class="form-input" id="l-email" type="email" placeholder="Enter your email"/>
     </div>
 
     <!-- Password -->
@@ -166,12 +166,14 @@ input,select{font-family:inherit;}
       </div>
     </div>
 
-    <button class="btn-submit">Log In</button>
+    <div id="l-error" style="display:none;background:#fff2f0;border:1px solid #ffd5cc;border-radius:8px;padding:10px 14px;font-size:12.5px;color:#c94400;margin-bottom:10px;"></div>
+    <div id="l-success" style="display:none;background:#f0fff8;border:1px solid #b3f0d5;border-radius:8px;padding:10px 14px;font-size:12.5px;color:#0a7540;margin-bottom:10px;"></div>
+    <button class="btn-submit" id="l-btn" onclick="doLogin()">Log In</button>
 
     <div class="form-divider">or</div>
 
     <div class="form-links">
-      <span class="form-link"><a href="#">Forgot Password?</a></span>
+      <span class="form-link"><a href="#" onclick="doForgot();return false;">Forgot Password?</a></span>
       <span class="form-link">New to SpeedVerse? <a href="register.html">Create Account</a></span>
     </div>
 
@@ -193,12 +195,62 @@ input,select{font-family:inherit;}
 
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./supabase.js"></script>
 <script>
 function togglePwd(id, btn) {
   const input = document.getElementById(id);
   const isText = input.type === 'text';
   input.type = isText ? 'password' : 'text';
   btn.style.color = isText ? '#aaa' : '#E8530A';
+}
+
+/* Redirect if already logged in */
+(async () => {
+  const { data: { session } } = await window.SV_DB.auth.getSession();
+  if (session) window.location.href = 'dashboard.html';
+})();
+
+async function doLogin() {
+  const btn    = document.getElementById('l-btn');
+  const errEl  = document.getElementById('l-error');
+  const email  = document.getElementById('l-email').value.trim();
+  const pwd    = document.getElementById('pwd').value;
+
+  errEl.style.display = 'none';
+  if (!email || !pwd) return showErr('Please enter your email and password.');
+
+  btn.disabled    = true;
+  btn.textContent = 'Signing in…';
+
+  const { error } = await window.SV_DB.auth.signInWithPassword({ email, password: pwd });
+
+  if (error) {
+    btn.disabled    = false;
+    btn.textContent = 'Log In';
+    return showErr(error.message === 'Invalid login credentials' ? 'Incorrect email or password.' : error.message);
+  }
+
+  window.location.href = 'dashboard.html';
+}
+
+async function doForgot() {
+  const email = document.getElementById('l-email').value.trim();
+  const errEl = document.getElementById('l-error');
+  const okEl  = document.getElementById('l-success');
+  errEl.style.display = 'none';
+  okEl.style.display  = 'none';
+  if (!email) return showErr('Enter your email address above first.');
+  const { error } = await window.SV_DB.auth.resetPasswordForEmail(email);
+  if (error) return showErr(error.message);
+  okEl.textContent   = 'Password reset email sent — check your inbox.';
+  okEl.style.display = 'block';
+}
+
+function showErr(msg) {
+  const el = document.getElementById('l-error');
+  el.textContent   = msg;
+  el.style.display = 'block';
 }
 </script>
 </body>

@@ -206,18 +206,18 @@ input,select{font-family:inherit;}
     <div class="form-row">
       <div class="form-group">
         <label class="form-label">First Name *</label>
-        <input class="form-input" type="text" placeholder="First name"/>
+        <input class="form-input" id="r-fname" type="text" placeholder="First name"/>
       </div>
       <div class="form-group">
         <label class="form-label">Last Name *</label>
-        <input class="form-input" type="text" placeholder="Last name"/>
+        <input class="form-input" id="r-lname" type="text" placeholder="Last name"/>
       </div>
     </div>
 
     <!-- Country -->
     <div class="form-group">
       <label class="form-label">Country of Residence *</label>
-      <select class="form-input form-select">
+      <select class="form-input form-select" id="r-country">
         <option value="">Select country</option>
         <optgroup label="Africa">
           <option>South Africa</option>
@@ -257,14 +257,14 @@ input,select{font-family:inherit;}
     <!-- Email -->
     <div class="form-group">
       <label class="form-label">Email Address *</label>
-      <input class="form-input" type="email" placeholder="your@email.com"/>
+      <input class="form-input" id="r-email" type="email" placeholder="your@email.com"/>
     </div>
 
     <!-- Phone -->
     <div class="form-group">
       <label class="form-label">Phone Number *</label>
       <div class="phone-row">
-        <select class="phone-code">
+        <select class="phone-code" id="r-phone-code">
           <option>🇿🇦 +27</option>
           <option>🇳🇬 +234</option>
           <option>🇰🇪 +254</option>
@@ -274,7 +274,7 @@ input,select{font-family:inherit;}
           <option>🇬🇧 +44</option>
           <option>🇦🇺 +61</option>
         </select>
-        <input class="form-input phone-input" type="tel" placeholder="Phone number"/>
+        <input class="form-input phone-input" id="r-phone" type="tel" placeholder="Phone number"/>
       </div>
     </div>
 
@@ -318,7 +318,8 @@ input,select{font-family:inherit;}
       <label for="chk3">I agree to receive communications regarding products, services, promotions and updates. I have read and agree to the <a href="#">Privacy Policy</a> and <a href="#">Terms &amp; Conditions</a>.</label>
     </div>
 
-    <button class="btn-submit">Create Account</button>
+    <div id="r-error" style="display:none;background:#fff2f0;border:1px solid #ffd5cc;border-radius:8px;padding:10px 14px;font-size:12.5px;color:#c94400;margin-bottom:10px;"></div>
+    <button class="btn-submit" id="r-btn" onclick="doRegister()">Create Account</button>
 
     <div class="form-footer">
       <span class="form-footer-link">Have an account? <a href="login.html">Log In</a></span>
@@ -342,12 +343,69 @@ input,select{font-family:inherit;}
 
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./supabase.js"></script>
 <script>
 function togglePwd(id, btn) {
   const input = document.getElementById(id);
   const isText = input.type === 'text';
   input.type = isText ? 'password' : 'text';
   btn.style.color = isText ? '#bbb' : '#E8530A';
+}
+
+async function doRegister() {
+  const btn   = document.getElementById('r-btn');
+  const errEl = document.getElementById('r-error');
+  const fname   = document.getElementById('r-fname').value.trim();
+  const lname   = document.getElementById('r-lname').value.trim();
+  const country = document.getElementById('r-country').value;
+  const email   = document.getElementById('r-email').value.trim();
+  const phone   = document.getElementById('r-phone-code').value.replace(/[^\d+]/g,'') + document.getElementById('r-phone').value.trim();
+  const pwd     = document.getElementById('pwd').value;
+  const acctType = document.querySelector('input[name="acct"]:checked')?.id === 'acct-corp' ? 'company' : document.querySelector('input[name="acct"]:checked')?.id === 'acct-trust' ? 'trust' : 'individual';
+  const chk2  = document.getElementById('chk2').checked;
+  const chk3  = document.getElementById('chk3').checked;
+
+  errEl.style.display = 'none';
+
+  if (!fname || !lname)    return showErr('Please enter your full name.');
+  if (!country)            return showErr('Please select your country.');
+  if (!email)              return showErr('Please enter your email address.');
+  if (pwd.length < 8)      return showErr('Password must be at least 8 characters.');
+  if (!chk2)               return showErr('Please confirm you are of legal age.');
+  if (!chk3)               return showErr('Please agree to the Privacy Policy and Terms.');
+
+  btn.disabled    = true;
+  btn.textContent = 'Creating account…';
+
+  const db = window.SV_DB;
+  const { data, error } = await db.auth.signUp({ email, password: pwd });
+
+  if (error) {
+    btn.disabled    = false;
+    btn.textContent = 'Create Account';
+    return showErr(error.message);
+  }
+
+  await db.from('profiles').insert({
+    id: data.user.id,
+    email,
+    first_name:   fname,
+    last_name:    lname,
+    phone,
+    country,
+    account_type: acctType,
+    status:       'active',
+    kyc_status:   'none',
+  });
+
+  window.location.href = 'dashboard.html';
+}
+
+function showErr(msg) {
+  const el = document.getElementById('r-error');
+  el.textContent   = msg;
+  el.style.display = 'block';
 }
 </script>
 </body>
