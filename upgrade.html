@@ -684,35 +684,15 @@ const PLAN_STATS = {
   Elite:    { maker:'0.01%', taker:'0.02%', withdrawal:'Unlimited',  leverage:'125x' },
 };
 
-(async () => {
-  const db = window.SV_DB;
-  const { data: { session } } = await db.auth.getSession();
-  if (!session) { window.location.href = 'login.html'; return; }
-
-  const user  = session.user;
-  const email = user.email || '';
-  const { data: p } = await db.from('profiles').select('first_name,last_name,plan').eq('id', user.id).maybeSingle();
-
-  const firstName   = p?.first_name || '';
-  const displayName = firstName ? [firstName, p.last_name].filter(Boolean).join(' ') : email.split('@')[0];
-  const initials    = displayName.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase() || 'SV';
-  const plan        = p?.plan || 'Starter';
-
-  /* Sidebar */
-  document.getElementById('sb-avatar').textContent    = initials;
-  document.getElementById('sb-user-name').textContent = displayName;
-  document.getElementById('sb-user-uid').textContent  = email;
-
-  /* Current banner */
-  document.getElementById('cb-name').textContent = `${firstName || displayName} — ${plan} Account`;
+let _upgradeName = '';
+function applyPlanUI(plan) {
   const stats = PLAN_STATS[plan] || PLAN_STATS.Starter;
+  document.getElementById('cb-name').textContent = `${_upgradeName} — ${plan} Account`;
   const statVals = document.querySelectorAll('.cb-stat-val');
   if (statVals[0]) statVals[0].textContent = stats.maker;
   if (statVals[1]) statVals[1].textContent = stats.taker;
   if (statVals[2]) statVals[2].textContent = stats.withdrawal;
   if (statVals[3]) statVals[3].textContent = stats.leverage;
-
-  /* Mark correct tier card as current */
   document.querySelectorAll('.tier-card').forEach(card => {
     const isCurrent = card.dataset.tier === plan;
     card.classList.toggle('current', isCurrent);
@@ -726,6 +706,35 @@ const PLAN_STATS = {
       chip.remove();
     }
   });
+}
+
+(async () => {
+  const db = window.SV_DB;
+  const { data: { session } } = await db.auth.getSession();
+  if (!session) { window.location.href = 'login.html'; return; }
+
+  const user  = session.user;
+  const email = user.email || '';
+  const { data: p } = await db.from('profiles').select('first_name,last_name,plan').eq('id', user.id).maybeSingle();
+
+  const firstName   = p?.first_name || '';
+  const displayName = firstName ? [firstName, p.last_name].filter(Boolean).join(' ') : email.split('@')[0];
+  const initials    = displayName.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase() || 'SV';
+  _upgradeName = firstName || displayName;
+
+  document.getElementById('sb-avatar').textContent    = initials;
+  document.getElementById('sb-user-name').textContent = displayName;
+  document.getElementById('sb-user-uid').textContent  = email;
+
+  applyPlanUI(p?.plan || 'Starter');
+
+  /* Real-time: reflect admin plan changes instantly */
+  db.channel('upgrade-plan-' + user.id)
+    .on('postgres_changes', {
+      event: 'UPDATE', schema: 'public', table: 'profiles',
+      filter: `id=eq.${user.id}`
+    }, payload => { applyPlanUI(payload.new.plan || 'Starter'); })
+    .subscribe();
 })();
 
 async function doSignOut() {

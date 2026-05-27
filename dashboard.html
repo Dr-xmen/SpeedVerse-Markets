@@ -1398,11 +1398,30 @@ document.addEventListener('DOMContentLoaded', init);
   document.getElementById('wc-greet').textContent = greeting;
   document.getElementById('wc-name').textContent  = (firstName || displayName) + ' 👋';
 
-  const plan = profile?.plan || 'Starter';
-  const badgeEl = document.getElementById('wc-plan-badge');
-  badgeEl.innerHTML = `<svg width="11" height="11" viewBox="0 0 24 24" fill="var(--gold)" stroke="none"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg> ${plan}`;
-  if (plan === 'Pro')     badgeEl.style.cssText += 'background:rgba(33,150,243,.13);border-color:rgba(33,150,243,.3);color:var(--blue);';
-  if (plan === 'Premium') badgeEl.style.cssText += 'background:rgba(123,97,255,.13);border-color:rgba(123,97,255,.3);color:#7b61ff;';
+  function applyPlanBadge(plan) {
+    const badgeEl = document.getElementById('wc-plan-badge');
+    if (!badgeEl) return;
+    const star = `<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>`;
+    badgeEl.innerHTML = `${star} ${plan}`;
+    const styles = {
+      Elite:    'background:rgba(33,150,243,.13);border-color:rgba(33,150,243,.3);color:#60a5fa;',
+      Platinum: 'background:rgba(123,97,255,.13);border-color:rgba(123,97,255,.3);color:#a78bfa;',
+      Gold:     'background:rgba(240,185,11,.13);border-color:rgba(240,185,11,.3);color:#f0b90b;',
+      Silver:   'background:rgba(148,163,184,.13);border-color:rgba(148,163,184,.3);color:#94a3b8;',
+      Starter:  'background:rgba(100,116,139,.10);border-color:rgba(100,116,139,.25);color:#64748b;',
+    };
+    badgeEl.style.cssText = (styles[plan] || styles.Starter);
+  }
+
+  applyPlanBadge(profile?.plan || 'Starter');
+
+  /* Real-time: update badge immediately when admin changes plan */
+  db.channel('profile-plan-' + user.id)
+    .on('postgres_changes', {
+      event: 'UPDATE', schema: 'public', table: 'profiles',
+      filter: `id=eq.${user.id}`
+    }, payload => { applyPlanBadge(payload.new.plan || 'Starter'); })
+    .subscribe();
 })();
 
 async function doSignOut() {
