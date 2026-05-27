@@ -489,19 +489,25 @@ function toggleTheme(){var light=document.body.classList.toggle('light');localSt
 // Contract data
 const contracts = ['BTC-USDT-SWAP','ETH-USDT-SWAP','SOL-USDT-SWAP','XRP-USDT-SWAP','BNB-USDT-SWAP','AVAX-USDT-SWAP','DOGE-USDT-SWAP'];
 const contractNames = {'BTC-USDT-SWAP':'BTC-USDT-PERP','ETH-USDT-SWAP':'ETH-USDT-PERP','SOL-USDT-SWAP':'SOL-USDT-PERP','XRP-USDT-SWAP':'XRP-USDT-PERP','BNB-USDT-SWAP':'BNB-USDT-PERP','AVAX-USDT-SWAP':'AVAX-USDT-PERP','DOGE-USDT-SWAP':'DOGE-USDT-PERP'};
+const binanceSyms = {'BTC-USDT-SWAP':'BTCUSDT','ETH-USDT-SWAP':'ETHUSDT','SOL-USDT-SWAP':'SOLUSDT','XRP-USDT-SWAP':'XRPUSDT','BNB-USDT-SWAP':'BNBUSDT','AVAX-USDT-SWAP':'AVAXUSDT','DOGE-USDT-SWAP':'DOGEUSDT'};
 let activeInst = 'BTC-USDT-SWAP';
-let currentPrice = 67412.50;
+let currentPrice = 0;
 let currentSide = 'long';
 let currentLeverage = 10;
 let oType = 'market';
 
-// Fetch price from OKX
 async function fetchPrice(inst) {
+  const sym = binanceSyms[inst];
+  if(sym) {
+    try {
+      const d = await fetch('https://fapi.binance.com/fapi/v1/ticker/24hr?symbol='+sym).then(r=>r.json());
+      if(d.lastPrice) return {last:d.lastPrice,open24h:d.openPrice,high24h:d.highPrice,low24h:d.lowPrice,vol24h:d.volume,volCcy24h:d.quoteVolume};
+    } catch(e){}
+  }
   try {
-    const r = await fetch('https://www.okx.com/api/v5/market/ticker?instId=' + inst);
-    const d = await r.json();
-    if(d.data && d.data[0]) return d.data[0];
-  } catch(e) {}
+    const d = await fetch('https://www.okx.com/api/v5/market/ticker?instId='+inst).then(r=>r.json());
+    if(d.data&&d.data[0]) return d.data[0];
+  } catch(e){}
   return null;
 }
 
@@ -553,7 +559,7 @@ function updateStatsBar(data, inst) {
   chgEl.className = 'stat-val ' + (chgPct >= 0 ? 'green' : 'red');
   document.getElementById('stat-high').textContent = fmtPrice(data.high24h, inst);
   document.getElementById('stat-low').textContent = fmtPrice(data.low24h, inst);
-  const volUsdt = parseFloat(data.volCcy24h||data.vol24h||0) * px;
+  const volUsdt = parseFloat(data.volCcy24h||0) || parseFloat(data.vol24h||0)*px;
   document.getElementById('stat-vol').textContent = fmtVol(volUsdt) + ' USDT';
   document.getElementById('stat-mark').textContent = fmtPrice(data.last, inst);
   document.getElementById('stat-index').textContent = fmtPrice((px * 0.9998).toFixed(2), inst);

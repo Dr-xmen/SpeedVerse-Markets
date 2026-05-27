@@ -473,12 +473,20 @@ let currentSide = 'long';
 let currentLeverage = 10;
 let oType = 'market';
 
+const binanceSpotSyms = {'BTC-USDT':'BTCUSDT','ETH-USDT':'ETHUSDT'};
+
 async function fetchPrice(inst) {
   try {
-    const r = await fetch('https://www.okx.com/api/v5/market/ticker?instId=' + inst);
-    const d = await r.json();
-    if(d.data && d.data[0]) return d.data[0];
-  } catch(e) {}
+    const d = await fetch('https://www.okx.com/api/v5/market/ticker?instId='+inst).then(r=>r.json());
+    if(d.data&&d.data[0]) return d.data[0];
+  } catch(e){}
+  const sym = binanceSpotSyms[inst];
+  if(sym) {
+    try {
+      const d = await fetch('https://api.binance.com/api/v3/ticker/24hr?symbol='+sym).then(r=>r.json());
+      if(d.lastPrice) return {last:d.lastPrice,open24h:d.openPrice,high24h:d.highPrice,low24h:d.lowPrice,vol24h:d.volume,volCcy24h:d.quoteVolume};
+    } catch(e){}
+  }
   return null;
 }
 

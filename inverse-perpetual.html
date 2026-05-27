@@ -457,6 +457,7 @@ function toggleTheme(){var light=document.body.classList.toggle('light');localSt
 const contracts = ['BTC-USD-SWAP','ETH-USD-SWAP','SOL-USD-SWAP'];
 const contractNames = {'BTC-USD-SWAP':'BTC-USD-PERP','ETH-USD-SWAP':'ETH-USD-PERP','SOL-USD-SWAP':'SOL-USD-PERP'};
 const baseCoins = {'BTC-USD-SWAP':'BTC','ETH-USD-SWAP':'ETH','SOL-USD-SWAP':'SOL'};
+const binanceSyms = {'BTC-USD-SWAP':'BTCUSD_PERP','ETH-USD-SWAP':'ETHUSD_PERP','SOL-USD-SWAP':'SOLUSD_PERP'};
 let activeInst = 'BTC-USD-SWAP';
 let currentPrice = 0;
 let currentSide = 'long';
@@ -464,11 +465,18 @@ let currentLeverage = 10;
 let oType = 'market';
 
 async function fetchPrice(inst) {
+  const sym = binanceSyms[inst];
+  if(sym) {
+    try {
+      const d = await fetch('https://dapi.binance.com/dapi/v1/ticker/24hr?symbol='+sym).then(r=>r.json());
+      const item = Array.isArray(d) ? d[0] : d;
+      if(item&&item.lastPrice) return {last:item.lastPrice,open24h:item.openPrice,high24h:item.highPrice,low24h:item.lowPrice,vol24h:item.volume};
+    } catch(e){}
+  }
   try {
-    const r = await fetch('https://www.okx.com/api/v5/market/ticker?instId=' + inst);
-    const d = await r.json();
-    if(d.data && d.data[0]) return d.data[0];
-  } catch(e) {}
+    const d = await fetch('https://www.okx.com/api/v5/market/ticker?instId='+inst).then(r=>r.json());
+    if(d.data&&d.data[0]) return d.data[0];
+  } catch(e){}
   return null;
 }
 
