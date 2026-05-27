@@ -268,6 +268,9 @@ html.mob .sb-overlay.open{display:block;}
       </button>
     </header>
 
+    <!-- TRADINGVIEW TICKER TAPE -->
+    <div id="tv-ticker-usdt" style="height:46px;overflow:hidden;flex-shrink:0;border-bottom:1px solid var(--b);"></div>
+
     <!-- CONTRACT SELECTOR BAR -->
     <div class="contract-bar" id="contractBar">
       <div class="contract-pill active" data-inst="BTC-USDT-SWAP" onclick="selectContract(this)">
@@ -714,6 +717,44 @@ updateFundingTimer();
 // Initial load
 updateAllPills();
 setInterval(updateAllPills, 10000);
+
+// TradingView Ticker Tape
+(function(){
+  var wrap=document.getElementById('tv-ticker-usdt');
+  if(!wrap)return;
+  var c=document.createElement('div');
+  c.className='tradingview-widget-container';
+  c.style.cssText='height:100%;width:100%';
+  var w=document.createElement('div');
+  w.className='tradingview-widget-container__widget';
+  w.style.cssText='height:calc(100% + 32px);width:100%';
+  var s=document.createElement('script');
+  s.type='text/javascript';
+  s.src='https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js';
+  s.async=true;
+  s.textContent=JSON.stringify({
+    symbols:[
+      {proName:'BINANCE:BTCUSDT',title:'BTC/USDT'},
+      {proName:'BINANCE:ETHUSDT',title:'ETH/USDT'},
+      {proName:'BINANCE:SOLUSDT',title:'SOL/USDT'},
+      {proName:'BINANCE:BNBUSDT',title:'BNB/USDT'},
+      {proName:'BINANCE:XRPUSDT',title:'XRP/USDT'},
+      {proName:'BINANCE:DOGEUSDT',title:'DOGE/USDT'},
+      {proName:'BINANCE:AVAXUSDT',title:'AVAX/USDT'},
+      {proName:'BINANCE:ADAUSDT',title:'ADA/USDT'},
+      {proName:'BINANCE:LINKUSDT',title:'LINK/USDT'},
+      {proName:'BINANCE:DOTUSDT',title:'DOT/USDT'}
+    ],
+    showSymbolLogo:true,
+    isTransparent:true,
+    displayMode:'adaptive',
+    colorTheme:'dark',
+    locale:'en'
+  });
+  c.appendChild(w);
+  c.appendChild(s);
+  wrap.appendChild(c);
+})();
 </script>
 </body>
 </html>
