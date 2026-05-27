@@ -529,17 +529,17 @@ function toggleTheme(){var light=document.body.classList.toggle('light');localSt
 
 // ── Asset Data ──
 const ASSETS = [
-  {sym:'BTC',name:'Bitcoin',       amount:0.8452,  avail:0.6452, inOrder:0.2000, price:67420,   chg:2.14,  icon:'#F7931A', bg:'rgba(247,147,26,.15)'},
-  {sym:'ETH',name:'Ethereum',      amount:12.34,   avail:10.84,  inOrder:1.50,   price:3512,    chg:1.87,  icon:'#627EEA', bg:'rgba(98,126,234,.15)'},
-  {sym:'SOL',name:'Solana',        amount:142.6,   avail:142.6,  inOrder:0,      price:148.60,  chg:4.23,  icon:'#9945FF', bg:'rgba(153,69,255,.15)'},
-  {sym:'BNB',name:'BNB',           amount:8.5,     avail:7.0,    inOrder:1.5,    price:412.30,  chg:-0.84, icon:'#F0B90B', bg:'rgba(240,185,11,.15)'},
-  {sym:'XRP',name:'XRP',           amount:12450,   avail:12450,  inOrder:0,      price:0.5821,  chg:3.12,  icon:'#00AAE4', bg:'rgba(0,170,228,.15)'},
-  {sym:'USDT',name:'Tether',       amount:8250,    avail:6250,   inOrder:2000,   price:1.00,    chg:0.00,  icon:'#26A17B', bg:'rgba(38,161,123,.15)'},
-  {sym:'ADA',name:'Cardano',       amount:5200,    avail:5200,   inOrder:0,      price:0.4512,  chg:-1.23, icon:'#0033AD', bg:'rgba(0,51,173,.15)'},
-  {sym:'LINK',name:'Chainlink',    amount:320,     avail:270,    inOrder:50,     price:14.85,   chg:2.56,  icon:'#2A5ADA', bg:'rgba(42,90,218,.15)'},
+  {sym:'BTC', name:'Bitcoin',   inst:'BTC-USDT',  amount:0.8452,  avail:0.6452, inOrder:0.2000, price:67420,  chg:2.14,  icon:'#F7931A', bg:'rgba(247,147,26,.15)'},
+  {sym:'ETH', name:'Ethereum',  inst:'ETH-USDT',  amount:12.34,   avail:10.84,  inOrder:1.50,   price:3512,   chg:1.87,  icon:'#627EEA', bg:'rgba(98,126,234,.15)'},
+  {sym:'SOL', name:'Solana',    inst:'SOL-USDT',  amount:142.6,   avail:142.6,  inOrder:0,      price:148.60, chg:4.23,  icon:'#9945FF', bg:'rgba(153,69,255,.15)'},
+  {sym:'BNB', name:'BNB',       inst:'BNB-USDT',  amount:8.5,     avail:7.0,    inOrder:1.5,    price:412.30, chg:-0.84, icon:'#F0B90B', bg:'rgba(240,185,11,.15)'},
+  {sym:'XRP', name:'XRP',       inst:'XRP-USDT',  amount:12450,   avail:12450,  inOrder:0,      price:0.5821, chg:3.12,  icon:'#00AAE4', bg:'rgba(0,170,228,.15)'},
+  {sym:'USDT',name:'Tether',    inst:null,         amount:8250,    avail:6250,   inOrder:2000,   price:1.00,   chg:0.00,  icon:'#26A17B', bg:'rgba(38,161,123,.15)'},
+  {sym:'ADA', name:'Cardano',   inst:'ADA-USDT',  amount:5200,    avail:5200,   inOrder:0,      price:0.4512, chg:-1.23, icon:'#0033AD', bg:'rgba(0,51,173,.15)'},
+  {sym:'LINK',name:'Chainlink', inst:'LINK-USDT', amount:320,     avail:270,    inOrder:50,     price:14.85,  chg:2.56,  icon:'#2A5ADA', bg:'rgba(42,90,218,.15)'},
 ];
 
-const TOTAL = ASSETS.reduce((s,a)=>s+a.amount*a.price,0);
+let TOTAL = ASSETS.reduce((s,a)=>s+a.amount*a.price,0);
 
 function fmt(n,decimals=2){return n.toLocaleString('en-US',{minimumFractionDigits:decimals,maximumFractionDigits:decimals});}
 function fmtCoin(n,sym){
@@ -635,25 +635,44 @@ function toggleHide(){
   }
 }
 
-// Live BTC price fetch (OKX API)
-async function fetchBTCPrice(){
-  try{
-    const r=await fetch('https://www.okx.com/api/v5/market/ticker?instId=BTC-USDT');
-    const d=await r.json();
-    if(d.data&&d.data[0]){
-      const price=parseFloat(d.data[0].last);
-      if(price>0){
-        ASSETS[0].price=price;
-        renderTable();
-      }
+// Live price fetch — all assets in parallel from OKX
+async function fetchAllPrices(){
+  const results = await Promise.all(ASSETS.map((a,i) => {
+    if(!a.inst) return Promise.resolve(null);
+    return fetch('https://www.okx.com/api/v5/market/ticker?instId='+a.inst)
+      .then(r=>r.json())
+      .then(d=>{
+        if(!d.data||!d.data[0]) return null;
+        const px = parseFloat(d.data[0].last);
+        const open = parseFloat(d.data[0].open24h);
+        return {i, px, chg: open ? ((px-open)/open*100) : 0};
+      })
+      .catch(()=>null);
+  }));
+  results.forEach(res=>{
+    if(!res) return;
+    ASSETS[res.i].price = res.px;
+    ASSETS[res.i].chg = res.chg;
+  });
+  TOTAL = ASSETS.reduce((s,a)=>s+a.amount*a.price, 0);
+  if(!hiddenBalance){
+    document.getElementById('pb-total').textContent = '$'+fmt(TOTAL);
+    // rough daily P&L estimate: sum of positive changers
+    const pnl = ASSETS.reduce((s,a)=>s+(a.chg>0?a.amount*a.price*a.chg/100:0),0);
+    const pnlPct = TOTAL>0?(pnl/TOTAL*100):0;
+    const pnlEl = document.getElementById('pnl-val');
+    if(pnlEl){
+      pnlEl.textContent=(pnl>=0?'+$':'-$')+fmt(Math.abs(pnl))+' ('+(pnlPct>=0?'+':'')+fmt(pnlPct,2)+'%)';
+      pnlEl.className=pnl>=0?'pb-pnl-pos':'pb-pnl-neg';
     }
-  }catch(e){}
+  }
+  renderTable();
 }
 
 // Init
 renderTable();
-fetchBTCPrice();
-setInterval(fetchBTCPrice, 15000);
+fetchAllPrices();
+setInterval(fetchAllPrices, 15000);
 </script>
 </body>
 </html>

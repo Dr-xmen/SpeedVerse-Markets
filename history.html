@@ -105,6 +105,17 @@ input,select{font-family:inherit;border:none;outline:none;background:none;color:
 .filter-sep{width:1px;height:18px;background:var(--b);}
 .filter-export-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;border:1px solid var(--b);background:var(--s2);font-size:12.5px;font-weight:500;color:var(--sub);cursor:pointer;white-space:nowrap;transition:all .15s;}
 .filter-export-btn:hover{border-color:var(--b2);color:var(--text);}
+/* LIVE PRICE BAR */
+.price-bar{display:flex;align-items:center;gap:0;background:var(--s1);border:1px solid var(--b);border-radius:10px;padding:0;margin-bottom:12px;overflow:hidden;flex-wrap:wrap;}
+.price-bar-item{display:flex;align-items:center;gap:10px;padding:10px 16px;border-right:1px solid var(--b);min-width:140px;}
+.price-bar-item:last-child{border-right:none;}
+.price-bar-sym{font-size:12px;font-weight:700;color:var(--text);}
+.price-bar-px{font-size:13px;font-weight:600;font-variant-numeric:tabular-nums;}
+.price-bar-chg{font-size:11px;font-weight:600;}
+.price-bar-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.price-bar-live{display:flex;align-items:center;gap:5px;margin-left:auto;padding:10px 14px;font-size:11px;color:var(--sub);}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
 
 /* HISTORY TABLE */
 .history-section{background:var(--s1);border:1px solid var(--b);border-radius:14px;overflow:hidden;}
@@ -360,6 +371,44 @@ html.mob .filter-controls{gap:6px;}
 
   <div class="page-title">History</div>
   <div class="page-title-sub">All account activity</div>
+
+  <!-- Live Market Prices Bar -->
+  <div class="price-bar" id="price-bar">
+    <div class="price-bar-item">
+      <div class="price-bar-dot" style="background:#F7931A;"></div>
+      <span class="price-bar-sym">BTC</span>
+      <span class="price-bar-px" id="pb-btc-px" style="color:var(--text);">—</span>
+      <span class="price-bar-chg" id="pb-btc-chg" style="color:var(--sub);">—</span>
+    </div>
+    <div class="price-bar-item">
+      <div class="price-bar-dot" style="background:#627EEA;"></div>
+      <span class="price-bar-sym">ETH</span>
+      <span class="price-bar-px" id="pb-eth-px" style="color:var(--text);">—</span>
+      <span class="price-bar-chg" id="pb-eth-chg" style="color:var(--sub);">—</span>
+    </div>
+    <div class="price-bar-item">
+      <div class="price-bar-dot" style="background:#9945FF;"></div>
+      <span class="price-bar-sym">SOL</span>
+      <span class="price-bar-px" id="pb-sol-px" style="color:var(--text);">—</span>
+      <span class="price-bar-chg" id="pb-sol-chg" style="color:var(--sub);">—</span>
+    </div>
+    <div class="price-bar-item">
+      <div class="price-bar-dot" style="background:#F0B90B;"></div>
+      <span class="price-bar-sym">BNB</span>
+      <span class="price-bar-px" id="pb-bnb-px" style="color:var(--text);">—</span>
+      <span class="price-bar-chg" id="pb-bnb-chg" style="color:var(--sub);">—</span>
+    </div>
+    <div class="price-bar-item">
+      <div class="price-bar-dot" style="background:#00AAE4;"></div>
+      <span class="price-bar-sym">XRP</span>
+      <span class="price-bar-px" id="pb-xrp-px" style="color:var(--text);">—</span>
+      <span class="price-bar-chg" id="pb-xrp-chg" style="color:var(--sub);">—</span>
+    </div>
+    <div class="price-bar-live">
+      <div class="live-dot"></div>
+      <span>Live prices</span>
+    </div>
+  </div>
 
   <!-- Filter Bar -->
   <div class="filter-bar">
@@ -630,9 +679,43 @@ function renderHistory() {
   }).join('');
 }
 
+// Live market price bar
+const PRICE_TICKERS = [
+  {id:'BTC-USDT', pxId:'pb-btc-px', chgId:'pb-btc-chg', dec:2},
+  {id:'ETH-USDT', pxId:'pb-eth-px', chgId:'pb-eth-chg', dec:2},
+  {id:'SOL-USDT', pxId:'pb-sol-px', chgId:'pb-sol-chg', dec:2},
+  {id:'BNB-USDT', pxId:'pb-bnb-px', chgId:'pb-bnb-chg', dec:2},
+  {id:'XRP-USDT', pxId:'pb-xrp-px', chgId:'pb-xrp-chg', dec:4},
+];
+async function fetchLivePrices(){
+  await Promise.all(PRICE_TICKERS.map(t =>
+    fetch('https://www.okx.com/api/v5/market/ticker?instId='+t.id)
+      .then(r=>r.json())
+      .then(d=>{
+        if(!d.data||!d.data[0]) return;
+        const px = parseFloat(d.data[0].last);
+        const open = parseFloat(d.data[0].open24h);
+        const chg = open ? ((px-open)/open*100) : 0;
+        const pxEl = document.getElementById(t.pxId);
+        const chgEl = document.getElementById(t.chgId);
+        if(pxEl) {
+          pxEl.textContent = '$'+px.toLocaleString('en-US',{minimumFractionDigits:t.dec,maximumFractionDigits:t.dec});
+          pxEl.style.color = chg>=0?'var(--green)':'var(--red)';
+        }
+        if(chgEl){
+          chgEl.textContent = (chg>=0?'+':'')+chg.toFixed(2)+'%';
+          chgEl.style.color = chg>=0?'var(--green)':'var(--red)';
+        }
+      })
+      .catch(()=>{})
+  ));
+}
+
 // Init
 renderHistory();
 applyFilters();
+fetchLivePrices();
+setInterval(fetchLivePrices, 15000);
 </script>
 </body>
 </html>

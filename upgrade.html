@@ -258,6 +258,39 @@ html.mob .sb-overlay.open{display:block;}
     </header>
 
     <div class="content">
+      <!-- LIVE ACCOUNT STATS -->
+      <div id="acct-stats-bar" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;background:var(--s1);border:1px solid var(--b);border-radius:10px;padding:14px 20px;align-items:center;">
+        <div style="display:flex;flex-direction:column;min-width:120px;">
+          <span style="font-size:10px;color:var(--text3);margin-bottom:3px;">BTC Price</span>
+          <span id="upg-btc" style="font-size:15px;font-weight:700;color:var(--green);font-variant-numeric:tabular-nums;">Loading…</span>
+        </div>
+        <div style="width:1px;background:var(--b);align-self:stretch;"></div>
+        <div style="display:flex;flex-direction:column;min-width:120px;">
+          <span style="font-size:10px;color:var(--text3);margin-bottom:3px;">ETH Price</span>
+          <span id="upg-eth" style="font-size:15px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums;">Loading…</span>
+        </div>
+        <div style="width:1px;background:var(--b);align-self:stretch;"></div>
+        <div style="display:flex;flex-direction:column;min-width:140px;">
+          <span style="font-size:10px;color:var(--text3);margin-bottom:3px;">Your 30D Volume</span>
+          <span id="upg-vol" style="font-size:15px;font-weight:700;color:var(--accent);">$84,210.00</span>
+        </div>
+        <div style="display:flex;flex-direction:column;flex:1;min-width:180px;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
+            <span style="font-size:10px;color:var(--text3);">Progress to Silver ($100K)</span>
+            <span id="upg-pct" style="font-size:10px;color:var(--accent);font-weight:600;">84.2%</span>
+          </div>
+          <div style="height:6px;background:var(--s3);border-radius:3px;overflow:hidden;">
+            <div id="upg-bar" style="height:100%;width:84.2%;background:linear-gradient(90deg,var(--accent),var(--gold));border-radius:3px;transition:width .6s ease;"></div>
+          </div>
+          <span style="font-size:10px;color:var(--text3);margin-top:4px;">$15,790 more needed for Silver tier</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text3);flex-shrink:0;">
+          <div style="width:6px;height:6px;border-radius:50%;background:var(--green);animation:upg-pulse 2s infinite;"></div>
+          Live
+        </div>
+      </div>
+      <style>@keyframes upg-pulse{0%,100%{opacity:1;}50%{opacity:.3;}}</style>
+
       <!-- CURRENT TIER BANNER -->
       <div class="current-banner">
         <div class="cb-icon">
@@ -539,6 +572,31 @@ function toggleSub(el,subId){var sub=document.getElementById(subId);if(!sub)retu
 function toggleTheme(){var light=document.body.classList.toggle('light');localStorage.setItem('sv_theme',light?'light':'dark');document.getElementById('theme-icon-dark').style.display=light?'none':'';document.getElementById('theme-icon-light').style.display=light?'':'none';}
 (function(){if(localStorage.getItem('sv_theme')==='light'){document.body.classList.add('light');document.getElementById('theme-icon-dark').style.display='none';document.getElementById('theme-icon-light').style.display='';}})();
 function toggleFaq(item){item.classList.toggle('open');}
+
+async function fetchUpgradePrices(){
+  try{
+    const [btcR, ethR] = await Promise.all([
+      fetch('https://www.okx.com/api/v5/market/ticker?instId=BTC-USDT').then(r=>r.json()),
+      fetch('https://www.okx.com/api/v5/market/ticker?instId=ETH-USDT').then(r=>r.json()),
+    ]);
+    const btcPx = btcR.data&&btcR.data[0] ? parseFloat(btcR.data[0].last) : null;
+    const ethPx = ethR.data&&ethR.data[0] ? parseFloat(ethR.data[0].last) : null;
+    const btcChg = btcR.data&&btcR.data[0] ? ((parseFloat(btcR.data[0].last)-parseFloat(btcR.data[0].open24h))/parseFloat(btcR.data[0].open24h)*100) : 0;
+    const ethChg = ethR.data&&ethR.data[0] ? ((parseFloat(ethR.data[0].last)-parseFloat(ethR.data[0].open24h))/parseFloat(ethR.data[0].open24h)*100) : 0;
+    const btcEl = document.getElementById('upg-btc');
+    const ethEl = document.getElementById('upg-eth');
+    if(btcEl&&btcPx){
+      btcEl.textContent = '$'+btcPx.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})+(btcChg>=0?' ▲':' ▼')+Math.abs(btcChg).toFixed(2)+'%';
+      btcEl.style.color = btcChg>=0?'var(--green)':'var(--red)';
+    }
+    if(ethEl&&ethPx){
+      ethEl.textContent = '$'+ethPx.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})+(ethChg>=0?' ▲':' ▼')+Math.abs(ethChg).toFixed(2)+'%';
+      ethEl.style.color = ethChg>=0?'var(--green)':'var(--red)';
+    }
+  }catch(e){}
+}
+fetchUpgradePrices();
+setInterval(fetchUpgradePrices, 15000);
 </script>
 </body>
 </html>
