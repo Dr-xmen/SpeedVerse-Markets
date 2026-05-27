@@ -374,7 +374,7 @@ html.mob .pb-balance{font-size:26px;}
       <div class="pb-left">
         <div class="pb-label">Total Portfolio Value</div>
         <div class="pb-balance-row">
-          <span class="pb-balance" id="pb-total">$124,850.32</span>
+          <span class="pb-balance" id="pb-total">$0.00</span>
           <span class="pb-balance-currency">USD</span>
           <button class="pb-hide-btn" onclick="toggleHide()" title="Hide balance">
             <svg id="eye-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
@@ -382,7 +382,7 @@ html.mob .pb-balance{font-size:26px;}
         </div>
         <div class="pb-pnl">
           <span style="color:var(--sub);font-weight:400;">Today's P&L:</span>
-          <span class="pb-pnl-pos" id="pnl-val">+$2,341.18 (+1.91%)</span>
+          <span class="pb-pnl-pos" id="pnl-val">$0.00 (0.00%)</span>
         </div>
         <div class="pb-actions">
           <button class="pb-btn primary" onclick="window.location.href='deposit.html'">
@@ -394,31 +394,6 @@ html.mob .pb-balance{font-size:26px;}
           <button class="pb-btn outline">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="display:inline;vertical-align:middle;margin-right:5px;"><polyline points="17,1 21,5 17,9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7,23 3,19 7,15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>Transfer
           </button>
-        </div>
-      </div>
-      <div class="pb-right">
-        <div class="pb-summary-item">
-          <div class="pb-summary-label">Spot Account</div>
-          <div class="pb-summary-val">$89,247.10</div>
-          <div class="pb-summary-sub">71.5% of total</div>
-        </div>
-        <div class="pb-divider"></div>
-        <div class="pb-summary-item">
-          <div class="pb-summary-label">Derivatives</div>
-          <div class="pb-summary-val">$22,180.00</div>
-          <div class="pb-summary-sub">17.8% of total</div>
-        </div>
-        <div class="pb-divider"></div>
-        <div class="pb-summary-item">
-          <div class="pb-summary-label">Funding</div>
-          <div class="pb-summary-val">$5,173.22</div>
-          <div class="pb-summary-sub">4.1% of total</div>
-        </div>
-        <div class="pb-divider"></div>
-        <div class="pb-summary-item">
-          <div class="pb-summary-label">Earn</div>
-          <div class="pb-summary-val">$8,250.00</div>
-          <div class="pb-summary-sub">6.6% of total</div>
         </div>
       </div>
     </div>
@@ -434,8 +409,8 @@ html.mob .pb-balance{font-size:26px;}
         </div>
         <div class="acct-card-name">Spot Account</div>
       </div>
-      <div class="acct-card-val">$89,247.10</div>
-      <div class="acct-card-secondary">≈ 1.3238 BTC equivalent</div>
+      <div class="acct-card-val">$0.00</div>
+      <div class="acct-card-secondary">No assets yet</div>
       <div class="acct-card-link" onclick="window.location.href='spot.html'">Trade Spot →</div>
     </div>
     <!-- Derivatives -->
@@ -446,8 +421,8 @@ html.mob .pb-balance{font-size:26px;}
         </div>
         <div class="acct-card-name">Derivatives Account</div>
       </div>
-      <div class="acct-card-val">$22,180.00</div>
-      <div class="acct-card-secondary">Unrealized P&L: <span style="color:var(--green);">+$1,240.50</span></div>
+      <div class="acct-card-val">$0.00</div>
+      <div class="acct-card-secondary">No open positions</div>
       <div class="acct-card-link" onclick="window.location.href='usdt-perpetual.html'">Trade Perpetual →</div>
     </div>
     <!-- Funding -->
@@ -458,7 +433,7 @@ html.mob .pb-balance{font-size:26px;}
         </div>
         <div class="acct-card-name">Funding Account</div>
       </div>
-      <div class="acct-card-val">$5,173.22</div>
+      <div class="acct-card-val">$0.00</div>
       <div class="acct-card-secondary">Available for withdrawal</div>
       <div class="acct-card-link" onclick="window.location.href='withdraw.html'">Withdraw →</div>
     </div>
@@ -470,46 +445,25 @@ html.mob .pb-balance{font-size:26px;}
         </div>
         <div class="acct-card-name">Earn Account</div>
       </div>
-      <div class="acct-card-val">$8,250.00</div>
-      <div class="acct-card-secondary">APR: <span style="color:var(--gold);">12.40%</span> &mdash; Accruing daily</div>
+      <div class="acct-card-val">$0.00</div>
+      <div class="acct-card-secondary">No active earning positions</div>
       <div class="acct-card-link">Manage Earn →</div>
     </div>
   </div>
 
-  <!-- Asset Holdings Table -->
+  <!-- Asset Holdings -->
   <div class="asset-section">
     <div class="asset-section-header">
       <div class="asset-section-title">Asset Holdings</div>
-      <div class="asset-controls">
-        <div class="asset-search">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--sub)" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input type="text" id="asset-search-input" placeholder="Search asset…" oninput="filterAssets()"/>
-        </div>
-        <div class="hide-small-wrap" onclick="toggleHideSmall()">
-          <div class="toggle-switch" id="hide-small-toggle"><div class="toggle-thumb"></div></div>
-          <span>Hide small balances</span>
-        </div>
-      </div>
     </div>
-    <div class="asset-table-wrap">
-      <table class="asset-table" id="asset-table">
-        <thead>
-          <tr>
-            <th>Asset</th>
-            <th>Total Balance</th>
-            <th>Available</th>
-            <th>In Order</th>
-            <th>Price</th>
-            <th>24h Change</th>
-            <th>Portfolio %</th>
-            <th>Value (USD)</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody id="asset-tbody">
-          <!-- Rows injected by JS -->
-        </tbody>
-      </table>
+    <div style="padding:48px 24px;text-align:center;">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--sub)" stroke-width="1.2" stroke-linecap="round" style="margin-bottom:12px;opacity:.5;"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><circle cx="17" cy="14" r="1" fill="var(--sub)" stroke="none"/></svg>
+      <div style="font-size:15px;font-weight:600;color:var(--text);margin-bottom:6px;">No assets yet</div>
+      <div style="font-size:13px;color:var(--sub);margin-bottom:20px;">Make a deposit to start building your portfolio.</div>
+      <button class="pb-btn primary" onclick="window.location.href='deposit.html'" style="display:inline-flex;align-items:center;gap:6px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Deposit Now
+      </button>
     </div>
   </div>
 
@@ -527,99 +481,8 @@ function toggleSub(el,subId){var sub=document.getElementById(subId);if(!sub)retu
 function toggleTheme(){var light=document.body.classList.toggle('light');localStorage.setItem('sv_theme',light?'light':'dark');document.getElementById('theme-icon-dark').style.display=light?'none':'';document.getElementById('theme-icon-light').style.display=light?'':'none';}
 (function(){if(localStorage.getItem('sv_theme')==='light'){document.body.classList.add('light');document.getElementById('theme-icon-dark').style.display='none';document.getElementById('theme-icon-light').style.display='';}})();
 
-// ── Asset Data ──
-const ASSETS = [
-  {sym:'BTC', name:'Bitcoin',   inst:'BTC-USDT',  amount:0.8452,  avail:0.6452, inOrder:0.2000, price:67420,  chg:2.14,  icon:'#F7931A', bg:'rgba(247,147,26,.15)'},
-  {sym:'ETH', name:'Ethereum',  inst:'ETH-USDT',  amount:12.34,   avail:10.84,  inOrder:1.50,   price:3512,   chg:1.87,  icon:'#627EEA', bg:'rgba(98,126,234,.15)'},
-  {sym:'SOL', name:'Solana',    inst:'SOL-USDT',  amount:142.6,   avail:142.6,  inOrder:0,      price:148.60, chg:4.23,  icon:'#9945FF', bg:'rgba(153,69,255,.15)'},
-  {sym:'BNB', name:'BNB',       inst:'BNB-USDT',  amount:8.5,     avail:7.0,    inOrder:1.5,    price:412.30, chg:-0.84, icon:'#F0B90B', bg:'rgba(240,185,11,.15)'},
-  {sym:'XRP', name:'XRP',       inst:'XRP-USDT',  amount:12450,   avail:12450,  inOrder:0,      price:0.5821, chg:3.12,  icon:'#00AAE4', bg:'rgba(0,170,228,.15)'},
-  {sym:'USDT',name:'Tether',    inst:null,         amount:8250,    avail:6250,   inOrder:2000,   price:1.00,   chg:0.00,  icon:'#26A17B', bg:'rgba(38,161,123,.15)'},
-  {sym:'ADA', name:'Cardano',   inst:'ADA-USDT',  amount:5200,    avail:5200,   inOrder:0,      price:0.4512, chg:-1.23, icon:'#0033AD', bg:'rgba(0,51,173,.15)'},
-  {sym:'LINK',name:'Chainlink', inst:'LINK-USDT', amount:320,     avail:270,    inOrder:50,     price:14.85,  chg:2.56,  icon:'#2A5ADA', bg:'rgba(42,90,218,.15)'},
-];
-
-let TOTAL = ASSETS.reduce((s,a)=>s+a.amount*a.price,0);
-
-function fmt(n,decimals=2){return n.toLocaleString('en-US',{minimumFractionDigits:decimals,maximumFractionDigits:decimals});}
-function fmtCoin(n,sym){
-  if(n===0)return '0';
-  if(n>=1000)return fmt(n,2);
-  if(n>=1)return fmt(n,4);
-  return fmt(n,6);
-}
-
-let hideSmall=false;
-let searchVal='';
+// ── Hide balance toggle ──
 let hiddenBalance=false;
-
-function renderTable(){
-  const tbody=document.getElementById('asset-tbody');
-  const rows=ASSETS.filter(a=>{
-    const val=a.amount*a.price;
-    if(hideSmall && val<10)return false;
-    if(searchVal && !a.sym.toLowerCase().includes(searchVal) && !a.name.toLowerCase().includes(searchVal))return false;
-    return true;
-  });
-  tbody.innerHTML=rows.map(a=>{
-    const val=a.amount*a.price;
-    const pct=(val/TOTAL*100).toFixed(1);
-    const chgClass=a.chg>0?'chg-pos':a.chg<0?'chg-neg':'chg-zero';
-    const chgSign=a.chg>0?'+':'';
-    const barColor=a.chg>0?'var(--green)':a.chg<0?'var(--red)':'var(--sub)';
-    return `<tr class="asset-row" data-val="${val}">
-      <td>
-        <div class="asset-coin-cell">
-          <div class="asset-icon" style="background:${a.bg};color:${a.icon};">${a.sym.charAt(0)}</div>
-          <div>
-            <div class="asset-name">${a.sym}</div>
-            <div class="asset-fullname">${a.name}</div>
-          </div>
-        </div>
-      </td>
-      <td>
-        <div class="asset-num">${fmtCoin(a.amount,a.sym)} ${a.sym}</div>
-        <div class="asset-num-sub">≈ $${fmt(val)}</div>
-      </td>
-      <td>
-        <div class="asset-num">${fmtCoin(a.avail,a.sym)} ${a.sym}</div>
-      </td>
-      <td>
-        <div class="asset-num">${fmtCoin(a.inOrder,a.sym)} ${a.sym}</div>
-      </td>
-      <td>
-        <div class="asset-price">$${a.price>=1?fmt(a.price,a.price>=100?2:4):fmt(a.price,4)}</div>
-      </td>
-      <td class="${chgClass}">${chgSign}${fmt(a.chg,2)}%</td>
-      <td>
-        <div class="portfolio-bar-wrap">
-          <div class="portfolio-bar-track"><div class="portfolio-bar-fill" style="width:${Math.min(parseFloat(pct)*3,100)}%;background:${barColor};"></div></div>
-          <span class="portfolio-pct">${pct}%</span>
-        </div>
-      </td>
-      <td><div class="asset-value">$${fmt(val)}</div></td>
-      <td>
-        <div class="asset-actions">
-          <span class="asset-action-btn" onclick="window.location.href='deposit.html'">Deposit</span>
-          <span class="asset-action-btn" onclick="window.location.href='withdraw.html'">Withdraw</span>
-          <span class="asset-action-btn" onclick="window.location.href='spot.html'">Trade</span>
-        </div>
-      </td>
-    </tr>`;
-  }).join('');
-}
-
-function toggleHideSmall(){
-  hideSmall=!hideSmall;
-  document.getElementById('hide-small-toggle').classList.toggle('on',hideSmall);
-  renderTable();
-}
-function filterAssets(){
-  searchVal=document.getElementById('asset-search-input').value.trim().toLowerCase();
-  renderTable();
-}
-
-// Hide balance toggle
 function toggleHide(){
   hiddenBalance=!hiddenBalance;
   const el=document.getElementById('pb-total');
@@ -629,50 +492,11 @@ function toggleHide(){
     pnl.textContent='*****';
     document.getElementById('eye-icon').innerHTML='<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
   } else {
-    el.textContent='$124,850.32';
-    pnl.textContent='+$2,341.18 (+1.91%)';
+    el.textContent='$0.00';
+    pnl.textContent='$0.00 (0.00%)';
     document.getElementById('eye-icon').innerHTML='<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
   }
 }
-
-// Live price fetch — all assets in parallel from OKX
-async function fetchAllPrices(){
-  const results = await Promise.all(ASSETS.map((a,i) => {
-    if(!a.inst) return Promise.resolve(null);
-    return fetch('https://www.okx.com/api/v5/market/ticker?instId='+a.inst)
-      .then(r=>r.json())
-      .then(d=>{
-        if(!d.data||!d.data[0]) return null;
-        const px = parseFloat(d.data[0].last);
-        const open = parseFloat(d.data[0].open24h);
-        return {i, px, chg: open ? ((px-open)/open*100) : 0};
-      })
-      .catch(()=>null);
-  }));
-  results.forEach(res=>{
-    if(!res) return;
-    ASSETS[res.i].price = res.px;
-    ASSETS[res.i].chg = res.chg;
-  });
-  TOTAL = ASSETS.reduce((s,a)=>s+a.amount*a.price, 0);
-  if(!hiddenBalance){
-    document.getElementById('pb-total').textContent = '$'+fmt(TOTAL);
-    // rough daily P&L estimate: sum of positive changers
-    const pnl = ASSETS.reduce((s,a)=>s+(a.chg>0?a.amount*a.price*a.chg/100:0),0);
-    const pnlPct = TOTAL>0?(pnl/TOTAL*100):0;
-    const pnlEl = document.getElementById('pnl-val');
-    if(pnlEl){
-      pnlEl.textContent=(pnl>=0?'+$':'-$')+fmt(Math.abs(pnl))+' ('+(pnlPct>=0?'+':'')+fmt(pnlPct,2)+'%)';
-      pnlEl.className=pnl>=0?'pb-pnl-pos':'pb-pnl-neg';
-    }
-  }
-  renderTable();
-}
-
-// Init
-renderTable();
-fetchAllPrices();
-setInterval(fetchAllPrices, 15000);
 </script>
 </body>
 </html>
