@@ -475,28 +475,15 @@ html.mob .filter-controls{gap:6px;}
         </tbody>
       </table>
     </div>
-    <div id="empty-state" class="empty-state" style="display:none;">
+    <div id="empty-state" class="empty-state" style="display:flex;">
       <div class="empty-icon">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
       </div>
-      <div class="empty-title">No transactions found</div>
-      <div class="empty-sub">Try adjusting your filters or date range</div>
+      <div class="empty-title">No transaction history yet</div>
+      <div class="empty-sub">Your deposits, withdrawals, and trades will appear here once you start trading.</div>
     </div>
-    <div class="pagination">
-      <div class="pagination-info" id="pagination-info">Showing 1–15 of 248 transactions</div>
-      <div class="pagination-controls">
-        <button class="page-btn" disabled title="Previous">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15,18 9,12 15,6"/></svg>
-        </button>
-        <button class="page-btn active">1</button>
-        <button class="page-btn">2</button>
-        <button class="page-btn">3</button>
-        <div class="page-ellipsis">…</div>
-        <button class="page-btn">17</button>
-        <button class="page-btn" title="Next">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9,18 15,12 9,6"/></svg>
-        </button>
-      </div>
+    <div class="pagination" id="pagination" style="display:none;">
+      <div class="pagination-info" id="pagination-info"></div>
     </div>
   </div>
 
@@ -521,30 +508,7 @@ const ICON_TRADE = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" 
 const ICON_ORDER = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>`;
 
 // ── Transaction Data ──
-const TRANSACTIONS = [
-  // Deposits (3)
-  {id:'DEP-001', type:'deposit', asset:'BTC', assetName:'Bitcoin',     amount:+0.5,     price:66800,   rate:'$66,800.00', fee:'0.0001 BTC',  status:'completed', date:'2026-05-26', time:'09:14:22', txid:'bc1q8m4f...7t2d'},
-  {id:'DEP-002', type:'deposit', asset:'ETH', assetName:'Ethereum',    amount:+5,       price:3490,    rate:'$3,490.00',  fee:'0.001 ETH',   status:'completed', date:'2026-05-24', time:'15:38:07', txid:'0x3a91f...c44b'},
-  {id:'DEP-003', type:'deposit', asset:'USDT',assetName:'Tether',      amount:+10000,   price:1.00,    rate:'$1.00',      fee:'1 USDT',      status:'completed', date:'2026-05-21', time:'11:02:55', txid:'TXh7k2p...9q8r'},
-
-  // Withdrawals (3)
-  {id:'WDR-001', type:'withdrawal', asset:'SOL', assetName:'Solana',   amount:-50,      price:146.20,  rate:'$146.20',    fee:'0.01 SOL',    status:'completed', date:'2026-05-25', time:'17:44:31', txid:'4xkrT9...mN3p'},
-  {id:'WDR-002', type:'withdrawal', asset:'USDT',assetName:'Tether',   amount:-2000,    price:1.00,    rate:'$1.00',      fee:'2 USDT',      status:'pending',   date:'2026-05-26', time:'08:21:03', txid:'TXp8n1q...4r5s'},
-  {id:'WDR-003', type:'withdrawal', asset:'BNB', assetName:'BNB',      amount:-2,       price:410.50,  rate:'$410.50',    fee:'0.002 BNB',   status:'completed', date:'2026-05-20', time:'13:09:47', txid:'bnb1x8y...6z2w'},
-
-  // Trades (5)
-  {id:'TRD-001', type:'trade', asset:'BTC/USDT', assetName:'Spot',     amount:+0.12,    price:67100,   rate:'$67,100.00', fee:'0.84 USDT',   status:'filled',    date:'2026-05-26', time:'10:33:18', txid:'ORD-7482910'},
-  {id:'TRD-002', type:'trade', asset:'BTC/USDT', assetName:'Spot',     amount:-0.05,    price:67380,   rate:'$67,380.00', fee:'1.68 USDT',   status:'filled',    date:'2026-05-25', time:'14:19:56', txid:'ORD-7481204'},
-  {id:'TRD-003', type:'trade', asset:'ETH/USDT', assetName:'Spot',     amount:+2.5,     price:3505,    rate:'$3,505.00',  fee:'4.38 USDT',   status:'filled',    date:'2026-05-24', time:'09:07:42', txid:'ORD-7478831'},
-  {id:'TRD-004', type:'trade', asset:'SOL/USDT', assetName:'Spot',     amount:-30,      price:151.40,  rate:'$151.40',    fee:'2.27 USDT',   status:'filled',    date:'2026-05-23', time:'16:52:11', txid:'ORD-7475302'},
-  {id:'TRD-005', type:'trade', asset:'XRP/USDT', assetName:'Spot',     amount:+5000,    price:0.5790,  rate:'$0.5790',    fee:'1.45 USDT',   status:'filled',    date:'2026-05-22', time:'12:30:04', txid:'ORD-7472891'},
-
-  // Orders (4)
-  {id:'ORD-001', type:'order', asset:'ETH/USDT', assetName:'Limit Buy',  amount:+3,     price:3400,    rate:'$3,400.00',  fee:'—',           status:'filled',    date:'2026-05-25', time:'08:00:00', txid:'ORD-7480012'},
-  {id:'ORD-002', type:'order', asset:'BNB/USDT', assetName:'Limit Sell', amount:-5,     price:420.00,  rate:'$420.00',    fee:'—',           status:'cancelled', date:'2026-05-23', time:'11:15:33', txid:'ORD-7474200'},
-  {id:'ORD-003', type:'order', asset:'BTC/USDT', assetName:'Limit Buy',  amount:+0.08,  price:65000,   rate:'$65,000.00', fee:'—',           status:'open',      date:'2026-05-26', time:'11:58:09', txid:'ORD-7483001'},
-  {id:'ORD-004', type:'order', asset:'SOL/USDT', assetName:'Limit Sell', amount:-100,   price:155.00,  rate:'$155.00',    fee:'—',           status:'filled',    date:'2026-05-21', time:'19:44:52', txid:'ORD-7470934'},
-];
+const TRANSACTIONS = [];
 
 let activeFilter = 'all';
 
@@ -576,9 +540,11 @@ function applyFilters() {
   });
 
   const empty = document.getElementById('empty-state');
+  const pagination = document.getElementById('pagination');
   empty.style.display = visCount === 0 ? 'flex' : 'none';
-  document.getElementById('pagination-info').textContent =
-    visCount > 0 ? `Showing 1–${Math.min(visCount, 15)} of 248 transactions` : 'No transactions found';
+  if(pagination) pagination.style.display = visCount > 0 ? 'flex' : 'none';
+  const pgInfo = document.getElementById('pagination-info');
+  if(pgInfo && visCount > 0) pgInfo.textContent = `Showing ${Math.min(visCount,15)} of ${visCount} transactions`;
 }
 
 function typeConfig(tx) {
