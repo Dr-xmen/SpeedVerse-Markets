@@ -181,19 +181,8 @@ input{font-family:inherit;border:none;outline:none;background:none;color:var(--t
 .sec-tab.on{color:var(--accent);border-bottom-color:var(--accent);}
 .sec-tab:hover:not(.on){color:var(--text);}
 
-/* WATCHLIST */
-.wl-row{display:flex;align-items:center;padding:10px 16px;border-bottom:1px solid rgba(255,255,255,.04);cursor:pointer;transition:background .15s;}
-.wl-row:last-child{border-bottom:none;}
-.wl-row:hover{background:rgba(255,255,255,.03);}
-.wl-coin{display:flex;align-items:center;gap:8px;flex:1;}
-.wl-icon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
-.wl-name{font-size:13px;font-weight:600;color:var(--text);}
-.wl-pair{font-size:10.5px;color:var(--sub);}
-.wl-mid{flex:1;display:flex;justify-content:center;}
-.wl-right{text-align:right;min-width:80px;}
-.wl-price{font-size:13px;font-weight:600;font-family:'Inter',sans-serif;color:var(--text);}
-.wl-chg{font-size:11px;font-weight:600;margin-top:2px;}
-.wl-pos{color:var(--green);} .wl-neg{color:var(--red);}
+/* MARKET WATCH */
+.mw-widget-wrap{height:400px;width:100%;}
 
 /* PORTFOLIO PERFORMANCE */
 .perf-wrap{padding:12px 16px 14px;}
@@ -558,17 +547,13 @@ html.mob .full-sec{margin-left:0 !important;margin-right:0 !important;}
     </div>
   </div>
 
-  <!-- Two-col: Watchlist + Portfolio -->
+  <!-- Two-col: Market Watch + Portfolio -->
   <div class="two-col">
-    <div class="sec-card">
+    <div class="sec-card" style="overflow:hidden;">
       <div class="sec-head">
-        <div class="sec-title">
-          Watchlist
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26 12,2"/></svg>
-        </div>
-        <span class="sec-link">Edit List</span>
+        <div class="sec-title">Market Watch</div>
       </div>
-      <div id="watchlist-container"></div>
+      <div class="mw-widget-wrap" id="mw-container"></div>
     </div>
 
     <div class="sec-card">
@@ -781,17 +766,7 @@ const RECENT_ORDERS = [
   { pair:'ADA/USDT', side:'SELL', priceRef:'ADAUSDT', amount:'5,000',  status:'Cancelled', statusColor:'var(--sub)',   statusBg:'rgba(132,142,156,.1)'   },
 ];
 
-/* Watchlist display config */
-const WATCHLIST_CFG = [
-  { symbol:'BTCUSDT', name:'Bitcoin',  base:'BTC', bg:'#f7931a', txt:'#fff', sym:'₿' },
-  { symbol:'ETHUSDT', name:'Ethereum', base:'ETH', bg:'#627eea', txt:'#fff', sym:'Ξ' },
-  { symbol:'SOLUSDT', name:'Solana',   base:'SOL', bg:'#9945ff', txt:'#fff', sym:'◎' },
-  { symbol:'XRPUSDT', name:'XRP',      base:'XRP', bg:'#00aae4', txt:'#fff', sym:'✕' },
-  { symbol:'BNBUSDT', name:'BNB',      base:'BNB', bg:'#f0b90b', txt:'#000', sym:'B' },
-  { symbol:'DOGEUSDT',name:'Dogecoin', base:'DOGE',bg:'#c2a633', txt:'#fff', sym:'Ð' },
-];
-
-/* All symbols to fetch (watchlist + positions + movers + ticker) */
+/* All symbols to fetch (positions + movers + ticker) */
 const ALL_SYMBOLS = [
   'BTCUSDT','ETHUSDT','SOLUSDT','XRPUSDT','BNBUSDT','DOGEUSDT',
   'ADAUSDT','AVAXUSDT','LINKUSDT','MATICUSDT','DOTUSDT','LTCUSDT',
@@ -803,8 +778,7 @@ const ALL_SYMBOLS = [
 /* ════════════════════════════════════════════════════════
    STATE
    ════════════════════════════════════════════════════════ */
-let marketData = {};   // symbol -> { price, priceChange, priceChangePercent, volume }
-let klineData  = {};   // symbol -> [close prices for sparkline]
+let marketData = {};
 let firstLoad  = true;
 
 /* ════════════════════════════════════════════════════════
@@ -869,17 +843,6 @@ async function fetchMarketData() {
   });
 }
 
-async function fetchKlines(symbol, interval='4h', limit=12) {
-  const res = await fetch(`${OKX}/market/candles?instId=${toOkx(symbol)}&bar=${toOkxBar(interval)}&limit=${limit}`);
-  if(!res.ok) return;
-  const { data } = await res.json();
-  // OKX returns newest-first — reverse to chronological order
-  klineData[symbol] = data.map(k => parseFloat(k[4])).reverse();
-}
-
-async function fetchAllKlines() {
-  await Promise.all(WATCHLIST_CFG.map(c => fetchKlines(c.symbol)));
-}
 
 /* ════════════════════════════════════════════════════════
    PORTFOLIO CALCULATIONS
@@ -1000,34 +963,6 @@ function renderStats() {
   }
 }
 
-/* ════════════════════════════════════════════════════════
-   RENDER — WATCHLIST
-   ════════════════════════════════════════════════════════ */
-function renderWatchlist() {
-  const html = WATCHLIST_CFG.map((cfg, i) => {
-    const d = marketData[cfg.symbol] || {};
-    const up = (d.priceChangePercent||0) >= 0;
-    return `<div class="wl-row">
-      <div class="wl-coin">
-        <div class="wl-icon" style="background:${cfg.bg};color:${cfg.txt};">${cfg.sym}</div>
-        <div><div class="wl-name">${cfg.name}</div><div class="wl-pair">${cfg.base}/USDT</div></div>
-      </div>
-      <div class="wl-mid"><canvas id="wl-spark-${i}" width="70" height="28"></canvas></div>
-      <div class="wl-right">
-        <div class="wl-price">${fmtPrice(d.price)}</div>
-        <div class="wl-chg ${up?'wl-pos':'wl-neg'}">${up?'▲':'▼'} ${Math.abs(d.priceChangePercent||0).toFixed(2)}%</div>
-      </div>
-    </div>`;
-  }).join('');
-  document.getElementById('watchlist-container').innerHTML = html;
-  WATCHLIST_CFG.forEach((cfg, i) => {
-    const closes = klineData[cfg.symbol];
-    if(closes?.length) {
-      const up = (marketData[cfg.symbol]?.priceChangePercent||0) >= 0;
-      drawSparkline(document.getElementById(`wl-spark-${i}`), closes, up);
-    }
-  });
-}
 
 /* ════════════════════════════════════════════════════════
    PORTFOLIO PERFORMANCE CHART
@@ -1262,87 +1197,6 @@ function renderMovers() {
   renderMoversList(sorted.slice(0, 5), sorted.slice(-5).reverse());
 }
 
-/* ════════════════════════════════════════════════════════
-   CANVAS — WATCHLIST SPARKLINE
-   ════════════════════════════════════════════════════════ */
-function drawSparkline(canvas, data, up) {
-  if(!canvas || !data?.length) return;
-  const W = canvas.width = 70, H = canvas.height = 28;
-  const ctx = canvas.getContext('2d');
-  const min = Math.min(...data), max = Math.max(...data);
-  const range = max - min || 1;
-  const toX = i => i * W / (data.length-1);
-  const toY = v => H - ((v-min)/range) * H * 0.9 - H * 0.05;
-  const color = up ? '#0ecb81' : '#f6465d';
-  const grad = ctx.createLinearGradient(0,0,0,H);
-  grad.addColorStop(0, up ? 'rgba(14,203,129,.25)' : 'rgba(246,70,93,.25)');
-  grad.addColorStop(1, 'transparent');
-  ctx.beginPath();
-  ctx.moveTo(toX(0), toY(data[0]));
-  for(let i=1;i<data.length;i++) ctx.lineTo(toX(i),toY(data[i]));
-  ctx.lineTo(W,H); ctx.lineTo(0,H); ctx.closePath();
-  ctx.fillStyle = grad; ctx.fill();
-  ctx.beginPath();
-  ctx.moveTo(toX(0), toY(data[0]));
-  for(let i=1;i<data.length;i++) ctx.lineTo(toX(i),toY(data[i]));
-  ctx.strokeStyle = color; ctx.lineWidth = 1.5; ctx.stroke();
-}
-
-/* ════════════════════════════════════════════════════════
-   CANVAS — PNL MINI CHART  (BTC 7-day klines as proxy)
-   ════════════════════════════════════════════════════════ */
-function drawPnlMini() {
-  const canvas = document.getElementById('pnl-mini');
-  if(!canvas) return;
-  const closes = klineData['BTCUSDT'];
-  if(!closes?.length) return;
-
-  // Convert BTC closes to portfolio-like cumulative PnL shape
-  const base = closes[0];
-  const data = closes.map(c => (c - base) / base * 10000); // relative change amplified
-
-  const W = canvas.parentElement.offsetWidth || 200, H = 70;
-  canvas.width = W; canvas.height = H;
-  const ctx = canvas.getContext('2d');
-  const min = Math.min(...data), max = Math.max(...data);
-  const range = max - min || 1;
-  const toX = i => i * W / (data.length-1);
-  const toY = v => H - ((v-min)/range) * H * 0.85 - H * 0.08;
-  const zeroY = toY(0);
-  const lastUp = data[data.length-1] >= data[0];
-
-  const grad = ctx.createLinearGradient(0,0,0,H);
-  grad.addColorStop(0, lastUp ? 'rgba(14,203,129,.28)' : 'rgba(246,70,93,.28)');
-  grad.addColorStop(1, 'transparent');
-  ctx.beginPath();
-  ctx.moveTo(toX(0), toY(data[0]));
-  for(let i=1;i<data.length;i++){
-    const mx = toX(i-.5);
-    ctx.bezierCurveTo(mx,toY(data[i-1]),mx,toY(data[i]),toX(i),toY(data[i]));
-  }
-  ctx.lineTo(W,H); ctx.lineTo(0,H); ctx.closePath();
-  ctx.fillStyle = grad; ctx.fill();
-  ctx.beginPath(); ctx.moveTo(0,zeroY); ctx.lineTo(W,zeroY);
-  ctx.strokeStyle = 'rgba(255,255,255,.06)'; ctx.lineWidth = 1; ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(toX(0), toY(data[0]));
-  for(let i=1;i<data.length;i++){
-    const mx = toX(i-.5);
-    ctx.bezierCurveTo(mx,toY(data[i-1]),mx,toY(data[i]),toX(i),toY(data[i]));
-  }
-  ctx.strokeStyle = lastUp ? '#0ecb81' : '#f6465d'; ctx.lineWidth = 2; ctx.stroke();
-
-  // x-axis labels using actual dates from kline count
-  const now = new Date();
-  const days = ['pnl-lbl-l','pnl-lbl-m','pnl-lbl-r'];
-  const offsets = [data.length-1, Math.floor(data.length/2), 0];
-  days.forEach((id,i) => {
-    const el = document.getElementById(id);
-    if(!el) return;
-    const d = new Date(now); d.setDate(d.getDate() - offsets[i]);
-    el.textContent = d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
-  });
-}
 
 /* ════════════════════════════════════════════════════════
    RENDER ALL
@@ -1351,7 +1205,6 @@ function renderAll() {
   renderTicker();
   renderWelcome();
   renderStats();
-  renderWatchlist();
   drawPerfChart();
   renderAccountSummary();
   renderPositions();
@@ -1382,10 +1235,9 @@ async function init() {
   setInterval(fetchTopMovers, 60000);
 
   await tick();
-  // Load sparklines + performance chart klines in parallel
+  // Load performance chart klines
   try {
-    await Promise.all([fetchAllKlines(), fetchPerfKlines()]);
-    renderWatchlist();
+    await fetchPerfKlines();
     drawPerfChart();
   } catch(e) {}
   // Poll prices every 5 seconds
@@ -1393,8 +1245,7 @@ async function init() {
   // Refresh klines every 5 minutes
   setInterval(async () => {
     try {
-      await Promise.all([fetchAllKlines(), fetchPerfKlines()]);
-      renderWatchlist();
+      await fetchPerfKlines();
       drawPerfChart();
     } catch(e) {}
   }, 300000);
@@ -1460,7 +1311,48 @@ function toggleTheme() {
 })();
 
 document.addEventListener('DOMContentLoaded', init);
-window.addEventListener('resize', () => { drawPnlMini(); });
+
+// Market Watch TradingView widget
+(function() {
+  var wrap = document.getElementById('mw-container');
+  if (!wrap) return;
+  var container = document.createElement('div');
+  container.className = 'tradingview-widget-container';
+  container.style.cssText = 'height:100%;width:100%';
+  var inner = document.createElement('div');
+  inner.className = 'tradingview-widget-container__widget';
+  inner.style.cssText = 'height:100%;width:100%';
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js';
+  script.async = true;
+  script.textContent = JSON.stringify({
+    colorTheme: 'dark',
+    dateRange: '1D',
+    showChart: true,
+    locale: 'en',
+    isTransparent: true,
+    showSymbolLogo: true,
+    showFloatingTooltip: false,
+    width: '100%',
+    height: 400,
+    plotLineColorGrowing: 'rgba(240,90,26,1)',
+    plotLineColorFalling: 'rgba(246,70,93,1)',
+    gridLineColor: 'rgba(42,46,57,0)',
+    scaleFontColor: 'rgba(139,149,161,1)',
+    belowLineFillColorGrowing: 'rgba(240,90,26,0.1)',
+    belowLineFillColorFalling: 'rgba(246,70,93,0.05)',
+    symbolActiveColor: 'rgba(240,90,26,0.1)',
+    tabs: [
+      { title: 'Crypto', symbols: [{s:'BINANCE:BTCUSDT'},{s:'BINANCE:ETHUSDT'},{s:'BINANCE:SOLUSDT'},{s:'BINANCE:BNBUSDT'},{s:'BINANCE:XRPUSDT'},{s:'BINANCE:DOGEUSDT'}], originalTitle: 'Crypto' },
+      { title: 'Forex',  symbols: [{s:'FX:EURUSD'},{s:'FX:GBPUSD'},{s:'FX:USDJPY'},{s:'FX:AUDUSD'},{s:'FX:USDCAD'}], originalTitle: 'Forex' },
+      { title: 'Metals', symbols: [{s:'OANDA:XAUUSD'},{s:'OANDA:XAGUSD'},{s:'TVC:PLATINUM'}], originalTitle: 'Metals' }
+    ]
+  });
+  container.appendChild(inner);
+  container.appendChild(script);
+  wrap.appendChild(container);
+})();
 </script>
 </body>
 </html>
