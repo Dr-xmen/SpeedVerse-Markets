@@ -304,9 +304,9 @@ html.mob .main{width:100% !important;padding:20px 16px;}</style>
       <svg class="nav-item-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6,9 12,15 18,9"/></svg>
     </div>
     <div class="nav-sub" id="deriv-sub">
-      <div class="nav-sub-item">USDT Perpetual</div>
-      <div class="nav-sub-item">Inverse Perpetual</div>
-      <div class="nav-sub-item">Futures</div>
+      <a class="nav-sub-item" href="usdt-perpetual.html" style="text-decoration:none;color:inherit;">USDT Perpetual</a>
+      <a class="nav-sub-item" href="inverse-perpetual.html" style="text-decoration:none;color:inherit;">Inverse Perpetual</a>
+      <a class="nav-sub-item" href="futures.html" style="text-decoration:none;color:inherit;">Futures</a>
     </div>
     <div class="nav-item" onclick="toggleSub(this,'earn-sub')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 0v10l5 3"/></svg>
@@ -323,22 +323,24 @@ html.mob .main{width:100% !important;padding:20px 16px;}</style>
       <span class="nav-item-label">Copy Trading</span>
       <span class="nav-item-badge">NEW</span>
     </div>
-    <div class="nav-divider"></div>
-    <div class="nav-group-label">Finance</div>
-    <div class="nav-item active">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
-      <span class="nav-item-label">Assets</span>
-    </div>
-    <div class="nav-item">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-      <span class="nav-item-label">Orders</span>
-    </div>
+    <a class="nav-item" href="wallet.html" style="text-decoration:none;color:inherit;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><circle cx="17" cy="14" r="1" fill="currentColor" stroke="none"/></svg>
+      <span class="nav-item-label">Wallet</span>
+    </a>
+    <a class="nav-item" href="history.html" style="text-decoration:none;color:inherit;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
+      <span class="nav-item-label">History</span>
+    </a>
     <div class="nav-divider"></div>
     <div class="nav-group-label">Account</div>
-    <div class="nav-item">
+    <a class="nav-item" href="settings.html#security" style="text-decoration:none;color:inherit;">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
       <span class="nav-item-label">Security</span>
-    </div>
+    </a>
+    <a class="nav-item" href="upgrade.html" style="text-decoration:none;color:inherit;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="17,11 12,6 7,11"/><polyline points="17,18 12,13 7,18"/></svg>
+      <span class="nav-item-label">Account Upgrade</span>
+    </a>
     <a class="nav-item" href="settings.html" style="text-decoration:none;color:inherit;">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       <span class="nav-item-label">Settings</span>
