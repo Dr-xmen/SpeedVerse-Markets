@@ -388,7 +388,7 @@ async function doRegister() {
     return showErr(error.message);
   }
 
-  await db.from('profiles').insert({
+  await db.from('profiles').upsert({
     id:           data.user.id,
     email,
     first_name:   fname,
@@ -398,7 +398,7 @@ async function doRegister() {
     account_type: acctType,
     status:       'active',
     kyc_status:   'none',
-  });
+  }, { onConflict: 'id' });
 
   /* If Supabase returned a session immediately (email confirm disabled), go straight to dashboard.
      Otherwise show the "verify your email" message. */

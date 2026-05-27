@@ -913,8 +913,7 @@ async function saveProfile(){
   btn.disabled = true; btn.textContent = 'Saving…';
 
   const { error } = await db.from('profiles')
-    .update({ first_name: fname, last_name: lname, phone, country })
-    .eq('id', window._svUserId);
+    .upsert({ id: window._svUserId, email: window._svEmail, first_name: fname, last_name: lname, phone, country }, { onConflict: 'id' });
 
   btn.disabled = false; btn.textContent = 'Save Changes';
 
