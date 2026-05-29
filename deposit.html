@@ -531,8 +531,21 @@ html.mob .main{width:100% !important;padding:20px 16px;}</style>
         </div>
       </div>
 
-      <!-- Payment Proof Upload -->
+      <!-- Deposit Amount -->
       <div style="margin-top:20px;background:var(--s2);border:1.5px solid var(--b2);border-radius:12px;padding:20px;">
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">Deposit Amount</div>
+        <div style="font-size:12px;color:var(--sub);margin-bottom:12px;">Enter the exact amount you are depositing.</div>
+        <div style="display:flex;align-items:center;background:var(--s3);border:1.5px solid var(--b2);border-radius:10px;padding:0 14px;height:46px;">
+          <span style="font-size:15px;font-weight:600;color:var(--sub);margin-right:8px;">$</span>
+          <input id="dep-amount-input" type="number" min="0" step="0.01" placeholder="0.00"
+            style="flex:1;font-size:16px;font-weight:700;color:var(--text);background:none;border:none;outline:none;"
+            oninput="updatePaymentBtn()"/>
+          <span style="font-size:13px;color:var(--sub);margin-left:8px;" id="dep-amount-coin">USDT</span>
+        </div>
+      </div>
+
+      <!-- Payment Proof Upload -->
+      <div style="margin-top:12px;background:var(--s2);border:1.5px solid var(--b2);border-radius:12px;padding:20px;">
         <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">Upload Payment Proof</div>
         <div style="font-size:12px;color:var(--sub);margin-bottom:14px;">Upload a screenshot or photo of your transaction receipt to confirm your deposit.</div>
         <label id="proof-drop" for="proof-file-input" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:var(--s3);border:2px dashed var(--b2);border-radius:10px;padding:28px 16px;cursor:pointer;transition:border-color .15s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="if(!window._proofSelected)this.style.borderColor='var(--b2)'">
@@ -568,12 +581,11 @@ html.mob .main{width:100% !important;padding:20px 16px;}</style>
             <th>Coin</th>
             <th>Network</th>
             <th>Amount</th>
-            <th>TxID</th>
             <th>Status</th>
           </tr>
         </thead>
         <tbody id="recent-tbody">
-          <tr><td colspan="6">
+          <tr><td colspan="5">
             <div class="empty-state">
               <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
               <p>No deposit history</p>
@@ -823,24 +835,27 @@ if(preselect && COINS.find(c => c.sym===preselect.toUpperCase())){
 window._proofSelected = false;
 window._proofFile = null;
 
+function updatePaymentBtn() {
+  const btn = document.getElementById('btn-made-payment');
+  if (!btn) return;
+  const amount = parseFloat(document.getElementById('dep-amount-input')?.value) || 0;
+  const ready = window._proofSelected && amount > 0;
+  btn.disabled = !ready;
+  btn.style.background = ready ? 'var(--accent)' : 'var(--s3)';
+  btn.style.borderColor = ready ? 'var(--accent)' : 'var(--b2)';
+  btn.style.color = ready ? '#fff' : 'var(--sub)';
+  btn.style.cursor = ready ? 'pointer' : 'not-allowed';
+}
+
 function handleProofFile(input) {
   const file = input.files?.[0];
   if (!file) return;
   window._proofFile = file;
   window._proofSelected = true;
   document.getElementById('proof-filename').textContent = file.name;
-  const preview = document.getElementById('proof-preview');
-  preview.style.display = 'flex';
-  const drop = document.getElementById('proof-drop');
-  drop.style.borderColor = 'var(--green)';
-  const btn = document.getElementById('btn-made-payment');
-  if (btn) {
-    btn.disabled = false;
-    btn.style.background = 'var(--accent)';
-    btn.style.borderColor = 'var(--accent)';
-    btn.style.color = '#fff';
-    btn.style.cursor = 'pointer';
-  }
+  document.getElementById('proof-preview').style.display = 'flex';
+  document.getElementById('proof-drop').style.borderColor = 'var(--green)';
+  updatePaymentBtn();
 }
 
 function clearProof() {
@@ -849,14 +864,7 @@ function clearProof() {
   document.getElementById('proof-file-input').value = '';
   document.getElementById('proof-preview').style.display = 'none';
   document.getElementById('proof-drop').style.borderColor = 'var(--b2)';
-  const btn = document.getElementById('btn-made-payment');
-  if (btn) {
-    btn.disabled = true;
-    btn.style.background = 'var(--s3)';
-    btn.style.borderColor = 'var(--b2)';
-    btn.style.color = 'var(--sub)';
-    btn.style.cursor = 'not-allowed';
-  }
+  updatePaymentBtn();
 }
 
 async function confirmDeposit() {
@@ -875,6 +883,8 @@ async function confirmDeposit() {
     const storagePath = `payment-proofs/${userId}/${Date.now()}.${ext}`;
     await db.storage.from('deposits').upload(storagePath, window._proofFile, { upsert: false });
 
+    const depositAmount = parseFloat(document.getElementById('dep-amount-input')?.value) || 0;
+
     /* Write to deposit_requests — this is what the admin panel reads */
     const { error } = await db.from('deposit_requests').insert({
       user_id: userId,
@@ -883,7 +893,7 @@ async function confirmDeposit() {
       currency: selectedCoin?.sym || null,
       network: selectedNet?.id || null,
       method: 'crypto',
-      amount: 0,
+      amount: depositAmount,
       status: 'pending',
       proof_url: storagePath,
       created_at: new Date().toISOString()
@@ -896,6 +906,8 @@ async function confirmDeposit() {
       btn.style.borderColor = 'var(--green)';
     }
     clearProof();
+    const amtInput = document.getElementById('dep-amount-input');
+    if (amtInput) amtInput.value = '';
     loadRecentDeposits();
     setTimeout(() => {
       if (btn) {
@@ -925,7 +937,7 @@ async function loadRecentDeposits() {
     const tbody = document.getElementById('recent-tbody');
     if (!tbody) return;
     if (!data?.length) {
-      tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg><p>No deposit history</p></div></td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg><p>No deposit history</p></div></td></tr>`;
       return;
     }
     tbody.innerHTML = data.map(d => {
@@ -937,8 +949,7 @@ async function loadRecentDeposits() {
         <td style="font-weight:600;">${d.coin || d.currency || '—'}</td>
         <td style="font-size:12px;color:var(--sub);">${d.network || '—'}</td>
         <td style="font-weight:600;color:var(--green);">${d.amount > 0 ? '$'+parseFloat(d.amount).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}) : '—'}</td>
-        <td style="font-size:11.5px;color:var(--sub);">${d.txid || (d.proof_url ? 'Proof uploaded' : '—')}</td>
-        <td><span class="badge badge--${d.status === 'approved' ? 'green' : d.status === 'rejected' ? 'red' : 'orange'}" style="font-size:11px;padding:2px 8px;border-radius:4px;background:${d.status==='approved'?'rgba(14,203,129,.15)':d.status==='rejected'?'rgba(246,70,93,.15)':'rgba(240,185,11,.15)'};color:${d.status==='approved'?'var(--green)':d.status==='rejected'?'var(--red)':'var(--gold)'};">${label}</span></td>
+        <td><span style="font-size:11px;padding:2px 8px;border-radius:4px;background:${d.status==='approved'?'rgba(14,203,129,.15)':d.status==='rejected'?'rgba(246,70,93,.15)':'rgba(240,185,11,.15)'};color:${d.status==='approved'?'var(--green)':d.status==='rejected'?'var(--red)':'var(--gold)'};">${label}</span></td>
       </tr>`;
     }).join('');
   } catch(e) { console.error('loadRecentDeposits', e); }

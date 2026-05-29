@@ -781,7 +781,7 @@
         <div class="card">
           <div class="card__body--p0 table-wrap">
             <table class="data-table">
-              <thead><tr><th>User</th><th>Amount</th><th>Currency</th><th>Method</th><th>TxID</th><th>Submitted</th><th>Status</th><th>Actions</th></tr></thead>
+              <thead><tr><th>User</th><th>Amount</th><th>Coin/Network</th><th>Submitted</th><th>Proof</th><th>Status</th><th>Actions</th></tr></thead>
               <tbody id="deposits-tbody"></tbody>
             </table>
           </div>
@@ -1523,6 +1523,16 @@ async function renderActivityFeed() {
 }
 window.renderActivity = renderActivityFeed;
 
+/* ── Shared user-cell helper — name (bold) + email + phone stacked ── */
+function userCell(userId, fallbackEmail) {
+  const u = _allUsers.find(x => x.id === userId);
+  if (!u) return `<div style="font-size:12px;color:var(--muted);">${fallbackEmail || userId?.slice(0,12) || '—'}</div>`;
+  const name = [u.first_name, u.last_name].filter(Boolean).join(' ') || u.email || '—';
+  return `<div style="font-weight:600;font-size:13px;">${name}</div>
+    <div style="font-size:11.5px;color:var(--muted);">${u.email||'—'}</div>
+    ${u.phone ? `<div style="font-size:11px;color:var(--muted);">${u.phone}</div>` : ''}`;
+}
+
 /* ── All Users ── */
 window.renderUsersLive = async function() {
   const db = window.SV_DB; if (!db) return;
@@ -1664,7 +1674,7 @@ window.renderKYCLive = async function() {
   tbody.innerHTML = rows.map(r => {
     const pill = r.status === 'approved' ? 'pill-green' : r.status === 'rejected' ? 'pill-red' : 'pill-orange';
     return `<tr>
-      <td>${r.user_email||r.user_id||'—'}</td>
+      <td>${userCell(r.user_id, r.user_email)}</td>
       <td>${fmtDate(r.created_at)}</td>
       <td>${r.doc_type||'—'}</td>
       <td>${r.country||'—'}</td>
@@ -1777,7 +1787,7 @@ window.renderPositionsLive = async function() {
     const pnl = parseFloat(p.pnl||0);
     return `<tr>
       <td><code style="font-size:11px;">#${p.ticket||p.id.slice(0,6)}</code></td>
-      <td>${p.user_email||p.user_id||'—'}</td>
+      <td>${userCell(p.user_id, p.user_email)}</td>
       <td>${p.symbol||'—'}</td>
       <td><span class="badge-pill ${p.side==='buy'?'pill-green':'pill-red'}">${p.side||'—'}</span></td>
       <td>${p.lots||'—'}</td>
@@ -1810,13 +1820,16 @@ window.renderDepositsLive = async function() {
   if (!rows.length) { tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:24px;">No deposits</td></tr>`; return; }
   tbody.innerHTML = rows.map(d => {
     const pill = d.status==='approved'?'pill-green':d.status==='rejected'?'pill-red':'pill-orange';
+    const coinNet = [d.coin||d.currency, d.network].filter(Boolean).join(' / ') || '—';
+    const proofBtn = d.proof_url
+      ? `<button class="btn btn--sm btn--outline" onclick="viewDepositProof('${d.proof_url.replace(/'/g,"\\'")}')">View Proof</button>`
+      : '—';
     return `<tr>
-      <td>${d.user_email||d.user_id||'—'}</td>
-      <td>${fmtMoney(d.amount||0)}</td>
-      <td>${d.currency||'USD'}</td>
-      <td>${d.method||'—'}</td>
-      <td><code style="font-size:11px;">${(d.txid||'—').slice(0,16)}…</code></td>
+      <td>${userCell(d.user_id, d.user_email)}</td>
+      <td style="font-weight:700;">${fmtMoney(d.amount||0)}</td>
+      <td style="font-size:12px;">${coinNet}</td>
       <td>${fmtDate(d.created_at)}</td>
+      <td>${proofBtn}</td>
       <td><span class="badge-pill ${pill}">${d.status||'pending'}</span></td>
       <td><div class="row-actions">
         ${d.status==='pending'?`<button class="btn btn--sm btn--green" onclick="approveDeposit('${d.id}')">Approve</button><button class="btn btn--sm btn--red" onclick="rejectDeposit('${d.id}')">Reject</button>`:''}
@@ -1838,6 +1851,12 @@ async function rejectDeposit(id) {
   showToast('Deposit rejected', 'error');
   renderDepositsLive(); loadDashStats();
 }
+window.viewDepositProof = async function(storagePath) {
+  const db = window.SV_DB; if (!db) return;
+  const { data, error } = await db.storage.from('deposits').createSignedUrl(storagePath, 120);
+  if (error || !data?.signedUrl) { showToast('Could not load proof: ' + (error?.message || 'unknown error'), 'error'); return; }
+  window.open(data.signedUrl, '_blank');
+};
 window.opsManualDeposit = async function() {
   const db = window.SV_DB; if (!db) return;
   const user   = document.getElementById('md-user').value.trim();
@@ -1867,8 +1886,8 @@ window.renderWithdrawalsLive = async function() {
   tbody.innerHTML = rows.map(w => {
     const pill = w.status==='approved'?'pill-green':w.status==='rejected'?'pill-red':'pill-orange';
     return `<tr>
-      <td>${w.user_email||w.user_id||'—'}</td>
-      <td>${fmtMoney(w.amount||0)}</td>
+      <td>${userCell(w.user_id, w.user_email)}</td>
+      <td style="font-weight:700;">${fmtMoney(w.amount||0)}</td>
       <td>${w.method||'—'}</td>
       <td><code style="font-size:11px;">${(w.wallet||w.bank_details||'—').slice(0,20)}</code></td>
       <td>${fmtDate(w.created_at)}</td>
