@@ -510,6 +510,7 @@ function loadMore() { visibleCount += 10; renderNotifications(); }
 })();
 
 async function doSignOut() {
+  sessionStorage.removeItem('sv_pin_ok');
   await window.SV_DB.auth.signOut();
   window.location.href = 'login.html';
 }

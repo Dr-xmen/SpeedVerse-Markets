@@ -180,10 +180,13 @@ html.mob .sb-overlay.open{display:block;}
 .td-active{color:var(--text);font-weight:600;}
 
 /* UPGRADE MODAL */
-.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(4px);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .2s;}
-.modal-backdrop.open{opacity:1;pointer-events:all;}
-.modal-box{background:var(--s1);border:1px solid var(--b);border-radius:14px;width:100%;max-width:480px;overflow:hidden;transform:translateY(16px) scale(.97);transition:transform .25s cubic-bezier(0.22,1,0.36,1);position:relative;}
-.modal-backdrop.open .modal-box{transform:translateY(0) scale(1);}
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(4px);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;visibility:hidden;transition:opacity .3s ease,visibility 0s linear .5s;}
+.modal-backdrop.open{opacity:1;pointer-events:all;visibility:visible;transition:opacity .3s ease,visibility 0s;}
+.modal-box{background:var(--s1);border:1px solid var(--b);border-radius:14px;width:100%;max-width:480px;overflow:hidden;position:relative;transform-origin:center bottom;will-change:clip-path,transform;}
+@keyframes svGenieIn{0%{opacity:0;transform:scaleX(.18) translateY(42px);clip-path:polygon(38% 94%,62% 94%,62% 100%,38% 100%);}10%{opacity:1;}40%{transform:scaleX(.88) translateY(14px);clip-path:polygon(0% 0%,100% 0%,64% 100%,36% 100%);}62%{transform:scale(1) translateY(0);clip-path:polygon(0% 0%,100% 0%,100% 100%,0% 100%);}76%{transform:scale(1.04,1.03) translateY(-5px);}88%{transform:scale(.98,.99) translateY(2px);}100%{opacity:1;transform:scale(1) translateY(0);clip-path:polygon(0% 0%,100% 0%,100% 100%,0% 100%);}}
+@keyframes svGenieOut{0%{opacity:1;transform:scale(1) translateY(0);clip-path:polygon(0% 0%,100% 0%,100% 100%,0% 100%);}15%{transform:scale(1.02,1.01) translateY(-3px);}42%{transform:scaleX(.9) translateY(12px);clip-path:polygon(0% 0%,100% 0%,64% 100%,36% 100%);}70%{opacity:.4;clip-path:polygon(22% 0%,78% 0%,55% 100%,45% 100%);transform:scaleX(.45) translateY(30px);}100%{opacity:0;clip-path:polygon(40% 94%,60% 94%,60% 100%,40% 100%);transform:scaleX(.18) translateY(42px);}}
+.sv-genie-in{animation:svGenieIn .70s cubic-bezier(0.34,1.72,0.64,1) both;}
+.sv-genie-out{animation:svGenieOut .42s cubic-bezier(0.4,0,0.8,1) both;}
 .modal-header{padding:20px 22px 0;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
 .modal-header-icon{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,rgba(240,90,26,.2),rgba(240,185,11,.15));display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .modal-header-icon svg{width:22px;height:22px;color:var(--accent);}
@@ -663,13 +666,24 @@ function toggleFaq(item){item.classList.toggle('open');}
 function openUpgradeModal(tier){
   const labels={Silver:'Upgrade to Silver',Gold:'Upgrade to Gold',Platinum:'Upgrade to Platinum',Elite:'Apply for Elite'};
   document.getElementById('modal-title').textContent=labels[tier]||'Upgrade Account';
-  document.getElementById('upgrade-modal').classList.add('open');
+  const bd = document.getElementById('upgrade-modal');
+  const bx = bd.querySelector('.modal-box');
+  bx.classList.remove('sv-genie-out');
+  void bx.offsetWidth;
+  bd.classList.add('open');
   document.body.style.overflow='hidden';
+  bx.classList.add('sv-genie-in');
+  bx.addEventListener('animationend', () => bx.classList.remove('sv-genie-in'), { once: true });
 }
 function closeUpgradeModal(e){
   if(e&&e.target!==document.getElementById('upgrade-modal'))return;
-  document.getElementById('upgrade-modal').classList.remove('open');
+  const bd = document.getElementById('upgrade-modal');
+  const bx = bd.querySelector('.modal-box');
+  bx.classList.remove('sv-genie-in');
+  bx.classList.add('sv-genie-out');
+  bd.classList.remove('open');
   document.body.style.overflow='';
+  bx.addEventListener('animationend', () => bx.classList.remove('sv-genie-out'), { once: true });
 }
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closeUpgradeModal();});
 
@@ -742,6 +756,7 @@ function applyPlanUI(plan) {
 })();
 
 async function doSignOut() {
+  sessionStorage.removeItem('sv_pin_ok');
   await window.SV_DB.auth.signOut();
   window.location.href = 'login.html';
 }

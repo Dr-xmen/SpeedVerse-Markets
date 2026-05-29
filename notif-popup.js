@@ -4,16 +4,20 @@
 (function () {
   const STYLE = `
     @keyframes svnpGenieIn {
-      0%   { opacity: 0; transform: scale(.48) translateY(44px); clip-path: inset(44% 18% 0% 18% round 16px); }
-      48%  { opacity: 1; clip-path: inset(0% 0% 0% 0% round 16px); }
-      70%  { transform: scale(1.07) translateY(-7px); }
-      86%  { transform: scale(.97) translateY(3px); }
-      100% { opacity: 1; transform: scale(1) translateY(0); clip-path: inset(0% 0% 0% 0% round 16px); }
+      0%   { opacity:0; transform:scaleX(.18) translateY(42px); clip-path:polygon(38% 94%,62% 94%,62% 100%,38% 100%); }
+      10%  { opacity:1; }
+      40%  { transform:scaleX(.88) translateY(14px); clip-path:polygon(0% 0%,100% 0%,64% 100%,36% 100%); }
+      62%  { transform:scale(1) translateY(0); clip-path:polygon(0% 0%,100% 0%,100% 100%,0% 100%); }
+      76%  { transform:scale(1.04,1.03) translateY(-5px); }
+      88%  { transform:scale(.98,.99) translateY(2px); }
+      100% { opacity:1; transform:scale(1) translateY(0); clip-path:polygon(0% 0%,100% 0%,100% 100%,0% 100%); }
     }
     @keyframes svnpGenieOut {
-      0%   { opacity: 1; transform: scale(1) translateY(0);      clip-path: inset(0%  0%  0%  0%  round 16px); }
-      18%  { transform: scale(1.03) translateY(-4px); }
-      100% { opacity: 0; transform: scale(.48) translateY(40px); clip-path: inset(44% 18% 0% 18% round 16px); }
+      0%   { opacity:1; transform:scale(1) translateY(0); clip-path:polygon(0% 0%,100% 0%,100% 100%,0% 100%); }
+      15%  { transform:scale(1.02,1.01) translateY(-3px); }
+      42%  { transform:scaleX(.9) translateY(12px); clip-path:polygon(0% 0%,100% 0%,64% 100%,36% 100%); }
+      70%  { opacity:.4; clip-path:polygon(22% 0%,78% 0%,55% 100%,45% 100%); transform:scaleX(.45) translateY(30px); }
+      100% { opacity:0; clip-path:polygon(40% 94%,60% 94%,60% 100%,40% 100%); transform:scaleX(.18) translateY(42px); }
     }
     #svnp-overlay {
       position: fixed; inset: 0; background: rgba(0,0,0,0.6);
@@ -24,7 +28,7 @@
     #svnp-box {
       background: #111318; border-radius: 16px; width: 100%; max-width: 480px;
       box-shadow: 0 24px 64px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.07);
-      overflow: hidden; transform-origin: center 80%; will-change: clip-path, transform;
+      overflow: hidden; transform-origin: center bottom; will-change: clip-path, transform;
     }
     #svnp-box.svnp-genie-in  { animation: svnpGenieIn  .65s cubic-bezier(0.34,1.72,0.64,1) both; }
     #svnp-box.svnp-genie-out { animation: svnpGenieOut .40s cubic-bezier(0.4,0,0.8,1) both; }
