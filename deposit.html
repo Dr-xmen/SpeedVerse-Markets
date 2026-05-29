@@ -529,7 +529,7 @@ html.mob .main{width:100% !important;padding:20px 16px;}</style>
           <ul>
             <li>Only send <strong id="notice-coin" style="color:var(--text);">—</strong> to this address. Sending other assets will result in permanent loss.</li>
             <li>Ensure you are using the correct network. SpeedVerse is not responsible for deposits made on the wrong network.</li>
-            <li>Deposits below the minimum will not be credited to your account.</li>
+            <li id="min-deposit-notice" style="display:none;">Minimum deposit for this account is <strong id="min-deposit-notice-val" style="color:var(--text);">$0.00</strong>. Deposits below this will not be credited.</li>
             <li>This address is unique to your account. Do not share it widely.</li>
           </ul>
         </div>
@@ -546,6 +546,7 @@ html.mob .main{width:100% !important;padding:20px 16px;}</style>
             oninput="updatePaymentBtn()"/>
           <span style="font-size:13px;color:var(--sub);margin-left:8px;" id="dep-amount-coin">USDT</span>
         </div>
+        <div id="dep-min-hint" style="font-size:12px;color:var(--red);margin-top:6px;min-height:16px;"></div>
       </div>
 
       <!-- Payment Proof Upload -->
@@ -842,22 +843,17 @@ window._proofFile = null;
 function updatePaymentBtn() {
   const btn = document.getElementById('btn-made-payment');
   if (!btn) return;
-  const amount  = parseFloat(document.getElementById('dep-amount-input')?.value) || 0;
-  const minDep  = window._minDeposit || 0;
-  const aboveMin = amount >= minDep || minDep <= 0;
-  const ready   = window._proofSelected && amount > 0 && aboveMin;
+  const amount   = parseFloat(document.getElementById('dep-amount-input')?.value) || 0;
+  const minDep   = window._minDeposit || 0;
+  const aboveMin = minDep <= 0 || amount >= minDep;
+  const ready    = window._proofSelected && amount > 0 && aboveMin;
 
-  /* Show/hide minimum hint */
-  let hint = document.getElementById('dep-min-hint');
-  if (!hint) {
-    hint = document.createElement('div');
-    hint.id = 'dep-min-hint';
-    hint.style.cssText = 'font-size:12px;color:var(--red);margin-top:6px;';
-    document.getElementById('dep-amount-input')?.parentNode?.after(hint);
+  const hint = document.getElementById('dep-min-hint');
+  if (hint) {
+    hint.textContent = (minDep > 0 && amount > 0 && !aboveMin)
+      ? 'Minimum deposit is $' + minDep.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})
+      : '';
   }
-  hint.textContent = (minDep > 0 && amount > 0 && !aboveMin)
-    ? 'Minimum deposit is $' + minDep.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})
-    : '';
 
   btn.disabled = !ready;
   btn.style.background = ready ? 'var(--accent)' : 'var(--s3)';
@@ -1004,7 +1000,6 @@ window._minDeposit = 0;
     const db = window.SV_DB;
     const { data: { user } } = await db.auth.getUser();
     if (!user) return;
-    /* Fetch user's profile min_deposit and global setting in parallel */
     const [{ data: prof }, { data: setting }] = await Promise.all([
       db.from('profiles').select('min_deposit').eq('id', user.id).single(),
       db.from('system_settings').select('value').eq('key', 'min_deposit_amount').single(),
@@ -1012,6 +1007,14 @@ window._minDeposit = 0;
     const globalMin = parseFloat(setting?.value) || 0;
     const userMin   = prof?.min_deposit != null ? parseFloat(prof.min_deposit) : null;
     window._minDeposit = userMin != null ? userMin : globalMin;
+
+    /* Show/update the minimum notice bullet */
+    const notice = document.getElementById('min-deposit-notice');
+    const noticeVal = document.getElementById('min-deposit-notice-val');
+    if (notice && noticeVal && window._minDeposit > 0) {
+      noticeVal.textContent = '$' + window._minDeposit.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+      notice.style.display = '';
+    }
     updatePaymentBtn();
   } catch(e) {}
 })();
