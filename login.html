@@ -208,7 +208,7 @@ function togglePwd(id, btn) {
 /* Redirect if already logged in */
 (async () => {
   const { data: { session } } = await window.SV_DB.auth.getSession();
-  if (session) window.location.href = 'dashboard.html';
+  if (session) window.location.href = 'session.html';
 })();
 
 async function doLogin() {
@@ -231,7 +231,7 @@ async function doLogin() {
     return showErr(error.message === 'Invalid login credentials' ? 'Incorrect email or password.' : error.message);
   }
 
-  window.location.href = 'dashboard.html';
+  window.location.href = 'session.html';
 }
 
 async function doForgot() {
