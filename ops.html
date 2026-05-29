@@ -775,15 +775,12 @@
             </div>
           </div>
           <div class="card">
-            <div class="card__head"><div class="card__title">Deposit Addresses</div></div>
+            <div class="card__head"><div class="card__title">Deposit Addresses</div><div class="card__sub">Addresses shown to users on the deposit page</div></div>
             <div class="card__body">
-              <div class="form-grid" style="grid-template-columns:1fr;">
-                <div class="field"><label>USDT (TRC-20)</label><input type="text" id="addr-trc20" placeholder="TRC-20 wallet address"></div>
-                <div class="field"><label>USDT (ERC-20)</label><input type="text" id="addr-erc20" placeholder="ERC-20 wallet address"></div>
-                <div class="field"><label>Bitcoin (BTC)</label><input type="text" id="addr-btc" placeholder="Bitcoin wallet address"></div>
-                <div class="field"><label>Ethereum (ETH)</label><input type="text" id="addr-eth" placeholder="Ethereum wallet address"></div>
+              <div class="form-grid" style="grid-template-columns:1fr 1fr;gap:10px;" id="dep-addr-grid">
+                <!-- populated by loadDepositAddresses() -->
               </div>
-              <button class="btn btn--primary" style="margin-top:16px;width:100%;" onclick="saveDepositAddresses()">Save Addresses</button>
+              <button class="btn btn--primary" style="margin-top:16px;width:100%;" onclick="saveDepositAddresses()">Save All Addresses</button>
             </div>
           </div>
         </div>
@@ -1123,7 +1120,7 @@
   function publishAnnouncement() { showToast('Auth loading…', 'error'); }
   function sendEmail() { showToast('Auth loading…', 'error'); }
   function saveSystemSettings() { showToast('Settings saved'); }
-  function saveDepositAddresses() { showToast('Auth loading…', 'error'); }
+  function saveDepositAddresses() { showToast('Auth loading…'); }
   function forceCloseAll() { if (confirm('Force close ALL open positions?')) showToast('Use per-position close buttons', 'error'); }
   function loadDashStats() {}
 </script>
@@ -1159,6 +1156,7 @@
   renderMarketsControl();
   await loadDashStats();
   await renderAll();
+  await loadDepositAddresses();
 })();
 
 async function doSignOut() {
@@ -1171,6 +1169,65 @@ async function logAudit(action, target, details) {
   const db = window.SV_DB; if (!db || !_adminUser?.id) return;
   await db.from('audit_log').insert({ admin_id: _adminUser.id, admin_email: _adminUser.email, action, target: String(target||'').slice(0,100), details: String(details||'').slice(0,255) });
 }
+
+/* ── Deposit Addresses ── */
+const DEP_ADDR_PAIRS = [
+  { coin:'USDT',  network:'TRC20',  label:'USDT — TRC20 (Tron)'        },
+  { coin:'USDT',  network:'ERC20',  label:'USDT — ERC20 (Ethereum)'    },
+  { coin:'USDT',  network:'BEP20',  label:'USDT — BEP20 (BNB Chain)'   },
+  { coin:'USDT',  network:'SOL',    label:'USDT — Solana'              },
+  { coin:'BTC',   network:'BTC',    label:'Bitcoin (BTC)'              },
+  { coin:'BTC',   network:'LN',     label:'Bitcoin — Lightning'        },
+  { coin:'ETH',   network:'ERC20',  label:'ETH — ERC20'                },
+  { coin:'ETH',   network:'ARBI',   label:'ETH — Arbitrum One'         },
+  { coin:'BNB',   network:'BEP20',  label:'BNB — BEP20'                },
+  { coin:'BNB',   network:'BEP2',   label:'BNB — Beacon Chain (BEP2)'  },
+  { coin:'XRP',   network:'XRP',    label:'XRP (Ripple)'               },
+  { coin:'SOL',   network:'SOL',    label:'Solana (SOL)'               },
+  { coin:'ADA',   network:'ADA',    label:'Cardano (ADA)'              },
+  { coin:'DOGE',  network:'DOGE',   label:'Dogecoin (DOGE)'            },
+  { coin:'MATIC', network:'MATIC',  label:'Polygon (MATIC)'            },
+  { coin:'AVAX',  network:'AVAXC',  label:'Avalanche C-Chain'          },
+  { coin:'DOT',   network:'DOT',    label:'Polkadot (DOT)'             },
+  { coin:'LINK',  network:'ERC20',  label:'Chainlink — ERC20'          },
+  { coin:'TRX',   network:'TRC20',  label:'TRON (TRX/TRC20)'           },
+  { coin:'ATOM',  network:'ATOM',   label:'Cosmos (ATOM)'              },
+];
+
+function buildDepAddrForm(savedMap) {
+  const grid = document.getElementById('dep-addr-grid');
+  if (!grid) return;
+  grid.innerHTML = DEP_ADDR_PAIRS.map(p => {
+    const key = p.coin + '-' + p.network;
+    const val = savedMap[key] || '';
+    return `<div class="field" style="margin:0;">
+      <label class="field__label" style="font-size:11px;">${p.label}</label>
+      <input class="field__input" style="font-size:12px;" id="depaddr-${key}" type="text" placeholder="Wallet address…" value="${val.replace(/"/g,'&quot;')}"/>
+    </div>`;
+  }).join('');
+}
+
+window.loadDepositAddresses = async function() {
+  const db = window.SV_DB; if (!db) return;
+  const { data } = await db.from('deposit_addresses').select('coin,network,address');
+  const map = {};
+  (data||[]).forEach(r => { map[r.coin + '-' + r.network] = r.address; });
+  buildDepAddrForm(map);
+};
+
+window.saveDepositAddresses = async function() {
+  const db = window.SV_DB; if (!db) return;
+  const rows = DEP_ADDR_PAIRS.map(p => {
+    const key  = p.coin + '-' + p.network;
+    const addr = (document.getElementById('depaddr-' + key)?.value || '').trim();
+    return { coin: p.coin, network: p.network, address: addr, updated_at: new Date().toISOString() };
+  }).filter(r => r.address); // only save non-empty
+  if (!rows.length) { showToast('Enter at least one address', 'error'); return; }
+  const { error } = await db.from('deposit_addresses').upsert(rows, { onConflict: 'coin,network' });
+  if (error) { showToast('Error: ' + error.message, 'error'); return; }
+  await logAudit('save_deposit_addresses', 'system', `${rows.length} addresses saved`);
+  showToast('Deposit addresses saved');
+};
 
 /* ── Dashboard Stats ── */
 window.loadDashStats = async function() {

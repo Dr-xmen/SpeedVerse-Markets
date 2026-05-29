@@ -795,5 +795,30 @@ if(preselect && COINS.find(c => c.sym===preselect.toUpperCase())){
   pickCoin(preselect.toUpperCase());
 }
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./supabase.js"></script>
+<script>
+/* ── Load admin-set deposit addresses and overlay onto COINS ── */
+(async () => {
+  try {
+    const db = window.SV_DB;
+    const { data } = await db.from('deposit_addresses').select('coin,network,address,memo').eq('enabled', true);
+    if (!data?.length) return;
+    data.forEach(row => {
+      const coin = COINS.find(c => c.sym === row.coin);
+      if (!coin) return;
+      const net = coin.networks.find(n => n.id === row.network);
+      if (!net) return;
+      if (row.address) net.addr = row.address;
+      if (row.memo != null) net.memo = !!row.memo;
+    });
+    /* Re-render address panel if user is already on step 3 */
+    if (typeof buildAddressPanel === 'function' && typeof selectedNet !== 'undefined' && selectedNet) {
+      buildAddressPanel();
+    }
+  } catch(e) {}
+})();
+</script>
 </body>
 </html>
