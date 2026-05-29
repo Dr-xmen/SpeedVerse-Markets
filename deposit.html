@@ -772,7 +772,9 @@ function buildAddressPanel(){
   const nd = document.getElementById('step3-net-display');
   nd.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg><span style="font-size:12.5px;font-weight:700;color:var(--accent);">${selectedNet.id}</span>`;
   document.getElementById('addr-string').textContent = selectedNet.addr;
-  document.getElementById('min-dep').textContent = selectedNet.min;
+  document.getElementById('min-dep').textContent = (window._minDeposit > 0)
+    ? '$' + window._minDeposit.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' USD'
+    : selectedNet.min;
   document.getElementById('confirms').textContent = selectedNet.confirms + ' conf.';
   document.getElementById('eta').textContent = selectedNet.eta;
   document.getElementById('notice-coin').textContent = selectedCoin.sym;
