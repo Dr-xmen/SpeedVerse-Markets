@@ -694,8 +694,8 @@ function toggleTheme(){var light=document.body.classList.toggle('light');localSt
       }
       if (activeTab === 'buy'    && t.direction.toLowerCase() !== 'buy')  return false;
       if (activeTab === 'sell'   && t.direction.toLowerCase() !== 'sell') return false;
-      if (activeTab === 'profit' && !(t.status === 'closed' && t.pnl > 0)) return false;
-      if (activeTab === 'loss'   && !(t.status === 'closed' && t.pnl < 0)) return false;
+      if (activeTab === 'profit' && !(t.pnl > 0)) return false;
+      if (activeTab === 'loss'   && !(t.pnl < 0)) return false;
       return true;
     });
 
