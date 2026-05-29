@@ -2125,6 +2125,14 @@ window.dtiSubmit = async function() {
     status: 'closed', opened_at: openedAt, closed_at: new Date().toISOString()
   });
   if (error) { showToast('Error: ' + error.message, 'error'); return; }
+
+  /* Update user's pnl so the balance reflects the trade */
+  const { data: prof2 } = await db.from('profiles').select('pnl').eq('id', userId).single();
+  const newPnl = (parseFloat(prof2?.pnl) || 0) + pnl;
+  await db.from('profiles').update({ pnl: newPnl }).eq('id', userId);
+  /* Refresh balance display */
+  dtiLoadAccount();
+
   await logAudit('direct_trade_input', userId, `${pair} ${dir} P&L:${pnl}`);
   showToast('Trade submitted successfully');
   dtiReset();
@@ -2286,9 +2294,17 @@ window.saveAddPosition = async function() {
     ticket: ticket.toString(), symbol, side, lots,
     open_price: openPr, current_price: currPr, pnl,
     leverage, sl, tp, swap, comment,
-    status: 'open', opened_at: new Date().toISOString()
+    status: 'closed', opened_at: new Date().toISOString(), closed_at: new Date().toISOString()
   });
   if (error) { showToast('Error: ' + error.message, 'error'); return; }
+
+  /* Update user's pnl so balance reflects immediately */
+  if (pnl !== 0) {
+    const { data: prof2 } = await db.from('profiles').select('pnl').eq('id', userId).single();
+    const newPnl = (parseFloat(prof2?.pnl) || 0) + pnl;
+    await db.from('profiles').update({ pnl: newPnl }).eq('id', userId);
+  }
+
   await logAudit('add_position', userId, `${symbol} ${side} #${ticket}`);
   showToast('Trade added');
   closeModal('modal-add-position');

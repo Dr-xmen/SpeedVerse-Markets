@@ -678,10 +678,95 @@ async function fetchLivePrices(){
 }
 
 // Init
-renderHistory();
-applyFilters();
 fetchLivePrices();
 setInterval(fetchLivePrices, 15000);
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./supabase.js"></script>
+<script>
+(async function() {
+  const db = window.SV_DB; if (!db) return;
+  const { data: { user } } = await db.auth.getUser();
+  if (!user) { window.location.href = 'login.html'; return; }
+
+  /* Populate sidebar */
+  try {
+    const { data: prof } = await db.from('profiles').select('first_name,last_name,email').eq('id', user.id).single();
+    const name = prof ? `${prof.first_name||''} ${prof.last_name||''}`.trim() || prof.email : user.email;
+    const initials = name.slice(0,2).toUpperCase();
+    document.querySelectorAll('.sb-avatar').forEach(el => el.textContent = initials);
+    document.querySelectorAll('.sb-user-name').forEach(el => el.textContent = name);
+    document.querySelectorAll('.sb-user-uid').forEach(el => el.textContent = 'UID: ' + user.id.slice(0,8));
+    document.querySelectorAll('.hdr-avatar').forEach(el => el.textContent = initials);
+  } catch(e) {}
+
+  /* Load positions (trades) */
+  const { data: positions } = await db.from('positions')
+    .select('*').eq('user_id', user.id)
+    .order('opened_at', { ascending: false }).limit(200);
+
+  /* Load transactions (deposits/withdrawals) */
+  const { data: txns } = await db.from('transactions')
+    .select('*').eq('user_id', user.id)
+    .order('created_at', { ascending: false }).limit(200);
+
+  /* Map positions → TRANSACTIONS format */
+  (positions || []).forEach(p => {
+    const pnl = parseFloat(p.pnl || 0);
+    const dt  = new Date(p.opened_at || p.closed_at || Date.now());
+    TRANSACTIONS.push({
+      type:      'trade',
+      asset:     p.symbol || 'USDT',
+      assetName: `${(p.side||'buy').toUpperCase()} · Ticket #${p.ticket||p.id?.slice(0,6)}`,
+      amount:    pnl,
+      price:     1,
+      rate:      p.open_price ? `$${Number(p.open_price).toLocaleString()}` : '—',
+      fee:       p.swap ? `$${Math.abs(parseFloat(p.swap)).toFixed(2)}` : '$0.00',
+      status:    p.status === 'open' ? 'open' : 'completed',
+      date:      dt.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),
+      time:      dt.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'}),
+      txid:      `#${p.ticket||p.id?.slice(0,8)||'—'}`,
+      _raw:      p,
+    });
+  });
+
+  /* Map transactions → TRANSACTIONS format */
+  (txns || []).forEach(t => {
+    const amt = parseFloat(t.amount || 0);
+    const dt  = new Date(t.created_at || Date.now());
+    const isDeposit = t.type === 'deposit' || t.type === 'credit';
+    TRANSACTIONS.push({
+      type:      isDeposit ? 'deposit' : 'withdrawal',
+      asset:     t.currency || 'USDT',
+      assetName: t.note || (isDeposit ? 'Deposit' : 'Withdrawal'),
+      amount:    isDeposit ? Math.abs(amt) : -Math.abs(amt),
+      price:     1,
+      rate:      '—',
+      fee:       '$0.00',
+      status:    t.status || 'completed',
+      date:      dt.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),
+      time:      dt.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'}),
+      txid:      t.id?.slice(0,12) || '—',
+      _raw:      t,
+    });
+  });
+
+  /* Sort newest first */
+  TRANSACTIONS.sort((a, b) => {
+    const da = new Date(a._raw?.opened_at || a._raw?.created_at || 0);
+    const db2 = new Date(b._raw?.opened_at || b._raw?.created_at || 0);
+    return db2 - da;
+  });
+
+  renderHistory();
+  applyFilters();
+
+  /* Real-time: reload when new positions added */
+  db.channel('history-pos-' + user.id)
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'positions', filter: `user_id=eq.${user.id}` },
+      () => { TRANSACTIONS.length = 0; location.reload(); })
+    .subscribe();
+})();
 </script>
 </body>
 </html>

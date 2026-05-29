@@ -641,31 +641,30 @@ html.mob .full-sec{margin-left:0 !important;margin-right:0 !important;}
     </div>
   </div>
 
-  <!-- Open Positions -->
+  <!-- Closed Positions / Trade History -->
   <div class="full-sec">
     <div class="sec-card">
       <div class="sec-head">
         <div class="sec-title">
-          Open Positions
-          <span class="sec-title-sub" id="pos-count">4 active</span>
+          Trade History
+          <span class="sec-title-sub" id="pos-count">0 trades</span>
         </div>
         <div style="display:flex;align-items:center;gap:12px;">
-          <span style="font-size:12px;color:var(--sub);">Unrealized PnL: <span id="pos-total-pnl" style="color:var(--green);font-weight:600;">—</span></span>
-          <span class="sec-link">View All →</span>
+          <span style="font-size:12px;color:var(--sub);">Realized PnL: <span id="pos-total-pnl" style="color:var(--green);font-weight:600;">—</span></span>
+          <a href="history.html"><span class="sec-link">View All →</span></a>
         </div>
       </div>
       <div style="overflow-x:auto;">
         <table class="pos-table">
           <thead>
             <tr>
-              <th>Contract</th>
-              <th>Size</th>
-              <th>Entry Price</th>
-              <th>Mark Price</th>
-              <th>Liq. Price</th>
-              <th>Margin</th>
-              <th>Unrealized PnL</th>
-              <th></th>
+              <th>Ticket</th>
+              <th>Pair</th>
+              <th>Direction</th>
+              <th>Lots</th>
+              <th>Open Price</th>
+              <th>Closed</th>
+              <th>Realized PnL</th>
             </tr>
           </thead>
           <tbody id="positions-tbody"></tbody>
@@ -1140,13 +1139,13 @@ async function renderPositions() {
     const { data: user } = await db.auth.getUser();
     if (!user?.user) return;
     const { data: positions } = await db.from('positions')
-      .select('*').eq('user_id', user.user.id).eq('status','open')
+      .select('*').eq('user_id', user.user.id)
       .order('opened_at', { ascending: false }).limit(20);
     const countEl = document.getElementById('pos-count');
     const pnlEl   = document.getElementById('pos-total-pnl');
     if (!positions?.length) {
-      tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:var(--sub);padding:20px;font-size:12.5px;">No open positions</td></tr>`;
-      if (countEl) countEl.textContent = '0 active';
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--sub);padding:20px;font-size:12.5px;">No trade history yet</td></tr>`;
+      if (countEl) countEl.textContent = '0 trades';
       if (pnlEl)   pnlEl.textContent   = '$0.00';
       return;
     }
@@ -1157,25 +1156,27 @@ async function renderPositions() {
       const pnlUp  = pnl >= 0;
       const side   = (pos.side || 'buy').toUpperCase();
       const isLong = pos.side === 'buy';
-      const lev    = pos.leverage || '1:1';
+      const lev    = pos.leverage || '';
+      const closedDate = pos.closed_at
+        ? new Date(pos.closed_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})
+        : '—';
       return `<tr>
+        <td><div class="pos-num" style="font-size:11.5px;color:var(--sub);">#${pos.ticket||pos.id?.slice(0,6)||'—'}</div></td>
         <td>
           <div class="pos-pair">${pos.symbol||'—'}</div>
-          <div><span class="pos-type ${isLong?'pos-long':'pos-short'}">${side} ${lev}</span></div>
+          ${lev ? `<div style="font-size:10px;color:var(--sub);">${lev}</div>` : ''}
         </td>
+        <td><span class="pos-type ${isLong?'pos-long':'pos-short'}">${side}</span></td>
         <td><div class="pos-num">${pos.lots||'—'}</div></td>
         <td><div class="pos-num">${pos.open_price ? Number(pos.open_price).toLocaleString() : '—'}</div></td>
-        <td><div class="pos-num">${pos.current_price ? Number(pos.current_price).toLocaleString() : '—'}</div></td>
-        <td><div class="pos-num" style="color:var(--red);">—</div></td>
-        <td><div class="pos-num">—</div></td>
+        <td><div class="pos-num" style="font-size:11.5px;">${closedDate}</div></td>
         <td>
-          <div class="${pnlUp?'pos-pos':'pos-neg'}">${pnlUp?'+':''}$${Math.abs(pnl).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</div>
+          <div class="${pnlUp?'pos-pos':'pos-neg'}">${pnlUp?'+':'−'}$${Math.abs(pnl).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</div>
         </td>
-        <td><button class="pos-close" style="pointer-events:none;opacity:.4;">Close</button></td>
       </tr>`;
     }).join('');
     tbody.innerHTML = rows;
-    if (countEl) countEl.textContent = `${positions.length} active`;
+    if (countEl) countEl.textContent = `${positions.length} trade${positions.length===1?'':'s'}`;
     const pnlUp = totalPnl >= 0;
     if (pnlEl) {
       pnlEl.style.color = pnlUp ? 'var(--green)' : 'var(--red)';
