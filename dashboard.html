@@ -389,6 +389,20 @@ html.mob .full-sec{margin-left:0 !important;margin-right:0 !important;}
 .pu-feats li svg{flex-shrink:0;}
 .pu-cta{width:100%;padding:13px;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;margin-bottom:10px;}
 .pu-skip{background:none;border:none;color:var(--sub);font-size:12.5px;cursor:pointer;padding:0;}
+
+/* PROFIT TARGET REACHED POPUP */
+.pt-overlay{position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .3s;}
+.pt-overlay.open{opacity:1;pointer-events:all;}
+.pt-box{background:var(--s1);border-radius:20px;padding:36px 32px 28px;max-width:440px;width:100%;text-align:center;position:relative;border:1.5px solid rgba(14,203,129,.3);box-shadow:0 24px 64px rgba(0,0,0,.65),0 0 80px rgba(14,203,129,.1);transform:translateY(24px) scale(.96);transition:transform .38s cubic-bezier(.34,1.56,.64,1);}
+.pt-overlay.open .pt-box{transform:translateY(0) scale(1);}
+.pt-icon{width:90px;height:90px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:44px;background:rgba(14,203,129,.14);}
+.pt-confetti{font-size:20px;position:absolute;top:16px;left:50%;transform:translateX(-50%);letter-spacing:6px;opacity:.7;}
+.pt-heading{font-size:24px;font-weight:800;color:#0ecb81;margin-bottom:6px;}
+.pt-label-name{font-size:15px;font-weight:600;color:var(--text);margin-bottom:4px;}
+.pt-amount-val{font-size:34px;font-weight:800;color:#0ecb81;margin-bottom:18px;letter-spacing:-.5px;}
+.pt-desc{font-size:13px;color:var(--sub);margin-bottom:26px;line-height:1.65;}
+.pt-cta{width:100%;padding:13px;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#0ecb81,#09a468);color:#fff;margin-bottom:10px;box-shadow:0 4px 18px rgba(14,203,129,.3);}
+.pt-dismiss{background:none;border:none;color:var(--sub);font-size:12.5px;cursor:pointer;padding:0;}
 </style>
 <script>if(window.innerWidth<=960||screen.width<=960)document.documentElement.classList.add('mob');</script>
 </head>
@@ -1644,6 +1658,9 @@ document.addEventListener('DOMContentLoaded', init);
     }
   } catch(e) {}
 
+  /* Check for unread profit-target-reached popup */
+  checkProfitTargetPopup(user.id);
+
   /* Real-time: reflect any admin change (plan, balance, pnl) instantly */
   db.channel('profile-live-' + user.id)
     .on('postgres_changes', {
@@ -1685,7 +1702,53 @@ function showPlanUpgradePopup(plan) {
 function closePlanPopup() {
   document.getElementById('pu-overlay').classList.remove('open');
 }
+
+/* ── Profit Target reached one-time popup ── */
+let _ptPopupNotifIds = [];
+async function checkProfitTargetPopup(userId) {
+  try {
+    const db = window.SV_DB;
+    const { data: notifs } = await db.from('notifications')
+      .select('id,message')
+      .eq('user_id', userId)
+      .eq('type', 'profit_target_reached')
+      .eq('read', false)
+      .order('created_at', { ascending: true })
+      .limit(1);
+    if (!notifs?.length) return;
+    const n = notifs[0];
+    _ptPopupNotifIds = [n.id];
+    const labelMatch  = n.message.match(/profit target "(.+?)"/);
+    const amountMatch = n.message.match(/of \$([0-9,]+(?:\.\d+)?)/);
+    document.getElementById('pt-popup-label').textContent  = labelMatch  ? labelMatch[1]           : 'Profit Target';
+    document.getElementById('pt-popup-amount').textContent = amountMatch ? '$' + amountMatch[1]    : '';
+    setTimeout(() => document.getElementById('pt-overlay').classList.add('open'), 1400);
+  } catch(e) { console.error('checkProfitTargetPopup', e); }
+}
+async function closePTPopup() {
+  document.getElementById('pt-overlay').classList.remove('open');
+  try {
+    if (_ptPopupNotifIds.length) {
+      await window.SV_DB.from('notifications').update({ read: true }).in('id', _ptPopupNotifIds);
+      _ptPopupNotifIds = [];
+    }
+  } catch(e) {}
+}
 </script>
+
+<!-- Profit Target Reached popup -->
+<div class="pt-overlay" id="pt-overlay">
+  <div class="pt-box">
+    <div class="pt-confetti">🎉 🎊 🎉</div>
+    <div class="pt-icon">🎯</div>
+    <div class="pt-heading">Profit Target Reached!</div>
+    <div class="pt-label-name" id="pt-popup-label"></div>
+    <div class="pt-amount-val" id="pt-popup-amount"></div>
+    <div class="pt-desc">Congratulations! You've successfully achieved your profit target. Your dedication and strategy paid off — keep the momentum going!</div>
+    <button class="pt-cta" onclick="closePTPopup()">🚀 Keep Trading</button>
+    <button class="pt-dismiss" onclick="closePTPopup()">Dismiss</button>
+  </div>
+</div>
 
 <!-- Plan upgrade congrats popup -->
 <div class="pu-overlay" id="pu-overlay">
