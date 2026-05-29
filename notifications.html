@@ -278,12 +278,13 @@ html.mob .main{width:100% !important;padding:20px 16px;}</style>
   </nav>
   <div class="sb-bottom">
     <div class="sb-user">
-      <div class="sb-avatar">S</div>
+      <div class="sb-avatar" id="sb-avatar">S</div>
       <div class="sb-user-info">
-        <div class="sb-user-name">SpeedVerse User</div>
-        <div class="sb-user-uid">UID: 92847362 &nbsp;<span class="sb-vip">VIP 3</span></div>
+        <div class="sb-user-name" id="sb-user-name">SpeedVerse User</div>
+        <div class="sb-user-uid" id="sb-user-uid"></div>
       </div>
     </div>
+    <button class="btn btn--outline" style="width:100%;margin-top:10px;font-size:12px;" onclick="doSignOut()">Sign Out</button>
   </div>
 </aside>
 
@@ -320,6 +321,8 @@ html.mob .main{width:100% !important;padding:20px 16px;}</style>
 </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./supabase.js"></script>
 <script>
 /* ── Theme ── */
 (function(){
@@ -346,225 +349,162 @@ function toggleSub(el, subId){
   el.classList.toggle('open', isOpen);
 }
 
-/* ── Notifications Data ── */
-const NOTIFS_ALL = [
-  /* notifications populated dynamically from backend */
-  /* {
-    id:1, unread:true, cat:'trade',
-    iconColor:'green',
-    iconSvg:'<path d="M12 19V5M5 12l7-7 7 7"/>',
-    title:'Deposit Received',
-    desc:'0.05 BTC deposited successfully. Funds are now available in your Spot wallet.',
-    time:'2 min ago'
-  },
-  {
-    id:2, unread:true, cat:'trade',
-    iconColor:'gold',
-    iconSvg:'<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>',
-    title:'Price Alert',
-    desc:'BTC/USDT has reached your target price of $67,000.',
-    time:'15 min ago'
-  },
-  {
-    id:3, unread:true, cat:'system',
-    iconColor:'red',
-    iconSvg:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
-    title:'Security Alert',
-    desc:'New login detected from Chrome on Windows. If this wasn\'t you, secure your account immediately.',
-    time:'1 hour ago'
-  },
-  {
-    id:4, unread:false, cat:'trade',
-    iconColor:'green',
-    iconSvg:'<path d="M12 5v14M5 12l7 7 7-7"/>',
-    title:'Withdrawal Processed',
-    desc:'100.00 USDT withdrawal to TRC20 address has been confirmed.',
-    time:'3 hours ago'
-  },
-  {
-    id:5, unread:false, cat:'announcement',
-    iconColor:'orange',
-    iconSvg:'<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>',
-    title:'SpeedVerse F1 Partnership',
-    desc:'We\'re proud to announce our partnership with Ferrari F1. Read more about exclusive benefits for SpeedVerse users.',
-    time:'Yesterday'
-  },
-  {
-    id:6, unread:false, cat:'system',
-    iconColor:'blue',
-    iconSvg:'<polyline points="20,6 9,17 4,12"/>',
-    title:'Account Verified',
-    desc:'Your KYC verification has been approved. You now have full access to all features.',
-    time:'2 days ago'
-  },
-  {
-    id:7, unread:false, cat:'promotion',
-    iconColor:'gold',
-    iconSvg:'<path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>',
-    title:'Referral Bonus',
-    desc:'You earned 10 USDT from a referral. Funds have been added to your Spot wallet.',
-    time:'3 days ago'
-  },
-  {
-    id:8, unread:false, cat:'announcement',
-    iconColor:'orange',
-    iconSvg:'<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>',
-    title:'Market Update',
-    desc:'Markets are showing high volatility. Ensure your risk management strategies are in place before trading.',
-    time:'4 days ago'
-  },
-  {
-    id:9, unread:false, cat:'announcement',
-    iconColor:'orange',
-    iconSvg:'<circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/>',
-    title:'BTC Halving Countdown',
-    desc:'Bitcoin halving is expected in approximately 12 days. Learn how it may affect prices and your portfolio.',
-    time:'5 days ago'
-  },
-  {
-    id:10, unread:false, cat:'announcement',
-    iconColor:'blue',
-    iconSvg:'<polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>',
-    title:'New Feature: Convert',
-    desc:'Instantly swap between 500+ cryptocurrencies with zero fees on SpeedVerse. Try it now.',
-    time:'1 week ago'
-  },
-  {
-    id:11, unread:false, cat:'promotion',
-    iconColor:'gold',
-    iconSvg:'<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
-    title:'VIP Level Up Offer',
-    desc:'Trade 5,000 USDT this month to unlock VIP 4 and earn 15% fee discounts on all trades.',
-    time:'1 week ago'
-  },
-  {
-    id:12, unread:false, cat:'system',
-    iconColor:'blue',
-    iconSvg:'<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>',
-    title:'API Key Created',
-    desc:'A new API key was generated for your account. If you did not perform this action, contact support.',
-    time:'2 weeks ago'
-  },
-  {
-    id:13, unread:false, cat:'trade',
-    iconColor:'green',
-    iconSvg:'<polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>',
-    title:'Spot Order Filled',
-    desc:'Your limit buy order for 0.5 ETH at $3,500 has been fully executed.',
-    time:'2 weeks ago'
-  },
-  {
-    id:14, unread:false, cat:'promotion',
-    iconColor:'orange',
-    iconSvg:'<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>',
-    title:'Staking Rewards Distributed',
-    desc:'Monthly staking rewards of 2.4 ATOM have been credited to your Earn wallet.',
-    time:'3 weeks ago'
-  },
-  {
-    id:15, unread:false, cat:'system',
-    iconColor:'blue',
-    iconSvg:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
-    title:'Password Changed',
-    desc:'Your account password was changed successfully. All active sessions have been logged out.',
-    time:'1 month ago'
-  }, */
-];
+/* ── Helpers ── */
+function fmtTime(ts) {
+  if (!ts) return '';
+  const d = new Date(ts), now = new Date();
+  const diff = Math.floor((now - d) / 1000);
+  if (diff < 60)   return 'Just now';
+  if (diff < 3600) return Math.floor(diff/60) + ' min ago';
+  if (diff < 86400) return Math.floor(diff/3600) + ' hour' + (Math.floor(diff/3600)>1?'s':'') + ' ago';
+  if (diff < 172800) return 'Yesterday';
+  if (diff < 604800) return Math.floor(diff/86400) + ' days ago';
+  return d.toLocaleDateString();
+}
 
-let notifications = NOTIFS_ALL.map(n => ({...n}));
+const TYPE_ICON = {
+  account:    { color:'blue',   svg:'<polyline points="20,6 9,17 4,12"/>' },
+  info:       { color:'blue',   svg:'<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>' },
+  warning:    { color:'orange', svg:'<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>' },
+  success:    { color:'green',  svg:'<polyline points="20,6 9,17 4,12"/>' },
+  urgent:     { color:'red',    svg:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>' },
+  deposit:    { color:'green',  svg:'<path d="M12 19V5M5 12l7-7 7 7"/>' },
+  withdrawal: { color:'orange', svg:'<path d="M12 5v14M5 12l7 7 7-7"/>' },
+  kyc:        { color:'blue',   svg:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>' },
+};
+
+/* ── State ── */
+let _notifications = [];
+let _userId = null;
 let currentFilter = 'all';
 let visibleCount = 15;
 
 /* ── Render ── */
-function getFiltered(){
-  return notifications.filter(n => currentFilter === 'all' || n.cat === currentFilter);
+function getFiltered() {
+  return _notifications.filter(n => currentFilter === 'all' || n.type === currentFilter);
 }
 
-function renderNotifications(){
+function renderNotifications() {
   const list = document.getElementById('notif-list');
   const filtered = getFiltered();
   const visible = filtered.slice(0, visibleCount);
 
-  if(visible.length === 0){
-    list.innerHTML = `
-      <div class="empty-notif">
-        <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-        <p>No notifications in this category</p>
-      </div>`;
-    document.getElementById('load-more-wrap').style.display='none';
+  if (!visible.length) {
+    list.innerHTML = `<div class="empty-notif"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><p>No notifications yet</p></div>`;
+    document.getElementById('load-more-wrap').style.display = 'none';
     return;
   }
 
-  list.innerHTML = visible.map(n => `
-    <div class="notif-item${n.unread?' unread':''}" data-id="${n.id}" onclick="markRead(${n.id})">
-      <div class="notif-icon-wrap ${n.iconColor}">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">${n.iconSvg}</svg>
+  list.innerHTML = visible.map(n => {
+    const ic = TYPE_ICON[n.type] || TYPE_ICON.info;
+    const safe = s => String(s||'').replace(/</g,'&lt;');
+    return `<div class="notif-item${n.read?'':' unread'}" data-id="${n.id}">
+      <div class="notif-icon-wrap ${ic.color}">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">${ic.svg}</svg>
       </div>
-      <div class="notif-body">
-        <div class="notif-title">${n.title}</div>
-        <div class="notif-desc">${n.desc}</div>
-        <div class="notif-time">${n.time}</div>
+      <div class="notif-body" onclick="markRead('${n.id}')">
+        <div class="notif-title">${safe(n.title)}</div>
+        <div class="notif-desc">${safe(n.message)}</div>
+        <div class="notif-time">${fmtTime(n.created_at)}</div>
       </div>
       <div class="notif-right">
-        ${n.unread ? '<div class="notif-dot"></div>' : ''}
-        <div class="notif-dismiss" onclick="dismiss(event,${n.id})" title="Dismiss">
+        ${n.read ? '' : '<div class="notif-dot"></div>'}
+        <div class="notif-dismiss" onclick="dismissNotif('${n.id}')" title="Dismiss">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </div>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 
-  const loadWrap = document.getElementById('load-more-wrap');
-  loadWrap.style.display = filtered.length > visibleCount ? '' : 'none';
-
+  document.getElementById('load-more-wrap').style.display = filtered.length > visibleCount ? '' : 'none';
   updateUnreadBadge();
 }
 
-function updateUnreadBadge(){
-  const count = notifications.filter(n=>n.unread).length;
+function updateUnreadBadge() {
+  const count = _notifications.filter(n => !n.read).length;
   const badge = document.getElementById('unread-count');
-  const headerBadge = document.getElementById('header-badge');
+  const hBadge = document.getElementById('header-badge');
   badge.textContent = count;
   badge.style.display = count > 0 ? '' : 'none';
-  if(headerBadge){
-    headerBadge.textContent = count;
-    headerBadge.style.display = count > 0 ? '' : 'none';
-  }
+  if (hBadge) { hBadge.textContent = count; hBadge.style.display = count > 0 ? '' : 'none'; }
 }
 
-/* ── Actions ── */
-function markRead(id){
-  const n = notifications.find(x=>x.id===id);
-  if(n) n.unread = false;
+/* ── Actions (write to DB) ── */
+async function markRead(id) {
+  const db = window.SV_DB;
+  _notifications = _notifications.map(n => n.id === id ? {...n, read: true} : n);
   renderNotifications();
+  if (db && _userId) await db.from('notifications').update({ read: true }).eq('id', id).eq('user_id', _userId);
 }
 
-function markAllRead(){
-  notifications.forEach(n=>n.unread=false);
+async function markAllRead() {
+  const db = window.SV_DB;
+  const unreadIds = _notifications.filter(n => !n.read).map(n => n.id);
+  _notifications = _notifications.map(n => ({...n, read: true}));
   renderNotifications();
+  if (db && _userId && unreadIds.length)
+    await db.from('notifications').update({ read: true }).in('id', unreadIds).eq('user_id', _userId);
 }
 
-function dismiss(e, id){
-  e.stopPropagation();
-  notifications = notifications.filter(n=>n.id!==id);
+async function dismissNotif(id) {
+  const db = window.SV_DB;
+  _notifications = _notifications.filter(n => n.id !== id);
   renderNotifications();
+  if (db && _userId) await db.from('notifications').delete().eq('id', id).eq('user_id', _userId);
 }
 
-function setFilter(cat){
+function setFilter(cat) {
   currentFilter = cat;
   visibleCount = 15;
-  document.querySelectorAll('.filter-tab').forEach(t=>{
-    t.classList.toggle('active', t.dataset.cat===cat);
-  });
+  document.querySelectorAll('.filter-tab').forEach(t => t.classList.toggle('active', t.dataset.cat === cat));
   renderNotifications();
 }
 
-function loadMore(){
-  visibleCount += 10;
-  renderNotifications();
-}
+function loadMore() { visibleCount += 10; renderNotifications(); }
 
-/* ── Init ── */
-renderNotifications();
+/* ── Auth + Data load ── */
+(async () => {
+  const db = window.SV_DB;
+  const { data: { session } } = await db.auth.getSession();
+  if (!session) { window.location.href = 'login.html'; return; }
+
+  const user = session.user;
+  _userId = user.id;
+
+  /* Sidebar */
+  const { data: profile } = await db.from('profiles').select('first_name,last_name').eq('id', user.id).maybeSingle();
+  const firstName   = profile?.first_name || '';
+  const displayName = firstName ? [firstName, profile.last_name].filter(Boolean).join(' ') : user.email.split('@')[0];
+  const initials    = displayName.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase() || 'SV';
+  document.getElementById('sb-avatar').textContent    = initials;
+  document.getElementById('sb-user-name').textContent = displayName;
+  document.getElementById('sb-user-uid').textContent  = user.email;
+
+  /* Load notifications (exclude plan_upgrade_popup — those are consumed on dashboard) */
+  async function loadNotifs() {
+    const { data } = await db.from('notifications')
+      .select('*')
+      .eq('user_id', user.id)
+      .neq('type', 'plan_upgrade_popup')
+      .order('created_at', { ascending: false });
+    _notifications = data || [];
+    renderNotifications();
+  }
+  await loadNotifs();
+
+  /* Real-time: reload when admin sends a new notification */
+  db.channel('notifs-live-' + user.id)
+    .on('postgres_changes', {
+      event: '*', schema: 'public', table: 'notifications',
+      filter: `user_id=eq.${user.id}`
+    }, () => loadNotifs())
+    .subscribe();
+})();
+
+async function doSignOut() {
+  await window.SV_DB.auth.signOut();
+  window.location.href = 'login.html';
+}
 </script>
 </body>
 </html>

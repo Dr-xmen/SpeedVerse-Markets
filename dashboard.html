@@ -320,6 +320,20 @@ html.mob .announce-strip{display:none !important;}
 html.mob .welcome{margin:0 0 8px !important;border-radius:10px;}
 html.mob .stat-strip{margin:0 0 8px !important;}
 html.mob .full-sec{margin-left:0 !important;margin-right:0 !important;}
+
+/* PLAN UPGRADE POPUP */
+.pu-overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .3s;}
+.pu-overlay.open{opacity:1;pointer-events:all;}
+.pu-box{background:var(--s1);border-radius:20px;padding:36px 32px 28px;max-width:420px;width:100%;text-align:center;position:relative;border:1.5px solid rgba(255,255,255,.08);box-shadow:0 24px 64px rgba(0,0,0,.6);transform:translateY(20px) scale(.97);transition:transform .35s cubic-bezier(.34,1.56,.64,1);}
+.pu-overlay.open .pu-box{transform:translateY(0) scale(1);}
+.pu-glow{width:90px;height:90px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:38px;}
+.pu-plan{font-size:28px;font-weight:800;letter-spacing:.5px;margin-bottom:6px;}
+.pu-sub{font-size:13px;color:var(--sub);margin-bottom:22px;}
+.pu-feats{list-style:none;padding:0;margin:0 0 24px;text-align:left;display:flex;flex-direction:column;gap:9px;}
+.pu-feats li{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text);}
+.pu-feats li svg{flex-shrink:0;}
+.pu-cta{width:100%;padding:13px;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;margin-bottom:10px;}
+.pu-skip{background:none;border:none;color:var(--sub);font-size:12.5px;cursor:pointer;padding:0;}
 </style>
 <script>if(window.innerWidth<=960||screen.width<=960)document.documentElement.classList.add('mob');</script>
 </head>
@@ -1415,6 +1429,21 @@ document.addEventListener('DOMContentLoaded', init);
 
   applyPlanBadge(profile?.plan || 'Starter');
 
+  /* Check for one-time upgrade congrats popup */
+  try {
+    const { data: popups } = await db.from('notifications')
+      .select('id,message')
+      .eq('user_id', user.id)
+      .eq('type', 'plan_upgrade_popup');
+    if (popups?.length) {
+      const plan = popups[0].message || '';
+      await db.from('notifications').delete()
+        .eq('type', 'plan_upgrade_popup')
+        .eq('user_id', user.id);
+      setTimeout(() => showPlanUpgradePopup(plan), 900);
+    }
+  } catch(e) {}
+
   /* Real-time: update badge immediately when admin changes plan */
   db.channel('profile-plan-' + user.id)
     .on('postgres_changes', {
@@ -1428,6 +1457,43 @@ async function doSignOut() {
   await window.SV_DB.auth.signOut();
   window.location.href = 'login.html';
 }
+
+/* ── Plan upgrade congrats popup ── */
+const PLAN_POPUP_CONFIG = {
+  Elite:    { color:'#60a5fa', bg:'rgba(33,150,243,.15)', emoji:'👑', feats:['125× max leverage','Unlimited withdrawals','Personal relationship manager (24/7)','OTC desk access','Custom liquidity solutions'] },
+  Platinum: { color:'#a78bfa', bg:'rgba(123,97,255,.15)', emoji:'💎', feats:['100× max leverage','$2,000,000/day withdrawal','Dedicated account manager','Weekly strategy calls','API priority access'] },
+  Gold:     { color:'#f0b90b', bg:'rgba(240,185,11,.15)', emoji:'⭐', feats:['50× max leverage','$500,000/day withdrawal','Full analytics suite','Monthly account review','Lower funding rates'] },
+  Silver:   { color:'#94a3b8', bg:'rgba(148,163,184,.15)', emoji:'🥈', feats:['25× max leverage','$100,000/day withdrawal','Advanced charting tools','Priority support','Reduced trading fees'] },
+  Starter:  { color:'#64748b', bg:'rgba(100,116,139,.12)', emoji:'🚀', feats:['10× max leverage','$20,000/day withdrawal','Standard analytics','Email support','Basic trading features'] },
+};
+function showPlanUpgradePopup(plan) {
+  const cfg = PLAN_POPUP_CONFIG[plan] || PLAN_POPUP_CONFIG.Starter;
+  const overlay = document.getElementById('pu-overlay');
+  document.getElementById('pu-glow').style.background = cfg.bg;
+  document.getElementById('pu-glow').textContent = cfg.emoji;
+  document.getElementById('pu-plan-name').textContent = plan;
+  document.getElementById('pu-plan-name').style.color = cfg.color;
+  document.getElementById('pu-feats-list').innerHTML = cfg.feats.map(f =>
+    `<li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${cfg.color}" stroke-width="3" stroke-linecap="round"><polyline points="20,6 9,17 4,12"/></svg>${f}</li>`
+  ).join('');
+  document.getElementById('pu-cta').style.background = cfg.color;
+  overlay.classList.add('open');
+}
+function closePlanPopup() {
+  document.getElementById('pu-overlay').classList.remove('open');
+}
 </script>
+
+<!-- Plan upgrade congrats popup -->
+<div class="pu-overlay" id="pu-overlay">
+  <div class="pu-box">
+    <div class="pu-glow" id="pu-glow"></div>
+    <div class="pu-plan" id="pu-plan-name"></div>
+    <div class="pu-sub">Your account has been upgraded! You now have access to all the features and limits of your new plan.</div>
+    <ul class="pu-feats" id="pu-feats-list"></ul>
+    <button class="pu-cta" id="pu-cta" onclick="closePlanPopup()">Start Trading</button>
+    <button class="pu-skip" onclick="closePlanPopup()">Maybe later</button>
+  </div>
+</div>
 </body>
 </html>

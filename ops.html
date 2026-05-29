@@ -1578,6 +1578,23 @@ window.saveUpgradePlan = async function() {
   if (!plan) { showToast('Please select a plan', 'error'); return; }
   const { error } = await db.from('profiles').update({ plan }).eq('id', userId);
   if (error) { showToast('Error: ' + error.message, 'error'); return; }
+  /* Insert upgrade popup (one-time congrats) + persistent account notification */
+  await db.from('notifications').insert([
+    {
+      user_id: userId,
+      title:   `Account Upgraded to ${plan}`,
+      message: plan,
+      type:    'plan_upgrade_popup',
+      enabled: true,
+    },
+    {
+      user_id: userId,
+      title:   `Account Upgraded to ${plan}`,
+      message: `Your account has been successfully upgraded to the ${plan} plan. You now have access to all ${plan} features and limits.`,
+      type:    'account',
+      enabled: true,
+    },
+  ]);
   await logAudit('upgrade_plan', userId, `Plan set to ${plan}`);
   showToast(`Plan upgraded to ${plan}`);
   closeModal('modal-upgrade-plan');
