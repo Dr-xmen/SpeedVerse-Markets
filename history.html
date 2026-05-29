@@ -207,6 +207,27 @@ body.light ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.15);}
 body.light input,body.light select{color:var(--text);}
 body.light input[type=date]{color-scheme:light;}
 
+/* TX DETAIL MODAL */
+.txd-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:300;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s;backdrop-filter:blur(3px);}
+.txd-overlay.open{opacity:1;pointer-events:auto;}
+.txd-sheet{background:var(--s1);border:1px solid var(--b2);border-radius:18px;width:100%;max-width:440px;overflow:hidden;transform:translateY(20px);transition:transform .25s cubic-bezier(.4,0,.2,1);box-shadow:0 24px 80px rgba(0,0,0,.6);}
+.txd-overlay.open .txd-sheet{transform:translateY(0);}
+.txd-header{display:flex;align-items:center;justify-content:space-between;padding:18px 20px 14px;border-bottom:1px solid var(--b);}
+.txd-title{font-size:15px;font-weight:700;color:var(--text);}
+.txd-close{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--sub);cursor:pointer;transition:all .15s;background:var(--s3);}
+.txd-close:hover{background:var(--s4);color:var(--text);}
+.txd-hero{display:flex;flex-direction:column;align-items:center;padding:24px 20px 20px;border-bottom:1px solid var(--b);gap:8px;}
+.txd-icon{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+.txd-amount{font-size:28px;font-weight:800;font-family:'Inter',sans-serif;letter-spacing:-.5px;}
+.txd-body{padding:16px 20px;}
+.txd-row{display:flex;align-items:flex-start;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.txd-row:last-child{border-bottom:none;}
+.txd-key{font-size:12px;color:var(--sub);font-weight:500;}
+.txd-val{font-size:12.5px;font-weight:600;color:var(--text);text-align:right;max-width:240px;word-break:break-all;}
+.txd-copy-row{display:flex;align-items:center;gap:6px;justify-content:flex-end;}
+.txd-copy-btn{background:var(--s3);border:1px solid var(--b2);border-radius:5px;padding:2px 7px;font-size:10.5px;color:var(--sub);cursor:pointer;transition:all .15s;}
+.txd-copy-btn:hover{color:var(--text);border-color:var(--b2);}
+
 /* MOBILE */
 .sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:199;opacity:0;pointer-events:none;transition:opacity .42s cubic-bezier(0.4,0,0.2,1);}
 .sidebar-overlay.open{opacity:1;pointer-events:auto;}
@@ -429,11 +450,9 @@ html.mob .filter-controls{gap:6px;}
             <th>Type</th>
             <th>Asset</th>
             <th>Amount</th>
-            <th>Price / Rate</th>
-            <th>Fee</th>
             <th>Status</th>
             <th>Date &amp; Time</th>
-            <th style="text-align:right;">TxID / Order ID</th>
+            <th style="text-align:right;"></th>
           </tr>
         </thead>
         <tbody id="history-tbody">
@@ -569,9 +588,7 @@ function renderHistory() {
   const tbody = document.getElementById('history-tbody');
   tbody.innerHTML = TRANSACTIONS.map((tx, i) => {
     const cfg = typeConfig(tx);
-    const usdVal = Math.abs(tx.amount) * tx.price;
-    const usdStr = usdVal.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
-    return `<tr id="tx-row-${i}" data-type="${tx.type}" data-asset="${tx.asset}">
+    return `<tr id="tx-row-${i}" data-type="${tx.type}" data-asset="${tx.asset}" style="cursor:pointer;" onclick="openTxDetail(${i})">
       <td>
         <div class="tx-type-cell">
           <div class="tx-icon" style="background:${cfg.bg};color:${cfg.color};">${cfg.icon}</div>
@@ -587,25 +604,14 @@ function renderHistory() {
       </td>
       <td>
         <div class="tx-amount ${amountClass(tx)}">${fmtAmount(tx)}</div>
-        <div class="tx-amount-sub">≈ $${usdStr}</div>
       </td>
-      <td>
-        <div class="tx-price">${tx.rate}</div>
-        <div class="tx-price-sub">${tx.type==='trade'||tx.type==='order'?'Limit / Market':''}</div>
-      </td>
-      <td><div class="tx-fee">${tx.fee}</div></td>
       <td>${statusBadge(tx.status)}</td>
       <td>
         <div class="tx-date">${tx.date}</div>
         <div class="tx-time">${tx.time} UTC</div>
       </td>
-      <td>
-        <div class="tx-id-cell">
-          <span class="tx-id-text">${tx.txid}</span>
-          <div class="tx-id-copy" onclick="copyTxId(this,'${tx.txid}')" title="Copy ID">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          </div>
-        </div>
+      <td style="text-align:right;">
+        <button onclick="event.stopPropagation();openTxDetail(${i})" style="font-size:11.5px;font-weight:600;color:var(--accent);background:rgba(240,90,26,.1);border:1px solid rgba(240,90,26,.25);border-radius:6px;padding:4px 10px;cursor:pointer;transition:all .15s;" onmouseover="this.style.background='rgba(240,90,26,.2)'" onmouseout="this.style.background='rgba(240,90,26,.1)'">Details</button>
       </td>
     </tr>`;
   }).join('');
@@ -705,6 +711,90 @@ async function doSignOut() {
   if (db) await db.auth.signOut();
   window.location.href = 'login.html';
 }
+
+/* ── Transaction Detail Modal ── */
+function openTxDetail(idx) {
+  const tx = TRANSACTIONS[idx];
+  if (!tx) return;
+  const cfg = typeConfig(tx);
+  const raw = tx._raw || {};
+  const isPos = tx.type === 'trade';
+  const isTxn = tx.type === 'deposit' || tx.type === 'withdrawal';
+
+  /* Hero */
+  const iconEl  = document.getElementById('txd-icon');
+  const amtEl   = document.getElementById('txd-amount');
+  const statEl  = document.getElementById('txd-status');
+  iconEl.style.background = cfg.bg;
+  iconEl.style.color      = cfg.color;
+  iconEl.innerHTML = cfg.icon;
+  const sign = tx.amount > 0 ? '+' : tx.amount < 0 ? '−' : '';
+  amtEl.textContent = sign + '$' + Math.abs(tx.amount).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  amtEl.style.color = tx.amount > 0 ? 'var(--green)' : tx.amount < 0 ? 'var(--red)' : 'var(--text)';
+  statEl.innerHTML = statusBadge(tx.status);
+
+  /* Title */
+  document.getElementById('txd-title').textContent = cfg.label + ' Details';
+
+  /* Build detail rows */
+  const rows = [];
+  rows.push(['Date & Time', `${tx.date} · ${tx.time} UTC`]);
+  rows.push(['Status', tx.status.charAt(0).toUpperCase() + tx.status.slice(1)]);
+
+  if (isPos) {
+    rows.push(['Symbol',    raw.symbol || tx.asset || '—']);
+    rows.push(['Direction', (raw.side || '—').toUpperCase()]);
+    rows.push(['Lots',      raw.lots || '—']);
+    if (raw.open_price)  rows.push(['Open Price',  '$' + Number(raw.open_price).toLocaleString()]);
+    if (raw.close_price) rows.push(['Close Price', '$' + Number(raw.close_price).toLocaleString()]);
+    rows.push(['Realized P&L', (tx.amount >= 0 ? '+' : '−') + '$' + Math.abs(tx.amount).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})]);
+    rows.push(['Ticket', tx.txid || '—']);
+  } else {
+    rows.push(['Type',   isTxn ? (tx.type === 'deposit' ? 'Deposit' : 'Withdrawal') : cfg.label]);
+    rows.push(['Asset',  raw.currency || raw.coin || tx.asset || '—']);
+    if (raw.network) rows.push(['Network', raw.network]);
+    if (raw.method)  rows.push(['Method',  raw.method]);
+    if (raw.note)    rows.push(['Note',    raw.note]);
+    rows.push(['Transaction ID', tx.txid || raw.id?.slice(0,16) || '—']);
+  }
+
+  const bodyEl = document.getElementById('txd-rows');
+  bodyEl.innerHTML = rows.map(([k, v]) => {
+    const isId = k.includes('ID') || k === 'Ticket';
+    return `<div class="txd-row">
+      <span class="txd-key">${k}</span>
+      <span class="txd-val">${isId
+        ? `<div class="txd-copy-row"><span>${v}</span><button class="txd-copy-btn" onclick="navigator.clipboard.writeText('${v}').then(()=>{this.textContent='Copied!';setTimeout(()=>this.textContent='Copy',1500)})">Copy</button></div>`
+        : v}</span>
+    </div>`;
+  }).join('');
+
+  document.getElementById('txd-overlay').classList.add('open');
+}
+
+function closeTxDetail() {
+  document.getElementById('txd-overlay').classList.remove('open');
+}
 </script>
+
+<!-- Transaction Detail Modal -->
+<div class="txd-overlay" id="txd-overlay" onclick="if(event.target===this)closeTxDetail()">
+  <div class="txd-sheet">
+    <div class="txd-header">
+      <span class="txd-title" id="txd-title">Transaction Details</span>
+      <div class="txd-close" onclick="closeTxDetail()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </div>
+    </div>
+    <div class="txd-hero">
+      <div class="txd-icon" id="txd-icon"></div>
+      <div class="txd-amount" id="txd-amount">$0.00</div>
+      <div id="txd-status"></div>
+    </div>
+    <div class="txd-body">
+      <div id="txd-rows"></div>
+    </div>
+  </div>
+</div>
 </body>
 </html>
