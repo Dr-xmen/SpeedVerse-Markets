@@ -241,7 +241,7 @@ html.mob .sb-overlay.open{display:block;}
       <a class="nav-item" href="settings.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span class="nav-item-label">Settings</span></a>
       <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg><span class="nav-item-label">Rewards Hub</span></div>
     </nav>
-    <div class="sb-bottom"><div class="sb-user"><div class="sb-avatar">S</div><div class="sb-user-info"><div class="sb-user-name">SpeedVerse User</div><div class="sb-user-uid">UID: 92847362 &nbsp;<span class="sb-vip">VIP 3</span></div></div></div></div>
+    <div class="sb-bottom"><div class="sb-user"><div class="sb-avatar" id="sb-avatar">S</div><div class="sb-user-info"><div class="sb-user-name" id="sb-user-name">Loading…</div><div class="sb-user-uid" id="sb-user-uid"></div></div></div></div>
   </aside>
 
   <div class="main">
@@ -757,6 +757,16 @@ loadTVChart(activeInst);
   if(!sessionStorage.getItem("sv_pin_ok")){window.location.href="session.html";return;}
   const{data:{session}}=await db.auth.getSession();
   if(!session){window.location.href="login.html";return;}
+  try{
+    const u=session.user;
+    const{data:p}=await db.from('profiles').select('first_name,last_name').eq('id',u.id).maybeSingle();
+    const fn=p?.first_name||'';
+    const dn=fn?[fn,p?.last_name].filter(Boolean).join(' '):u.email.split('@')[0];
+    const ini=dn.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()||'SV';
+    document.getElementById('sb-avatar').textContent=ini;
+    document.getElementById('sb-user-name').textContent=dn;
+    document.getElementById('sb-user-uid').textContent=u.email;
+  }catch(_){}
 })();
 </script>
 <script src="notif-popup.js"></script>

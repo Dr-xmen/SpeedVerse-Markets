@@ -356,10 +356,10 @@ html.mob .main{width:100% !important;padding:20px 16px;}</style>
   </nav>
   <div class="sb-bottom">
     <div class="sb-user">
-      <div class="sb-avatar">S</div>
+      <div class="sb-avatar" id="sb-avatar">S</div>
       <div class="sb-user-info">
-        <div class="sb-user-name">SpeedVerse User</div>
-        <div class="sb-user-uid">UID: 92847362 &nbsp;<span class="sb-vip">VIP 3</span></div>
+        <div class="sb-user-name" id="sb-user-name">Loading…</div>
+        <div class="sb-user-uid" id="sb-user-uid"></div>
       </div>
     </div>
   </div>
@@ -1004,7 +1004,7 @@ window._minDeposit = 0;
     const { data: { user } } = await db.auth.getUser();
     if (!user) return;
     const [{ data: prof }, { data: setting }] = await Promise.all([
-      db.from('profiles').select('min_deposit').eq('id', user.id).single(),
+      db.from('profiles').select('first_name,last_name,min_deposit').eq('id', user.id).single(),
       db.from('system_settings').select('value').eq('key', 'min_deposit_amount').single(),
     ]);
     const globalMin = parseFloat(setting?.value) || 0;
@@ -1019,6 +1019,12 @@ window._minDeposit = 0;
 
     updatePaymentBtn();
     initNotifPopup(db, user.id);
+    const fn=prof?.first_name||'';
+    const dn=fn?[fn,prof?.last_name].filter(Boolean).join(' '):user.email.split('@')[0];
+    const ini=dn.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()||'SV';
+    const sbAv=document.getElementById('sb-avatar');if(sbAv)sbAv.textContent=ini;
+    const sbNm=document.getElementById('sb-user-name');if(sbNm)sbNm.textContent=dn;
+    const sbUd=document.getElementById('sb-user-uid');if(sbUd)sbUd.textContent=user.email;
   } catch(e) {}
 })();
 </script>

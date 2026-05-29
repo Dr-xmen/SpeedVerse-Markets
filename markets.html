@@ -360,6 +360,16 @@ html.mob .hdr-search{max-width:180px;}
       <span class="nav-item-label">Copy Trading</span>
       <span class="nav-item-badge">NEW</span>
     </div>
+    <div class="nav-divider"></div>
+    <div class="nav-group-label">Finance</div>
+    <a class="nav-item" href="deposit.html" style="text-decoration:none;color:inherit;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      <span class="nav-item-label">Deposit</span>
+    </a>
+    <a class="nav-item" href="withdraw.html" style="text-decoration:none;color:inherit;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17,8 12,3 7,8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      <span class="nav-item-label">Withdraw</span>
+    </a>
     <a class="nav-item" href="wallet.html" style="text-decoration:none;color:inherit;">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><circle cx="17" cy="14" r="1" fill="currentColor" stroke="none"/></svg>
       <span class="nav-item-label">Wallet</span>
@@ -393,10 +403,10 @@ html.mob .hdr-search{max-width:180px;}
   </nav>
   <div class="sb-bottom">
     <div class="sb-user">
-      <div class="sb-avatar">S</div>
+      <div class="sb-avatar" id="sb-avatar">S</div>
       <div>
-        <div class="sb-user-name">SpeedVerse User</div>
-        <div class="sb-user-uid">UID: 92847362 &nbsp;<span class="sb-vip">VIP 3</span></div>
+        <div class="sb-user-name" id="sb-user-name">Loading…</div>
+        <div class="sb-user-uid" id="sb-user-uid"></div>
       </div>
     </div>
   </div>
@@ -1076,6 +1086,16 @@ window.addEventListener('load', async () => {
   if(!sessionStorage.getItem("sv_pin_ok")){window.location.href="session.html";return;}
   const{data:{session}}=await db.auth.getSession();
   if(!session){window.location.href="login.html";return;}
+  try{
+    const u=session.user;
+    const{data:p}=await db.from('profiles').select('first_name,last_name').eq('id',u.id).maybeSingle();
+    const fn=p?.first_name||'';
+    const dn=fn?[fn,p?.last_name].filter(Boolean).join(' '):u.email.split('@')[0];
+    const ini=dn.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()||'SV';
+    document.getElementById('sb-avatar').textContent=ini;
+    document.getElementById('sb-user-name').textContent=dn;
+    document.getElementById('sb-user-uid').textContent=u.email;
+  }catch(_){}
 })();
 </script>
 <script src="notif-popup.js"></script>
