@@ -655,9 +655,9 @@ body.light input,body.light select{color:var(--text);}
     <!-- OPEN ORDERS -->
     <div class="open-orders">
       <div class="oo-tabs">
-        <div class="oo-tab active" onclick="setOoTab(this)">Open Orders <span style="color:var(--sub);font-weight:400;">(0)</span></div>
-        <div class="oo-tab" onclick="setOoTab(this)">Order History</div>
-        <div class="oo-tab" onclick="setOoTab(this)">Trade History</div>
+        <div class="oo-tab active" data-tab="open" onclick="setOoTab(this)">Open Orders <span id="oo-open-count" style="color:var(--sub);font-weight:400;">(0)</span></div>
+        <div class="oo-tab" data-tab="history" onclick="setOoTab(this)">Order History</div>
+        <div class="oo-tab" data-tab="trades" onclick="setOoTab(this)">Trade History</div>
       </div>
       <div class="oo-body">
         <table class="oo-table">
@@ -1036,7 +1036,56 @@ function setRpTab(t){
   document.getElementById('rp-tab-tr').classList.toggle('active',!isOb);
   if(!isOb) renderTrades();
 }
-function setOoTab(el){ document.querySelectorAll('.oo-tab').forEach(t=>t.classList.remove('active')); el.classList.add('active'); }
+function setOoTab(el){
+  document.querySelectorAll('.oo-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  renderOoTab(el.dataset.tab);
+}
+
+function renderOoTab(tab){
+  const positions = window._spotPositions || [];
+  let filtered;
+  if(tab==='open'){
+    filtered = positions.filter(p => (p.status||'').toLowerCase() === 'open');
+  } else if(tab==='history'){
+    filtered = positions.filter(p => (p.status||'').toLowerCase() !== 'open');
+  } else {
+    filtered = positions;
+  }
+
+  const tbody = document.querySelector('.oo-table tbody');
+  if(filtered.length === 0){
+    const label = tab==='open' ? 'No open orders' : 'No trade history';
+    tbody.innerHTML = `<tr><td colspan="8"><div class="empty-orders">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      <p>${label}</p></div></td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = filtered.map(p => {
+    const dt = new Date(p.opened_at || p.created_at || Date.now());
+    const timeStr = dt.toLocaleDateString('en-US',{month:'short',day:'numeric'}) + ' ' +
+                    dt.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+    const side = (p.side || 'buy').toUpperCase();
+    const sideColor = side==='BUY' ? 'var(--green)' : 'var(--red)';
+    const isOpen = (p.status||'').toLowerCase() === 'open';
+    const statusHtml = isOpen
+      ? `<span style="padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;background:rgba(33,150,243,.12);color:var(--blue);">Open</span>`
+      : `<span style="padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;background:rgba(14,203,129,.12);color:var(--green);">Closed</span>`;
+    const price = p.open_price != null ? '$'+Number(p.open_price).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:5}) : '—';
+    const lots = p.lots != null ? p.lots : (p.volume != null ? p.volume : '—');
+    return `<tr>
+      <td style="font-size:11px;color:var(--sub);">${timeStr}</td>
+      <td style="font-weight:700;">${p.symbol||'—'}</td>
+      <td>Market</td>
+      <td style="color:${sideColor};font-weight:700;">${side}</td>
+      <td>${price}</td>
+      <td>${lots}</td>
+      <td>${isOpen ? '—' : lots}</td>
+      <td>${statusHtml}</td>
+    </tr>`;
+  }).join('');
+}
 
 /* ═══════════════════ ORDER FORM ═══════════════════ */
 let orderSide='buy', orderType='limit';
@@ -1228,6 +1277,14 @@ if(window.innerWidth<=960) mobSetTab('chart');
       document.getElementById('hdr-avatar').innerHTML = `<img src="${_signed.signedUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
     }
   }
+
+  /* Load positions for order/trade history tabs */
+  const { data: _pos } = await db.from('positions').select('*').eq('user_id', user.id)
+    .order('opened_at', { ascending: false }).limit(200);
+  window._spotPositions = _pos || [];
+  const _openCount = (_pos || []).filter(p => (p.status||'').toLowerCase() === 'open').length;
+  document.getElementById('oo-open-count').textContent = `(${_openCount})`;
+  renderOoTab('open');
 })();
 </script>
 <script src="notif-popup.js"></script>
