@@ -889,7 +889,8 @@ async function confirmDeposit() {
   if (btn) { btn.disabled = true; btn.textContent = 'Submitting…'; }
   try {
     const db = window.SV_DB;
-    const { data: { session } } = await db.auth.getSession();
+    if (!sessionStorage.getItem('sv_pin_ok')) { window.location.href = 'session.html'; return; }
+  const { data: { session } } = await db.auth.getSession();
     if (!session) { window.location.href = 'login.html'; return; }
     const userId = session.user.id;
     const userEmail = session.user.email || '';
@@ -945,7 +946,8 @@ async function loadRecentDeposits() {
   const db = window.SV_DB;
   if (!db) return;
   try {
-    const { data: { session } } = await db.auth.getSession();
+    if (!sessionStorage.getItem('sv_pin_ok')) { window.location.href = 'session.html'; return; }
+  const { data: { session } } = await db.auth.getSession();
     if (!session) return;
     const { data } = await db.from('deposit_requests')
       .select('*').eq('user_id', session.user.id)
@@ -1023,3 +1025,4 @@ window._minDeposit = 0;
 <script src="notif-popup.js"></script>
 </body>
 </html>
+

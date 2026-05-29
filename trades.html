@@ -535,6 +535,7 @@ function toggleTheme(){var light=document.body.classList.toggle('light');localSt
   if (!db) return;
 
   /* Auth check */
+  if (!sessionStorage.getItem('sv_pin_ok')) { window.location.href = 'session.html'; return; }
   const { data: { session } } = await db.auth.getSession();
   if (!session) { window.location.href = 'login.html'; return; }
   const user = session.user;
@@ -815,3 +816,4 @@ async function doSignOut() {
 <script src="notif-popup.js"></script>
 </body>
 </html>
+

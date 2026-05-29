@@ -711,6 +711,7 @@ function applyPlanUI(plan) {
 
 (async () => {
   const db = window.SV_DB;
+  if (!sessionStorage.getItem('sv_pin_ok')) { window.location.href = 'session.html'; return; }
   const { data: { session } } = await db.auth.getSession();
   if (!session) { window.location.href = 'login.html'; return; }
 
@@ -748,3 +749,4 @@ async function doSignOut() {
 <script src="notif-popup.js"></script>
 </body>
 </html>
+

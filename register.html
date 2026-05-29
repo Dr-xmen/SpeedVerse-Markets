@@ -404,7 +404,7 @@ async function doRegister() {
   /* If Supabase returned a session immediately (email confirm disabled), go straight to dashboard.
      Otherwise show the "verify your email" message. */
   if (data.session) {
-    window.location.href = 'dashboard.html';
+    window.location.href = 'session.html';
   } else {
     btn.disabled    = false;
     btn.textContent = 'Create Account';
