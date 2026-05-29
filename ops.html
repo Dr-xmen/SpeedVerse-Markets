@@ -834,7 +834,18 @@
           <div class="card__head"><div class="card__title" id="ann-card-title">New Announcement</div></div>
           <div class="card__body">
             <div class="form-grid">
-              <div class="field field--full"><label>Title</label><input type="text" id="ann-title" placeholder="e.g. System Maintenance Notice"></div>
+              <div class="field field--full">
+                <label>Title</label>
+                <select id="ann-title">
+                  <option value="Notice 🔔">Notice 🔔</option>
+                  <option value="Attention ⚠️">Attention ⚠️</option>
+                  <option value="Important Update 📢">Important Update 📢</option>
+                  <option value="System Alert 🚨">System Alert 🚨</option>
+                  <option value="Good News 🎉">Good News 🎉</option>
+                  <option value="Account Update 👤">Account Update 👤</option>
+                  <option value="Security Notice 🔒">Security Notice 🔒</option>
+                </select>
+              </div>
               <div class="field field--full"><label>Message</label><textarea id="ann-body" rows="4" placeholder="Write your announcement…"></textarea></div>
               <div class="field">
                 <label>Type</label>
@@ -2305,18 +2316,21 @@ window.onAnnAudienceChange = function(val) {
 async function _populateAnnUserDropdown() {
   const db = window.SV_DB; if (!db) return;
   const sel = document.getElementById('ann-specific-user'); if (!sel) return;
-  const { data } = await db.from('profiles').select('id,full_name,email').order('created_at', { ascending: false });
+  const { data } = await db.from('profiles').select('id,first_name,last_name,email').order('created_at', { ascending: false });
   if (!data?.length) return;
   const current = sel.value;
   sel.innerHTML = '<option value="">— Select a user —</option>' +
-    data.map(p => `<option value="${p.id}">${p.full_name || p.email} (${p.email})</option>`).join('');
+    data.map(p => {
+      const name = `${p.first_name||''} ${p.last_name||''}`.trim() || p.email;
+      return `<option value="${p.id}">${name} (${p.email})</option>`;
+    }).join('');
   if (current) sel.value = current;
 }
 
 window.resetAnnForm = function() {
   _editingAnnId = null;
   const f = id => document.getElementById(id);
-  if (f('ann-title'))    f('ann-title').value = '';
+  if (f('ann-title'))    f('ann-title').selectedIndex = 0;
   if (f('ann-body'))     f('ann-body').value  = '';
   if (f('ann-type'))     f('ann-type').value  = 'info';
   if (f('ann-audience')) f('ann-audience').value = 'all';
