@@ -1019,12 +1019,11 @@ window._minDeposit = 0;
 
     updatePaymentBtn();
     initNotifPopup(db, user.id);
-    const fn=prof?.first_name||'';
-    const dn=fn?[fn,prof?.last_name].filter(Boolean).join(' '):user.email.split('@')[0];
-    const ini=dn.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()||'SV';
-    const sbAv=document.getElementById('sb-avatar');if(sbAv)sbAv.textContent=ini;
-    const sbNm=document.getElementById('sb-user-name');if(sbNm)sbNm.textContent=dn;
-    const sbUd=document.getElementById('sb-user-uid');if(sbUd)sbUd.textContent=user.email;
+    const _name=user.user_metadata?.first_name?(user.user_metadata.first_name+(user.user_metadata.last_name?' '+user.user_metadata.last_name:'')):(user.email||'').split('@')[0];
+    const _ini=_name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()||'SV';
+    document.querySelectorAll('.sb-avatar').forEach(el=>el.textContent=_ini);
+    document.querySelectorAll('.sb-user-name').forEach(el=>el.textContent=_name);
+    document.querySelectorAll('.sb-user-uid').forEach(el=>el.textContent=user.email||'');
   } catch(e) {}
 })();
 </script>
