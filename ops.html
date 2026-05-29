@@ -1562,10 +1562,26 @@ function renderUsersTable(rows) {
         <button class="btn btn--sm btn--green" onclick="openCreditDebit('${u.id}','${(u.first_name||u.email||'User').replace(/'/g,"\\'")}',${u.balance||0})">Credit/Debit</button>
         <button class="btn btn--sm btn--primary" onclick="openAddPosition('${u.id}','${(u.email||'').replace(/'/g,"\\'")}')">+ Trade</button>
         <button class="btn btn--sm ${u.status==='suspended'?'btn--green':'btn--red'}" onclick="toggleUserStatus('${u.id}','${u.status}')">${u.status==='suspended'?'Unsuspend':'Suspend'}</button>
+        <button class="btn btn--sm btn--red" onclick="event.stopPropagation();deleteUser('${u.id}','${(name).replace(/'/g,"\\'")}')">Delete</button>
       </div></td>
     </tr>`;
   }).join('');
 }
+
+window.deleteUser = async function(userId, name) {
+  if (!confirm(`Permanently delete "${name}"?\n\nThis will remove ALL their data (trades, positions, transactions, notifications) and their login account. This cannot be undone.`)) return;
+  const db = window.SV_DB; if (!db) return;
+  try {
+    const { error } = await db.rpc('admin_delete_user', { target_user_id: userId });
+    if (error) throw error;
+    showToast(`User "${name}" deleted permanently`, 'success');
+    await renderUsersLive();
+    await loadDashStats();
+  } catch(e) {
+    showToast('Delete failed: ' + (e.message || e), 'error');
+  }
+};
+
 window.filterUsers = function(type, btn) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
