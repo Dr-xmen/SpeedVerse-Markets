@@ -459,7 +459,8 @@ html.mob .settings-nav{width:100%;}</style>
               <div class="avatar-name" id="set-avatar-name">SpeedVerse User</div>
               <div class="avatar-uid" id="set-avatar-uid"></div>
             </div>
-            <button class="change-avatar-btn">Change Avatar</button>
+            <button class="change-avatar-btn" onclick="document.getElementById('avatar-file-input').click()">Change Avatar</button>
+            <input type="file" id="avatar-file-input" accept="image/*" style="display:none" onchange="uploadAvatar(this)">
           </div>
 
           <div id="set-msg" style="display:none;border-radius:8px;padding:10px 14px;font-size:12.5px;margin-bottom:12px;"></div>
@@ -467,14 +468,14 @@ html.mob .settings-nav{width:100%;}</style>
           <div class="form-grid">
             <div class="form-group">
               <div class="form-label">First Name</div>
-              <div class="form-input-wrap">
-                <input class="form-input" id="set-fname" type="text" placeholder="First name"/>
+              <div class="form-input-wrap disabled">
+                <input class="form-input" id="set-fname" type="text" placeholder="First name" disabled/>
               </div>
             </div>
             <div class="form-group">
               <div class="form-label">Last Name</div>
-              <div class="form-input-wrap">
-                <input class="form-input" id="set-lname" type="text" placeholder="Last name"/>
+              <div class="form-input-wrap disabled">
+                <input class="form-input" id="set-lname" type="text" placeholder="Last name" disabled/>
               </div>
             </div>
             <div class="form-group">
@@ -488,20 +489,20 @@ html.mob .settings-nav{width:100%;}</style>
             </div>
             <div class="form-group">
               <div class="form-label">Phone Number</div>
-              <div class="form-input-wrap">
-                <input class="form-input" id="set-phone" type="tel" placeholder="Enter phone number"/>
+              <div class="form-input-wrap disabled">
+                <input class="form-input" id="set-phone" type="tel" placeholder="—" disabled/>
               </div>
             </div>
             <div class="form-group">
               <div class="form-label">Date of Birth</div>
-              <div class="form-input-wrap">
-                <input class="form-input" id="set-dob" type="date"/>
+              <div class="form-input-wrap disabled">
+                <input class="form-input" id="set-dob" type="date" disabled/>
               </div>
             </div>
             <div class="form-group full">
               <div class="form-label">Country of Residence</div>
-              <div class="form-input-wrap">
-                <select class="form-select" id="set-country">
+              <div class="form-input-wrap disabled">
+                <select class="form-select" id="set-country" disabled>
                   <option value="">Select country…</option>
                   <optgroup label="Africa">
                     <option>South Africa</option><option>Nigeria</option><option>Kenya</option>
@@ -523,9 +524,6 @@ html.mob .settings-nav{width:100%;}</style>
             </div>
           </div>
 
-          <div style="margin-top:20px;">
-            <button class="save-btn" onclick="saveProfile()">Save Changes</button>
-          </div>
         </div>
       </div>
 
@@ -620,7 +618,7 @@ html.mob .settings-nav{width:100%;}</style>
               <div class="pref-desc">Primary fiat currency for value display</div>
             </div>
             <div class="pref-right">
-              <select class="pref-select">
+              <select class="pref-select" disabled style="opacity:.55;cursor:not-allowed;">
                 <option value="usd" selected>USD — US Dollar</option>
                 <option value="eur">EUR — Euro</option>
                 <option value="gbp">GBP — British Pound</option>
@@ -655,16 +653,16 @@ html.mob .settings-nav{width:100%;}</style>
               <div class="pref-desc">Choose your default trading interface density</div>
             </div>
             <div class="pref-right">
-              <div class="radio-group" id="layout-radio">
-                <div class="radio-opt" data-val="compact" onclick="setLayout('compact')">
+              <div class="radio-group" id="layout-radio" style="pointer-events:none;opacity:.55;">
+                <div class="radio-opt" data-val="compact">
                   <div class="radio-dot"><div class="radio-dot-inner"></div></div>
                   <span class="radio-label">Compact</span>
                 </div>
-                <div class="radio-opt active" data-val="standard" onclick="setLayout('standard')">
+                <div class="radio-opt active" data-val="standard">
                   <div class="radio-dot"><div class="radio-dot-inner"></div></div>
                   <span class="radio-label">Standard</span>
                 </div>
-                <div class="radio-opt" data-val="advanced" onclick="setLayout('advanced')">
+                <div class="radio-opt" data-val="advanced">
                   <div class="radio-dot"><div class="radio-dot-inner"></div></div>
                   <span class="radio-label">Advanced</span>
                 </div>
@@ -911,41 +909,44 @@ function switchSection(name){
   });
 }
 
-/* ── Profile save ── */
-async function saveProfile(){
-  const btn  = event.target;
-  const msg  = document.getElementById('set-msg');
-  const db   = window.SV_DB;
-  if (!db || !window._svUserId) return;
+/* ── Avatar upload ── */
+async function uploadAvatar(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const db  = window.SV_DB;
+  const uid = window._svUserId;
+  if (!db || !uid) return;
 
-  const fname   = document.getElementById('set-fname').value.trim();
-  const lname   = document.getElementById('set-lname').value.trim();
-  const phone   = document.getElementById('set-phone').value.trim();
-  const dob     = document.getElementById('set-dob').value;
-  const country = document.getElementById('set-country').value;
+  const msg = document.getElementById('set-msg');
+  const btn = document.querySelector('.change-avatar-btn');
+  const ext = file.name.split('.').pop().toLowerCase() || 'jpg';
+  const path = `${uid}/custom-avatar.${ext}`;
 
-  btn.disabled = true; btn.textContent = 'Saving…';
+  btn.disabled = true; btn.textContent = 'Uploading…';
 
-  const { error } = await db.from('profiles')
-    .upsert({ id: window._svUserId, email: window._svEmail, first_name: fname, last_name: lname, phone, country }, { onConflict: 'id' });
-
-  btn.disabled = false; btn.textContent = 'Save Changes';
-
-  if (error) {
-    msg.textContent = 'Error: ' + error.message;
+  const { error: upErr } = await db.storage.from('kyc-docs').upload(path, file, { upsert: true, contentType: file.type });
+  if (upErr) {
+    btn.disabled = false; btn.textContent = 'Change Avatar';
+    msg.textContent = 'Upload failed: ' + upErr.message;
     msg.style.cssText = 'display:block;background:rgba(246,70,93,.1);border:1px solid rgba(246,70,93,.3);border-radius:8px;padding:10px 14px;font-size:12.5px;margin-bottom:12px;color:var(--red);';
-  } else {
-    const displayName = [fname, lname].filter(Boolean).join(' ') || window._svEmail.split('@')[0];
-    const initials    = displayName.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-    document.getElementById('set-big-avatar').textContent = initials;
-    document.getElementById('set-avatar-name').textContent = displayName;
-    document.getElementById('hdr-avatar').textContent     = initials;
-    document.getElementById('sb-avatar').textContent      = initials;
-    document.getElementById('sb-user-name').textContent   = displayName;
-    msg.textContent = 'Profile updated successfully.';
-    msg.style.cssText = 'display:block;background:rgba(14,203,129,.1);border:1px solid rgba(14,203,129,.3);border-radius:8px;padding:10px 14px;font-size:12.5px;margin-bottom:12px;color:var(--green);';
-    setTimeout(() => { msg.style.display = 'none'; }, 3000);
+    return;
   }
+
+  await db.from('kyc_submissions').update({ selfie_url: path }).eq('user_id', uid);
+
+  const { data: signed } = await db.storage.from('kyc-docs').createSignedUrl(path, 3600);
+  if (signed?.signedUrl) {
+    const imgHtml = `<img src="${signed.signedUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+    document.getElementById('set-big-avatar').innerHTML = imgHtml;
+    document.getElementById('sb-avatar').innerHTML      = imgHtml;
+    document.getElementById('hdr-avatar').innerHTML     = imgHtml;
+  }
+
+  btn.disabled = false; btn.textContent = 'Change Avatar';
+  msg.textContent = 'Avatar updated successfully.';
+  msg.style.cssText = 'display:block;background:rgba(14,203,129,.1);border:1px solid rgba(14,203,129,.3);border-radius:8px;padding:10px 14px;font-size:12.5px;margin-bottom:12px;color:var(--green);';
+  setTimeout(() => { msg.style.display = 'none'; }, 3000);
+  input.value = '';
 }
 
 /* ── Layout radio ── */
@@ -1003,13 +1004,15 @@ function toggleNotif(key){
   if (_kyc?.selfie_url) {
     const { data: _signed } = await db.storage.from('kyc-docs').createSignedUrl(_kyc.selfie_url, 3600);
     if (_signed?.signedUrl) {
-      document.getElementById('sb-avatar').innerHTML = `<img src="${_signed.signedUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
-      document.getElementById('hdr-avatar').innerHTML = `<img src="${_signed.signedUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+      const _imgHtml = `<img src="${_signed.signedUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+      document.getElementById('sb-avatar').innerHTML       = _imgHtml;
+      document.getElementById('hdr-avatar').innerHTML      = _imgHtml;
+      document.getElementById('set-big-avatar').innerHTML  = _imgHtml;
     }
   }
 
   /* Profile card */
-  document.getElementById('set-big-avatar').textContent = initials;
+  if (!_kyc?.selfie_url) document.getElementById('set-big-avatar').textContent = initials;
   document.getElementById('set-avatar-name').textContent = displayName;
   document.getElementById('set-avatar-uid').innerHTML = email + ' &nbsp;<span class="sb-vip">' + plan + '</span>';
 
