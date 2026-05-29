@@ -868,28 +868,80 @@ async function confirmDeposit() {
     const { data: { session } } = await db.auth.getSession();
     if (!session) { window.location.href = 'login.html'; return; }
     const userId = session.user.id;
+    const userEmail = session.user.email || '';
+
+    /* Upload proof to storage */
     const ext = window._proofFile.name.split('.').pop() || 'jpg';
-    const path = `payment-proofs/${userId}/${Date.now()}.${ext}`;
-    await db.storage.from('deposits').upload(path, window._proofFile, { upsert: false });
-    await db.from('transactions').insert({
+    const storagePath = `payment-proofs/${userId}/${Date.now()}.${ext}`;
+    await db.storage.from('deposits').upload(storagePath, window._proofFile, { upsert: false });
+
+    /* Write to deposit_requests — this is what the admin panel reads */
+    const { error } = await db.from('deposit_requests').insert({
       user_id: userId,
-      type: 'deposit',
+      user_email: userEmail,
       coin: selectedCoin?.sym || null,
-      network: selectedNet?.id || null,
       currency: selectedCoin?.sym || null,
+      network: selectedNet?.id || null,
+      method: 'crypto',
       amount: 0,
       status: 'pending',
-      proof_url: path,
+      proof_url: storagePath,
       created_at: new Date().toISOString()
     });
-    if (btn) { btn.textContent = 'Submitted ✓'; btn.style.background = 'var(--green)'; btn.style.borderColor = 'var(--green)'; }
+    if (error) throw error;
+
+    if (btn) {
+      btn.textContent = 'Submitted ✓';
+      btn.style.background = 'var(--green)';
+      btn.style.borderColor = 'var(--green)';
+    }
+    clearProof();
+    loadRecentDeposits();
     setTimeout(() => {
-      if (btn) { btn.textContent = "I've Made Payment"; btn.disabled = false; }
-    }, 3000);
+      if (btn) {
+        btn.textContent = "I've Made Payment";
+        btn.style.background = 'var(--s3)';
+        btn.style.borderColor = 'var(--b2)';
+        btn.style.color = 'var(--sub)';
+        btn.disabled = true;
+      }
+    }, 4000);
   } catch(e) {
     if (btn) { btn.disabled = false; btn.textContent = "I've Made Payment"; }
-    alert('Submission failed. Please try again.');
+    alert('Submission failed: ' + (e.message || 'Please try again.'));
   }
+}
+
+/* ── Recent Deposits (user-side) ── */
+async function loadRecentDeposits() {
+  const db = window.SV_DB;
+  if (!db) return;
+  try {
+    const { data: { session } } = await db.auth.getSession();
+    if (!session) return;
+    const { data } = await db.from('deposit_requests')
+      .select('*').eq('user_id', session.user.id)
+      .order('created_at', { ascending: false }).limit(10);
+    const tbody = document.getElementById('recent-tbody');
+    if (!tbody) return;
+    if (!data?.length) {
+      tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg><p>No deposit history</p></div></td></tr>`;
+      return;
+    }
+    tbody.innerHTML = data.map(d => {
+      const pill = d.status === 'approved' ? 'pill-green' : d.status === 'rejected' ? 'pill-red' : 'pill-orange';
+      const label = d.status === 'approved' ? 'Completed' : d.status === 'rejected' ? 'Rejected' : 'Pending';
+      const dt = d.created_at ? new Date(d.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—';
+      return `<tr>
+        <td style="font-size:12px;color:var(--sub);">${dt}</td>
+        <td style="font-weight:600;">${d.coin || d.currency || '—'}</td>
+        <td style="font-size:12px;color:var(--sub);">${d.network || '—'}</td>
+        <td style="font-weight:600;color:var(--green);">${d.amount > 0 ? '$'+parseFloat(d.amount).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}) : '—'}</td>
+        <td style="font-size:11.5px;color:var(--sub);">${d.txid || (d.proof_url ? 'Proof uploaded' : '—')}</td>
+        <td><span class="badge badge--${d.status === 'approved' ? 'green' : d.status === 'rejected' ? 'red' : 'orange'}" style="font-size:11px;padding:2px 8px;border-radius:4px;background:${d.status==='approved'?'rgba(14,203,129,.15)':d.status==='rejected'?'rgba(246,70,93,.15)':'rgba(240,185,11,.15)'};color:${d.status==='approved'?'var(--green)':d.status==='rejected'?'var(--red)':'var(--gold)'};">${label}</span></td>
+      </tr>`;
+    }).join('');
+  } catch(e) { console.error('loadRecentDeposits', e); }
 }
 
 /* ── Load admin-set deposit addresses and overlay onto COINS ── */
@@ -912,6 +964,8 @@ async function confirmDeposit() {
     }
   } catch(e) {}
 })();
+
+loadRecentDeposits();
 </script>
 </body>
 </html>
