@@ -301,15 +301,22 @@ html.mob .sb-change{min-width:0;font-size:12px;margin:0 6px;flex-shrink:0;}
 html.mob .sb-stat{padding:0 8px;flex-shrink:0;}
 html.mob .pair-pills{display:none !important;}
 html.mob .trading-body{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0;}
-html.mob .trading-columns{flex:1;min-height:0;display:block !important;position:relative;overflow:hidden;}
-html.mob .pairs-panel,html.mob .chart-col,html.mob .order-col,html.mob .right-panel{position:absolute !important;inset:0;display:none !important;overflow:hidden;}
+html.mob .trading-columns{flex:1;min-height:0;display:block !important;position:relative;overflow:hidden;width:100% !important;}
+html.mob .pairs-panel,html.mob .chart-col,html.mob .order-col,html.mob .right-panel{
+  position:absolute !important;
+  top:0 !important; right:0 !important; bottom:86px !important; left:0 !important;
+  width:auto !important; height:auto !important;
+  flex-shrink:unset !important;
+  display:none !important;
+  overflow:hidden;
+  border:none !important;
+}
 html.mob .pairs-panel.mob-active{display:flex !important;flex-direction:column;}
 html.mob .chart-col.mob-active{display:flex !important;flex-direction:column;}
 html.mob .order-col.mob-active{display:flex !important;flex-direction:column;overflow-y:auto;}
 html.mob .right-panel.mob-active{display:flex !important;flex-direction:column;}
 html.mob .open-orders{display:none !important;}
 html.mob .mob-nav{display:flex !important;}
-html.mob .trading-columns{padding-bottom:86px !important;}
 html.mob .of-body{padding:16px;overflow-y:auto;}
 html.mob .of-submit{height:50px;font-size:16px;}
 html.mob .of-field-input{height:46px;}
