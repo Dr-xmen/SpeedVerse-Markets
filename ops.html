@@ -309,6 +309,21 @@
     }
     @media (max-width: 480px) { .stat-cards { grid-template-columns: 1fr 1fr; } .topbar__icon-btn { display: none; } }
     @media (max-width: 360px) { .stat-cards { grid-template-columns: 1fr; } }
+    /* KYC doc viewer */
+    .kyc-meta{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:18px;padding:14px;background:var(--surface);border-radius:10px;}
+    .kyc-meta label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;display:block;margin-bottom:3px;letter-spacing:.3px;}
+    .kyc-meta span{font-size:13.5px;font-weight:500;}
+    .kyc-doc-box{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:0;}
+    .kyc-doc-label{font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;padding:8px 12px;border-bottom:1px solid var(--border);letter-spacing:.4px;}
+    .kyc-doc-box a{display:block;background:#111;}
+    .kyc-doc-box img{width:100%;display:block;max-height:240px;object-fit:contain;cursor:zoom-in;transition:opacity .15s;}
+    .kyc-doc-box a:hover img{opacity:.88;}
+    .kyc-doc-missing{padding:40px;text-align:center;color:var(--muted);font-size:13px;}
+    .kyc-reject-panel{margin-top:14px;padding:14px;background:#fff5f5;border:1px solid #ffd5cc;border-radius:10px;}
+    body.dark .kyc-reject-panel{background:rgba(246,70,93,.07);border-color:rgba(246,70,93,.2);}
+    .kyc-reject-panel textarea{width:100%;min-height:72px;padding:10px 12px;border:1.5px solid #e0e3e8;border-radius:8px;font-family:inherit;font-size:13px;resize:vertical;outline:none;}
+    .kyc-reject-panel textarea:focus{border-color:#E8530A;}
+    body.dark .kyc-reject-panel textarea{background:#1e2229;border-color:rgba(255,255,255,.1);color:#eaecef;}
   </style>
 </head>
 <body>
@@ -1257,6 +1272,55 @@
   </div>
 </div>
 
+<!-- KYC Document Viewer Modal -->
+<div class="modal-overlay" id="modal-kyc-docs">
+  <div class="modal" style="max-width:700px;">
+    <div class="modal__head">
+      <div class="modal__title">KYC Documents — <span id="kyc-modal-email" style="font-weight:400;color:var(--muted);"></span></div>
+      <button class="modal__close" onclick="closeModal('modal-kyc-docs')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal__body">
+      <div class="kyc-meta">
+        <div><label>Document Type</label><span id="kyc-modal-doctype">—</span></div>
+        <div><label>Country of Issue</label><span id="kyc-modal-country">—</span></div>
+        <div><label>Submitted</label><span id="kyc-modal-date">—</span></div>
+        <div><label>Status</label><span id="kyc-modal-status">—</span></div>
+      </div>
+      <div id="kyc-docs-loading" style="text-align:center;padding:40px 0;color:var(--muted);font-size:13px;">Loading documents…</div>
+      <div id="kyc-docs-content" style="display:none;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+          <div class="kyc-doc-box">
+            <div class="kyc-doc-label">Front of Document</div>
+            <div id="kyc-front-wrap"></div>
+          </div>
+          <div class="kyc-doc-box">
+            <div class="kyc-doc-label">Back of Document</div>
+            <div id="kyc-back-wrap"></div>
+          </div>
+        </div>
+        <div class="kyc-doc-box">
+          <div class="kyc-doc-label">Profile Photo</div>
+          <div id="kyc-selfie-wrap"></div>
+        </div>
+      </div>
+      <div id="kyc-docs-error" style="display:none;color:var(--red);font-size:13px;padding:20px 0;text-align:center;"></div>
+      <div class="kyc-reject-panel" id="kyc-reject-panel" style="display:none;">
+        <div style="font-size:13px;font-weight:600;margin-bottom:8px;">Rejection Reason *</div>
+        <textarea id="kyc-reject-reason" placeholder="Describe why the KYC was rejected so the user can resubmit correctly…"></textarea>
+        <div style="display:flex;gap:8px;margin-top:10px;justify-content:flex-end;">
+          <button class="btn btn--outline btn--sm" onclick="cancelRejectPanel()">Cancel</button>
+          <button class="btn btn--sm" style="background:var(--red);color:#fff;" onclick="confirmRejectKYC()">Confirm Rejection</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal__foot" id="kyc-modal-foot">
+      <button class="btn btn--outline" onclick="closeModal('modal-kyc-docs')">Close</button>
+      <button class="btn btn--sm" style="background:var(--red);color:#fff;" id="kyc-btn-reject" onclick="showRejectPanel()">Reject</button>
+      <button class="btn btn--sm btn--green" id="kyc-btn-approve" onclick="approveKYCFromModal()">Approve</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast">
   <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
   <span id="toast-msg">Done</span>
@@ -1840,6 +1904,7 @@ window.renderKYCLive = async function() {
   if (!rows.length) { tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:24px;">No submissions</td></tr>`; return; }
   tbody.innerHTML = rows.map(r => {
     const pill = r.status === 'approved' ? 'pill-green' : r.status === 'rejected' ? 'pill-red' : 'pill-orange';
+    const hasDocs = r.front_url || r.back_url || r.selfie_url;
     return `<tr>
       <td>${userCell(r.user_id, r.user_email)}</td>
       <td>${fmtDate(r.created_at)}</td>
@@ -1847,23 +1912,122 @@ window.renderKYCLive = async function() {
       <td>${r.country||'—'}</td>
       <td><span class="badge-pill ${pill}">${r.status||'pending'}</span></td>
       <td><div class="row-actions">
-        <button class="btn btn--sm btn--green" onclick="approveKYC('${r.id}')">Approve</button>
-        <button class="btn btn--sm btn--red" onclick="rejectKYC('${r.id}')">Reject</button>
+        <button class="btn btn--sm btn--outline" onclick="viewKYCDocs('${r.id}')">View Docs</button>
+        <button class="btn btn--sm btn--green" onclick="approveKYC('${r.id}','${r.user_id}')">Approve</button>
+        <button class="btn btn--sm btn--red" onclick="showInlineReject('${r.id}','${r.user_id}')">Reject</button>
       </div></td>
     </tr>`;
   }).join('');
 };
-async function approveKYC(id) {
+
+/* ── KYC Doc Viewer ── */
+let _kycViewId   = null;
+let _kycViewUid  = null;
+
+async function viewKYCDocs(subId) {
   const db = window.SV_DB; if (!db) return;
-  await db.from('kyc_submissions').update({ status:'approved' }).eq('id', id);
+  _kycViewId  = subId;
+  _kycViewUid = null;
+
+  document.getElementById('kyc-docs-loading').style.display  = 'block';
+  document.getElementById('kyc-docs-content').style.display  = 'none';
+  document.getElementById('kyc-docs-error').style.display    = 'none';
+  document.getElementById('kyc-reject-panel').style.display  = 'none';
+  document.getElementById('kyc-reject-reason').value         = '';
+  openModal('modal-kyc-docs');
+
+  const { data: sub } = await db.from('kyc_submissions').select('*').eq('id', subId).single();
+  if (!sub) {
+    document.getElementById('kyc-docs-loading').style.display = 'none';
+    document.getElementById('kyc-docs-error').textContent = 'Submission not found.';
+    document.getElementById('kyc-docs-error').style.display = 'block';
+    return;
+  }
+  _kycViewUid = sub.user_id;
+
+  document.getElementById('kyc-modal-email').textContent   = sub.user_email || sub.user_id;
+  document.getElementById('kyc-modal-doctype').textContent = sub.doc_type  || '—';
+  document.getElementById('kyc-modal-country').textContent = sub.country   || '—';
+  document.getElementById('kyc-modal-date').textContent    = fmtDate(sub.created_at);
+  document.getElementById('kyc-modal-status').textContent  = sub.status    || 'pending';
+
+  /* show/hide action buttons based on current status */
+  const isPending = !sub.status || sub.status === 'pending';
+  document.getElementById('kyc-btn-approve').style.display = isPending ? '' : 'none';
+  document.getElementById('kyc-btn-reject').style.display  = isPending ? '' : 'none';
+
+  /* generate signed URLs for each doc */
+  async function signedImgHtml(path, label) {
+    if (!path) return `<div class="kyc-doc-missing">Not uploaded</div>`;
+    try {
+      const { data } = await db.storage.from('kyc-docs').createSignedUrl(path, 3600);
+      const url = data?.signedUrl;
+      if (!url) return `<div class="kyc-doc-missing">Could not load</div>`;
+      return `<a href="${url}" target="_blank" rel="noopener"><img src="${url}" alt="${label}" loading="lazy"/></a>`;
+    } catch { return `<div class="kyc-doc-missing">Error loading</div>`; }
+  }
+
+  const [frontHtml, backHtml, selfieHtml] = await Promise.all([
+    signedImgHtml(sub.front_url,  'Front'),
+    signedImgHtml(sub.back_url,   'Back'),
+    signedImgHtml(sub.selfie_url, 'Selfie'),
+  ]);
+  document.getElementById('kyc-front-wrap').innerHTML  = frontHtml;
+  document.getElementById('kyc-back-wrap').innerHTML   = backHtml;
+  document.getElementById('kyc-selfie-wrap').innerHTML = selfieHtml;
+
+  document.getElementById('kyc-docs-loading').style.display = 'none';
+  document.getElementById('kyc-docs-content').style.display = 'block';
+}
+
+function showRejectPanel() {
+  document.getElementById('kyc-reject-panel').style.display = 'block';
+  document.getElementById('kyc-reject-reason').focus();
+}
+function cancelRejectPanel() {
+  document.getElementById('kyc-reject-panel').style.display = 'none';
+  document.getElementById('kyc-reject-reason').value = '';
+}
+async function approveKYCFromModal() {
+  await approveKYC(_kycViewId, _kycViewUid);
+  closeModal('modal-kyc-docs');
+}
+async function confirmRejectKYC() {
+  const reason = document.getElementById('kyc-reject-reason').value.trim();
+  if (!reason) { document.getElementById('kyc-reject-reason').focus(); return; }
+  await rejectKYC(_kycViewId, _kycViewUid, reason);
+  closeModal('modal-kyc-docs');
+}
+
+/* quick reject from table row (prompts inline) */
+async function showInlineReject(id, uid) {
+  await viewKYCDocs(id);
+  /* wait for modal to open then show reject panel */
+  setTimeout(showRejectPanel, 400);
+}
+
+async function approveKYC(id, userId) {
+  const db = window.SV_DB; if (!db) return;
+  if (!userId) {
+    const { data } = await db.from('kyc_submissions').select('user_id').eq('id', id).single();
+    userId = data?.user_id;
+  }
+  await db.from('kyc_submissions').update({ status: 'approved' }).eq('id', id);
+  if (userId) await db.from('profiles').update({ kyc_status: 'verified' }).eq('id', userId);
   await logAudit('approve_kyc', id, '');
-  showToast('KYC approved');
+  showToast('KYC approved ✓');
   renderKYCLive();
 }
-async function rejectKYC(id) {
+
+async function rejectKYC(id, userId, reason) {
   const db = window.SV_DB; if (!db) return;
-  await db.from('kyc_submissions').update({ status:'rejected' }).eq('id', id);
-  await logAudit('reject_kyc', id, '');
+  if (!userId) {
+    const { data } = await db.from('kyc_submissions').select('user_id').eq('id', id).single();
+    userId = data?.user_id;
+  }
+  await db.from('kyc_submissions').update({ status: 'rejected', rejection_reason: reason || '' }).eq('id', id);
+  if (userId) await db.from('profiles').update({ kyc_status: 'rejected' }).eq('id', userId);
+  await logAudit('reject_kyc', id, reason || '');
   showToast('KYC rejected', 'error');
   renderKYCLive();
 }
