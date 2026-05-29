@@ -530,6 +530,26 @@ html.mob .main{width:100% !important;padding:20px 16px;}</style>
           </ul>
         </div>
       </div>
+
+      <!-- Payment Proof Upload -->
+      <div style="margin-top:20px;background:var(--s2);border:1.5px solid var(--b2);border-radius:12px;padding:20px;">
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">Upload Payment Proof</div>
+        <div style="font-size:12px;color:var(--sub);margin-bottom:14px;">Upload a screenshot or photo of your transaction receipt to confirm your deposit.</div>
+        <label id="proof-drop" for="proof-file-input" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:var(--s3);border:2px dashed var(--b2);border-radius:10px;padding:28px 16px;cursor:pointer;transition:border-color .15s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="if(!window._proofSelected)this.style.borderColor='var(--b2)'">
+          <svg id="proof-upload-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--sub)" stroke-width="1.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17,8 12,3 7,8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <span id="proof-label-text" style="font-size:12.5px;color:var(--sub);text-align:center;">Click or drag to upload<br><span style="font-size:11px;">PNG, JPG, PDF — max 10 MB</span></span>
+        </label>
+        <input type="file" id="proof-file-input" accept="image/*,application/pdf" style="display:none;" onchange="handleProofFile(this)"/>
+        <div id="proof-preview" style="display:none;margin-top:12px;display:none;align-items:center;gap:10px;background:rgba(14,203,129,.07);border:1px solid rgba(14,203,129,.2);border-radius:8px;padding:10px 14px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round"><polyline points="20,6 9,17 4,12"/></svg>
+          <span id="proof-filename" style="font-size:12.5px;color:var(--text);font-weight:600;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+          <button onclick="clearProof()" style="font-size:11px;color:var(--sub);background:none;border:none;cursor:pointer;flex-shrink:0;">Remove</button>
+        </div>
+      </div>
+
+      <button id="btn-made-payment" onclick="confirmDeposit()" disabled style="margin-top:16px;width:100%;padding:14px;background:var(--s3);border:1.5px solid var(--b2);border-radius:10px;font-size:14px;font-weight:700;color:var(--sub);cursor:not-allowed;transition:all .2s;">
+        I've Made Payment
+      </button>
     </div>
 
   </div><!-- /dep-card -->
@@ -799,6 +819,79 @@ if(preselect && COINS.find(c => c.sym===preselect.toUpperCase())){
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="./supabase.js"></script>
 <script>
+/* ── Payment proof upload ── */
+window._proofSelected = false;
+window._proofFile = null;
+
+function handleProofFile(input) {
+  const file = input.files?.[0];
+  if (!file) return;
+  window._proofFile = file;
+  window._proofSelected = true;
+  document.getElementById('proof-filename').textContent = file.name;
+  const preview = document.getElementById('proof-preview');
+  preview.style.display = 'flex';
+  const drop = document.getElementById('proof-drop');
+  drop.style.borderColor = 'var(--green)';
+  const btn = document.getElementById('btn-made-payment');
+  if (btn) {
+    btn.disabled = false;
+    btn.style.background = 'var(--accent)';
+    btn.style.borderColor = 'var(--accent)';
+    btn.style.color = '#fff';
+    btn.style.cursor = 'pointer';
+  }
+}
+
+function clearProof() {
+  window._proofFile = null;
+  window._proofSelected = false;
+  document.getElementById('proof-file-input').value = '';
+  document.getElementById('proof-preview').style.display = 'none';
+  document.getElementById('proof-drop').style.borderColor = 'var(--b2)';
+  const btn = document.getElementById('btn-made-payment');
+  if (btn) {
+    btn.disabled = true;
+    btn.style.background = 'var(--s3)';
+    btn.style.borderColor = 'var(--b2)';
+    btn.style.color = 'var(--sub)';
+    btn.style.cursor = 'not-allowed';
+  }
+}
+
+async function confirmDeposit() {
+  if (!window._proofFile) return;
+  const btn = document.getElementById('btn-made-payment');
+  if (btn) { btn.disabled = true; btn.textContent = 'Submitting…'; }
+  try {
+    const db = window.SV_DB;
+    const { data: { session } } = await db.auth.getSession();
+    if (!session) { window.location.href = 'login.html'; return; }
+    const userId = session.user.id;
+    const ext = window._proofFile.name.split('.').pop() || 'jpg';
+    const path = `payment-proofs/${userId}/${Date.now()}.${ext}`;
+    await db.storage.from('deposits').upload(path, window._proofFile, { upsert: false });
+    await db.from('transactions').insert({
+      user_id: userId,
+      type: 'deposit',
+      coin: selectedCoin?.sym || null,
+      network: selectedNet?.id || null,
+      currency: selectedCoin?.sym || null,
+      amount: 0,
+      status: 'pending',
+      proof_url: path,
+      created_at: new Date().toISOString()
+    });
+    if (btn) { btn.textContent = 'Submitted ✓'; btn.style.background = 'var(--green)'; btn.style.borderColor = 'var(--green)'; }
+    setTimeout(() => {
+      if (btn) { btn.textContent = "I've Made Payment"; btn.disabled = false; }
+    }, 3000);
+  } catch(e) {
+    if (btn) { btn.disabled = false; btn.textContent = "I've Made Payment"; }
+    alert('Submission failed. Please try again.');
+  }
+}
+
 /* ── Load admin-set deposit addresses and overlay onto COINS ── */
 (async () => {
   try {

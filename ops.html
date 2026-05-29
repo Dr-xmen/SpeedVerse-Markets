@@ -611,7 +611,7 @@
         <div class="card">
           <div class="card__body--p0 table-wrap">
             <table class="data-table">
-              <thead><tr><th>Email</th><th>Name</th><th>Balance</th><th>Equity</th><th>Plan</th><th>P&amp;L</th><th>Actions</th></tr></thead>
+              <thead><tr><th>User</th><th>Balance</th><th>Equity</th><th>Plan</th><th>P&amp;L</th><th>Actions</th></tr></thead>
               <tbody id="balances-tbody"></tbody>
             </table>
           </div>
@@ -1544,7 +1544,11 @@ function renderUsersTable(rows) {
     const statusPill = u.status === 'active' ? 'pill-green' : u.status === 'suspended' ? 'pill-red' : 'pill-grey';
     return `<tr onclick="openEditUser('${u.id}')">
       <td onclick="event.stopPropagation()"><input type="checkbox"></td>
-      <td><div class="user-cell"><div class="user-avatar" style="background:${avatarColor(name)}">${initials(name)}</div><div><div class="user-name">${name}</div><div class="user-email">${u.email||'—'}</div></div></div></td>
+      <td><div class="user-cell"><div class="user-avatar" style="background:${avatarColor(name)}">${initials(name)}</div><div>
+        <div style="font-weight:600;font-size:13px;">${(u.first_name||'') + ' ' + (u.last_name||'')}</div>
+        <div style="font-size:11.5px;color:var(--muted);">${u.email||'—'}</div>
+        ${u.phone ? `<div style="font-size:11px;color:var(--muted);">${u.phone}</div>` : ''}
+      </div></div></td>
       <td>${u.country||'—'}</td>
       <td><span class="badge-pill ${u.account_type==='live'?'pill-blue':'pill-grey'}">${u.account_type||'demo'}</span></td>
       <td>${fmtMoney(u.balance||0)}</td>
@@ -1723,17 +1727,20 @@ window.applyAdjustment = async function() {
 /* ── Balances ── */
 window.renderBalancesLive = async function() {
   const db = window.SV_DB; if (!db) return;
-  const { data, error } = await db.from('profiles').select('id,email,first_name,last_name,balance,pnl,account_type,plan').order('balance', { ascending:false });
+  const { data, error } = await db.from('profiles').select('id,email,first_name,last_name,phone,balance,pnl,account_type,plan').order('balance', { ascending:false });
   const tbody = document.getElementById('balances-tbody');
   if (!tbody) return;
-  if (error || !data?.length) { tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:24px;">${error ? 'Error: '+error.message : 'No accounts'}</td></tr>`; return; }
+  if (error || !data?.length) { tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:24px;">${error ? 'Error: '+error.message : 'No accounts'}</td></tr>`; return; }
   tbody.innerHTML = data.map(p => {
     const pnl    = parseFloat(p.pnl||0);
     const name   = [p.first_name, p.last_name].filter(Boolean).join(' ') || p.email || '—';
     const equity = parseFloat(p.balance||0) + pnl;
     return `<tr>
-      <td>${p.email||'—'}</td>
-      <td>${name}</td>
+      <td>
+        <div style="font-weight:600;font-size:13px;">${(p.first_name||'') + ' ' + (p.last_name||'')}</div>
+        <div style="font-size:11.5px;color:var(--muted);">${p.email||'—'}</div>
+        ${p.phone ? `<div style="font-size:11px;color:var(--muted);">${p.phone}</div>` : ''}
+      </td>
       <td>${fmtMoney(p.balance||0)}</td>
       <td style="color:${equity>=0?'var(--green)':'var(--red)'}">${fmtMoney(equity)}</td>
       <td><span class="badge-pill ${p.plan==='Elite'?'pill-blue':p.plan==='Platinum'?'pill-purple':p.plan==='Gold'?'pill-orange':p.plan==='Silver'?'pill-blue':'pill-grey'}">${p.plan||'Starter'}</span></td>
@@ -2013,6 +2020,17 @@ window.publishAnnouncement = async function() {
   if (!title || !body) { showToast('Title and message required', 'error'); return; }
   const { error } = await db.from('announcements').insert({ title, body, type, published_by: _adminUser?.email, created_at: new Date().toISOString() });
   if (error) { showToast('Error: ' + error.message, 'error'); return; }
+  const { data: allUsers } = await db.from('profiles').select('id');
+  if (allUsers?.length) {
+    await db.from('notifications').insert(
+      allUsers.map(u => ({
+        user_id: u.id, type: 'announcement',
+        title: title, message: body,
+        read: false, enabled: true,
+        created_at: new Date().toISOString()
+      }))
+    );
+  }
   await logAudit('publish_announcement', title, type);
   showToast('Announcement published');
   document.getElementById('ann-title').value = '';
@@ -2378,6 +2396,7 @@ window.renderProfitTargetsLive = async function() {
         <div class="row-actions">
           <button class="btn btn--sm btn--primary" onclick="openAddPTTrade('${t.id}','${t.user_id}',${t.target_amount||0})">+ Trade</button>
           <button class="btn btn--sm btn--outline" onclick="openSetProfitTarget('${t.id}','${email}',${t.target_amount||0},'${t.label||''}','${t.user_id}')">Edit</button>
+          ${t.is_active ? `<button class="btn btn--sm btn--red" onclick="deactivateProfitTarget('${t.id}','${t.user_id}')">Deactivate</button>` : ''}
         </div>
       </td>
     </tr>`;
@@ -2426,6 +2445,23 @@ window.saveSetProfitTarget = async function() {
   await logAudit('set_profit_target', userId, `${label} $${targetAmt}`);
   showToast('Profit target saved');
   closeModal('modal-set-profit-target');
+  renderProfitTargetsLive();
+};
+
+window.deactivateProfitTarget = async function(targetId, userId) {
+  const db = window.SV_DB; if (!db) return;
+  if (!confirm('Deactivate this profit target?')) return;
+  await db.from('profit_targets').update({ is_active: false, updated_at: new Date().toISOString() }).eq('id', targetId);
+  // Notify user
+  const { data: prof } = await db.from('profiles').select('email,first_name').eq('id', userId).single();
+  await db.from('notifications').insert({
+    user_id: userId, type: 'account',
+    title: 'Profit Target Deactivated',
+    message: 'Your profit target has been deactivated by the administrator.',
+    read: false, enabled: true, created_at: new Date().toISOString()
+  });
+  await logAudit('deactivate_profit_target', targetId, userId);
+  showToast('Profit target deactivated');
   renderProfitTargetsLive();
 };
 

@@ -159,6 +159,12 @@ input{font-family:inherit;border:none;outline:none;background:none;color:var(--t
 .sc-val{font-size:18px;font-weight:700;font-family:'Inter',sans-serif;color:var(--text);line-height:1.1;}
 .sc-sub{font-size:11px;color:var(--sub);margin-top:4px;}
 .sc-pos{color:var(--green);} .sc-neg{color:var(--red);}
+/* Stat cards have dark photo backgrounds — keep text white in all themes */
+.stat-card .sc-val{color:#fff !important;}
+.stat-card .sc-sub{color:rgba(255,255,255,.55) !important;}
+.stat-card .sc-label{color:rgba(255,255,255,.5) !important;}
+.stat-card .sc-pos{color:#0ecb81 !important;}
+.stat-card .sc-neg{color:#f6465d !important;}
 
 /* TWO-COL */
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 20px 16px;}
@@ -539,13 +545,13 @@ html.mob .full-sec{margin-left:0 !important;margin-right:0 !important;}
 
   <!-- Welcome Banner -->
   <div class="welcome">
-    <div class="wc-plan-badge" id="wc-plan-badge">
+    <div class="wc-plan-badge" id="wc-plan-badge" style="opacity:0;transition:opacity .3s;">
       <svg width="11" height="11" viewBox="0 0 24 24" fill="var(--gold)" stroke="none"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
       Starter
     </div>
     <div class="wc-left">
       <div class="wc-greet" id="wc-greet">Good day,</div>
-      <div class="wc-name" id="wc-name">SpeedVerse User 👋</div>
+      <div class="wc-name" id="wc-name" style="opacity:0;transition:opacity .3s;">SpeedVerse User 👋</div>
       <div class="wc-balance-label">Total Portfolio Value</div>
       <div class="wc-balance-row">
         <div class="wc-balance" id="wc-total">$0.00 <span>USD</span></div>
@@ -586,10 +592,10 @@ html.mob .full-sec{margin-left:0 !important;margin-right:0 !important;}
     <div class="stat-card">
       <div class="sc-label">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-        Open Positions
+        Closed Positions
       </div>
       <div class="sc-val" id="stat-pos-val">0</div>
-      <div class="sc-sub" id="stat-pos-sub">Unrealized PnL: <span id="stat-unreal">$0.00</span></div>
+      <div class="sc-sub" id="stat-pos-sub">Total completed trades</div>
     </div>
     <div class="stat-card">
       <div class="sc-label">
@@ -716,17 +722,12 @@ html.mob .full-sec{margin-left:0 !important;margin-right:0 !important;}
       </div>
     </div>
 
-    <div class="sec-card">
+    <div class="sec-card" style="overflow:hidden;">
       <div class="sec-head">
-        <div class="sec-title">Recent Orders</div>
-        <span class="sec-link">View All →</span>
+        <div class="sec-title">Economic Calendar</div>
+        <span style="font-size:11px;color:var(--sub);display:flex;align-items:center;gap:4px;"><span class="live-dot"></span>Live</span>
       </div>
-      <div style="overflow-x:auto;">
-        <table class="pos-table">
-          <thead><tr><th>Pair</th><th>Type</th><th>Price</th><th>Amount</th><th>Status</th></tr></thead>
-          <tbody id="recent-orders-tbody"></tbody>
-        </table>
-      </div>
+      <div id="econ-cal-container" style="height:360px;width:100%;"></div>
     </div>
   </div>
 
@@ -1156,11 +1157,15 @@ async function renderPositions() {
   try {
     const { data: user } = await db.auth.getUser();
     if (!user?.user) return;
-    const { data: positions } = await db.from('positions')
-      .select('*').eq('user_id', user.user.id)
-      .order('opened_at', { ascending: false }).limit(5);
-    const countEl = document.getElementById('pos-count');
-    const pnlEl   = document.getElementById('pos-total-pnl');
+    const [{ data: positions }, { count: totalCount }] = await Promise.all([
+      db.from('positions').select('*').eq('user_id', user.user.id)
+        .order('opened_at', { ascending: false }).limit(5),
+      db.from('positions').select('id', { count: 'exact', head: true }).eq('user_id', user.user.id)
+    ]);
+    const countEl   = document.getElementById('pos-count');
+    const pnlEl     = document.getElementById('pos-total-pnl');
+    const statPosEl = document.getElementById('stat-pos-val');
+    if (statPosEl) statPosEl.textContent = totalCount || 0;
     if (!positions?.length) {
       tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--sub);padding:20px;font-size:12.5px;">No trade history yet</td></tr>`;
       if (countEl) countEl.textContent = '0 trades';
@@ -1346,7 +1351,6 @@ function renderAll() {
   drawPerfChart();
   renderAccountSummary();
   renderPositions();
-  renderRecentOrders();
   renderMovers();
 }
 
@@ -1491,6 +1495,34 @@ document.addEventListener('DOMContentLoaded', init);
   container.appendChild(script);
   wrap.appendChild(container);
 })();
+
+// Economic Calendar TradingView widget
+(function() {
+  var wrap = document.getElementById('econ-cal-container');
+  if (!wrap) return;
+  var container = document.createElement('div');
+  container.className = 'tradingview-widget-container';
+  container.style.cssText = 'height:100%;width:100%';
+  var inner = document.createElement('div');
+  inner.className = 'tradingview-widget-container__widget';
+  inner.style.cssText = 'height:100%;width:100%';
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-events.js';
+  script.async = true;
+  script.textContent = JSON.stringify({
+    colorTheme: 'dark',
+    isTransparent: true,
+    width: '100%',
+    height: '360',
+    locale: 'en',
+    importanceFilter: '-1,0,1',
+    countryFilter: 'us,eu,gb,jp,cn,ca,au'
+  });
+  container.appendChild(inner);
+  container.appendChild(script);
+  wrap.appendChild(container);
+})();
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -1525,7 +1557,9 @@ document.addEventListener('DOMContentLoaded', init);
   const hr = new Date().getHours();
   const greeting = hr < 12 ? 'Good morning,' : hr < 17 ? 'Good afternoon,' : 'Good evening,';
   document.getElementById('wc-greet').textContent = greeting;
-  document.getElementById('wc-name').textContent  = (firstName || displayName) + ' 👋';
+  const nameEl = document.getElementById('wc-name');
+  nameEl.textContent  = (firstName || displayName) + ' 👋';
+  nameEl.style.opacity = '1';
 
   function applyPlanBadge(plan) {
     const badgeEl = document.getElementById('wc-plan-badge');
@@ -1543,6 +1577,7 @@ document.addEventListener('DOMContentLoaded', init);
   }
 
   applyPlanBadge(profile?.plan || 'Starter');
+  document.getElementById('wc-plan-badge').style.opacity = '1';
 
   /* Wire real DB balance into HOLDINGS so every portfolioValue() / renderWelcome() call
      shows the correct admin-set balance instead of hardcoded demo amounts. */
@@ -1560,6 +1595,18 @@ document.addEventListener('DOMContentLoaded', init);
     const el = document.getElementById('wc-total');
     if (el && !balanceHidden) {
       el.innerHTML = `$${total.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})} <span>USD</span>`;
+    }
+    /* Wire PnL stat card */
+    const pnlStatEl  = document.getElementById('stat-pnl-val');
+    const pnlSubEl   = document.getElementById('stat-pnl-sub');
+    if (pnlStatEl) {
+      const sign = p >= 0 ? '+' : '−';
+      pnlStatEl.textContent = sign + '$' + Math.abs(p).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+      pnlStatEl.className = 'sc-val ' + (p >= 0 ? 'sc-pos' : 'sc-neg');
+    }
+    if (pnlSubEl) {
+      pnlSubEl.textContent = p >= 0 ? 'Overall gain' : 'Overall loss';
+      pnlSubEl.style.color = p >= 0 ? 'var(--green)' : 'var(--red)';
     }
   }
   applyBalance(profile?.balance, profile?.pnl);
