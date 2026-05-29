@@ -2173,7 +2173,15 @@ window.loadUserTradeHistory = async function() {
 window.deleteTradeEntry = async function(id) {
   const db = window.SV_DB; if (!db) return;
   if (!confirm('Delete this trade entry?')) return;
+  /* Fetch user_id before deleting so we can resync pnl */
+  const { data: pos } = await db.from('positions').select('user_id').eq('id', id).single();
   await db.from('positions').delete().eq('id', id);
+  /* Recalculate pnl from remaining positions */
+  if (pos?.user_id) {
+    const { data: remaining } = await db.from('positions').select('pnl').eq('user_id', pos.user_id);
+    const newPnl = (remaining || []).reduce((s, r) => s + (parseFloat(r.pnl) || 0), 0);
+    await db.from('profiles').update({ pnl: newPnl }).eq('id', pos.user_id);
+  }
   await logAudit('delete_trade', id, 'admin delete');
   showToast('Trade deleted');
   loadUserTradeHistory();
