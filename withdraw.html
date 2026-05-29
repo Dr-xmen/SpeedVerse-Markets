@@ -405,12 +405,13 @@ html.mob .main{width:100% !important;padding:20px 16px;}</style>
   </nav>
   <div class="sb-bottom">
     <div class="sb-user">
-      <div class="sb-avatar">S</div>
+      <div class="sb-avatar" id="sb-avatar">S</div>
       <div class="sb-user-info">
-        <div class="sb-user-name">SpeedVerse User</div>
-        <div class="sb-user-uid">UID: 92847362 &nbsp;<span class="sb-vip">VIP 3</span></div>
+        <div class="sb-user-name" id="sb-user-name">SpeedVerse User</div>
+        <div class="sb-user-uid" id="sb-user-uid"></div>
       </div>
     </div>
+    <button onclick="doSignOut()" style="width:100%;margin-top:10px;padding:8px;background:none;border:1px solid var(--b);border-radius:7px;color:var(--sub);font-size:12px;cursor:pointer;">Sign Out</button>
   </div>
 </aside>
 
@@ -983,7 +984,8 @@ function buildDetailsPanel(){
   cd.innerHTML = `<div style="display:flex;align-items:center;gap:8px;">${coinIconHTML(selCoin,24)}</div><span style="font-size:13px;font-weight:700;color:var(--text);">${selCoin.sym}</span>`;
   const nd = document.getElementById('wd-step3-net-display');
   nd.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg><span style="font-size:12.5px;font-weight:700;color:var(--accent);">${selNet.id}</span>`;
-  document.getElementById('avail-bal').textContent = '0.00';
+  const bal = typeof _svBalance !== 'undefined' ? _svBalance : 0;
+  document.getElementById('avail-bal').textContent = bal.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
   document.getElementById('avail-sym').textContent = selCoin.sym;
   document.getElementById('amount-sym').textContent = selCoin.sym;
   document.getElementById('min-wd').textContent = selNet.min + ' ' + selCoin.sym;
@@ -1016,7 +1018,10 @@ function wdGoStep(n){
 }
 
 function setMax(){
-  document.getElementById('amount-input').value = '0';
+  const bal = typeof _svBalance !== 'undefined' ? _svBalance : 0;
+  const fee = selNet?.fee || 0;
+  const max = Math.max(0, bal - fee);
+  document.getElementById('amount-input').value = max.toFixed(2);
   updateCryptoSummary();
 }
 
@@ -1140,6 +1145,60 @@ updateBankSummary();
 const p = new URLSearchParams(location.search);
 if(p.get('method')==='bank') switchMethod('bank');
 if(p.get('coin') && COINS.find(c => c.sym === p.get('coin').toUpperCase())) pickCoin(p.get('coin').toUpperCase());
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./supabase.js"></script>
+<script>
+let _svBalance = 0;
+let _svUserId  = null;
+let _svEmail   = '';
+
+(async () => {
+  const db = window.SV_DB;
+  const { data: { session } } = await db.auth.getSession();
+  if (!session) { window.location.href = 'login.html'; return; }
+
+  const user = session.user;
+  _svUserId  = user.id;
+  _svEmail   = user.email || '';
+
+  const { data: profile } = await db.from('profiles')
+    .select('first_name,last_name,balance,pnl')
+    .eq('id', user.id)
+    .maybeSingle();
+
+  const firstName   = profile?.first_name || '';
+  const displayName = firstName ? [firstName, profile.last_name].filter(Boolean).join(' ') : _svEmail.split('@')[0];
+  const initials    = displayName.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase() || 'SV';
+
+  document.getElementById('sb-avatar').textContent    = initials;
+  document.getElementById('sb-user-name').textContent = displayName;
+  document.getElementById('sb-user-uid').textContent  = _svEmail;
+
+  _svBalance = parseFloat(profile?.balance || 0) + parseFloat(profile?.pnl || 0);
+
+  /* Refresh available balance display if a coin is already selected */
+  const availEl = document.getElementById('avail-bal');
+  if (availEl) availEl.textContent = _svBalance.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+
+  /* Real-time: update balance when admin credits/debits */
+  db.channel('wd-balance-' + user.id)
+    .on('postgres_changes', {
+      event: 'UPDATE', schema: 'public', table: 'profiles',
+      filter: `id=eq.${user.id}`
+    }, payload => {
+      _svBalance = parseFloat(payload.new.balance || 0) + parseFloat(payload.new.pnl || 0);
+      const el = document.getElementById('avail-bal');
+      if (el) el.textContent = _svBalance.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+    })
+    .subscribe();
+})();
+
+async function doSignOut() {
+  await window.SV_DB.auth.signOut();
+  window.location.href = 'login.html';
+}
 </script>
 </body>
 </html>
