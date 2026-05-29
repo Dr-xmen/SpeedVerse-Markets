@@ -510,12 +510,15 @@ function toggleHide(){
   if(!sessionStorage.getItem("sv_pin_ok")){window.location.href="session.html";return;}
   const{data:{session}}=await db.auth.getSession();
   if(!session){window.location.href="login.html";return;}
-  const u=session.user;
-  const name=u.user_metadata?.first_name?(u.user_metadata.first_name+(u.user_metadata.last_name?' '+u.user_metadata.last_name:'')):(u.email||'').split('@')[0];
-  const initials=name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()||'SV';
-  document.querySelectorAll('.sb-avatar').forEach(el=>el.textContent=initials);
-  document.querySelectorAll('.sb-user-name').forEach(el=>el.textContent=name);
-  document.querySelectorAll('.sb-user-uid').forEach(el=>el.textContent=u.email||'');
+  const user = session.user;
+  const email = user.email || '';
+  const { data: profile } = await db.from('profiles').select('first_name,last_name').eq('id', user.id).maybeSingle();
+  const firstName = profile?.first_name || '';
+  const displayName = firstName ? [firstName, profile.last_name].filter(Boolean).join(' ') : email.split('@')[0];
+  const initials = displayName.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase() || 'SV';
+  document.getElementById('sb-avatar').textContent    = initials;
+  document.getElementById('sb-user-name').textContent = displayName;
+  document.getElementById('sb-user-uid').textContent  = email;
 })();
 </script>
 <script src="notif-popup.js"></script>
