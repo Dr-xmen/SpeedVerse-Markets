@@ -2100,6 +2100,27 @@ window.dtiReset = function() {
   document.getElementById('dti-balance').value = '';
 };
 
+/* Shared helper: update profiles.pnl + write to profit_target_trades if user has active target */
+async function _syncTradeToBalance(db, userId, pnl, note) {
+  /* 1. Increment profiles.pnl */
+  const { data: prof } = await db.from('profiles').select('pnl').eq('id', userId).single();
+  const newPnl = (parseFloat(prof?.pnl) || 0) + pnl;
+  await db.from('profiles').update({ pnl: newPnl }).eq('id', userId);
+
+  /* 2. Write to profit_target_trades if user has an active target */
+  const { data: targets } = await db.from('profit_targets')
+    .select('id,target_amount').eq('user_id', userId).eq('is_active', true).limit(1);
+  const target = targets?.[0];
+  if (target) {
+    const pctDelta = target.target_amount ? (pnl / parseFloat(target.target_amount) * 100) : 0;
+    await db.from('profit_target_trades').insert({
+      target_id: target.id, user_id: userId,
+      amount: pnl, percentage_delta: pctDelta,
+      note: note || '', created_at: new Date().toISOString()
+    });
+  }
+}
+
 window.dtiSubmit = async function() {
   const db = window.SV_DB; if (!db) return;
   const userId = document.getElementById('dti-account').value;
@@ -2126,11 +2147,8 @@ window.dtiSubmit = async function() {
   });
   if (error) { showToast('Error: ' + error.message, 'error'); return; }
 
-  /* Update user's pnl so the balance reflects the trade */
-  const { data: prof2 } = await db.from('profiles').select('pnl').eq('id', userId).single();
-  const newPnl = (parseFloat(prof2?.pnl) || 0) + pnl;
-  await db.from('profiles').update({ pnl: newPnl }).eq('id', userId);
-  /* Refresh balance display */
+  /* Update profiles.pnl and profit_target_trades */
+  await _syncTradeToBalance(db, userId, pnl, `${pair} ${dir} #${ticket}`);
   dtiLoadAccount();
 
   await logAudit('direct_trade_input', userId, `${pair} ${dir} P&L:${pnl}`);
@@ -2306,12 +2324,8 @@ window.saveAddPosition = async function() {
   });
   if (error) { showToast('Error: ' + error.message, 'error'); return; }
 
-  /* Update user's pnl so balance reflects immediately */
-  if (pnl !== 0) {
-    const { data: prof2 } = await db.from('profiles').select('pnl').eq('id', userId).single();
-    const newPnl = (parseFloat(prof2?.pnl) || 0) + pnl;
-    await db.from('profiles').update({ pnl: newPnl }).eq('id', userId);
-  }
+  /* Update profiles.pnl and profit_target_trades */
+  await _syncTradeToBalance(db, userId, pnl, `${symbol} ${side} #${ticket}`);
 
   await logAudit('add_position', userId, `${symbol} ${side} #${ticket}`);
   showToast('Trade added');
