@@ -505,7 +505,7 @@ html.mob .main{width:100% !important;padding:20px 16px;}</style>
 
         <!-- Info badges -->
         <div class="info-row">
-          <div class="info-badge" style="display:none;" id="min-dep-badge">
+          <div class="info-badge">
             <div class="info-badge-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><polyline points="23,4 23,10 17,10"/><path d="M20.49 15a9 9 0 1 1-.08-7.05"/></svg></div>
             <div><div class="info-badge-label">Min Deposit</div><div class="info-badge-val" id="min-dep">—</div></div>
           </div>
@@ -1006,6 +1006,12 @@ window._minDeposit = 0;
     const globalMin = parseFloat(setting?.value) || 0;
     const userMin   = prof?.min_deposit != null ? parseFloat(prof.min_deposit) : null;
     window._minDeposit = userMin != null ? userMin : globalMin;
+
+    /* Update the Min Deposit badge if admin has set a minimum */
+    if (window._minDeposit > 0) {
+      const minDepEl = document.getElementById('min-dep');
+      if (minDepEl) minDepEl.textContent = '$' + window._minDeposit.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' USD';
+    }
 
     updatePaymentBtn();
   } catch(e) {}
