@@ -3,35 +3,31 @@
 
 (function () {
   const STYLE = `
-    @keyframes svnpGenieIn {
-      0%   { opacity:0; transform:scaleX(.18) translateY(42px); clip-path:polygon(38% 94%,62% 94%,62% 100%,38% 100%); }
-      10%  { opacity:1; }
-      40%  { transform:scaleX(.88) translateY(14px); clip-path:polygon(0% 0%,100% 0%,64% 100%,36% 100%); }
-      62%  { transform:scale(1) translateY(0); clip-path:polygon(0% 0%,100% 0%,100% 100%,0% 100%); }
-      76%  { transform:scale(1.04,1.03) translateY(-5px); }
-      88%  { transform:scale(.98,.99) translateY(2px); }
-      100% { opacity:1; transform:scale(1) translateY(0); clip-path:polygon(0% 0%,100% 0%,100% 100%,0% 100%); }
+    @keyframes genieIn {
+      0%   { opacity:.7; clip-path:polygon(48% 100%,52% 100%,52% 100%,48% 100%,48% 100%,52% 100%); transform:scaleY(0.02); }
+      18%  { opacity:1;  clip-path:polygon(0% 0%,100% 0%,74% 50%,62% 100%,38% 100%,26% 50%); transform:scaleY(0.58); }
+      50%  { clip-path:polygon(0% 0%,100% 0%,90% 50%,82% 100%,18% 100%,10% 50%); transform:scaleY(0.84); }
+      78%  { clip-path:polygon(0% 0%,100% 0%,98% 50%,94% 100%,6% 100%,2% 50%);  transform:scaleY(0.97); }
+      100% { clip-path:polygon(0% 0%,100% 0%,100% 50%,100% 100%,0% 100%,0% 50%); transform:scaleY(1); opacity:1; }
     }
-    @keyframes svnpGenieOut {
-      0%   { opacity:1; transform:scale(1) translateY(0); clip-path:polygon(0% 0%,100% 0%,100% 100%,0% 100%); }
-      15%  { transform:scale(1.02,1.01) translateY(-3px); }
-      42%  { transform:scaleX(.9) translateY(12px); clip-path:polygon(0% 0%,100% 0%,64% 100%,36% 100%); }
-      70%  { opacity:.4; clip-path:polygon(22% 0%,78% 0%,55% 100%,45% 100%); transform:scaleX(.45) translateY(30px); }
-      100% { opacity:0; clip-path:polygon(40% 94%,60% 94%,60% 100%,40% 100%); transform:scaleX(.18) translateY(42px); }
+    @keyframes genieOut {
+      0%   { clip-path:polygon(0% 0%,100% 0%,100% 50%,100% 100%,0% 100%,0% 50%); transform:scaleY(1);    opacity:1; }
+      20%  { clip-path:polygon(0% 0%,100% 0%,98% 50%,94% 100%,6% 100%,2% 50%);  transform:scaleY(0.97); }
+      50%  { clip-path:polygon(0% 0%,100% 0%,90% 50%,82% 100%,18% 100%,10% 50%); transform:scaleY(0.84); opacity:1; }
+      80%  { clip-path:polygon(0% 0%,100% 0%,74% 50%,62% 100%,38% 100%,26% 50%); transform:scaleY(0.56); opacity:.8; }
+      100% { clip-path:polygon(48% 100%,52% 100%,52% 100%,48% 100%,48% 100%,52% 100%); transform:scaleY(0.02); opacity:0; }
     }
     #svnp-overlay {
       position: fixed; inset: 0; background: rgba(0,0,0,0.6);
-      z-index: 99999; display: flex; align-items: center; justify-content: center;
-      padding: 20px; animation: svnpFadeIn .25s ease both;
+      z-index: 99999; display: flex; align-items: center; justify-content: center; padding: 20px;
     }
-    @keyframes svnpFadeIn  { from { opacity: 0 } to { opacity: 1 } }
     #svnp-box {
       background: #111318; border-radius: 16px; width: 100%; max-width: 480px;
       box-shadow: 0 24px 64px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.07);
-      overflow: hidden; transform-origin: center bottom; will-change: clip-path, transform;
+      overflow: hidden; transform-origin: center 85%; will-change: clip-path, transform;
     }
-    #svnp-box.svnp-genie-in  { animation: svnpGenieIn  .65s cubic-bezier(0.34,1.72,0.64,1) both; }
-    #svnp-box.svnp-genie-out { animation: svnpGenieOut .40s cubic-bezier(0.4,0,0.8,1) both; }
+    #svnp-box.genie-in  { animation: genieIn  0.54s cubic-bezier(0.34,1.1,0.64,1) both; }
+    #svnp-box.genie-out { animation: genieOut 0.36s cubic-bezier(0.4,0,0.8,1)     both; }
     #svnp-header {
       display: flex; align-items: center; gap: 12px;
       padding: 18px 22px; border-bottom: 1px solid rgba(255,255,255,.07);
@@ -80,11 +76,9 @@
     const el = document.getElementById('svnp-overlay');
     if (!el) return;
     const box = el.querySelector('#svnp-box');
-    if (box && !box.classList.contains('svnp-genie-out')) {
-      box.classList.remove('svnp-genie-in');
-      box.classList.add('svnp-genie-out');
-      el.style.transition = 'opacity 0.38s ease';
-      el.style.opacity = '0';
+    if (box && !box.classList.contains('genie-out')) {
+      box.classList.remove('genie-in');
+      box.classList.add('genie-out');
       box.addEventListener('animationend', () => el.remove(), { once: true });
     } else {
       el.remove();
@@ -114,8 +108,9 @@
     overlay.addEventListener('click', e => { if (e.target === overlay) _removePopup(); });
     document.body.appendChild(overlay);
     const box = overlay.querySelector('#svnp-box');
-    box.classList.add('svnp-genie-in');
-    box.addEventListener('animationend', () => box.classList.remove('svnp-genie-in'), { once: true });
+    void box.offsetWidth;
+    box.classList.add('genie-in');
+    box.addEventListener('animationend', () => box.classList.remove('genie-in'), { once: true });
   }
 
   // Public API — call after auth resolves on every user page

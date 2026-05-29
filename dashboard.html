@@ -377,9 +377,9 @@ html.mob .stat-strip{margin:0 0 8px !important;}
 html.mob .full-sec{margin-left:0 !important;margin-right:0 !important;}
 
 /* PLAN UPGRADE POPUP */
-.pu-overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;visibility:hidden;transition:opacity .3s ease,visibility 0s linear .48s;}
-.pu-overlay.open{opacity:1;pointer-events:all;visibility:visible;transition:opacity .3s ease,visibility 0s;}
-.pu-box{background:var(--s1);border-radius:20px;padding:36px 32px 28px;max-width:420px;width:100%;text-align:center;position:relative;border:1.5px solid rgba(255,255,255,.08);box-shadow:0 24px 64px rgba(0,0,0,.6);transform-origin:center bottom;will-change:clip-path,transform;}
+.pu-overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:9999;display:none;align-items:center;justify-content:center;padding:20px;}
+.pu-overlay.open{display:flex;}
+.pu-box{background:var(--s1);border-radius:20px;padding:36px 32px 28px;max-width:420px;width:100%;text-align:center;position:relative;border:1.5px solid rgba(255,255,255,.08);box-shadow:0 24px 64px rgba(0,0,0,.6);transform-origin:center 85%;will-change:clip-path,transform;}
 .pu-glow{width:90px;height:90px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:38px;}
 .pu-plan{font-size:28px;font-weight:800;letter-spacing:.5px;margin-bottom:6px;}
 .pu-sub{font-size:13px;color:var(--sub);margin-bottom:22px;}
@@ -390,13 +390,13 @@ html.mob .full-sec{margin-left:0 !important;margin-right:0 !important;}
 .pu-skip{background:none;border:none;color:var(--sub);font-size:12.5px;cursor:pointer;padding:0;}
 
 /* PROFIT TARGET REACHED POPUP */
-.pt-overlay{position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;visibility:hidden;transition:opacity .3s ease,visibility 0s linear .48s;}
-.pt-overlay.open{opacity:1;pointer-events:all;visibility:visible;transition:opacity .3s ease,visibility 0s;}
-.pt-box{background:var(--s1);border-radius:20px;padding:36px 32px 28px;max-width:440px;width:100%;text-align:center;position:relative;border:1.5px solid rgba(14,203,129,.3);box-shadow:0 24px 64px rgba(0,0,0,.65),0 0 80px rgba(14,203,129,.1);transform-origin:center bottom;will-change:clip-path,transform;}
-@keyframes svGenieIn{0%{opacity:0;transform:scaleX(.18) translateY(42px);clip-path:polygon(38% 94%,62% 94%,62% 100%,38% 100%);}10%{opacity:1;}40%{transform:scaleX(.88) translateY(14px);clip-path:polygon(0% 0%,100% 0%,64% 100%,36% 100%);}62%{transform:scale(1) translateY(0);clip-path:polygon(0% 0%,100% 0%,100% 100%,0% 100%);}76%{transform:scale(1.04,1.03) translateY(-5px);}88%{transform:scale(.98,.99) translateY(2px);}100%{opacity:1;transform:scale(1) translateY(0);clip-path:polygon(0% 0%,100% 0%,100% 100%,0% 100%);}}
-@keyframes svGenieOut{0%{opacity:1;transform:scale(1) translateY(0);clip-path:polygon(0% 0%,100% 0%,100% 100%,0% 100%);}15%{transform:scale(1.02,1.01) translateY(-3px);}42%{transform:scaleX(.9) translateY(12px);clip-path:polygon(0% 0%,100% 0%,64% 100%,36% 100%);}70%{opacity:.4;clip-path:polygon(22% 0%,78% 0%,55% 100%,45% 100%);transform:scaleX(.45) translateY(30px);}100%{opacity:0;clip-path:polygon(40% 94%,60% 94%,60% 100%,40% 100%);transform:scaleX(.18) translateY(42px);}}
-.sv-genie-in{animation:svGenieIn .65s cubic-bezier(0.34,1.72,0.64,1) both;}
-.sv-genie-out{animation:svGenieOut .40s cubic-bezier(0.4,0,0.8,1) both;}
+.pt-overlay{position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:10000;display:none;align-items:center;justify-content:center;padding:20px;}
+.pt-overlay.open{display:flex;}
+.pt-box{background:var(--s1);border-radius:20px;padding:36px 32px 28px;max-width:440px;width:100%;text-align:center;position:relative;border:1.5px solid rgba(14,203,129,.3);box-shadow:0 24px 64px rgba(0,0,0,.65),0 0 80px rgba(14,203,129,.1);transform-origin:center 85%;will-change:clip-path,transform;}
+@keyframes genieIn{0%{opacity:.7;clip-path:polygon(48% 100%,52% 100%,52% 100%,48% 100%,48% 100%,52% 100%);transform:scaleY(0.02);}18%{opacity:1;clip-path:polygon(0% 0%,100% 0%,74% 50%,62% 100%,38% 100%,26% 50%);transform:scaleY(0.58);}50%{clip-path:polygon(0% 0%,100% 0%,90% 50%,82% 100%,18% 100%,10% 50%);transform:scaleY(0.84);}78%{clip-path:polygon(0% 0%,100% 0%,98% 50%,94% 100%,6% 100%,2% 50%);transform:scaleY(0.97);}100%{clip-path:polygon(0% 0%,100% 0%,100% 50%,100% 100%,0% 100%,0% 50%);transform:scaleY(1);opacity:1;}}
+@keyframes genieOut{0%{clip-path:polygon(0% 0%,100% 0%,100% 50%,100% 100%,0% 100%,0% 50%);transform:scaleY(1);opacity:1;}20%{clip-path:polygon(0% 0%,100% 0%,98% 50%,94% 100%,6% 100%,2% 50%);transform:scaleY(0.97);}50%{clip-path:polygon(0% 0%,100% 0%,90% 50%,82% 100%,18% 100%,10% 50%);transform:scaleY(0.84);opacity:1;}80%{clip-path:polygon(0% 0%,100% 0%,74% 50%,62% 100%,38% 100%,26% 50%);transform:scaleY(0.56);opacity:.8;}100%{clip-path:polygon(48% 100%,52% 100%,52% 100%,48% 100%,48% 100%,52% 100%);transform:scaleY(0.02);opacity:0;}}
+.genie-in{animation:genieIn 0.54s cubic-bezier(0.34,1.1,0.64,1) both;}
+.genie-out{animation:genieOut 0.36s cubic-bezier(0.4,0,0.8,1) both;}
 .pt-icon{width:90px;height:90px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:44px;background:rgba(14,203,129,.14);}
 .pt-confetti{font-size:20px;position:absolute;top:16px;left:50%;transform:translateX(-50%);letter-spacing:6px;opacity:.7;}
 .pt-heading{font-size:24px;font-weight:800;color:#0ecb81;margin-bottom:6px;}
@@ -1705,19 +1705,21 @@ function showPlanUpgradePopup(plan) {
     `<li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${cfg.color}" stroke-width="3" stroke-linecap="round"><polyline points="20,6 9,17 4,12"/></svg>${f}</li>`
   ).join('');
   document.getElementById('pu-cta').style.background = cfg.color;
-  box.classList.remove('sv-genie-out');
-  void box.offsetWidth;
+  box.classList.remove('genie-out');
   overlay.classList.add('open');
-  box.classList.add('sv-genie-in');
-  box.addEventListener('animationend', () => box.classList.remove('sv-genie-in'), { once: true });
+  void box.offsetWidth;
+  box.classList.add('genie-in');
+  box.addEventListener('animationend', () => box.classList.remove('genie-in'), { once: true });
 }
 function closePlanPopup() {
   const overlay = document.getElementById('pu-overlay');
   const box     = overlay.querySelector('.pu-box');
-  box.classList.remove('sv-genie-in');
-  box.classList.add('sv-genie-out');
-  overlay.classList.remove('open');
-  box.addEventListener('animationend', () => box.classList.remove('sv-genie-out'), { once: true });
+  box.classList.remove('genie-in');
+  box.classList.add('genie-out');
+  box.addEventListener('animationend', () => {
+    box.classList.remove('genie-out');
+    overlay.classList.remove('open');
+  }, { once: true });
 }
 
 /* ── Profit Target assigned one-time popup ── */
@@ -1742,21 +1744,23 @@ async function checkProfitTargetPopup(userId) {
     setTimeout(() => {
       const ov2 = document.getElementById('pt-overlay');
       const bx2 = ov2.querySelector('.pt-box');
-      bx2.classList.remove('sv-genie-out');
-      void bx2.offsetWidth;
+      bx2.classList.remove('genie-out');
       ov2.classList.add('open');
-      bx2.classList.add('sv-genie-in');
-      bx2.addEventListener('animationend', () => bx2.classList.remove('sv-genie-in'), { once: true });
+      void bx2.offsetWidth;
+      bx2.classList.add('genie-in');
+      bx2.addEventListener('animationend', () => bx2.classList.remove('genie-in'), { once: true });
     }, 1200);
   } catch(e) { console.error('checkProfitTargetPopup', e); }
 }
 function closePTPopup() {
   const overlay = document.getElementById('pt-overlay');
   const box     = overlay.querySelector('.pt-box');
-  box.classList.remove('sv-genie-in');
-  box.classList.add('sv-genie-out');
-  overlay.classList.remove('open');
-  box.addEventListener('animationend', () => box.classList.remove('sv-genie-out'), { once: true });
+  box.classList.remove('genie-in');
+  box.classList.add('genie-out');
+  box.addEventListener('animationend', () => {
+    box.classList.remove('genie-out');
+    overlay.classList.remove('open');
+  }, { once: true });
 }
 </script>
 

@@ -246,13 +246,13 @@ body.light select option{background:#fff;color:#111;}
 .empty-state p{font-size:13px;color:var(--sub);}
 
 /* MODAL */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);opacity:0;pointer-events:none;visibility:hidden;transition:opacity .3s ease,visibility 0s linear .5s;}
-.modal-overlay.open{opacity:1;pointer-events:auto;visibility:visible;transition:opacity .3s ease,visibility 0s;}
-.modal{background:var(--s1);border:1px solid var(--b2);border-radius:16px;padding:28px;width:440px;max-width:96vw;max-height:90vh;overflow-y:auto;transform-origin:center bottom;will-change:clip-path,transform;}
-@keyframes svGenieIn{0%{opacity:0;transform:scaleX(.18) translateY(42px);clip-path:polygon(38% 94%,62% 94%,62% 100%,38% 100%);}10%{opacity:1;}40%{transform:scaleX(.88) translateY(14px);clip-path:polygon(0% 0%,100% 0%,64% 100%,36% 100%);}62%{transform:scale(1) translateY(0);clip-path:polygon(0% 0%,100% 0%,100% 100%,0% 100%);}76%{transform:scale(1.04,1.03) translateY(-5px);}88%{transform:scale(.98,.99) translateY(2px);}100%{opacity:1;transform:scale(1) translateY(0);clip-path:polygon(0% 0%,100% 0%,100% 100%,0% 100%);}}
-@keyframes svGenieOut{0%{opacity:1;transform:scale(1) translateY(0);clip-path:polygon(0% 0%,100% 0%,100% 100%,0% 100%);}15%{transform:scale(1.02,1.01) translateY(-3px);}42%{transform:scaleX(.9) translateY(12px);clip-path:polygon(0% 0%,100% 0%,64% 100%,36% 100%);}70%{opacity:.4;clip-path:polygon(22% 0%,78% 0%,55% 100%,45% 100%);transform:scaleX(.45) translateY(30px);}100%{opacity:0;clip-path:polygon(40% 94%,60% 94%,60% 100%,40% 100%);transform:scaleX(.18) translateY(42px);}}
-.sv-genie-in{animation:svGenieIn .70s cubic-bezier(0.34,1.72,0.64,1) both;}
-.sv-genie-out{animation:svGenieOut .42s cubic-bezier(0.4,0,0.8,1) both;}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:999;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--s1);border:1px solid var(--b2);border-radius:16px;padding:28px;width:440px;max-width:96vw;max-height:90vh;overflow-y:auto;transform-origin:center 85%;will-change:clip-path,transform;}
+@keyframes genieIn{0%{opacity:.7;clip-path:polygon(48% 100%,52% 100%,52% 100%,48% 100%,48% 100%,52% 100%);transform:scaleY(0.02);}18%{opacity:1;clip-path:polygon(0% 0%,100% 0%,74% 50%,62% 100%,38% 100%,26% 50%);transform:scaleY(0.58);}50%{clip-path:polygon(0% 0%,100% 0%,90% 50%,82% 100%,18% 100%,10% 50%);transform:scaleY(0.84);}78%{clip-path:polygon(0% 0%,100% 0%,98% 50%,94% 100%,6% 100%,2% 50%);transform:scaleY(0.97);}100%{clip-path:polygon(0% 0%,100% 0%,100% 50%,100% 100%,0% 100%,0% 50%);transform:scaleY(1);opacity:1;}}
+@keyframes genieOut{0%{clip-path:polygon(0% 0%,100% 0%,100% 50%,100% 100%,0% 100%,0% 50%);transform:scaleY(1);opacity:1;}20%{clip-path:polygon(0% 0%,100% 0%,98% 50%,94% 100%,6% 100%,2% 50%);transform:scaleY(0.97);}50%{clip-path:polygon(0% 0%,100% 0%,90% 50%,82% 100%,18% 100%,10% 50%);transform:scaleY(0.84);opacity:1;}80%{clip-path:polygon(0% 0%,100% 0%,74% 50%,62% 100%,38% 100%,26% 50%);transform:scaleY(0.56);opacity:.8;}100%{clip-path:polygon(48% 100%,52% 100%,52% 100%,48% 100%,48% 100%,52% 100%);transform:scaleY(0.02);opacity:0;}}
+.genie-in{animation:genieIn 0.54s cubic-bezier(0.34,1.1,0.64,1) both;}
+.genie-out{animation:genieOut 0.36s cubic-bezier(0.4,0,0.8,1) both;}
 .modal-title{font-size:18px;font-weight:800;color:var(--text);margin-bottom:6px;}
 .modal-sub{font-size:13px;color:var(--sub);margin-bottom:22px;}
 .modal-field{margin-bottom:14px;}
@@ -1122,19 +1122,21 @@ function openVerifyModal(type){
     : 'Verify your identity to complete this crypto withdrawal';
   const ov = document.getElementById('modal-overlay');
   const m  = ov.querySelector('.modal');
-  m.classList.remove('sv-genie-out');
-  void m.offsetWidth;
+  m.classList.remove('genie-out');
   ov.classList.add('open');
-  m.classList.add('sv-genie-in');
-  m.addEventListener('animationend', () => m.classList.remove('sv-genie-in'), { once: true });
+  void m.offsetWidth;
+  m.classList.add('genie-in');
+  m.addEventListener('animationend', () => m.classList.remove('genie-in'), { once: true });
 }
 function closeModal(){
   const ov = document.getElementById('modal-overlay');
   const m  = ov.querySelector('.modal');
-  m.classList.remove('sv-genie-in');
-  m.classList.add('sv-genie-out');
-  ov.classList.remove('open');
-  m.addEventListener('animationend', () => m.classList.remove('sv-genie-out'), { once: true });
+  m.classList.remove('genie-in');
+  m.classList.add('genie-out');
+  m.addEventListener('animationend', () => {
+    m.classList.remove('genie-out');
+    ov.classList.remove('open');
+  }, { once: true });
 }
 
 let codeTimer;
