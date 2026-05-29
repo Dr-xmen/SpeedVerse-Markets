@@ -607,7 +607,7 @@
         <div class="card">
           <div class="card__body--p0 table-wrap">
             <table class="data-table">
-              <thead><tr><th>User</th><th>Account</th><th>Balance</th><th>Equity</th><th>Margin Used</th><th>P&amp;L</th><th>Actions</th></tr></thead>
+              <thead><tr><th>Email</th><th>Name</th><th>Balance</th><th>Equity</th><th>Plan</th><th>P&amp;L</th><th>Actions</th></tr></thead>
               <tbody id="balances-tbody"></tbody>
             </table>
           </div>
@@ -930,6 +930,41 @@
   </div>
 </div>
 
+<!-- Credit / Debit Modal -->
+<div class="modal-overlay" id="modal-credit-debit">
+  <div class="modal" style="max-width:400px;">
+    <div class="modal__head"><div class="modal__title">Credit / Debit Account</div><button class="modal__close" onclick="closeModal('modal-credit-debit')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div class="modal__body">
+      <input type="hidden" id="cd-user-id"/>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:14px;">Adjusting balance for <strong id="cd-user-name" style="color:var(--text)"></strong></p>
+      <div class="field" style="margin-bottom:12px;">
+        <label class="field__label">Current Balance</label>
+        <input type="text" class="field__input" id="cd-current-balance" disabled style="color:var(--green);font-weight:700;"/>
+      </div>
+      <div class="field" style="margin-bottom:12px;">
+        <label class="field__label">Operation</label>
+        <select class="field__input" id="cd-type">
+          <option value="credit">Credit (Add funds)</option>
+          <option value="debit">Debit (Remove funds)</option>
+          <option value="set_pnl">Set P&amp;L</option>
+        </select>
+      </div>
+      <div class="field" style="margin-bottom:12px;">
+        <label class="field__label">Amount (USD)</label>
+        <input type="number" class="field__input" id="cd-amount" placeholder="0.00" min="0" step="0.01"/>
+      </div>
+      <div class="field" style="margin-bottom:0;">
+        <label class="field__label">Note (optional)</label>
+        <input type="text" class="field__input" id="cd-note" placeholder="e.g. Manual deposit, bonus, correction…"/>
+      </div>
+    </div>
+    <div class="modal__foot">
+      <button class="btn btn--outline" onclick="closeModal('modal-credit-debit')">Cancel</button>
+      <button class="btn btn--primary" onclick="saveCreditDebit()">Apply</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast">
   <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
   <span id="toast-msg">Done</span>
@@ -1148,11 +1183,11 @@ window.loadDashStats = async function() {
       { data: balData }, { count: openPos }, { data: volData },
     ] = await Promise.all([
       db.from('profiles').select('*', { count:'exact', head:true }),
-      db.from('trading_accounts').select('*', { count:'exact', head:true }).eq('type','live'),
+      db.from('profiles').select('*', { count:'exact', head:true }).eq('account_type','live'),
       db.from('deposit_requests').select('*', { count:'exact', head:true }).eq('status','pending'),
       db.from('withdrawal_requests').select('*', { count:'exact', head:true }).eq('status','pending'),
       db.from('kyc_submissions').select('*', { count:'exact', head:true }).eq('status','pending'),
-      db.from('trading_accounts').select('balance'),
+      db.from('profiles').select('balance'),
       db.from('positions').select('*', { count:'exact', head:true }).eq('status','open'),
       db.from('transactions').select('amount').gte('created_at', todayStart.toISOString()),
     ]);
@@ -1182,6 +1217,7 @@ window.renderAll = async function() {
   await Promise.all([
     renderUsersLive(), renderRecentUsers(), renderActivityFeed(),
     renderKYCLive(), renderDepositsLive(), renderWithdrawalsLive(),
+    renderBalancesLive(),
   ]);
 };
 
@@ -1250,6 +1286,7 @@ function renderUsersTable(rows) {
       <td onclick="event.stopPropagation()"><div class="row-actions">
         <button class="btn btn--sm btn--outline" onclick="openEditUser('${u.id}')">Edit</button>
         <button class="btn btn--sm btn--primary" onclick="openUpgradePlan('${u.id}','${(u.first_name||u.email||'User').replace(/'/g,"\\'")}','${u.plan||'Starter'}')">Upgrade</button>
+        <button class="btn btn--sm btn--green" onclick="openCreditDebit('${u.id}','${(u.first_name||u.email||'User').replace(/'/g,"\\'")}',${u.balance||0})">Credit/Debit</button>
         <button class="btn btn--sm ${u.status==='suspended'?'btn--green':'btn--red'}" onclick="toggleUserStatus('${u.id}','${u.status}')">${u.status==='suspended'?'Unsuspend':'Suspend'}</button>
       </div></td>
     </tr>`;
@@ -1416,20 +1453,22 @@ window.applyAdjustment = async function() {
 /* ── Balances ── */
 window.renderBalancesLive = async function() {
   const db = window.SV_DB; if (!db) return;
-  const { data } = await db.from('trading_accounts').select('*');
+  const { data, error } = await db.from('profiles').select('id,email,first_name,last_name,balance,pnl,account_type,plan').order('balance', { ascending:false });
   const tbody = document.getElementById('balances-tbody');
   if (!tbody) return;
-  if (!data?.length) { tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:24px;">No accounts</td></tr>`; return; }
-  tbody.innerHTML = data.map(a => {
-    const pnl = parseFloat(a.pnl||0);
+  if (error || !data?.length) { tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:24px;">${error ? 'Error: '+error.message : 'No accounts'}</td></tr>`; return; }
+  tbody.innerHTML = data.map(p => {
+    const pnl    = parseFloat(p.pnl||0);
+    const name   = [p.first_name, p.last_name].filter(Boolean).join(' ') || p.email || '—';
+    const equity = parseFloat(p.balance||0) + pnl;
     return `<tr>
-      <td>${a.user_email||a.user_id||'—'}</td>
-      <td><code style="font-size:11px;">${a.account_number||a.id.slice(0,8)}</code></td>
-      <td>${fmtMoney(a.balance||0)}</td>
-      <td>${fmtMoney(a.equity||a.balance||0)}</td>
-      <td>${fmtMoney(a.margin_used||0)}</td>
+      <td>${p.email||'—'}</td>
+      <td>${name}</td>
+      <td>${fmtMoney(p.balance||0)}</td>
+      <td style="color:${equity>=0?'var(--green)':'var(--red)'}">${fmtMoney(equity)}</td>
+      <td><span class="badge-pill ${p.plan==='Elite'?'pill-blue':p.plan==='Platinum'?'pill-purple':p.plan==='Gold'?'pill-orange':p.plan==='Silver'?'pill-blue':'pill-grey'}">${p.plan||'Starter'}</span></td>
       <td style="color:${pnl>=0?'var(--green)':'var(--red)'}">${pnl>=0?'+':''}${fmtMoney(pnl)}</td>
-      <td><button class="btn btn--sm btn--outline" onclick="openAdjustBalance('${a.id}','${a.user_email||''}',${a.balance||0})">Adjust</button></td>
+      <td onclick="event.stopPropagation()"><button class="btn btn--sm btn--primary" onclick="openCreditDebit('${p.id}','${(name).replace(/'/g,"\\'")}',${p.balance||0})">Credit / Debit</button></td>
     </tr>`;
   }).join('');
 };
@@ -1599,6 +1638,80 @@ window.saveUpgradePlan = async function() {
   showToast(`Plan upgraded to ${plan}`);
   closeModal('modal-upgrade-plan');
   await renderUsersLive();
+};
+
+/* ── Credit / Debit ── */
+window.openCreditDebit = function(userId, userName, currentBalance) {
+  document.getElementById('cd-user-id').value = userId;
+  document.getElementById('cd-user-name').textContent = userName;
+  document.getElementById('cd-current-balance').value = fmtMoney(currentBalance);
+  document.getElementById('cd-amount').value = '';
+  document.getElementById('cd-note').value = '';
+  document.getElementById('cd-type').value = 'credit';
+  openModal('modal-credit-debit');
+};
+
+window.saveCreditDebit = async function() {
+  const db = window.SV_DB; if (!db) return;
+  const userId  = document.getElementById('cd-user-id').value;
+  const type    = document.getElementById('cd-type').value;
+  const amount  = parseFloat(document.getElementById('cd-amount').value);
+  const note    = document.getElementById('cd-note').value.trim();
+  if (!amount || amount <= 0) { showToast('Enter a valid amount', 'error'); return; }
+
+  /* Fetch current balance + pnl */
+  const { data: prof, error: fetchErr } = await db.from('profiles').select('balance,pnl,email,first_name').eq('id', userId).maybeSingle();
+  if (fetchErr || !prof) { showToast('User not found', 'error'); return; }
+
+  let update = {};
+  let txType = type;
+  let newBalance = parseFloat(prof.balance||0);
+  let newPnl     = parseFloat(prof.pnl||0);
+
+  if (type === 'credit') {
+    newBalance += amount;
+    update = { balance: newBalance };
+  } else if (type === 'debit') {
+    newBalance = Math.max(0, newBalance - amount);
+    update = { balance: newBalance };
+  } else if (type === 'set_pnl') {
+    newPnl = amount;
+    update = { pnl: newPnl };
+    txType = 'pnl_adjustment';
+  }
+
+  const { error } = await db.from('profiles').update(update).eq('id', userId);
+  if (error) { showToast('Error: ' + error.message, 'error'); return; }
+
+  /* Log transaction */
+  await db.from('transactions').insert({
+    user_id:    userId,
+    user_email: prof.email || '',
+    type:       txType,
+    amount:     type === 'debit' ? -amount : amount,
+    currency:   'USD',
+    status:     'completed',
+    note:       note || null,
+  });
+
+  /* Notify user */
+  const displayName = prof.first_name || prof.email || 'User';
+  const notifTitle = type === 'credit'   ? `Account Credited $${amount.toLocaleString()}` :
+                     type === 'debit'    ? `Account Debited $${amount.toLocaleString()}`  :
+                                           `Account P&L Updated`;
+  const notifMsg   = type === 'credit'   ? `$${amount.toLocaleString()} has been added to your account. New balance: $${newBalance.toLocaleString()}.${note ? ' Note: ' + note : ''}` :
+                     type === 'debit'    ? `$${amount.toLocaleString()} has been deducted from your account. New balance: $${newBalance.toLocaleString()}.${note ? ' Note: ' + note : ''}` :
+                                           `Your account P&L has been updated to $${newPnl.toLocaleString()}.${note ? ' Note: ' + note : ''}`;
+  await db.from('notifications').insert({
+    user_id: userId, title: notifTitle, message: notifMsg, type: 'account', enabled: true,
+  });
+
+  await logAudit(txType, userId, `${type === 'set_pnl' ? 'P&L set to' : type === 'credit' ? 'Credited' : 'Debited'} $${amount}${note ? ' — '+note : ''}`);
+  showToast(`${type === 'credit' ? 'Credited' : type === 'debit' ? 'Debited' : 'P&L set'}: $${amount.toLocaleString()}`);
+  closeModal('modal-credit-debit');
+  await renderUsersLive();
+  await renderBalancesLive();
+  await loadDashStats();
 };
 
 /* ── Transactions ── */
