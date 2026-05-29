@@ -384,10 +384,10 @@ html.mob .filter-controls{gap:6px;}
   </nav>
   <div class="sb-bottom">
     <div class="sb-user">
-      <div class="sb-avatar">S</div>
+      <div class="sb-avatar" id="sb-avatar">S</div>
       <div class="sb-user-info">
-        <div class="sb-user-name">SpeedVerse User</div>
-        <div class="sb-user-uid">UID: 92847362 &nbsp;<span class="sb-vip">VIP 3</span></div>
+        <div class="sb-user-name" id="sb-user-name">Loading…</div>
+        <div class="sb-user-uid" id="sb-user-uid"></div>
       </div>
     </div>
     <button onclick="doSignOut()" style="width:100%;display:flex;align-items:center;gap:10px;padding:12px 14px;font-size:13px;color:var(--red);background:none;border:none;border-top:1px solid var(--b);cursor:pointer;transition:background .15s;" onmouseover="this.style.background='rgba(246,70,93,.06)'" onmouseout="this.style.background='none'">
@@ -633,15 +633,14 @@ function renderHistory() {
   if (!user) { window.location.href = 'login.html'; return; }
 
   /* Populate sidebar */
-  try {
-    const { data: prof } = await db.from('profiles').select('first_name,last_name,email').eq('id', user.id).single();
-    const name = prof ? `${prof.first_name||''} ${prof.last_name||''}`.trim() || prof.email : user.email;
-    const initials = name.slice(0,2).toUpperCase();
-    document.querySelectorAll('.sb-avatar').forEach(el => el.textContent = initials);
-    document.querySelectorAll('.sb-user-name').forEach(el => el.textContent = name);
-    document.querySelectorAll('.sb-user-uid').forEach(el => el.textContent = 'UID: ' + user.id.slice(0,8));
-    document.querySelectorAll('.hdr-avatar').forEach(el => el.textContent = initials);
-  } catch(e) {}
+  const email = user.email || '';
+  const { data: profile } = await db.from('profiles').select('first_name,last_name').eq('id', user.id).maybeSingle();
+  const firstName = profile?.first_name || '';
+  const displayName = firstName ? [firstName, profile.last_name].filter(Boolean).join(' ') : email.split('@')[0];
+  const initials = displayName.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase() || 'SV';
+  document.getElementById('sb-avatar').textContent    = initials;
+  document.getElementById('sb-user-name').textContent = displayName;
+  document.getElementById('sb-user-uid').textContent  = email;
 
   /* Load transactions (deposits/withdrawals only) */
   const { data: txns } = await db.from('transactions')

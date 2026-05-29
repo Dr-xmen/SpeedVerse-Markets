@@ -1019,11 +1019,14 @@ window._minDeposit = 0;
 
     updatePaymentBtn();
     initNotifPopup(db, user.id);
-    const _name=user.user_metadata?.first_name?(user.user_metadata.first_name+(user.user_metadata.last_name?' '+user.user_metadata.last_name:'')):(user.email||'').split('@')[0];
-    const _ini=_name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()||'SV';
-    document.querySelectorAll('.sb-avatar').forEach(el=>el.textContent=_ini);
-    document.querySelectorAll('.sb-user-name').forEach(el=>el.textContent=_name);
-    document.querySelectorAll('.sb-user-uid').forEach(el=>el.textContent=user.email||'');
+    const _email = user.email || '';
+    const { data: _profile } = await db.from('profiles').select('first_name,last_name').eq('id', user.id).maybeSingle();
+    const _firstName = _profile?.first_name || '';
+    const _displayName = _firstName ? [_firstName, _profile.last_name].filter(Boolean).join(' ') : _email.split('@')[0];
+    const _ini = _displayName.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()||'SV';
+    document.getElementById('sb-avatar').textContent    = _ini;
+    document.getElementById('sb-user-name').textContent = _displayName;
+    document.getElementById('sb-user-uid').textContent  = _email;
   } catch(e) {}
 })();
 </script>
