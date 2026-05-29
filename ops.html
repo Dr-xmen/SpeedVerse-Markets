@@ -1839,9 +1839,47 @@ window.renderDepositsLive = async function() {
 };
 async function approveDeposit(id) {
   const db = window.SV_DB; if (!db) return;
-  await db.from('deposit_requests').update({ status:'approved' }).eq('id', id);
-  await logAudit('approve_deposit', id, '');
-  showToast('Deposit approved');
+  /* 1. Fetch the request */
+  const { data: req, error: reqErr } = await db.from('deposit_requests').select('*').eq('id', id).single();
+  if (reqErr || !req) { showToast('Could not load deposit request', 'error'); return; }
+
+  /* 2. Mark approved */
+  await db.from('deposit_requests').update({ status: 'approved' }).eq('id', id);
+
+  /* 3. Credit user balance */
+  const amount = parseFloat(req.amount) || 0;
+  if (amount > 0 && req.user_id) {
+    const { data: prof } = await db.from('profiles').select('balance').eq('id', req.user_id).single();
+    const newBalance = (parseFloat(prof?.balance) || 0) + amount;
+    await db.from('profiles').update({ balance: newBalance }).eq('id', req.user_id);
+  }
+
+  /* 4. Write to transactions so it appears on history page */
+  await db.from('transactions').insert({
+    user_id:    req.user_id,
+    user_email: req.user_email,
+    type:       'deposit',
+    amount:     amount,
+    currency:   req.coin || req.currency || 'USD',
+    note:       `Deposit approved — ${req.coin || 'Crypto'} ${req.network ? '(' + req.network + ')' : ''}`.trim(),
+    status:     'completed',
+    created_at: new Date().toISOString(),
+  });
+
+  /* 5. Notify the user */
+  if (req.user_id) {
+    await db.from('notifications').insert({
+      user_id: req.user_id,
+      title:   'Deposit Approved',
+      message: `Your deposit of $${amount.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})} has been approved and credited to your account.`,
+      type:    'deposit',
+      read:    false,
+      created_at: new Date().toISOString(),
+    });
+  }
+
+  await logAudit('approve_deposit', id, `$${amount} for ${req.user_email}`);
+  showToast('Deposit approved — balance credited');
   renderDepositsLive(); loadDashStats();
 }
 async function rejectDeposit(id) {
