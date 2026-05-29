@@ -366,6 +366,10 @@
         <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
         Trades
       </button>
+      <button class="nav-item" onclick="showPage('profit-targets',this)">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+        Profit Targets
+      </button>
 
       <div class="sidebar__section-label">Finance</div>
       <button class="nav-item" onclick="showPage('deposits',this)">
@@ -620,6 +624,7 @@
           <div><div class="page-header__title">Trades</div><div class="page-header__sub">Open and recent positions</div></div>
           <div style="display:flex;gap:8px;">
             <button class="btn btn--outline" onclick="renderPositionsLive()"><svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button>
+            <button class="btn btn--primary" onclick="openAddPosition(null,null)">+ Add Trade</button>
             <button class="btn btn--red" onclick="forceCloseAll()">Force Close All</button>
           </div>
         </div>
@@ -628,6 +633,25 @@
             <table class="data-table">
               <thead><tr><th>Ticket</th><th>User</th><th>Symbol</th><th>Side</th><th>Lots</th><th>Open Price</th><th>Current</th><th>P&amp;L</th><th>Opened</th><th>Actions</th></tr></thead>
               <tbody id="positions-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROFIT TARGETS -->
+      <div class="page" id="page-profit-targets">
+        <div class="page-header">
+          <div><div class="page-header__title">Profit Targets</div><div class="page-header__sub">Manage user profit targets and trade entries</div></div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn--outline" onclick="renderProfitTargetsLive()"><svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button>
+            <button class="btn btn--primary" onclick="openSetProfitTarget(null,null,null)">Set Target</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card__body--p0 table-wrap">
+            <table class="data-table">
+              <thead><tr><th>User</th><th>Label</th><th>Target</th><th>Current Progress</th><th>%</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody id="pt-tbody"></tbody>
             </table>
           </div>
         </div>
@@ -962,6 +986,81 @@
   </div>
 </div>
 
+<!-- Add Position Modal -->
+<div class="modal-overlay" id="modal-add-position">
+  <div class="modal" style="max-width:520px;">
+    <div class="modal__head"><div class="modal__title">Add Trade to User Account</div><button class="modal__close" onclick="closeModal('modal-add-position')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div class="modal__body">
+      <input type="hidden" id="ap-user-id">
+      <div class="form-grid">
+        <div class="field"><label>User Email</label><input type="text" id="ap-user-email" placeholder="user@email.com"></div>
+        <div class="field"><label>Symbol</label><input type="text" id="ap-symbol" placeholder="e.g. BTC/USDT" value="BTC/USDT"></div>
+        <div class="field"><label>Side</label>
+          <select id="ap-side"><option value="buy">Buy / Long</option><option value="sell">Sell / Short</option></select>
+        </div>
+        <div class="field"><label>Lots / Size</label><input type="number" id="ap-lots" placeholder="e.g. 0.5" step="0.01" min="0"></div>
+        <div class="field"><label>Open Price</label><input type="number" id="ap-open-price" placeholder="e.g. 67500" step="any"></div>
+        <div class="field"><label>Current Price</label><input type="number" id="ap-current-price" placeholder="e.g. 68200" step="any"></div>
+        <div class="field"><label>P&L (USD)</label><input type="number" id="ap-pnl" placeholder="e.g. 350.00" step="any"></div>
+        <div class="field"><label>Leverage</label><input type="text" id="ap-leverage" placeholder="e.g. 1:100" value="1:100"></div>
+        <div class="field"><label>Stop Loss</label><input type="number" id="ap-sl" placeholder="Optional" step="any"></div>
+        <div class="field"><label>Take Profit</label><input type="number" id="ap-tp" placeholder="Optional" step="any"></div>
+        <div class="field"><label>Swap</label><input type="number" id="ap-swap" placeholder="e.g. -1.20" step="any" value="0"></div>
+        <div class="field field--full"><label>Comment / Note</label><input type="text" id="ap-comment" placeholder="Optional comment"></div>
+      </div>
+    </div>
+    <div class="modal__foot">
+      <button class="btn btn--outline" onclick="closeModal('modal-add-position')">Cancel</button>
+      <button class="btn btn--primary" onclick="saveAddPosition()">Add Trade</button>
+    </div>
+  </div>
+</div>
+
+<!-- Set Profit Target Modal -->
+<div class="modal-overlay" id="modal-set-profit-target">
+  <div class="modal" style="max-width:420px;">
+    <div class="modal__head"><div class="modal__title">Set Profit Target</div><button class="modal__close" onclick="closeModal('modal-set-profit-target')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div class="modal__body">
+      <input type="hidden" id="pt-target-id">
+      <input type="hidden" id="pt-user-id">
+      <div class="form-grid" style="grid-template-columns:1fr;">
+        <div class="field"><label>User Email</label><input type="text" id="pt-user-email" placeholder="user@email.com"></div>
+        <div class="field"><label>Target Label</label><input type="text" id="pt-label" placeholder="e.g. Q2 Growth Target"></div>
+        <div class="field"><label>Target Amount (USD)</label><input type="number" id="pt-target-amount" placeholder="e.g. 10000" step="any"></div>
+      </div>
+    </div>
+    <div class="modal__foot">
+      <button class="btn btn--outline" onclick="closeModal('modal-set-profit-target')">Cancel</button>
+      <button class="btn btn--primary" onclick="saveSetProfitTarget()">Save Target</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Profit Target Trade Modal -->
+<div class="modal-overlay" id="modal-add-pt-trade">
+  <div class="modal" style="max-width:400px;">
+    <div class="modal__head"><div class="modal__title">Add Trade Entry</div><button class="modal__close" onclick="closeModal('modal-add-pt-trade')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div class="modal__body">
+      <input type="hidden" id="ptt-target-id">
+      <input type="hidden" id="ptt-user-id">
+      <input type="hidden" id="ptt-target-amount">
+      <div style="display:flex;gap:4px;margin-bottom:14px;background:#f4f6f9;border-radius:8px;padding:4px;">
+        <button id="ptt-tab-dollar" class="btn btn--sm btn--primary" style="flex:1;" onclick="switchPTTTab('dollar')">$ Dollar</button>
+        <button id="ptt-tab-pct" class="btn btn--sm btn--outline" style="flex:1;" onclick="switchPTTTab('pct')">% Percent</button>
+      </div>
+      <div class="form-grid" style="grid-template-columns:1fr;">
+        <div class="field" id="ptt-dollar-field"><label>Amount (USD)</label><input type="number" id="ptt-amount" placeholder="e.g. 500" step="any"></div>
+        <div class="field" id="ptt-pct-field" style="display:none;"><label>Percentage (%)</label><input type="number" id="ptt-pct" placeholder="e.g. 5" step="any" min="-100" max="100"></div>
+        <div class="field"><label>Note (optional)</label><input type="text" id="ptt-note" placeholder="e.g. BTC Long closed"></div>
+      </div>
+    </div>
+    <div class="modal__foot">
+      <button class="btn btn--outline" onclick="closeModal('modal-add-pt-trade')">Cancel</button>
+      <button class="btn btn--primary" onclick="saveAddPTTrade()">Add Entry</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast">
   <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
   <span id="toast-msg">Done</span>
@@ -974,7 +1073,7 @@
   const PAGE_TITLES = {
     dashboard:'Dashboard', activity:'Live Activity', users:'User Management',
     verification:'KYC / Verification', accounts:'Trading Accounts',
-    balances:'Balances & P&L', positions:'Trades',
+    balances:'Balances & P&L', positions:'Trades', 'profit-targets':'Profit Targets',
     deposits:'Deposits', withdrawals:'Withdrawals', transactions:'All Transactions',
     announcements:'Announcements', 'markets-control':'Markets Control',
     emails:'Email Users', settings:'System Settings', audit:'Audit Log',
@@ -1274,7 +1373,7 @@ window.renderAll = async function() {
   await Promise.all([
     renderUsersLive(), renderRecentUsers(), renderActivityFeed(),
     renderKYCLive(), renderDepositsLive(), renderWithdrawalsLive(),
-    renderBalancesLive(),
+    renderBalancesLive(), renderPositionsLive(), renderProfitTargetsLive(),
   ]);
 };
 
@@ -1344,6 +1443,7 @@ function renderUsersTable(rows) {
         <button class="btn btn--sm btn--outline" onclick="openEditUser('${u.id}')">Edit</button>
         <button class="btn btn--sm btn--primary" onclick="openUpgradePlan('${u.id}','${(u.first_name||u.email||'User').replace(/'/g,"\\'")}','${u.plan||'Starter'}')">Upgrade</button>
         <button class="btn btn--sm btn--green" onclick="openCreditDebit('${u.id}','${(u.first_name||u.email||'User').replace(/'/g,"\\'")}',${u.balance||0})">Credit/Debit</button>
+        <button class="btn btn--sm btn--primary" onclick="openAddPosition('${u.id}','${(u.email||'').replace(/'/g,"\\'")}')">+ Trade</button>
         <button class="btn btn--sm ${u.status==='suspended'?'btn--green':'btn--red'}" onclick="toggleUserStatus('${u.id}','${u.status}')">${u.status==='suspended'?'Unsuspend':'Suspend'}</button>
       </div></td>
     </tr>`;
@@ -1830,6 +1930,206 @@ window.sendEmail = async function() {
   if (error) { showToast('Error: ' + error.message, 'error'); return; }
   await logAudit('send_email', to, subject);
   showToast(`Email queued for ${to} users`);
+};
+
+/* ── Add Position ── */
+window.openAddPosition = function(userId, userEmail) {
+  document.getElementById('ap-user-id').value = userId || '';
+  document.getElementById('ap-user-email').value = userEmail || '';
+  document.getElementById('ap-symbol').value = 'BTC/USDT';
+  document.getElementById('ap-side').value = 'buy';
+  ['ap-lots','ap-open-price','ap-current-price','ap-pnl','ap-sl','ap-tp','ap-comment'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = '';
+  });
+  document.getElementById('ap-leverage').value = '1:100';
+  document.getElementById('ap-swap').value = '0';
+  openModal('modal-add-position');
+};
+
+window.saveAddPosition = async function() {
+  const db = window.SV_DB; if (!db) return;
+  const emailInput = document.getElementById('ap-user-email').value.trim();
+  let userId = document.getElementById('ap-user-id').value.trim();
+  let userEmail = emailInput;
+
+  if (!userEmail) { showToast('User email required', 'error'); return; }
+
+  if (!userId) {
+    const { data: prof } = await db.from('profiles').select('id,email').eq('email', userEmail).single();
+    if (!prof) { showToast('User not found', 'error'); return; }
+    userId = prof.id;
+  }
+
+  const symbol  = document.getElementById('ap-symbol').value.trim() || 'BTC/USDT';
+  const side    = document.getElementById('ap-side').value;
+  const lots    = parseFloat(document.getElementById('ap-lots').value) || 0;
+  const openPr  = parseFloat(document.getElementById('ap-open-price').value) || 0;
+  const currPr  = parseFloat(document.getElementById('ap-current-price').value) || openPr;
+  const pnl     = parseFloat(document.getElementById('ap-pnl').value) || 0;
+  const leverage = document.getElementById('ap-leverage').value.trim() || '1:100';
+  const sl      = document.getElementById('ap-sl').value ? parseFloat(document.getElementById('ap-sl').value) : null;
+  const tp      = document.getElementById('ap-tp').value ? parseFloat(document.getElementById('ap-tp').value) : null;
+  const swap    = parseFloat(document.getElementById('ap-swap').value) || 0;
+  const comment = document.getElementById('ap-comment').value.trim();
+  const ticket  = Math.floor(Math.random() * 9000000 + 1000000);
+
+  const { error } = await db.from('positions').insert({
+    user_id: userId, user_email: userEmail,
+    ticket: ticket.toString(), symbol, side, lots,
+    open_price: openPr, current_price: currPr, pnl,
+    leverage, sl, tp, swap, comment,
+    status: 'open', opened_at: new Date().toISOString()
+  });
+  if (error) { showToast('Error: ' + error.message, 'error'); return; }
+  await logAudit('add_position', userId, `${symbol} ${side} #${ticket}`);
+  showToast('Trade added');
+  closeModal('modal-add-position');
+  renderPositionsLive();
+};
+
+/* ── Profit Targets ── */
+let _ptUsers = [];
+
+window.renderProfitTargetsLive = async function() {
+  const db = window.SV_DB; if (!db) return;
+  const { data: targets } = await db.from('profit_targets')
+    .select('*,profit_target_trades(amount)')
+    .order('created_at', { ascending:false });
+  const tbody = document.getElementById('pt-tbody');
+  if (!tbody) return;
+  if (!targets?.length) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:24px;">No profit targets set</td></tr>`;
+    return;
+  }
+  const { data: profs } = await db.from('profiles').select('id,email,first_name,last_name');
+  const profMap = {};
+  (profs||[]).forEach(p => { profMap[p.id] = p; });
+  _ptUsers = profs || [];
+
+  tbody.innerHTML = targets.map(t => {
+    const trades = t.profit_target_trades || [];
+    const progress = trades.reduce((s, tr) => s + (parseFloat(tr.amount) || 0), 0);
+    const pct = t.target_amount ? Math.min(100, (progress / t.target_amount * 100)) : 0;
+    const color = pct < 25 ? '#f6465d' : pct < 50 ? '#f0b90b' : pct < 75 ? '#f5a623' : '#0ecb81';
+    const prof = profMap[t.user_id];
+    const name = prof ? `${prof.first_name||''} ${prof.last_name||''}`.trim() || prof.email : t.user_id;
+    const email = prof?.email || '—';
+    return `<tr>
+      <td><div style="font-weight:600;font-size:12px;">${name}</div><div style="font-size:11px;color:var(--muted);">${email}</div></td>
+      <td>${t.label||'—'}</td>
+      <td>$${parseFloat(t.target_amount||0).toLocaleString()}</td>
+      <td style="color:${color};font-weight:600;">$${progress.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="flex:1;height:6px;background:#e0e3e8;border-radius:3px;overflow:hidden;">
+            <div style="height:100%;width:${pct.toFixed(1)}%;background:${color};border-radius:3px;transition:width .3s;"></div>
+          </div>
+          <span style="font-size:11px;font-weight:700;color:${color};">${pct.toFixed(1)}%</span>
+        </div>
+      </td>
+      <td><span class="badge-pill ${t.is_active?'pill-green':'pill-red'}">${t.is_active?'Active':'Inactive'}</span></td>
+      <td>
+        <div class="row-actions">
+          <button class="btn btn--sm btn--primary" onclick="openAddPTTrade('${t.id}','${t.user_id}',${t.target_amount||0})">+ Trade</button>
+          <button class="btn btn--sm btn--outline" onclick="openSetProfitTarget('${t.id}','${email}',${t.target_amount||0},'${t.label||''}','${t.user_id}')">Edit</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+};
+
+window.openSetProfitTarget = function(targetId, userEmail, targetAmount, label, userId) {
+  document.getElementById('pt-target-id').value = targetId || '';
+  document.getElementById('pt-user-id').value = userId || '';
+  document.getElementById('pt-user-email').value = userEmail || '';
+  document.getElementById('pt-label').value = label || '';
+  document.getElementById('pt-target-amount').value = targetAmount || '';
+  openModal('modal-set-profit-target');
+};
+
+window.saveSetProfitTarget = async function() {
+  const db = window.SV_DB; if (!db) return;
+  const targetId    = document.getElementById('pt-target-id').value.trim();
+  let userId        = document.getElementById('pt-user-id').value.trim();
+  const userEmail   = document.getElementById('pt-user-email').value.trim();
+  const label       = document.getElementById('pt-label').value.trim() || 'Profit Target';
+  const targetAmt   = parseFloat(document.getElementById('pt-target-amount').value);
+
+  if (!userEmail)  { showToast('User email required', 'error'); return; }
+  if (!targetAmt)  { showToast('Target amount required', 'error'); return; }
+
+  if (!userId) {
+    const { data: prof } = await db.from('profiles').select('id').eq('email', userEmail).single();
+    if (!prof) { showToast('User not found', 'error'); return; }
+    userId = prof.id;
+  }
+
+  if (targetId) {
+    const { error } = await db.from('profit_targets').update({
+      target_amount: targetAmt, label, is_active: true, updated_at: new Date().toISOString()
+    }).eq('id', targetId);
+    if (error) { showToast('Error: ' + error.message, 'error'); return; }
+  } else {
+    await db.from('profit_targets').update({ is_active: false }).eq('user_id', userId).eq('is_active', true);
+    const { error } = await db.from('profit_targets').insert({
+      user_id: userId, target_amount: targetAmt, label, is_active: true,
+      created_at: new Date().toISOString(), updated_at: new Date().toISOString()
+    });
+    if (error) { showToast('Error: ' + error.message, 'error'); return; }
+  }
+  await logAudit('set_profit_target', userId, `${label} $${targetAmt}`);
+  showToast('Profit target saved');
+  closeModal('modal-set-profit-target');
+  renderProfitTargetsLive();
+};
+
+let _pttMode = 'dollar';
+window.switchPTTTab = function(mode) {
+  _pttMode = mode;
+  document.getElementById('ptt-dollar-field').style.display = mode === 'dollar' ? '' : 'none';
+  document.getElementById('ptt-pct-field').style.display   = mode === 'pct'    ? '' : 'none';
+  document.getElementById('ptt-tab-dollar').className = `btn btn--sm ${mode==='dollar'?'btn--primary':'btn--outline'}`;
+  document.getElementById('ptt-tab-pct').className    = `btn btn--sm ${mode==='pct'?'btn--primary':'btn--outline'}`;
+};
+
+window.openAddPTTrade = function(targetId, userId, targetAmount) {
+  document.getElementById('ptt-target-id').value     = targetId;
+  document.getElementById('ptt-user-id').value       = userId;
+  document.getElementById('ptt-target-amount').value = targetAmount;
+  document.getElementById('ptt-amount').value = '';
+  document.getElementById('ptt-pct').value   = '';
+  document.getElementById('ptt-note').value  = '';
+  switchPTTTab('dollar');
+  openModal('modal-add-pt-trade');
+};
+
+window.saveAddPTTrade = async function() {
+  const db = window.SV_DB; if (!db) return;
+  const targetId    = document.getElementById('ptt-target-id').value;
+  const userId      = document.getElementById('ptt-user-id').value;
+  const targetAmt   = parseFloat(document.getElementById('ptt-target-amount').value) || 0;
+  const note        = document.getElementById('ptt-note').value.trim();
+
+  let amount, pctDelta;
+  if (_pttMode === 'dollar') {
+    amount   = parseFloat(document.getElementById('ptt-amount').value);
+    pctDelta = targetAmt ? (amount / targetAmt * 100) : 0;
+  } else {
+    pctDelta = parseFloat(document.getElementById('ptt-pct').value);
+    amount   = targetAmt ? (pctDelta / 100 * targetAmt) : 0;
+  }
+  if (!amount && amount !== 0) { showToast('Amount required', 'error'); return; }
+
+  const { error } = await db.from('profit_target_trades').insert({
+    target_id: targetId, user_id: userId,
+    amount, percentage_delta: pctDelta, note,
+    created_at: new Date().toISOString()
+  });
+  if (error) { showToast('Error: ' + error.message, 'error'); return; }
+  await logAudit('add_pt_trade', userId, `$${amount} (${pctDelta.toFixed(2)}%)`);
+  showToast('Trade entry added');
+  closeModal('modal-add-pt-trade');
+  renderProfitTargetsLive();
 };
 
 /* ── Audit Log ── */

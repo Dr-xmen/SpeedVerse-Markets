@@ -185,6 +185,22 @@ input{font-family:inherit;border:none;outline:none;background:none;color:var(--t
 /* MARKET WATCH */
 .mw-widget-wrap{height:400px;width:100%;}
 
+/* PROFIT TARGET CARD */
+.pt-card{padding:14px 16px;}
+.pt-inner{display:flex;align-items:center;gap:16px;}
+.pt-ring-wrap{position:relative;width:80px;height:80px;flex-shrink:0;}
+.pt-ring-spin{position:absolute;inset:0;border-radius:50%;animation:ptSpin 3s linear infinite;}
+@keyframes ptSpin{to{transform:rotate(360deg);}}
+.pt-ring-svg{position:absolute;inset:4px;}
+.pt-info{flex:1;min-width:0;}
+.pt-label{font-size:10.5px;color:var(--sub);font-weight:500;margin-bottom:3px;text-transform:uppercase;letter-spacing:.4px;}
+.pt-pct{font-size:22px;font-weight:800;color:var(--text);line-height:1;}
+.pt-amounts{font-size:11.5px;color:var(--sub);margin-top:3px;}
+.pt-amounts span{font-weight:700;color:var(--text);}
+.pt-bar-wrap{margin-top:10px;height:5px;background:var(--muted);border-radius:3px;overflow:hidden;}
+.pt-bar{height:100%;border-radius:3px;transition:width .6s cubic-bezier(.4,0,.2,1);}
+.pt-empty{text-align:center;padding:18px 0;font-size:12px;color:var(--sub);}
+
 /* PORTFOLIO PERFORMANCE */
 .perf-wrap{padding:12px 16px 14px;}
 .perf-summary{display:flex;align-items:baseline;gap:10px;margin-bottom:10px;}
@@ -195,7 +211,7 @@ input{font-family:inherit;border:none;outline:none;background:none;color:var(--t
 .perf-tab.active{background:var(--s3);color:var(--text);}
 .perf-tab:hover:not(.active){color:var(--text);}
 .perf-chart-area{position:relative;height:110px;margin-bottom:4px;}
-.perf-chart-area canvas{position:absolute;inset:0;width:100%!important;height:100%!important;}
+.perf-chart-area svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible;}
 .perf-x{display:flex;justify-content:space-between;font-size:9.5px;color:var(--sub);}
 
 /* POSITIONS */
@@ -579,6 +595,17 @@ html.mob .full-sec{margin-left:0 !important;margin-right:0 !important;}
       <div class="mw-widget-wrap" id="mw-container"></div>
     </div>
 
+    <!-- Profit Target Card -->
+    <div class="sec-card" id="pt-card">
+      <div class="sec-head">
+        <div class="sec-title">Profit Target</div>
+        <span style="font-size:10.5px;color:var(--sub);" id="pt-status-badge">—</span>
+      </div>
+      <div class="pt-card" id="pt-body">
+        <div class="pt-empty">No profit target set</div>
+      </div>
+    </div>
+
     <div class="sec-card">
       <div class="sec-head">
         <div class="sec-title">Portfolio Performance</div>
@@ -599,7 +626,7 @@ html.mob .full-sec{margin-left:0 !important;margin-right:0 !important;}
           <button class="perf-tab" onclick="setPerfPeriod(this,'ALL')">ALL</button>
         </div>
         <div class="perf-chart-area">
-          <canvas id="perf-canvas"></canvas>
+          <svg id="perf-svg" preserveAspectRatio="none"></svg>
         </div>
         <div class="perf-x">
           <span id="perf-x-l">—</span>
@@ -1015,8 +1042,8 @@ function setPerfPeriod(btn, period) {
 }
 
 function drawPerfChart() {
-  const canvas = document.getElementById('perf-canvas');
-  if(!canvas) return;
+  const svg = document.getElementById('perf-svg');
+  if(!svg) return;
   const raw = perfKlines[perfPeriod];
   if(!raw?.length) return;
 
@@ -1024,20 +1051,15 @@ function drawPerfChart() {
   const base = raw[0], last = raw[raw.length-1];
   const pctChg = base ? (last - base) / base * 100 : 0;
   const up = pctChg >= 0;
-  // Scale to portfolio value
   const data = raw.map(c => total * (c / last));
 
-  // Update summary
   document.getElementById('perf-total').textContent = `$${fmtUSD(total)}`;
   const chgEl = document.getElementById('perf-change');
   chgEl.style.color = up ? 'var(--green)' : 'var(--red)';
   chgEl.textContent = `${up?'+':''}${pctChg.toFixed(2)}% (${up?'+':'−'}$${fmtUSD(Math.abs(total*pctChg/100))})`;
 
-  const W = canvas.parentElement.offsetWidth || 260, H = 110;
-  canvas.width = W * window.devicePixelRatio; canvas.height = H * window.devicePixelRatio;
-  canvas.style.width = W+'px'; canvas.style.height = H+'px';
-  const ctx = canvas.getContext('2d');
-  ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+  const W = svg.parentElement.offsetWidth || 260, H = 110;
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
 
   const min = Math.min(...data), max = Math.max(...data);
   const range = max - min || 1;
@@ -1046,35 +1068,32 @@ function drawPerfChart() {
   const toY = v => H - pad - ((v-min)/range) * (H - pad*2);
 
   const color = up ? '#0ecb81' : '#f6465d';
-  const grad = ctx.createLinearGradient(0, 0, 0, H);
-  grad.addColorStop(0, up ? 'rgba(14,203,129,.22)' : 'rgba(246,70,93,.22)');
-  grad.addColorStop(1, 'rgba(0,0,0,0)');
+  const fillColor = up ? 'rgba(14,203,129,.18)' : 'rgba(246,70,93,.18)';
+  const uid = 'pg' + Date.now();
 
-  // Filled area
-  ctx.beginPath();
-  ctx.moveTo(toX(0), toY(data[0]));
+  // Build smooth bezier path
+  let linePath = `M${toX(0)},${toY(data[0])}`;
   for(let i=1;i<data.length;i++){
     const mx=(toX(i)+toX(i-1))/2;
-    ctx.bezierCurveTo(mx,toY(data[i-1]),mx,toY(data[i]),toX(i),toY(data[i]));
+    linePath += ` C${mx},${toY(data[i-1])} ${mx},${toY(data[i])} ${toX(i)},${toY(data[i])}`;
   }
-  ctx.lineTo(toX(data.length-1),H); ctx.lineTo(toX(0),H); ctx.closePath();
-  ctx.fillStyle = grad; ctx.fill();
+  const fillPath = `${linePath} L${toX(data.length-1)},${H} L${toX(0)},${H} Z`;
 
-  // Line
-  ctx.beginPath();
-  ctx.moveTo(toX(0), toY(data[0]));
-  for(let i=1;i<data.length;i++){
-    const mx=(toX(i)+toX(i-1))/2;
-    ctx.bezierCurveTo(mx,toY(data[i-1]),mx,toY(data[i]),toX(i),toY(data[i]));
-  }
-  ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.lineJoin = 'round'; ctx.stroke();
-
-  // End dot
   const ex = toX(data.length-1), ey = toY(data[data.length-1]);
-  ctx.beginPath(); ctx.arc(ex, ey, 3.5, 0, Math.PI*2);
-  ctx.fillStyle = color; ctx.fill();
 
-  // X-axis labels
+  svg.innerHTML = `
+    <defs>
+      <linearGradient id="${uid}" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="${color}" stop-opacity="0.22"/>
+        <stop offset="100%" stop-color="${color}" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+    <path d="${fillPath}" fill="url(#${uid})"/>
+    <path d="${linePath}" fill="none" stroke="${color}" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="${ex}" cy="${ey}" r="3.5" fill="${color}"/>
+    <circle cx="${ex}" cy="${ey}" r="6" fill="${color}" fill-opacity="0.2"/>
+  `;
+
   const now = new Date();
   const fmt = (d) => d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
   const fmtH = (d) => d.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
@@ -1108,37 +1127,111 @@ function renderAccountSummary() {
 /* ════════════════════════════════════════════════════════
    RENDER — OPEN POSITIONS
    ════════════════════════════════════════════════════════ */
-function renderPositions() {
-  const rows = POSITIONS.map(pos => {
-    const d = marketData[pos.symbol] || {};
-    const mark = d.price || pos.entry;
-    const isLong = pos.side === 'LONG';
-    const pnl = isLong ? (mark - pos.entry) * pos.size : (pos.entry - mark) * pos.size;
-    const pnlPct = pos.entry ? (pnl / (pos.entry * pos.size / pos.leverage)) * 100 : 0;
-    const margin = (pos.entry * pos.size) / pos.leverage;
-    // Simplified liq price
-    const liq = isLong
-      ? pos.entry * (1 - 0.9/pos.leverage)
-      : pos.entry * (1 + 0.9/pos.leverage);
-    const pnlUp = pnl >= 0;
-    return `<tr>
-      <td>
-        <div class="pos-pair">${pos.display}</div>
-        <div><span class="pos-type ${isLong?'pos-long':'pos-short'}">${pos.side} ${pos.leverage}x</span></div>
-      </td>
-      <td><div class="pos-num">${pos.size} ${pos.base}</div><div style="font-size:10.5px;color:var(--sub);">$${fmtUSD(pos.size*pos.entry)}</div></td>
-      <td><div class="pos-num">${fmtPrice(pos.entry)}</div></td>
-      <td><div class="pos-num">${fmtPrice(mark)}</div></td>
-      <td><div class="pos-num" style="color:var(--red);">${fmtPrice(liq)}</div></td>
-      <td><div class="pos-num">$${fmtUSD(margin)}</div></td>
-      <td>
-        <div class="${pnlUp?'pos-pos':'pos-neg'}">${pnlUp?'+':''}$${fmtUSD(pnl)}</div>
-        <div style="font-size:10.5px;color:${pnlUp?'var(--green)':'var(--red)'};">${pnlUp?'+':''}${pnlPct.toFixed(2)}%</div>
-      </td>
-      <td><button class="pos-close">Close</button></td>
-    </tr>`;
-  }).join('');
-  document.getElementById('positions-tbody').innerHTML = rows;
+async function renderPositions() {
+  const db = window.SV_DB;
+  const tbody = document.getElementById('positions-tbody');
+  if (!tbody) return;
+  if (!db) { tbody.innerHTML = ''; return; }
+  try {
+    const { data: user } = await db.auth.getUser();
+    if (!user?.user) return;
+    const { data: positions } = await db.from('positions')
+      .select('*').eq('user_id', user.user.id).eq('status','open')
+      .order('opened_at', { ascending: false }).limit(20);
+    const countEl = document.getElementById('pos-count');
+    const pnlEl   = document.getElementById('pos-total-pnl');
+    if (!positions?.length) {
+      tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:var(--sub);padding:20px;font-size:12.5px;">No open positions</td></tr>`;
+      if (countEl) countEl.textContent = '0 active';
+      if (pnlEl)   pnlEl.textContent   = '$0.00';
+      return;
+    }
+    let totalPnl = 0;
+    const rows = positions.map(pos => {
+      const pnl    = parseFloat(pos.pnl || 0);
+      totalPnl    += pnl;
+      const pnlUp  = pnl >= 0;
+      const side   = (pos.side || 'buy').toUpperCase();
+      const isLong = pos.side === 'buy';
+      const lev    = pos.leverage || '1:1';
+      return `<tr>
+        <td>
+          <div class="pos-pair">${pos.symbol||'—'}</div>
+          <div><span class="pos-type ${isLong?'pos-long':'pos-short'}">${side} ${lev}</span></div>
+        </td>
+        <td><div class="pos-num">${pos.lots||'—'}</div></td>
+        <td><div class="pos-num">${pos.open_price ? Number(pos.open_price).toLocaleString() : '—'}</div></td>
+        <td><div class="pos-num">${pos.current_price ? Number(pos.current_price).toLocaleString() : '—'}</div></td>
+        <td><div class="pos-num" style="color:var(--red);">—</div></td>
+        <td><div class="pos-num">—</div></td>
+        <td>
+          <div class="${pnlUp?'pos-pos':'pos-neg'}">${pnlUp?'+':''}$${Math.abs(pnl).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</div>
+        </td>
+        <td><button class="pos-close" style="pointer-events:none;opacity:.4;">Close</button></td>
+      </tr>`;
+    }).join('');
+    tbody.innerHTML = rows;
+    if (countEl) countEl.textContent = `${positions.length} active`;
+    const pnlUp = totalPnl >= 0;
+    if (pnlEl) {
+      pnlEl.style.color = pnlUp ? 'var(--green)' : 'var(--red)';
+      pnlEl.textContent = `${pnlUp?'+':'−'}$${Math.abs(totalPnl).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}`;
+    }
+  } catch(e) { console.error('renderPositions', e); }
+}
+
+async function loadProfitTarget(userId) {
+  const db = window.SV_DB;
+  const body = document.getElementById('pt-body');
+  const badge = document.getElementById('pt-status-badge');
+  if (!db || !body) return;
+  try {
+    const { data: targets } = await db.from('profit_targets')
+      .select('*,profit_target_trades(amount)')
+      .eq('user_id', userId).eq('is_active', true).limit(1);
+    const t = targets?.[0];
+    if (!t) {
+      body.innerHTML = `<div class="pt-empty">No profit target set</div>`;
+      if (badge) badge.textContent = '—';
+      return;
+    }
+    const trades   = t.profit_target_trades || [];
+    const progress = trades.reduce((s, tr) => s + (parseFloat(tr.amount) || 0), 0);
+    const target   = parseFloat(t.target_amount) || 1;
+    const pct      = Math.min(100, Math.max(0, progress / target * 100));
+    const color    = pct < 25 ? '#f6465d' : pct < 50 ? '#f0b90b' : pct < 75 ? '#f5a623' : '#0ecb81';
+    const r = 29, cx = 38, cy = 38, circ = 2 * Math.PI * r;
+    const dash = circ * (pct / 100);
+    const spinColor = color + '55';
+    if (badge) badge.textContent = t.label || 'Profit Target';
+    body.innerHTML = `
+      <div class="pt-inner">
+        <div class="pt-ring-wrap">
+          <div class="pt-ring-spin" style="background:conic-gradient(${spinColor} 0deg, transparent 90deg, ${spinColor} 180deg, transparent 270deg, ${spinColor} 360deg);"></div>
+          <svg class="pt-ring-svg" viewBox="0 0 76 76" fill="none">
+            <circle cx="38" cy="38" r="${r}" stroke="rgba(255,255,255,.07)" stroke-width="5"/>
+            <circle cx="38" cy="38" r="${r}" stroke="${color}" stroke-width="5"
+              stroke-dasharray="${dash.toFixed(2)} ${(circ-dash).toFixed(2)}"
+              stroke-dashoffset="${(circ/4).toFixed(2)}"
+              stroke-linecap="round" transform="rotate(-90 38 38)"/>
+            <text x="38" y="35" text-anchor="middle" font-size="11" font-weight="800" fill="${color}">${pct.toFixed(0)}%</text>
+            <text x="38" y="48" text-anchor="middle" font-size="7" fill="rgba(255,255,255,.45)">DONE</text>
+          </svg>
+        </div>
+        <div class="pt-info">
+          <div class="pt-label">${t.label || 'Profit Target'}</div>
+          <div class="pt-pct" style="color:${color};">${pct.toFixed(1)}%</div>
+          <div class="pt-amounts">
+            <span>$${progress.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</span>
+            &nbsp;of&nbsp;$${target.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}
+          </div>
+          <div class="pt-bar-wrap">
+            <div class="pt-bar" style="width:${pct.toFixed(1)}%;background:${color};"></div>
+          </div>
+        </div>
+      </div>
+    `;
+  } catch(e) { console.error('loadProfitTarget', e); }
 }
 
 /* ════════════════════════════════════════════════════════
@@ -1448,6 +1541,10 @@ document.addEventListener('DOMContentLoaded', init);
     }
   }
   applyBalance(profile?.balance, profile?.pnl);
+
+  /* Load profit target and positions from DB */
+  loadProfitTarget(user.id);
+  renderPositions();
 
   /* Check for one-time upgrade congrats popup */
   try {
