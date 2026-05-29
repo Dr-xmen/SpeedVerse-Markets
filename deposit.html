@@ -1016,8 +1016,10 @@ window._minDeposit = 0;
     }
 
     updatePaymentBtn();
+    initNotifPopup(db, user.id);
   } catch(e) {}
 })();
 </script>
+<script src="notif-popup.js"></script>
 </body>
 </html>

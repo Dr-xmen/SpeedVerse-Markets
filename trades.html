@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
@@ -803,6 +803,7 @@ function toggleTheme(){var light=document.body.classList.toggle('light');localSt
   renderStats(TRADES);
   renderTrades(TRADES);
 
+  initNotifPopup(db, user.id);
 })();
 
 async function doSignOut() {
@@ -811,5 +812,6 @@ async function doSignOut() {
   window.location.href = 'login.html';
 }
 </script>
+<script src="notif-popup.js"></script>
 </body>
 </html>

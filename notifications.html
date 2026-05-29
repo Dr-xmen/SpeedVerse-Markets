@@ -497,6 +497,8 @@ function loadMore() { visibleCount += 10; renderNotifications(); }
   }
   await loadNotifs();
 
+  initNotifPopup(db, user.id);
+
   /* Real-time: reload when admin sends a new notification */
   db.channel('notifs-live-' + user.id)
     .on('postgres_changes', {
@@ -511,5 +513,6 @@ async function doSignOut() {
   window.location.href = 'login.html';
 }
 </script>
+<script src="notif-popup.js"></script>
 </body>
 </html>

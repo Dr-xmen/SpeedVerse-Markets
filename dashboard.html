@@ -1661,6 +1661,9 @@ document.addEventListener('DOMContentLoaded', init);
   /* Check for unread profit-target-reached popup */
   checkProfitTargetPopup(user.id);
 
+  /* Persistent admin announcement popup */
+  initNotifPopup(db, user.id);
+
   /* Real-time: reflect any admin change (plan, balance, pnl) instantly */
   db.channel('profile-live-' + user.id)
     .on('postgres_changes', {
@@ -1754,5 +1757,6 @@ function closePTPopup() {
     <button class="pu-skip" onclick="closePlanPopup()">Maybe later</button>
   </div>
 </div>
+<script src="notif-popup.js"></script>
 </body>
 </html>

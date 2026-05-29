@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
@@ -674,6 +674,8 @@ function renderHistory() {
   renderHistory();
   applyFilters();
 
+  initNotifPopup(db, user.id);
+
   /* Real-time: reload when new transaction added */
   db.channel('history-txn-' + user.id)
     .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'transactions', filter: `user_id=eq.${user.id}` },
@@ -771,5 +773,6 @@ function closeTxDetail() {
     </div>
   </div>
 </div>
+<script src="notif-popup.js"></script>
 </body>
 </html>

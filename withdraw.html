@@ -1192,6 +1192,8 @@ let _svEmail   = '';
       if (el) el.textContent = _svBalance.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
     })
     .subscribe();
+
+  initNotifPopup(db, user.id);
 })();
 
 async function doSignOut() {
@@ -1199,5 +1201,6 @@ async function doSignOut() {
   window.location.href = 'login.html';
 }
 </script>
+<script src="notif-popup.js"></script>
 </body>
 </html>

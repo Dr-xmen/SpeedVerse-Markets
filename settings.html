@@ -1007,6 +1007,8 @@ function toggleNotif(key){
       if (opt.value === p.country || opt.text === p.country) { opt.selected = true; break; }
     }
   }
+
+  initNotifPopup(db, user.id);
 })();
 
 async function doSignOut() {
@@ -1014,5 +1016,6 @@ async function doSignOut() {
   window.location.href = 'login.html';
 }
 </script>
+<script src="notif-popup.js"></script>
 </body>
 </html>

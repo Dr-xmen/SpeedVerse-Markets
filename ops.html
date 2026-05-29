@@ -823,27 +823,65 @@
       <!-- ANNOUNCEMENTS -->
       <div class="page" id="page-announcements">
         <div class="page-header">
-          <div><div class="page-header__title">Announcements</div><div class="page-header__sub">Publish platform-wide messages</div></div>
+          <div><div class="page-header__title">Announcements</div><div class="page-header__sub">Push notifications to user dashboards</div></div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn--outline" onclick="renderAnnouncementsLive()"><svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button>
+          </div>
         </div>
-        <div class="two-col-grid">
-          <div class="card">
-            <div class="card__head"><div class="card__title">New Announcement</div></div>
-            <div class="card__body">
-              <div class="form-grid" style="grid-template-columns:1fr;">
-                <div class="field"><label>Title</label><input type="text" id="ann-title" placeholder="Announcement title"></div>
-                <div class="field"><label>Message</label><textarea id="ann-body" rows="5" placeholder="Write your announcement…"></textarea></div>
-                <div class="field"><label>Type</label>
-                  <select id="ann-type">
-                    <option>Info</option><option>Warning</option><option>Success</option><option>Promo</option>
-                  </select>
-                </div>
+
+        <!-- Compose -->
+        <div class="card" style="margin-bottom:20px;">
+          <div class="card__head"><div class="card__title" id="ann-card-title">New Announcement</div></div>
+          <div class="card__body">
+            <div class="form-grid">
+              <div class="field field--full"><label>Title</label><input type="text" id="ann-title" placeholder="e.g. System Maintenance Notice"></div>
+              <div class="field field--full"><label>Message</label><textarea id="ann-body" rows="4" placeholder="Write your announcement…"></textarea></div>
+              <div class="field">
+                <label>Type</label>
+                <select id="ann-type">
+                  <option value="info">Info</option>
+                  <option value="warning">Warning</option>
+                  <option value="success">Success</option>
+                  <option value="urgent">Urgent</option>
+                </select>
               </div>
-              <button class="btn btn--primary" style="margin-top:16px;width:100%;" onclick="publishAnnouncement()">Publish</button>
+              <div class="field">
+                <label>Target Audience</label>
+                <select id="ann-audience" onchange="onAnnAudienceChange(this.value)">
+                  <option value="all">All Users</option>
+                  <option value="specific">Specific User</option>
+                </select>
+              </div>
+              <div class="field field--full" id="ann-specific-wrap" style="display:none;">
+                <label>Select User</label>
+                <select id="ann-specific-user"><option value="">— Select a user —</option></select>
+              </div>
+            </div>
+            <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;">
+              <button class="btn btn--primary" id="ann-submit-btn" onclick="publishAnnouncement()">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                Publish Now
+              </button>
+              <button class="btn btn--outline" onclick="resetAnnForm()">Clear</button>
+              <button class="btn btn--outline btn--red" id="ann-cancel-btn" style="display:none;" onclick="resetAnnForm()">Cancel Edit</button>
             </div>
           </div>
-          <div class="card">
-            <div class="card__head"><div class="card__title">Recent Announcements</div></div>
-            <div class="card__body" id="ann-list"><div style="color:var(--muted);font-size:13px;">Loading…</div></div>
+        </div>
+
+        <!-- History table -->
+        <div class="card">
+          <div class="card__head">
+            <div class="card__title">Announcement History</div>
+            <button class="btn btn--sm btn--outline" onclick="renderAnnouncementsLive()">Refresh</button>
+          </div>
+          <div class="card__body--p0 table-wrap">
+            <table class="data-table">
+              <thead><tr>
+                <th>Sent</th><th>Title</th><th>Message</th><th>Type</th>
+                <th>Audience</th><th>Recipients</th><th>Popup Active</th><th>Actions</th>
+              </tr></thead>
+              <tbody id="ann-tbody"></tbody>
+            </table>
           </div>
         </div>
       </div>
@@ -1400,6 +1438,7 @@
   showPage(savedPage, savedBtn);
 
   renderMarketsControl();
+  renderAnnouncementsLive();
   await loadDashStats();
   await renderAll();
   await loadDepositAddresses();
@@ -2254,43 +2293,178 @@ window.renderTransactionsLive = async function() {
 };
 
 /* ── Announcements ── */
-window.publishAnnouncement = async function() {
-  const db = window.SV_DB; if (!db) return;
-  const title = document.getElementById('ann-title').value.trim();
-  const body  = document.getElementById('ann-body').value.trim();
-  const type  = document.getElementById('ann-type').value;
-  if (!title || !body) { showToast('Title and message required', 'error'); return; }
-  const { error } = await db.from('announcements').insert({ title, body, type, published_by: _adminUser?.email, created_at: new Date().toISOString() });
-  if (error) { showToast('Error: ' + error.message, 'error'); return; }
-  const { data: allUsers } = await db.from('profiles').select('id');
-  if (allUsers?.length) {
-    await db.from('notifications').insert(
-      allUsers.map(u => ({
-        user_id: u.id, type: 'announcement',
-        title: title, message: body,
-        read: false, enabled: true,
-        created_at: new Date().toISOString()
-      }))
-    );
-  }
-  await logAudit('publish_announcement', title, type);
-  showToast('Announcement published');
-  document.getElementById('ann-title').value = '';
-  document.getElementById('ann-body').value  = '';
-  loadAnnouncementList();
+let _editingAnnId = null;
+
+window.onAnnAudienceChange = function(val) {
+  const wrap = document.getElementById('ann-specific-wrap');
+  if (!wrap) return;
+  wrap.style.display = val === 'specific' ? '' : 'none';
+  if (val === 'specific') _populateAnnUserDropdown();
 };
-async function loadAnnouncementList() {
+
+async function _populateAnnUserDropdown() {
   const db = window.SV_DB; if (!db) return;
-  const { data } = await db.from('announcements').select('*').order('created_at', { ascending:false }).limit(10);
-  const el = document.getElementById('ann-list');
-  if (!el) return;
-  if (!data?.length) { el.innerHTML = `<div style="color:var(--muted);font-size:13px;">No announcements yet</div>`; return; }
-  el.innerHTML = data.map(a => `
-    <div style="padding:12px 0;border-bottom:1px solid var(--border);">
-      <div style="font-size:13px;font-weight:600;">${a.title}</div>
-      <div style="font-size:12px;color:var(--muted);margin-top:2px;">${fmtDate(a.created_at)} &middot; <span class="badge-pill pill-orange">${a.type||'info'}</span></div>
-    </div>`).join('');
+  const sel = document.getElementById('ann-specific-user'); if (!sel) return;
+  const { data } = await db.from('profiles').select('id,full_name,email').order('created_at', { ascending: false });
+  if (!data?.length) return;
+  const current = sel.value;
+  sel.innerHTML = '<option value="">— Select a user —</option>' +
+    data.map(p => `<option value="${p.id}">${p.full_name || p.email} (${p.email})</option>`).join('');
+  if (current) sel.value = current;
 }
+
+window.resetAnnForm = function() {
+  _editingAnnId = null;
+  const f = id => document.getElementById(id);
+  if (f('ann-title'))    f('ann-title').value = '';
+  if (f('ann-body'))     f('ann-body').value  = '';
+  if (f('ann-type'))     f('ann-type').value  = 'info';
+  if (f('ann-audience')) f('ann-audience').value = 'all';
+  if (f('ann-specific-wrap')) f('ann-specific-wrap').style.display = 'none';
+  if (f('ann-card-title'))    f('ann-card-title').textContent = 'New Announcement';
+  if (f('ann-submit-btn'))    f('ann-submit-btn').innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Publish Now';
+  if (f('ann-cancel-btn'))    f('ann-cancel-btn').style.display = 'none';
+};
+
+async function _resolveAnnRecipients(db, audience, specificUserId) {
+  if (audience === 'specific') return specificUserId ? [specificUserId] : [];
+  const { data } = await db.from('profiles').select('id');
+  return (data || []).map(p => p.id);
+}
+
+async function renderAnnouncementsLive() {
+  const db = window.SV_DB; if (!db) return;
+  const tbody = document.getElementById('ann-tbody'); if (!tbody) return;
+  tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--muted);">Loading…</td></tr>';
+  const { data, error } = await db.from('announcements').select('*').order('created_at', { ascending: false }).limit(50);
+  if (error) { tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:16px;color:var(--red);">Error: ${error.message}</td></tr>`; return; }
+  if (!data?.length) { tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--muted);">No announcements yet</td></tr>'; return; }
+  const typePill = { info:'pill-blue', warning:'pill-orange', success:'pill-green', urgent:'pill-red' };
+  const audienceLabel = { all:'All Users', specific:'Specific User' };
+  tbody.innerHTML = data.map(a => `
+    <tr>
+      <td style="font-size:12px;white-space:nowrap;">${fmtDate(a.created_at)}</td>
+      <td style="font-weight:600;max-width:160px;">${a.title || '—'}</td>
+      <td style="font-size:12px;color:var(--muted);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${(a.body||'').replace(/"/g,'&quot;')}">${a.body || '—'}</td>
+      <td><span class="badge-pill ${typePill[a.type] || 'pill-blue'}">${a.type || 'info'}</span></td>
+      <td style="font-size:12px;">${audienceLabel[a.audience] || a.audience || 'All Users'}</td>
+      <td style="font-weight:700;text-align:center;">${a.sent_count || 0}</td>
+      <td>
+        ${a.is_active !== false
+          ? `<button onclick="opsToggleAnnouncement('${a.id}',false)" style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;border:none;background:#dcfce7;color:#15803d;font-size:11px;font-weight:700;cursor:pointer;"><span style="width:7px;height:7px;border-radius:50%;background:#22a06b;display:inline-block;"></span>ON</button>`
+          : `<button onclick="opsToggleAnnouncement('${a.id}',true)"  style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;border:none;background:#fee2e2;color:#b91c1c;font-size:11px;font-weight:700;cursor:pointer;"><span style="width:7px;height:7px;border-radius:50%;background:#e60023;display:inline-block;"></span>OFF</button>`
+        }
+      </td>
+      <td>
+        <div class="row-actions">
+          <button class="btn btn--sm btn--outline" onclick="opsEditAnnouncement('${a.id}')">Edit</button>
+          <button class="btn btn--sm btn--red"     onclick="opsDeleteAnnouncement('${a.id}')">Delete</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+window.renderAnnouncementsLive = renderAnnouncementsLive;
+
+window.opsToggleAnnouncement = async function(annId, enable) {
+  const db = window.SV_DB; if (!db) return;
+  await db.from('announcements').update({ is_active: enable }).eq('id', annId);
+  await db.from('notifications').update({ enabled: enable }).eq('announcement_id', annId);
+  await logAudit(enable ? 'ENABLE_ANNOUNCEMENT' : 'DISABLE_ANNOUNCEMENT', annId, `Popup ${enable ? 'enabled' : 'disabled'}`);
+  showToast(`Popup ${enable ? 'enabled — users will see it' : 'disabled — users will no longer see it'}`, enable ? 'success' : 'error');
+  renderAnnouncementsLive();
+};
+
+window.opsDeleteAnnouncement = async function(id) {
+  if (!confirm('Delete this announcement? All linked notifications will also be removed.')) return;
+  const db = window.SV_DB; if (!db) return;
+  await db.from('notifications').delete().eq('announcement_id', id);
+  await db.from('announcements').delete().eq('id', id);
+  await logAudit('DELETE_ANNOUNCEMENT', id, 'Deleted by admin');
+  showToast('Announcement deleted', 'error');
+  renderAnnouncementsLive();
+};
+
+window.opsEditAnnouncement = async function(id) {
+  const db = window.SV_DB; if (!db) return;
+  const { data, error } = await db.from('announcements').select('*').eq('id', id).single();
+  if (error || !data) { showToast('Could not load announcement', 'error'); return; }
+  const f = i => document.getElementById(i);
+  if (f('ann-title'))    f('ann-title').value = data.title || '';
+  if (f('ann-body'))     f('ann-body').value  = data.body  || '';
+  if (f('ann-type'))     f('ann-type').value  = data.type  || 'info';
+  const aud = f('ann-audience');
+  if (aud) {
+    aud.value = data.audience || 'all';
+    onAnnAudienceChange(aud.value);
+    if (data.audience === 'specific' && data.target_user_id) {
+      await _populateAnnUserDropdown();
+      const sel = f('ann-specific-user');
+      if (sel) sel.value = data.target_user_id;
+    }
+  }
+  _editingAnnId = id;
+  if (f('ann-card-title'))  f('ann-card-title').textContent = 'Edit Announcement';
+  if (f('ann-submit-btn'))  f('ann-submit-btn').innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Save Changes';
+  if (f('ann-cancel-btn'))  f('ann-cancel-btn').style.display = '';
+  f('ann-title')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+};
+
+window.publishAnnouncement = async function() {
+  const f = i => document.getElementById(i);
+  const title      = f('ann-title')?.value.trim();
+  const body       = f('ann-body')?.value.trim();
+  const type       = f('ann-type')?.value || 'info';
+  const audience   = f('ann-audience')?.value || 'all';
+  const specificId = f('ann-specific-user')?.value || null;
+
+  if (!title)                                  { showToast('Title required', 'error'); return; }
+  if (!body)                                   { showToast('Message required', 'error'); return; }
+  if (audience === 'specific' && !specificId)  { showToast('Please select a user', 'error'); return; }
+
+  const db = window.SV_DB; if (!db) return;
+  const btn = f('ann-submit-btn');
+  const origHtml = btn?.innerHTML;
+  if (btn) { btn.disabled = true; btn.textContent = _editingAnnId ? 'Saving…' : 'Sending…'; }
+
+  try {
+    const recipientIds = await _resolveAnnRecipients(db, audience, specificId);
+    if (!recipientIds.length) { showToast('No users matched', 'error'); return; }
+
+    if (_editingAnnId) {
+      const { error } = await db.from('announcements').update({
+        title, body, type, audience,
+        target_user_id: audience === 'specific' ? specificId : null,
+        sent_count: recipientIds.length
+      }).eq('id', _editingAnnId);
+      if (error) throw error;
+      await db.from('notifications').delete().eq('announcement_id', _editingAnnId);
+      const rows = recipientIds.map(uid => ({ user_id: uid, type: 'announcement', title, message: body, enabled: true, read: false, announcement_id: _editingAnnId }));
+      for (let i = 0; i < rows.length; i += 100) await db.from('notifications').insert(rows.slice(i, i + 100));
+      await logAudit('EDIT_ANNOUNCEMENT', title, `Updated | Recipients: ${recipientIds.length}`);
+      showToast('Announcement updated', 'success');
+    } else {
+      const { data: annRow, error } = await db.from('announcements').insert({
+        title, body, type, audience,
+        target_user_id: audience === 'specific' ? specificId : null,
+        is_active: true, sent_count: recipientIds.length,
+        created_by: _adminUser?.id || null,
+        published_by: _adminUser?.email || null
+      }).select('id').single();
+      if (error) throw error;
+      const annId = annRow.id;
+      const rows = recipientIds.map(uid => ({ user_id: uid, type: 'announcement', title, message: body, enabled: true, read: false, announcement_id: annId }));
+      for (let i = 0; i < rows.length; i += 100) await db.from('notifications').insert(rows.slice(i, i + 100));
+      await logAudit('PUBLISH_ANNOUNCEMENT', title, `Type: ${type} | Audience: ${audience} | Recipients: ${recipientIds.length}`);
+      showToast(`Sent to ${recipientIds.length} user${recipientIds.length !== 1 ? 's' : ''}`, 'success');
+    }
+    resetAnnForm();
+    renderAnnouncementsLive();
+  } catch(e) {
+    showToast('Error: ' + e.message, 'error');
+  } finally {
+    if (btn) { btn.disabled = false; btn.innerHTML = origHtml; }
+  }
+};
 
 /* ── Email ── */
 window.sendEmail = async function() {

@@ -736,6 +736,8 @@ function applyPlanUI(plan) {
       filter: `id=eq.${user.id}`
     }, payload => { applyPlanUI(payload.new.plan || 'Starter'); })
     .subscribe();
+
+  initNotifPopup(db, user.id);
 })();
 
 async function doSignOut() {
@@ -743,5 +745,6 @@ async function doSignOut() {
   window.location.href = 'login.html';
 }
 </script>
+<script src="notif-popup.js"></script>
 </body>
 </html>

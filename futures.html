@@ -720,5 +720,7 @@ setInterval(updateAllPills, 10000);
 
 loadTVChart(activeInst);
 </script>
+<script src="notif-popup.js"></script>
+<script>(async()=>{try{const db=window.SV_DB;if(!db)return;const{data:{session}}=await db.auth.getSession();if(session)initNotifPopup(db,session.user.id);}catch(_){}})();</script>
 </body>
 </html>
