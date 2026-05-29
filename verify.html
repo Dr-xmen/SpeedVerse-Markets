@@ -496,62 +496,55 @@ const COUNTRIES = [
 ];
 
 /* ── Country dropdown ── */
-function initCountryDropdown(inputId, dropdownId, hiddenKey) {
+function initCountryDropdown(inputId, dropdownId) {
   const inp = document.getElementById(inputId);
   const dd  = document.getElementById(dropdownId);
   let selected = '';
 
   function render(query) {
-    const q = query.toLowerCase();
-    const filtered = q
-      ? COUNTRIES.filter(c => c.toLowerCase().startsWith(q))
+    const q = (query || '').trim().toLowerCase();
+    const list = q
+      ? COUNTRIES.filter(c => c.toLowerCase().includes(q))
       : COUNTRIES;
-    if (!filtered.length) {
-      dd.innerHTML = '<div class="country-opt no-match">No results</div>';
-    } else {
-      dd.innerHTML = filtered.map(c =>
-        `<div class="country-opt" data-val="${c}">${c}</div>`
-      ).join('');
-    }
-    dd.querySelectorAll('.country-opt[data-val]').forEach(el => {
-      el.addEventListener('click', () => {
-        selected = el.dataset.val;
-        inp.value = selected;
-        dd.classList.remove('open');
-        inp._selectedValue = selected;
-      });
-    });
+    dd.innerHTML = list.length
+      ? list.map(c => `<div class="country-opt" data-val="${c}">${c}</div>`).join('')
+      : '<div class="country-opt no-match">No results</div>';
   }
 
-  inp.addEventListener('click', () => {
+  function openDrop() {
     inp.readOnly = false;
     inp.value = '';
-    inp._selectedValue = selected;
     render('');
     dd.classList.add('open');
     inp.focus();
+  }
+
+  function closeDrop() {
+    dd.classList.remove('open');
+    inp.readOnly = true;
+    inp.value = selected;
+  }
+
+  /* mousedown fires before blur — e.preventDefault() keeps input focused
+     so blur never fires when the user picks an option */
+  dd.addEventListener('mousedown', e => {
+    const opt = e.target.closest('.country-opt[data-val]');
+    if (!opt) return;
+    e.preventDefault();
+    selected = opt.dataset.val;
+    closeDrop();
   });
 
-  inp.addEventListener('input', () => {
-    selected = '';
-    inp._selectedValue = '';
-    render(inp.value);
+  inp.addEventListener('click', () => {
+    dd.classList.contains('open') ? closeDrop() : openDrop();
   });
 
-  inp.addEventListener('blur', () => {
-    setTimeout(() => {
-      dd.classList.remove('open');
-      inp.readOnly = true;
-      if (!inp._selectedValue) {
-        inp.value = selected;
-      } else {
-        selected = inp._selectedValue;
-        inp.value = selected;
-      }
-    }, 150);
-  });
+  inp.addEventListener('input', () => render(inp.value));
 
-  inp._getSelected = () => inp._selectedValue || selected;
+  /* blur only fires when user clicks somewhere that is NOT the dropdown */
+  inp.addEventListener('blur', () => setTimeout(closeDrop, 200));
+
+  inp._getSelected = () => selected;
   render('');
 }
 
@@ -715,8 +708,8 @@ document.getElementById('btn-signout').addEventListener('click', async () => {
   _user = session.user;
 
   // Init country dropdowns
-  initCountryDropdown('country-search',   'country-dropdown',   'country');
-  initCountryDropdown('country-search-r', 'country-dropdown-r', 'country-r');
+  initCountryDropdown('country-search',   'country-dropdown');
+  initCountryDropdown('country-search-r', 'country-dropdown-r');
 
   // Fetch profile + latest submission
   const [{ data: profile }, { data: sub }] = await Promise.all([
