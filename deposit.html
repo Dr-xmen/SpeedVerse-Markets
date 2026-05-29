@@ -842,8 +842,23 @@ window._proofFile = null;
 function updatePaymentBtn() {
   const btn = document.getElementById('btn-made-payment');
   if (!btn) return;
-  const amount = parseFloat(document.getElementById('dep-amount-input')?.value) || 0;
-  const ready = window._proofSelected && amount > 0;
+  const amount  = parseFloat(document.getElementById('dep-amount-input')?.value) || 0;
+  const minDep  = window._minDeposit || 0;
+  const aboveMin = amount >= minDep || minDep <= 0;
+  const ready   = window._proofSelected && amount > 0 && aboveMin;
+
+  /* Show/hide minimum hint */
+  let hint = document.getElementById('dep-min-hint');
+  if (!hint) {
+    hint = document.createElement('div');
+    hint.id = 'dep-min-hint';
+    hint.style.cssText = 'font-size:12px;color:var(--red);margin-top:6px;';
+    document.getElementById('dep-amount-input')?.parentNode?.after(hint);
+  }
+  hint.textContent = (minDep > 0 && amount > 0 && !aboveMin)
+    ? 'Minimum deposit is $' + minDep.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})
+    : '';
+
   btn.disabled = !ready;
   btn.style.background = ready ? 'var(--accent)' : 'var(--s3)';
   btn.style.borderColor = ready ? 'var(--accent)' : 'var(--b2)';
@@ -981,6 +996,25 @@ async function loadRecentDeposits() {
 })();
 
 loadRecentDeposits();
+
+/* ── Load minimum deposit settings ── */
+window._minDeposit = 0;
+(async () => {
+  try {
+    const db = window.SV_DB;
+    const { data: { user } } = await db.auth.getUser();
+    if (!user) return;
+    /* Fetch user's profile min_deposit and global setting in parallel */
+    const [{ data: prof }, { data: setting }] = await Promise.all([
+      db.from('profiles').select('min_deposit').eq('id', user.id).single(),
+      db.from('system_settings').select('value').eq('key', 'min_deposit_amount').single(),
+    ]);
+    const globalMin = parseFloat(setting?.value) || 0;
+    const userMin   = prof?.min_deposit != null ? parseFloat(prof.min_deposit) : null;
+    window._minDeposit = userMin != null ? userMin : globalMin;
+    updatePaymentBtn();
+  } catch(e) {}
+})();
 </script>
 </body>
 </html>
