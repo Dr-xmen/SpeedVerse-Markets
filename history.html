@@ -210,23 +210,23 @@ body.light input[type=date]{color-scheme:light;}
 /* TX DETAIL MODAL */
 .txd-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:300;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s;backdrop-filter:blur(3px);}
 .txd-overlay.open{opacity:1;pointer-events:auto;}
-.txd-sheet{background:var(--s1);border:1px solid var(--b2);border-radius:18px;width:100%;max-width:440px;overflow:hidden;transform:translateY(20px);transition:transform .25s cubic-bezier(.4,0,.2,1);box-shadow:0 24px 80px rgba(0,0,0,.6);}
+.txd-sheet{background:var(--s1);border:1px solid var(--b2);border-radius:14px;width:calc(100% - 32px);max-width:360px;overflow:hidden;transform:translateY(16px);transition:transform .22s cubic-bezier(.4,0,.2,1);box-shadow:0 16px 48px rgba(0,0,0,.55);}
 .txd-overlay.open .txd-sheet{transform:translateY(0);}
-.txd-header{display:flex;align-items:center;justify-content:space-between;padding:18px 20px 14px;border-bottom:1px solid var(--b);}
-.txd-title{font-size:15px;font-weight:700;color:var(--text);}
-.txd-close{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--sub);cursor:pointer;transition:all .15s;background:var(--s3);}
+.txd-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 12px;border-bottom:1px solid var(--b);}
+.txd-title{font-size:13.5px;font-weight:700;color:var(--text);}
+.txd-close{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;color:var(--sub);cursor:pointer;transition:all .15s;background:var(--s3);}
 .txd-close:hover{background:var(--s4);color:var(--text);}
-.txd-hero{display:flex;flex-direction:column;align-items:center;padding:24px 20px 20px;border-bottom:1px solid var(--b);gap:8px;}
-.txd-icon{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
-.txd-amount{font-size:28px;font-weight:800;font-family:'Inter',sans-serif;letter-spacing:-.5px;}
-.txd-body{padding:16px 20px;}
-.txd-row{display:flex;align-items:flex-start;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.txd-hero{display:flex;flex-direction:column;align-items:center;padding:18px 16px 14px;border-bottom:1px solid var(--b);gap:6px;}
+.txd-icon{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+.txd-amount{font-size:24px;font-weight:800;font-family:'Inter',sans-serif;letter-spacing:-.5px;}
+.txd-body{padding:4px 16px 12px;}
+.txd-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);}
 .txd-row:last-child{border-bottom:none;}
-.txd-key{font-size:12px;color:var(--sub);font-weight:500;}
-.txd-val{font-size:12.5px;font-weight:600;color:var(--text);text-align:right;max-width:240px;word-break:break-all;}
-.txd-copy-row{display:flex;align-items:center;gap:6px;justify-content:flex-end;}
-.txd-copy-btn{background:var(--s3);border:1px solid var(--b2);border-radius:5px;padding:2px 7px;font-size:10.5px;color:var(--sub);cursor:pointer;transition:all .15s;}
-.txd-copy-btn:hover{color:var(--text);border-color:var(--b2);}
+.txd-key{font-size:11.5px;color:var(--sub);font-weight:500;}
+.txd-val{font-size:12px;font-weight:600;color:var(--text);text-align:right;max-width:210px;word-break:break-all;}
+.txd-copy-row{display:flex;align-items:center;gap:5px;justify-content:flex-end;}
+.txd-copy-btn{background:var(--s3);border:1px solid var(--b2);border-radius:4px;padding:2px 6px;font-size:10px;color:var(--sub);cursor:pointer;transition:all .15s;}
+.txd-copy-btn:hover{color:var(--text);}
 
 /* MOBILE */
 .sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:199;opacity:0;pointer-events:none;transition:opacity .42s cubic-bezier(0.4,0,0.2,1);}
@@ -594,13 +594,13 @@ function renderHistory() {
           <div class="tx-icon" style="background:${cfg.bg};color:${cfg.color};">${cfg.icon}</div>
           <div>
             <div class="tx-label">${cfg.label}</div>
-            <div class="tx-sub">${tx.assetName}</div>
+            ${tx.type==='trade'?'<div class="tx-sub">'+tx.assetName+'</div>':(tx.network?'<div class="tx-sub">'+tx.network+'</div>':'')}
           </div>
         </div>
       </td>
       <td>
         <div class="tx-asset-sym">${tx.asset.includes('/')? tx.asset.split('/')[0] : tx.asset}</div>
-        <div class="tx-asset-name">${tx.asset.includes('/')? tx.asset : tx.assetName}</div>
+        ${(tx.network || (tx.asset.includes('/') ? tx.asset.split('/')[1] : '')) ? `<div class="tx-asset-name">${tx.network || tx.asset.split('/')[1]}</div>` : ''}
       </td>
       <td>
         <div class="tx-amount ${amountClass(tx)}">${fmtAmount(tx)}</div>
@@ -673,14 +673,19 @@ function renderHistory() {
     const amt = parseFloat(t.amount || 0);
     const dt  = new Date(t.created_at || Date.now());
     const isDeposit = t.type === 'deposit' || t.type === 'credit';
+    /* Derive clean coin symbol — prefer explicit coin/currency over generic 'USD' */
+    const coin = t.coin || (t.currency && t.currency !== 'USD' ? t.currency : 'USDT');
+    /* Derive network label from stored network or method string */
+    const network = t.network
+      ? t.network.replace(/^TRC20$/i,'TRC-20').replace(/^ERC20$/i,'ERC-20').replace(/^BEP20$/i,'BEP-20')
+      : (t.method && t.method !== 'Bank Transfer' ? t.method.replace(/^USDT\s*/i,'') : (t.method || ''));
     TRANSACTIONS.push({
       type:      isDeposit ? 'deposit' : 'withdrawal',
-      asset:     t.currency || 'USDT',
-      assetName: t.note || (isDeposit ? 'Deposit' : 'Withdrawal'),
+      asset:     coin,
+      assetName: network || (isDeposit ? 'Deposit' : 'Withdrawal'),
+      network:   network,
       amount:    isDeposit ? Math.abs(amt) : -Math.abs(amt),
       price:     1,
-      rate:      '—',
-      fee:       '$0.00',
       status:    t.status || 'completed',
       date:      dt.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),
       time:      dt.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'}),
