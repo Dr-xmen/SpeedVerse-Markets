@@ -377,10 +377,9 @@ html.mob .stat-strip{margin:0 0 8px !important;}
 html.mob .full-sec{margin-left:0 !important;margin-right:0 !important;}
 
 /* PLAN UPGRADE POPUP */
-.pu-overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .3s;}
-.pu-overlay.open{opacity:1;pointer-events:all;}
-.pu-box{background:var(--s1);border-radius:20px;padding:36px 32px 28px;max-width:420px;width:100%;text-align:center;position:relative;border:1.5px solid rgba(255,255,255,.08);box-shadow:0 24px 64px rgba(0,0,0,.6);transform:translateY(20px) scale(.97);transition:transform .35s cubic-bezier(.34,1.56,.64,1);}
-.pu-overlay.open .pu-box{transform:translateY(0) scale(1);}
+.pu-overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;visibility:hidden;transition:opacity .3s ease,visibility 0s linear .48s;}
+.pu-overlay.open{opacity:1;pointer-events:all;visibility:visible;transition:opacity .3s ease,visibility 0s;}
+.pu-box{background:var(--s1);border-radius:20px;padding:36px 32px 28px;max-width:420px;width:100%;text-align:center;position:relative;border:1.5px solid rgba(255,255,255,.08);box-shadow:0 24px 64px rgba(0,0,0,.6);transform-origin:center 80%;will-change:clip-path,transform;}
 .pu-glow{width:90px;height:90px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:38px;}
 .pu-plan{font-size:28px;font-weight:800;letter-spacing:.5px;margin-bottom:6px;}
 .pu-sub{font-size:13px;color:var(--sub);margin-bottom:22px;}
@@ -391,10 +390,13 @@ html.mob .full-sec{margin-left:0 !important;margin-right:0 !important;}
 .pu-skip{background:none;border:none;color:var(--sub);font-size:12.5px;cursor:pointer;padding:0;}
 
 /* PROFIT TARGET REACHED POPUP */
-.pt-overlay{position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .3s;}
-.pt-overlay.open{opacity:1;pointer-events:all;}
-.pt-box{background:var(--s1);border-radius:20px;padding:36px 32px 28px;max-width:440px;width:100%;text-align:center;position:relative;border:1.5px solid rgba(14,203,129,.3);box-shadow:0 24px 64px rgba(0,0,0,.65),0 0 80px rgba(14,203,129,.1);transform:translateY(24px) scale(.96);transition:transform .38s cubic-bezier(.34,1.56,.64,1);}
-.pt-overlay.open .pt-box{transform:translateY(0) scale(1);}
+.pt-overlay{position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;visibility:hidden;transition:opacity .3s ease,visibility 0s linear .48s;}
+.pt-overlay.open{opacity:1;pointer-events:all;visibility:visible;transition:opacity .3s ease,visibility 0s;}
+.pt-box{background:var(--s1);border-radius:20px;padding:36px 32px 28px;max-width:440px;width:100%;text-align:center;position:relative;border:1.5px solid rgba(14,203,129,.3);box-shadow:0 24px 64px rgba(0,0,0,.65),0 0 80px rgba(14,203,129,.1);transform-origin:center 80%;will-change:clip-path,transform;}
+@keyframes svGenieIn{0%{opacity:0;transform:scale(.48) translateY(44px);clip-path:inset(44% 18% 0% 18% round 20px);}48%{opacity:1;clip-path:inset(0% 0% 0% 0% round 20px);}70%{transform:scale(1.07) translateY(-7px);}86%{transform:scale(.97) translateY(3px);}100%{opacity:1;transform:scale(1) translateY(0);clip-path:inset(0% 0% 0% 0% round 20px);}}
+@keyframes svGenieOut{0%{opacity:1;transform:scale(1) translateY(0);clip-path:inset(0% 0% 0% 0% round 20px);}18%{transform:scale(1.03) translateY(-4px);}100%{opacity:0;transform:scale(.48) translateY(40px);clip-path:inset(44% 18% 0% 18% round 20px);}}
+.sv-genie-in{animation:svGenieIn .65s cubic-bezier(0.34,1.72,0.64,1) both;}
+.sv-genie-out{animation:svGenieOut .40s cubic-bezier(0.4,0,0.8,1) both;}
 .pt-icon{width:90px;height:90px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:44px;background:rgba(14,203,129,.14);}
 .pt-confetti{font-size:20px;position:absolute;top:16px;left:50%;transform:translateX(-50%);letter-spacing:6px;opacity:.7;}
 .pt-heading{font-size:24px;font-weight:800;color:#0ecb81;margin-bottom:6px;}
@@ -1693,6 +1695,7 @@ const PLAN_POPUP_CONFIG = {
 function showPlanUpgradePopup(plan) {
   const cfg = PLAN_POPUP_CONFIG[plan] || PLAN_POPUP_CONFIG.Starter;
   const overlay = document.getElementById('pu-overlay');
+  const box     = overlay.querySelector('.pu-box');
   document.getElementById('pu-glow').style.background = cfg.bg;
   document.getElementById('pu-glow').textContent = cfg.emoji;
   document.getElementById('pu-plan-name').textContent = plan;
@@ -1701,10 +1704,19 @@ function showPlanUpgradePopup(plan) {
     `<li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${cfg.color}" stroke-width="3" stroke-linecap="round"><polyline points="20,6 9,17 4,12"/></svg>${f}</li>`
   ).join('');
   document.getElementById('pu-cta').style.background = cfg.color;
+  box.classList.remove('sv-genie-out');
+  void box.offsetWidth;
   overlay.classList.add('open');
+  box.classList.add('sv-genie-in');
+  box.addEventListener('animationend', () => box.classList.remove('sv-genie-in'), { once: true });
 }
 function closePlanPopup() {
-  document.getElementById('pu-overlay').classList.remove('open');
+  const overlay = document.getElementById('pu-overlay');
+  const box     = overlay.querySelector('.pu-box');
+  box.classList.remove('sv-genie-in');
+  box.classList.add('sv-genie-out');
+  overlay.classList.remove('open');
+  box.addEventListener('animationend', () => box.classList.remove('sv-genie-out'), { once: true });
 }
 
 /* ── Profit Target assigned one-time popup ── */
@@ -1726,11 +1738,24 @@ async function checkProfitTargetPopup(userId) {
     const amountMatch = n.message.match(/\$([0-9,]+(?:\.\d+)?)/);
     document.getElementById('pt-popup-label').textContent  = labelMatch  ? labelMatch[1]        : 'Profit Target';
     document.getElementById('pt-popup-amount').textContent = amountMatch ? '$' + amountMatch[1] : '';
-    setTimeout(() => document.getElementById('pt-overlay').classList.add('open'), 1200);
+    setTimeout(() => {
+      const ov2 = document.getElementById('pt-overlay');
+      const bx2 = ov2.querySelector('.pt-box');
+      bx2.classList.remove('sv-genie-out');
+      void bx2.offsetWidth;
+      ov2.classList.add('open');
+      bx2.classList.add('sv-genie-in');
+      bx2.addEventListener('animationend', () => bx2.classList.remove('sv-genie-in'), { once: true });
+    }, 1200);
   } catch(e) { console.error('checkProfitTargetPopup', e); }
 }
 function closePTPopup() {
-  document.getElementById('pt-overlay').classList.remove('open');
+  const overlay = document.getElementById('pt-overlay');
+  const box     = overlay.querySelector('.pt-box');
+  box.classList.remove('sv-genie-in');
+  box.classList.add('sv-genie-out');
+  overlay.classList.remove('open');
+  box.addEventListener('animationend', () => box.classList.remove('sv-genie-out'), { once: true });
 }
 </script>
 

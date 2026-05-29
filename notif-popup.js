@@ -3,18 +3,31 @@
 
 (function () {
   const STYLE = `
+    @keyframes svnpGenieIn {
+      0%   { opacity: 0; transform: scale(.48) translateY(44px); clip-path: inset(44% 18% 0% 18% round 16px); }
+      48%  { opacity: 1; clip-path: inset(0% 0% 0% 0% round 16px); }
+      70%  { transform: scale(1.07) translateY(-7px); }
+      86%  { transform: scale(.97) translateY(3px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); clip-path: inset(0% 0% 0% 0% round 16px); }
+    }
+    @keyframes svnpGenieOut {
+      0%   { opacity: 1; transform: scale(1) translateY(0);      clip-path: inset(0%  0%  0%  0%  round 16px); }
+      18%  { transform: scale(1.03) translateY(-4px); }
+      100% { opacity: 0; transform: scale(.48) translateY(40px); clip-path: inset(44% 18% 0% 18% round 16px); }
+    }
     #svnp-overlay {
       position: fixed; inset: 0; background: rgba(0,0,0,0.6);
       z-index: 99999; display: flex; align-items: center; justify-content: center;
-      padding: 20px; animation: svnpFadeIn .2s ease;
+      padding: 20px; animation: svnpFadeIn .25s ease both;
     }
     @keyframes svnpFadeIn  { from { opacity: 0 } to { opacity: 1 } }
-    @keyframes svnpSlideUp { from { opacity: 0; transform: translateY(18px) } to { opacity: 1; transform: none } }
     #svnp-box {
       background: #111318; border-radius: 16px; width: 100%; max-width: 480px;
       box-shadow: 0 24px 64px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.07);
-      animation: svnpSlideUp .25s ease; overflow: hidden;
+      overflow: hidden; transform-origin: center 80%; will-change: clip-path, transform;
     }
+    #svnp-box.svnp-genie-in  { animation: svnpGenieIn  .65s cubic-bezier(0.34,1.72,0.64,1) both; }
+    #svnp-box.svnp-genie-out { animation: svnpGenieOut .40s cubic-bezier(0.4,0,0.8,1) both; }
     #svnp-header {
       display: flex; align-items: center; gap: 12px;
       padding: 18px 22px; border-bottom: 1px solid rgba(255,255,255,.07);
@@ -61,8 +74,20 @@
 
   function _removePopup() {
     const el = document.getElementById('svnp-overlay');
-    if (el) el.remove();
+    if (!el) return;
+    const box = el.querySelector('#svnp-box');
+    if (box && !box.classList.contains('svnp-genie-out')) {
+      box.classList.remove('svnp-genie-in');
+      box.classList.add('svnp-genie-out');
+      el.style.transition = 'opacity 0.38s ease';
+      el.style.opacity = '0';
+      box.addEventListener('animationend', () => el.remove(), { once: true });
+    } else {
+      el.remove();
+    }
   }
+
+  window._svnpClose = _removePopup;
 
   function _showPopup(notif) {
     _removePopup();
@@ -75,15 +100,18 @@
         <div id="svnp-header">
           <div id="svnp-dot" style="background:${cfg.color};box-shadow:0 0 8px ${cfg.color}88;"></div>
           <div id="svnp-title">${String(notif.title || 'Notice').replace(/</g, '&lt;')}</div>
-          <button id="svnp-close" onclick="document.getElementById('svnp-overlay').remove()" title="Dismiss">&#x2715;</button>
+          <button id="svnp-close" onclick="window._svnpClose && window._svnpClose()" title="Dismiss">&#x2715;</button>
         </div>
         <div id="svnp-body">${String(notif.message || '').replace(/</g, '&lt;')}</div>
         <div id="svnp-footer">
-          <button id="svnp-btn" style="background:${cfg.color};" onclick="document.getElementById('svnp-overlay').remove()">Got it</button>
+          <button id="svnp-btn" style="background:${cfg.color};" onclick="window._svnpClose && window._svnpClose()">Got it</button>
         </div>
       </div>`;
-    overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+    overlay.addEventListener('click', e => { if (e.target === overlay) _removePopup(); });
     document.body.appendChild(overlay);
+    const box = overlay.querySelector('#svnp-box');
+    box.classList.add('svnp-genie-in');
+    box.addEventListener('animationend', () => box.classList.remove('svnp-genie-in'), { once: true });
   }
 
   // Public API — call after auth resolves on every user page
