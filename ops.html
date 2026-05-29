@@ -1859,7 +1859,9 @@ async function approveDeposit(id) {
     user_email: req.user_email,
     type:       'deposit',
     amount:     amount,
-    currency:   req.coin || req.currency || 'USD',
+    coin:       req.coin || null,
+    network:    req.network || null,
+    currency:   req.coin || req.currency || 'USDT',
     note:       `Deposit approved — ${req.coin || 'Crypto'} ${req.network ? '(' + req.network + ')' : ''}`.trim(),
     status:     'completed',
     created_at: new Date().toISOString(),
@@ -1932,9 +1934,14 @@ window.opsManualDeposit = async function() {
   await db.from('profiles').update({ balance: newBalance }).eq('id', userId);
 
   /* Write transaction for history page */
+  const _methodMap = {'USDT TRC-20':{coin:'USDT',network:'TRC-20'},'USDT ERC-20':{coin:'USDT',network:'ERC-20'},'Bitcoin':{coin:'BTC',network:'Bitcoin'},'Ethereum':{coin:'ETH',network:'ERC-20'},'Bank Transfer':{coin:'USD',network:'Bank Transfer'}};
+  const _cn = _methodMap[method] || {coin:'USDT',network:method};
   await db.from('transactions').insert({
     user_id: userId, user_email: userEmail,
-    type: 'deposit', amount, currency: 'USD',
+    type: 'deposit', amount,
+    coin:     _cn.coin,
+    network:  _cn.network,
+    currency: _cn.coin,
     note: note || `Manual deposit via ${method}`,
     status: 'completed',
     created_at: new Date().toISOString(),
