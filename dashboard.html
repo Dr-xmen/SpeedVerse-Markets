@@ -1391,7 +1391,7 @@ document.addEventListener('DOMContentLoaded', init);
   const email = user.email || '';
 
   /* Try to get profile for richer name data */
-  const { data: profile } = await db.from('profiles').select('first_name,last_name,balance,plan').eq('id', user.id).maybeSingle();
+  const { data: profile } = await db.from('profiles').select('first_name,last_name,balance,pnl,plan').eq('id', user.id).maybeSingle();
 
   const firstName   = profile?.first_name || '';
   const displayName = firstName
@@ -1429,6 +1429,26 @@ document.addEventListener('DOMContentLoaded', init);
 
   applyPlanBadge(profile?.plan || 'Starter');
 
+  /* Wire real DB balance into HOLDINGS so every portfolioValue() / renderWelcome() call
+     shows the correct admin-set balance instead of hardcoded demo amounts. */
+  function applyBalance(balance, pnl) {
+    const bal   = parseFloat(balance) || 0;
+    const p     = parseFloat(pnl)     || 0;
+    const total = bal + p;
+    if (typeof HOLDINGS !== 'undefined') {
+      /* Zero out all demo crypto amounts; put full account value into USDT (price = $1) */
+      Object.keys(HOLDINGS).forEach(coin => {
+        HOLDINGS[coin].amount = coin === 'USDT' ? total : 0;
+      });
+    }
+    /* Immediately update the display element before the next renderWelcome() tick */
+    const el = document.getElementById('wc-total');
+    if (el && !balanceHidden) {
+      el.innerHTML = `$${total.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})} <span>USD</span>`;
+    }
+  }
+  applyBalance(profile?.balance, profile?.pnl);
+
   /* Check for one-time upgrade congrats popup */
   try {
     const { data: popups } = await db.from('notifications')
@@ -1444,12 +1464,15 @@ document.addEventListener('DOMContentLoaded', init);
     }
   } catch(e) {}
 
-  /* Real-time: update badge immediately when admin changes plan */
-  db.channel('profile-plan-' + user.id)
+  /* Real-time: reflect any admin change (plan, balance, pnl) instantly */
+  db.channel('profile-live-' + user.id)
     .on('postgres_changes', {
       event: 'UPDATE', schema: 'public', table: 'profiles',
       filter: `id=eq.${user.id}`
-    }, payload => { applyPlanBadge(payload.new.plan || 'Starter'); })
+    }, payload => {
+      applyPlanBadge(payload.new.plan || 'Starter');
+      applyBalance(payload.new.balance, payload.new.pnl);
+    })
     .subscribe();
 })();
 
