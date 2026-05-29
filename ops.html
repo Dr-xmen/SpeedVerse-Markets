@@ -621,19 +621,131 @@
       <!-- TRADES / POSITIONS -->
       <div class="page" id="page-positions">
         <div class="page-header">
-          <div><div class="page-header__title">Trades</div><div class="page-header__sub">Open and recent positions</div></div>
-          <div style="display:flex;gap:8px;">
-            <button class="btn btn--outline" onclick="renderPositionsLive()"><svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button>
-            <button class="btn btn--primary" onclick="openAddPosition(null,null)">+ Add Trade</button>
-            <button class="btn btn--red" onclick="forceCloseAll()">Force Close All</button>
+          <div><div class="page-header__title">Open Positions</div><div class="page-header__sub">Manage user trades and profit targets</div></div>
+        </div>
+
+        <!-- Direct Trade Input -->
+        <div class="card">
+          <div class="card__head">
+            <div>
+              <div class="card__title">Direct Trade Input</div>
+              <div style="font-size:12px;color:var(--muted);margin-top:2px;">Insert a closed trade directly into a user's trade history with a specified P&amp;L</div>
+            </div>
+          </div>
+          <div class="card__body" style="padding:20px;">
+            <div class="field field--full" style="margin-bottom:16px;">
+              <label>Account</label>
+              <select id="dti-account" onchange="dtiLoadAccount()">
+                <option value="">— Select an account —</option>
+              </select>
+            </div>
+            <div class="form-grid" style="margin-bottom:16px;">
+              <div class="field">
+                <label>Market</label>
+                <select id="dti-market" onchange="dtiUpdatePairs()">
+                  <option value="">— Select market —</option>
+                  <option value="Crypto">Crypto</option>
+                  <option value="Forex">Forex</option>
+                  <option value="Stocks">Stocks</option>
+                  <option value="Indices">Indices</option>
+                  <option value="Commodities">Commodities</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Pair / Instrument</label>
+                <select id="dti-pair">
+                  <option value="">— Select market first —</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-grid" style="margin-bottom:16px;">
+              <div class="field">
+                <label>Direction</label>
+                <div style="display:flex;gap:8px;margin-top:2px;">
+                  <button id="dti-buy-btn" onclick="dtiSetDir('buy')" style="flex:1;height:42px;border-radius:7px;font-weight:700;font-size:13px;background:var(--green);color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;">
+                    <svg width="10" height="10" viewBox="0 0 10 10"><polygon points="5,0 10,10 0,10" fill="currentColor"/></svg> BUY
+                  </button>
+                  <button id="dti-sell-btn" onclick="dtiSetDir('sell')" style="flex:1;height:42px;border-radius:7px;font-weight:700;font-size:13px;background:var(--border);color:var(--muted);border:1.5px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;">
+                    <svg width="10" height="10" viewBox="0 0 10 10"><polygon points="5,10 10,0 0,0" fill="currentColor"/></svg> SELL
+                  </button>
+                </div>
+                <input type="hidden" id="dti-dir" value="buy">
+              </div>
+              <div class="field">
+                <label>Lot Size — <span id="dti-lot-val" style="color:var(--blue);font-weight:700;">1.00</span> LOTS</label>
+                <input type="range" id="dti-lot-slider" min="0.01" max="100" step="0.01" value="1"
+                  oninput="document.getElementById('dti-lot-val').textContent=parseFloat(this.value).toFixed(2)"
+                  style="margin-top:10px;width:100%;accent-color:var(--blue);">
+                <div style="display:flex;justify-content:space-between;font-size:10.5px;color:var(--muted);margin-top:2px;"><span>0.01</span><span>100</span></div>
+              </div>
+            </div>
+            <div class="form-grid" style="margin-bottom:16px;">
+              <div class="field">
+                <label>Profit / Loss (USD)</label>
+                <div style="position:relative;">
+                  <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-weight:600;">$</span>
+                  <input type="number" id="dti-pnl" placeholder="e.g. 250 or -120" step="any" style="padding-left:24px;width:100%;height:40px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;color:var(--text);background:var(--white);outline:none;" onfocus="this.style.borderColor='var(--orange)'" onblur="this.style.borderColor='var(--border)'">
+                </div>
+                <div style="font-size:11px;color:var(--muted);margin-top:3px;">Positive = profit credited · Negative = loss debited</div>
+              </div>
+              <div class="field">
+                <label>Trade Date &amp; Time <span style="font-weight:400;text-transform:none;font-size:10px;">(optional — defaults to now)</span></label>
+                <input type="datetime-local" id="dti-date" style="height:40px;border:1.5px solid var(--border);border-radius:7px;padding:0 12px;font-size:13px;color:var(--text);background:var(--white);outline:none;width:100%;" onfocus="this.style.borderColor='var(--orange)'" onblur="this.style.borderColor='var(--border)'">
+              </div>
+            </div>
+            <div class="field field--full" style="margin-bottom:20px;">
+              <label>Current Balance</label>
+              <input type="text" id="dti-balance" readonly placeholder="Select an account" style="height:40px;border:1.5px solid var(--border);border-radius:7px;padding:0 12px;font-size:13px;color:var(--text);background:var(--bg);outline:none;cursor:default;width:100%;">
+            </div>
+            <div style="display:flex;gap:10px;">
+              <button class="btn btn--primary" style="display:flex;align-items:center;gap:6px;" onclick="dtiSubmit()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Submit Trade
+              </button>
+              <button class="btn btn--outline" onclick="dtiReset()">Reset</button>
+            </div>
           </div>
         </div>
+
+        <!-- User Trade History -->
         <div class="card">
-          <div class="card__body--p0 table-wrap">
-            <table class="data-table">
-              <thead><tr><th>Ticket</th><th>User</th><th>Symbol</th><th>Side</th><th>Lots</th><th>Open Price</th><th>Current</th><th>P&amp;L</th><th>Opened</th><th>Actions</th></tr></thead>
-              <tbody id="positions-tbody"></tbody>
-            </table>
+          <div class="card__head">
+            <div>
+              <div class="card__title">User Trade History</div>
+              <div style="font-size:12px;color:var(--muted);margin-top:2px;">View and delete closed trades for any account</div>
+            </div>
+          </div>
+          <div class="card__body" style="padding:20px;">
+            <div class="field" style="margin-bottom:16px;">
+              <label>Account</label>
+              <select id="uth-account" onchange="loadUserTradeHistory()">
+                <option value="">— Select an account —</option>
+              </select>
+            </div>
+            <div id="uth-content" style="font-size:13px;color:var(--muted);">Select an account to view trade history.</div>
+          </div>
+        </div>
+
+        <!-- Profit Target Manager -->
+        <div class="card">
+          <div class="card__head">
+            <div>
+              <div class="card__title">Profit Target Manager</div>
+              <div style="font-size:12px;color:var(--muted);margin-top:2px;">Set and track per-user profit targets with incremental trade entries</div>
+            </div>
+            <button class="btn btn--primary" onclick="openSetProfitTarget(null,null,null)" style="display:flex;align-items:center;gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Set Target
+            </button>
+          </div>
+          <div class="card__body" style="padding:20px;">
+            <div class="field" style="margin-bottom:16px;">
+              <label>Select User</label>
+              <select id="ptm-account" onchange="loadUserProfitTarget()">
+                <option value="">— Select an account —</option>
+              </select>
+            </div>
+            <div id="ptm-content" style="font-size:13px;color:var(--muted);">Select an account to view profit target.</div>
           </div>
         </div>
       </div>
@@ -1418,6 +1530,7 @@ window.renderUsersLive = async function() {
   if (error) { showToast('Error loading users: ' + error.message, 'error'); return; }
   _allUsers = data || [];
   renderUsersTable(_allUsers);
+  if (typeof _populateTradeDropdowns === 'function') _populateTradeDropdowns(_allUsers);
   const sub = document.getElementById('users-sub');
   if (sub) sub.textContent = `${_allUsers.length.toLocaleString()} registered users`;
 };
@@ -1932,7 +2045,202 @@ window.sendEmail = async function() {
   showToast(`Email queued for ${to} users`);
 };
 
-/* ── Add Position ── */
+/* ── Direct Trade Input ── */
+const DTI_PAIRS = {
+  Crypto: ['BTC/USDT','ETH/USDT','BNB/USDT','SOL/USDT','XRP/USDT','ADA/USDT','DOGE/USDT','AVAX/USDT','MATIC/USDT','DOT/USDT','LTC/USDT','TRX/USDT'],
+  Forex:  ['EUR/USD','GBP/USD','USD/JPY','AUD/USD','USD/CHF','NZD/USD','USD/CAD','EUR/GBP','EUR/JPY','GBP/JPY','XAU/USD','XAG/USD'],
+  Stocks: ['AAPL','TSLA','MSFT','AMZN','GOOGL','META','NVDA','NFLX','BABA','COIN','AMD','PYPL'],
+  Indices:['US30 (Dow Jones)','NAS100 (NASDAQ)','SPX500 (S&P 500)','UK100 (FTSE)','GER40 (DAX)','JPN225 (Nikkei)','HK50 (Hang Seng)','FRA40 (CAC40)'],
+  Commodities:['GOLD (XAU)','SILVER (XAG)','CRUDE OIL (WTI)','BRENT OIL','NATURAL GAS','COPPER','WHEAT','CORN'],
+};
+let _dtiDir = 'buy';
+
+window.dtiUpdatePairs = function() {
+  const market = document.getElementById('dti-market').value;
+  const sel = document.getElementById('dti-pair');
+  sel.innerHTML = `<option value="">— Select pair —</option>` +
+    (DTI_PAIRS[market]||[]).map(p=>`<option value="${p}">${p}</option>`).join('');
+};
+
+window.dtiSetDir = function(dir) {
+  _dtiDir = dir;
+  document.getElementById('dti-dir').value = dir;
+  const buyBtn  = document.getElementById('dti-buy-btn');
+  const sellBtn = document.getElementById('dti-sell-btn');
+  if (dir === 'buy') {
+    buyBtn.style.cssText  = 'flex:1;height:42px;border-radius:7px;font-weight:700;font-size:13px;background:var(--green);color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;';
+    sellBtn.style.cssText = 'flex:1;height:42px;border-radius:7px;font-weight:700;font-size:13px;background:var(--border);color:var(--muted);border:1.5px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;';
+  } else {
+    sellBtn.style.cssText = 'flex:1;height:42px;border-radius:7px;font-weight:700;font-size:13px;background:var(--red);color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;';
+    buyBtn.style.cssText  = 'flex:1;height:42px;border-radius:7px;font-weight:700;font-size:13px;background:var(--border);color:var(--muted);border:1.5px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;';
+  }
+};
+
+window.dtiLoadAccount = async function() {
+  const db = window.SV_DB; if (!db) return;
+  const userId = document.getElementById('dti-account').value;
+  const balEl  = document.getElementById('dti-balance');
+  if (!userId) { balEl.value = ''; return; }
+  const { data } = await db.from('profiles').select('balance,pnl').eq('id', userId).single();
+  if (data) {
+    const total = (parseFloat(data.balance)||0) + (parseFloat(data.pnl)||0);
+    balEl.value = '$' + total.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  }
+};
+
+window.dtiReset = function() {
+  document.getElementById('dti-account').value = '';
+  document.getElementById('dti-market').value  = '';
+  document.getElementById('dti-pair').innerHTML = '<option value="">— Select market first —</option>';
+  dtiSetDir('buy');
+  document.getElementById('dti-lot-slider').value = '1';
+  document.getElementById('dti-lot-val').textContent = '1.00';
+  document.getElementById('dti-pnl').value   = '';
+  document.getElementById('dti-date').value  = '';
+  document.getElementById('dti-balance').value = '';
+};
+
+window.dtiSubmit = async function() {
+  const db = window.SV_DB; if (!db) return;
+  const userId = document.getElementById('dti-account').value;
+  if (!userId) { showToast('Select an account first', 'error'); return; }
+  const pair   = document.getElementById('dti-pair').value;
+  if (!pair)   { showToast('Select a pair', 'error'); return; }
+  const pnl    = parseFloat(document.getElementById('dti-pnl').value);
+  if (isNaN(pnl)) { showToast('Enter a P&L amount', 'error'); return; }
+
+  const lots   = parseFloat(document.getElementById('dti-lot-slider').value) || 1;
+  const dir    = document.getElementById('dti-dir').value;
+  const dateVal= document.getElementById('dti-date').value;
+  const openedAt = dateVal ? new Date(dateVal).toISOString() : new Date().toISOString();
+  const ticket = Math.floor(Math.random() * 9000000 + 1000000);
+
+  const { data: prof } = await db.from('profiles').select('email').eq('id', userId).single();
+  const userEmail = prof?.email || '';
+
+  const { error } = await db.from('positions').insert({
+    user_id: userId, user_email: userEmail,
+    ticket: ticket.toString(), symbol: pair, side: dir, lots,
+    open_price: 0, current_price: 0, pnl,
+    status: 'closed', opened_at: openedAt, closed_at: new Date().toISOString()
+  });
+  if (error) { showToast('Error: ' + error.message, 'error'); return; }
+  await logAudit('direct_trade_input', userId, `${pair} ${dir} P&L:${pnl}`);
+  showToast('Trade submitted successfully');
+  dtiReset();
+  loadUserTradeHistory();
+};
+
+/* ── User Trade History ── */
+window.loadUserTradeHistory = async function() {
+  const db = window.SV_DB; if (!db) return;
+  const userId = document.getElementById('uth-account').value;
+  const cont   = document.getElementById('uth-content');
+  if (!userId) { cont.innerHTML = `<div style="font-size:13px;color:var(--muted);">Select an account to view trade history.</div>`; return; }
+  const { data } = await db.from('positions').select('*')
+    .eq('user_id', userId).order('opened_at', { ascending: false }).limit(50);
+  if (!data?.length) { cont.innerHTML = `<div style="font-size:13px;color:var(--muted);">No trade history for this account.</div>`; return; }
+  cont.innerHTML = `<div class="table-wrap" style="overflow-x:auto;">
+    <table class="data-table">
+      <thead><tr><th>Ticket</th><th>Pair</th><th>Dir</th><th>Lots</th><th>P&L</th><th>Status</th><th>Date</th><th></th></tr></thead>
+      <tbody>
+        ${data.map(p => {
+          const pnl = parseFloat(p.pnl||0);
+          return `<tr>
+            <td><code style="font-size:11px;">#${p.ticket||p.id.slice(0,6)}</code></td>
+            <td>${p.symbol||'—'}</td>
+            <td><span class="badge-pill ${p.side==='buy'?'pill-green':'pill-red'}">${(p.side||'buy').toUpperCase()}</span></td>
+            <td>${p.lots||'—'}</td>
+            <td style="color:${pnl>=0?'var(--green)':'var(--red)'};">${pnl>=0?'+':''}${fmtMoney(pnl)}</td>
+            <td><span class="badge-pill ${p.status==='open'?'pill-blue':'pill-grey'}">${p.status||'closed'}</span></td>
+            <td style="font-size:11px;">${fmtDate(p.opened_at)}</td>
+            <td><button class="btn btn--sm btn--red" onclick="deleteTradeEntry('${p.id}')">Delete</button></td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+  </div>`;
+};
+
+window.deleteTradeEntry = async function(id) {
+  const db = window.SV_DB; if (!db) return;
+  if (!confirm('Delete this trade entry?')) return;
+  await db.from('positions').delete().eq('id', id);
+  await logAudit('delete_trade', id, 'admin delete');
+  showToast('Trade deleted');
+  loadUserTradeHistory();
+};
+
+/* ── Inline Profit Target Manager ── */
+window.loadUserProfitTarget = async function() {
+  const db = window.SV_DB; if (!db) return;
+  const userId = document.getElementById('ptm-account').value;
+  const cont   = document.getElementById('ptm-content');
+  if (!userId) { cont.innerHTML = `<div style="font-size:13px;color:var(--muted);">Select an account to view profit target.</div>`; return; }
+  const { data: targets } = await db.from('profit_targets')
+    .select('*,profit_target_trades(amount,note,created_at)')
+    .eq('user_id', userId).eq('is_active', true).limit(1);
+  const t = targets?.[0];
+  if (!t) {
+    const { data: prof } = await db.from('profiles').select('email').eq('id', userId).single();
+    cont.innerHTML = `<div style="font-size:13px;color:var(--muted);margin-bottom:12px;">No active profit target for this user.</div>
+      <button class="btn btn--primary" onclick="openSetProfitTarget(null,'${prof?.email||''}',null)">+ Set Profit Target</button>`;
+    return;
+  }
+  const trades   = t.profit_target_trades || [];
+  const progress = trades.reduce((s, tr) => s + (parseFloat(tr.amount)||0), 0);
+  const target   = parseFloat(t.target_amount) || 1;
+  const pct      = Math.min(100, Math.max(0, progress / target * 100));
+  const color    = pct < 25 ? '#e60023' : pct < 50 ? '#f5a623' : pct < 75 ? '#f0b90b' : '#22a06b';
+  cont.innerHTML = `
+    <div style="margin-bottom:16px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <div>
+          <div style="font-size:14px;font-weight:700;">${t.label||'Profit Target'}</div>
+          <div style="font-size:12px;color:var(--muted);">Target: <strong>$${target.toLocaleString('en-US',{minimumFractionDigits:2})}</strong></div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:20px;font-weight:800;color:${color};">${pct.toFixed(1)}%</div>
+          <div style="font-size:12px;color:var(--muted);">$${progress.toLocaleString('en-US',{minimumFractionDigits:2})} achieved</div>
+        </div>
+      </div>
+      <div style="height:8px;background:var(--border);border-radius:4px;overflow:hidden;margin-bottom:12px;">
+        <div style="height:100%;width:${pct.toFixed(1)}%;background:${color};border-radius:4px;transition:width .5s;"></div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn--primary btn--sm" onclick="openAddPTTrade('${t.id}','${userId}',${t.target_amount})">+ Add Trade Entry</button>
+        <button class="btn btn--outline btn--sm" onclick="openSetProfitTarget('${t.id}','','${t.target_amount}','${t.label||''}','${userId}')">Edit Target</button>
+      </div>
+    </div>
+    ${trades.length ? `<div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--muted);letter-spacing:.05em;margin-bottom:8px;">Trade Entries</div>
+    <div class="table-wrap" style="overflow-x:auto;">
+      <table class="data-table">
+        <thead><tr><th>Amount</th><th>%</th><th>Note</th><th>Date</th></tr></thead>
+        <tbody>${trades.map(tr=>`<tr>
+          <td style="color:${parseFloat(tr.amount)>=0?'var(--green)':'var(--red)'};">
+            ${parseFloat(tr.amount)>=0?'+':''}$${parseFloat(tr.amount).toLocaleString('en-US',{minimumFractionDigits:2})}
+          </td>
+          <td>${parseFloat(tr.percentage_delta||0).toFixed(2)}%</td>
+          <td>${tr.note||'—'}</td>
+          <td style="font-size:11px;">${fmtDate(tr.created_at)}</td>
+        </tr>`).join('')}</tbody>
+      </table>
+    </div>` : ''}
+  `;
+};
+
+/* populate all three account dropdowns when users load */
+window._populateTradeDropdowns = function(users) {
+  ['dti-account','uth-account','ptm-account'].forEach(id => {
+    const sel = document.getElementById(id); if (!sel) return;
+    const val = sel.value;
+    sel.innerHTML = `<option value="">— Select an account —</option>` +
+      (users||[]).map(u => `<option value="${u.id}">${u.email} — ${(u.first_name||'')} ${(u.last_name||'')}`.trim()+`</option>`).join('');
+    if (val) sel.value = val;
+  });
+};
+
+/* ── Add Position (modal fallback) ── */
 window.openAddPosition = function(userId, userEmail) {
   document.getElementById('ap-user-id').value = userId || '';
   document.getElementById('ap-user-email').value = userEmail || '';
