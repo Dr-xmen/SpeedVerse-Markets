@@ -2683,6 +2683,14 @@ window.saveSetProfitTarget = async function() {
       created_at: new Date().toISOString(), updated_at: new Date().toISOString()
     });
     if (error) { showToast('Error: ' + error.message, 'error'); return; }
+    await db.from('notifications').insert({
+      user_id: userId,
+      type: 'profit_target_set',
+      title: '🎯 New Profit Target Assigned',
+      message: `"${label}" — $${targetAmt.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})} profit target has been set on your account`,
+      read: false,
+      created_at: new Date().toISOString()
+    });
   }
   await logAudit('set_profit_target', userId, `${label} $${targetAmt}`);
   showToast('Profit target saved');
