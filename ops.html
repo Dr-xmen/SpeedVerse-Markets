@@ -1897,16 +1897,49 @@ window.viewDepositProof = async function(storagePath) {
 };
 window.opsManualDeposit = async function() {
   const db = window.SV_DB; if (!db) return;
-  const user   = document.getElementById('md-user').value.trim();
-  const amount = parseFloat(document.getElementById('md-amount').value);
-  const method = document.getElementById('md-method').value;
-  const txid   = document.getElementById('md-txid').value;
-  const note   = document.getElementById('md-note').value;
-  if (!user || !amount) { showToast('User and amount required', 'error'); return; }
-  const { error } = await db.from('deposit_requests').insert({ user_email: user, amount, method, txid, note, status:'approved', created_at: new Date().toISOString() });
+  const userEmail = document.getElementById('md-user').value.trim();
+  const amount    = parseFloat(document.getElementById('md-amount').value);
+  const method    = document.getElementById('md-method').value;
+  const note      = document.getElementById('md-note').value;
+  if (!userEmail || !amount) { showToast('User and amount required', 'error'); return; }
+
+  /* Look up user profile by email */
+  const { data: prof } = await db.from('profiles').select('id,balance').eq('email', userEmail).maybeSingle();
+  if (!prof) { showToast('User not found: ' + userEmail, 'error'); return; }
+  const userId = prof.id;
+
+  /* Record the deposit request as approved */
+  const { error } = await db.from('deposit_requests').insert({
+    user_id: userId, user_email: userEmail,
+    amount, method, note, status: 'approved',
+    created_at: new Date().toISOString()
+  });
   if (error) { showToast('Error: ' + error.message, 'error'); return; }
-  await logAudit('manual_deposit', user, `${fmtMoney(amount)} via ${method}`);
-  showToast(`Manual deposit of ${fmtMoney(amount)} processed`);
+
+  /* Credit user balance */
+  const newBalance = (parseFloat(prof.balance) || 0) + amount;
+  await db.from('profiles').update({ balance: newBalance }).eq('id', userId);
+
+  /* Write transaction for history page */
+  await db.from('transactions').insert({
+    user_id: userId, user_email: userEmail,
+    type: 'deposit', amount, currency: 'USD',
+    note: note || `Manual deposit via ${method}`,
+    status: 'completed',
+    created_at: new Date().toISOString(),
+  });
+
+  /* Notify user */
+  await db.from('notifications').insert({
+    user_id: userId,
+    title:   'Deposit Credited',
+    message: `$${amount.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})} has been deposited to your account.`,
+    type:    'deposit', read: false,
+    created_at: new Date().toISOString(),
+  });
+
+  await logAudit('manual_deposit', userId, `${fmtMoney(amount)} via ${method} for ${userEmail}`);
+  showToast(`Manual deposit of ${fmtMoney(amount)} credited to ${userEmail}`);
   closeModal('modal-manual-deposit');
   renderDepositsLive(); loadDashStats();
 };
