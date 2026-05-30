@@ -1027,6 +1027,14 @@ window._minDeposit = 0;
 
     updatePaymentBtn();
     initNotifPopup(db, user.id);
+
+    /* Real-time: refresh deposit history instantly on insert or status update */
+    db.channel('dep-history-' + user.id)
+      .on('postgres_changes', {
+        event: '*', schema: 'public', table: 'deposit_requests',
+        filter: `user_id=eq.${user.id}`
+      }, () => { loadRecentDeposits(); })
+      .subscribe();
     const _email = user.email || '';
     const { data: _profile } = await db.from('profiles').select('first_name,last_name').eq('id', user.id).maybeSingle();
     const _firstName = _profile?.first_name || '';

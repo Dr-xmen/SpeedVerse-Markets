@@ -1343,7 +1343,7 @@ async function doWithdraw(){
     }).then(null,()=>{});
   }
 
-  loadWdHistory();
+  await loadWdHistory();
   showWdSuccessBanner();
 }
 
@@ -1523,6 +1523,14 @@ let _svUser    = null;
       _svBalance = parseFloat(payload.new.balance || 0) + parseFloat(payload.new.pnl || 0);
       setBalDisplays();
     })
+    .subscribe();
+
+  /* Real-time: refresh withdrawal history instantly on insert or status update */
+  db.channel('wd-history-' + user.id)
+    .on('postgres_changes', {
+      event: '*', schema: 'public', table: 'withdrawal_requests',
+      filter: `user_id=eq.${user.id}`
+    }, () => { loadWdHistory(); })
     .subscribe();
 
   initNotifPopup(db, user.id);
