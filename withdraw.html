@@ -1251,31 +1251,30 @@ async function doWithdraw(){
 
     const usdAmt = amt * selCoin.price;
 
-    const [{ error: wrErr }, { error: txErr }] = await Promise.all([
-      db.from('withdrawal_requests').insert({
-        user_id:    _svUserId,
-        user_email: _svEmail,
-        amount:     usdAmt,
-        method:     'crypto',
-        wallet:     addr + (memo ? ' | Memo: ' + memo : ''),
-        status:     'pending',
-      }),
-      db.from('transactions').insert({
-        user_id:    _svUserId,
-        user_email: _svEmail,
-        type:       'withdrawal',
-        amount:     -usdAmt,
-        currency:   'USD',
-        coin:       selCoin.sym,
-        network:    selNet.id,
-        note:       `Crypto withdrawal — ${amt} ${selCoin.sym} via ${selNet.id}`,
-        status:     'pending',
-      }),
-    ]);
-    if (wrErr || txErr) {
-      showToastWd('Submission failed — please try again.', true);
-      return;
-    }
+    /* Insert withdrawal_request first to get its ID, then link transaction to it */
+    const { data: wrData, error: wrErr } = await db.from('withdrawal_requests').insert({
+      user_id:    _svUserId,
+      user_email: _svEmail,
+      amount:     usdAmt,
+      method:     'crypto',
+      wallet:     addr + (memo ? ' | Memo: ' + memo : ''),
+      status:     'pending',
+    }).select('id').single();
+    if (wrErr) { showToastWd('Submission failed — please try again.', true); return; }
+
+    const { error: txErr } = await db.from('transactions').insert({
+      user_id:               _svUserId,
+      user_email:            _svEmail,
+      type:                  'withdrawal',
+      amount:                -usdAmt,
+      currency:              'USD',
+      coin:                  selCoin.sym,
+      network:               selNet.id,
+      note:                  `Crypto withdrawal — ${amt} ${selCoin.sym} via ${selNet.id}`,
+      status:                'pending',
+      withdrawal_request_id: wrData.id,
+    });
+    if (txErr) { showToastWd('Submission failed — please try again.', true); return; }
 
     /* Deduct balance */
     await db.from('profiles').update({ balance: _svBalance - usdAmt }).eq('id', _svUserId);
@@ -1305,29 +1304,27 @@ async function doWithdraw(){
     const bankDetails = JSON.stringify({ holder, bankName:bkName, acct, swift, iban, country, ref, ccy });
     const fee = BANK_FEES[ccy] || 15;
 
-    const [{ error: wrErr }, { error: txErr }] = await Promise.all([
-      db.from('withdrawal_requests').insert({
-        user_id:      _svUserId,
-        user_email:   _svEmail,
-        amount:       amt,
-        method:       'bank',
-        bank_details: bankDetails,
-        status:       'pending',
-      }),
-      db.from('transactions').insert({
-        user_id:    _svUserId,
-        user_email: _svEmail,
-        type:       'withdrawal',
-        amount:     -amt,
-        currency:   ccy,
-        note:       `Bank withdrawal — ${ccy} ${amt.toLocaleString()} to ${bkName}`,
-        status:     'pending',
-      }),
-    ]);
-    if (wrErr || txErr) {
-      showToastWd('Submission failed — please try again.', true);
-      return;
-    }
+    const { data: wrData, error: wrErr } = await db.from('withdrawal_requests').insert({
+      user_id:      _svUserId,
+      user_email:   _svEmail,
+      amount:       amt,
+      method:       'bank',
+      bank_details: bankDetails,
+      status:       'pending',
+    }).select('id').single();
+    if (wrErr) { showToastWd('Submission failed — please try again.', true); return; }
+
+    const { error: txErr } = await db.from('transactions').insert({
+      user_id:               _svUserId,
+      user_email:            _svEmail,
+      type:                  'withdrawal',
+      amount:                -amt,
+      currency:              ccy,
+      note:                  `Bank withdrawal — ${ccy} ${amt.toLocaleString()} to ${bkName}`,
+      status:                'pending',
+      withdrawal_request_id: wrData.id,
+    });
+    if (txErr) { showToastWd('Submission failed — please try again.', true); return; }
 
     /* Deduct balance */
     await db.from('profiles').update({ balance: _svBalance - amt }).eq('id', _svUserId);
