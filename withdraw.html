@@ -1208,7 +1208,9 @@ function handleWdPin(key){
 }
 
 async function checkWdPin(){
-  const stored=window._svUser?.user_metadata?.trading_pin;
+  /* Fetch fresh user so we never use a stale cached session that's missing the PIN */
+  const { data: { user: freshUser } } = await window.SV_DB.auth.getUser();
+  const stored = freshUser?.user_metadata?.trading_pin;
   if(!stored){
     document.querySelectorAll('#wd-pin-dots .wd-pin-dot').forEach(d=>d.classList.add('filled','success'));
     setTimeout(()=>{ closeModal(); doWithdraw(); },420);
