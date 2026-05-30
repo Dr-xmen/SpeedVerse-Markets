@@ -1180,6 +1180,8 @@ async function sha256(str){
 
 /* PIN state */
 let _wdPin='';
+let _wdPinAttempts=0;
+const WD_PIN_MAX=3;
 
 function syncWdDots(){
   document.querySelectorAll('#wd-pin-dots .wd-pin-dot').forEach((d,i)=>{
@@ -1196,6 +1198,7 @@ function buildWdNumpad(){
 }
 
 function handleWdPin(key){
+  if(_wdPinAttempts>=WD_PIN_MAX) return;
   if(key==='⌫') _wdPin=_wdPin.slice(0,-1);
   else if(key==='✕') _wdPin='';
   else if(_wdPin.length<4) _wdPin+=key;
@@ -1207,23 +1210,32 @@ function handleWdPin(key){
 async function checkWdPin(){
   const stored=window._svUser?.user_metadata?.trading_pin;
   if(!stored){
-    /* No PIN set — proceed directly */
     document.querySelectorAll('#wd-pin-dots .wd-pin-dot').forEach(d=>d.classList.add('filled','success'));
     setTimeout(()=>{ closeModal(); doWithdraw(); },420);
     return;
   }
   const hash=await sha256(_wdPin);
   if(hash===stored){
+    _wdPinAttempts=0;
     document.querySelectorAll('#wd-pin-dots .wd-pin-dot').forEach(d=>d.classList.add('filled','success'));
     setTimeout(()=>{ closeModal(); doWithdraw(); },420);
   } else {
+    _wdPinAttempts++;
     _wdPin='';
     syncWdDots();
     const dotsEl=document.getElementById('wd-pin-dots');
     dotsEl.classList.remove('wd-pin-shake');
     void dotsEl.offsetWidth;
     dotsEl.classList.add('wd-pin-shake');
-    document.getElementById('wd-pin-error').textContent='Incorrect PIN — try again';
+    const remaining=WD_PIN_MAX-_wdPinAttempts;
+    if(remaining<=0){
+      document.getElementById('wd-pin-error').textContent='Too many incorrect attempts — please try again later.';
+      /* Disable numpad */
+      document.querySelectorAll('.wd-np-btn').forEach(b=>{ b.disabled=true; b.style.opacity='0.35'; });
+      setTimeout(()=>{ closeModal(); },1800);
+    } else {
+      document.getElementById('wd-pin-error').textContent=`Incorrect PIN — ${remaining} attempt${remaining===1?'':'s'} remaining`;
+    }
   }
 }
 
@@ -1403,6 +1415,7 @@ function openVerifyModal(type){
     ?'Enter your 4-digit PIN to confirm this bank withdrawal'
     :'Enter your 4-digit PIN to confirm this crypto withdrawal';
   _wdPin='';
+  _wdPinAttempts=0;
   syncWdDots();
   document.getElementById('wd-pin-error').textContent='';
   buildWdNumpad();

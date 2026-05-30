@@ -2480,7 +2480,19 @@ window.renderWithdrawalsLive = async function() {
 };
 async function approveWithdrawal(id) {
   const db = window.SV_DB; if (!db) return;
+  const { data: req } = await db.from('withdrawal_requests').select('user_id,amount').eq('id', id).maybeSingle();
   await db.from('withdrawal_requests').update({ status:'approved' }).eq('id', id);
+  if (req?.user_id && req?.amount) {
+    await db.from('transactions')
+      .update({ status:'completed' })
+      .eq('user_id', req.user_id).eq('type','withdrawal').eq('status','pending').eq('amount', -parseFloat(req.amount));
+    await db.from('notifications').insert({
+      user_id: req.user_id,
+      title:   'Withdrawal Approved',
+      message: `Your withdrawal of $${parseFloat(req.amount).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})} has been approved and is being processed.`,
+      type:    'success',
+    }).catch(()=>{});
+  }
   await logAudit('approve_withdrawal', id, '');
   showToast('Withdrawal approved');
   renderWithdrawalsLive(); loadDashStats();
@@ -2493,6 +2505,9 @@ async function rejectWithdrawal(id) {
     const { data: prof } = await db.from('profiles').select('balance').eq('id', req.user_id).maybeSingle();
     const refunded = parseFloat(prof?.balance || 0) + parseFloat(req.amount);
     await db.from('profiles').update({ balance: refunded }).eq('id', req.user_id);
+    await db.from('transactions')
+      .update({ status:'rejected' })
+      .eq('user_id', req.user_id).eq('type','withdrawal').eq('status','pending').eq('amount', -parseFloat(req.amount));
     await db.from('notifications').insert({
       user_id: req.user_id,
       title:   'Withdrawal Rejected',
