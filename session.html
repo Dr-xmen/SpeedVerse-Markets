@@ -544,6 +544,7 @@ document.getElementById('btn-signout').addEventListener('click', async () => {
 
 /* ── Init ── */
 (async () => {
+  const _sessionLoadStart = Date.now();
   const db = window.SV_DB;
 
   // If PIN already passed this session, skip to next page
@@ -585,9 +586,17 @@ document.getElementById('btn-signout').addEventListener('click', async () => {
   const name = _user.user_metadata?.first_name || _user.email.split('@')[0];
   document.getElementById('enter-sub').textContent = `Welcome back, ${name}! Enter your PIN to continue.`;
 
-  // Show page
-  document.getElementById('sv-loading').style.display = 'none';
-  document.getElementById('sv-pin-page').style.display = 'flex';
+  // Show page — minimum 1.4s so the loading animation is visible
+  const _sessionEl = document.getElementById('sv-loading');
+  const _pinPage   = document.getElementById('sv-pin-page');
+  const elapsed    = Date.now() - _sessionLoadStart;
+  const delay      = Math.max(0, 1400 - elapsed);
+  setTimeout(() => {
+    _sessionEl.style.opacity    = '0';
+    _sessionEl.style.transition = 'opacity .45s ease';
+    _pinPage.style.display      = 'flex';
+    setTimeout(() => { _sessionEl.style.display = 'none'; }, 470);
+  }, delay);
 
   // Check lockout
   const until = parseInt(localStorage.getItem(`sv_lockout_${_user.id}`) || '0');
