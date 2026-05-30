@@ -505,7 +505,18 @@ document.getElementById('btn-signout').addEventListener('click', async () => {
     sessionStorage.removeItem(SS_KEY);
   }
 
-  const { data: { session } } = await db.auth.getSession();
+  /* Use onAuthStateChange so PKCE code exchange (Google OAuth) completes before we read the session */
+  const session = await new Promise(resolve => {
+    let done = false;
+    const { data: { subscription } } = db.auth.onAuthStateChange((_event, sess) => {
+      if (done) return;
+      done = true;
+      subscription.unsubscribe();
+      resolve(sess);
+    });
+    setTimeout(() => { if (!done) { done = true; subscription.unsubscribe(); resolve(null); } }, 6000);
+  });
+
   if (!session) { window.location.href = 'login.html'; return; }
   _user = session.user;
 
