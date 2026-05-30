@@ -834,7 +834,7 @@ html.mob .main{width:100% !important;padding:20px 16px;}</style>
             <th>Status</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id="wd-hist-tbody">
           <tr><td colspan="6">
             <div class="empty-state">
               <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17,8 12,3 7,8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
@@ -1209,11 +1209,174 @@ async function checkWdPin(){
   }
 }
 
-function doWithdraw(){
-  const msg=currentModalType==='bank'
-    ?'Bank withdrawal submitted successfully.\n\nFunds will arrive in 1–3 business days.'
-    :'Withdrawal submitted successfully.';
-  alert(msg);
+async function doWithdraw(){
+  const db = window.SV_DB;
+  if (!db || !_svUserId) return;
+
+  if (currentModalType === 'crypto') {
+    const amt  = parseFloat(document.getElementById('amount-input').value) || 0;
+    const addr = document.getElementById('addr-input').value.trim();
+    const memo = document.getElementById('memo-input')?.value.trim() || null;
+    if (!selCoin || !selNet || amt <= 0 || addr.length < 5) return;
+
+    const usdAmt = amt * selCoin.price;
+
+    const [{ error: wrErr }, { error: txErr }] = await Promise.all([
+      db.from('withdrawal_requests').insert({
+        user_id:    _svUserId,
+        user_email: _svEmail,
+        amount:     usdAmt,
+        method:     'crypto',
+        wallet:     addr + (memo ? ' | Memo: ' + memo : ''),
+        status:     'pending',
+      }),
+      db.from('transactions').insert({
+        user_id:    _svUserId,
+        user_email: _svEmail,
+        type:       'withdrawal',
+        amount:     -usdAmt,
+        currency:   'USD',
+        coin:       selCoin.sym,
+        network:    selNet.id,
+        note:       `Crypto withdrawal — ${amt} ${selCoin.sym} via ${selNet.id}`,
+        status:     'pending',
+      }),
+    ]);
+    if (wrErr || txErr) {
+      showToastWd('Submission failed — please try again.', true);
+      return;
+    }
+
+    /* Deduct balance */
+    await db.from('profiles').update({ balance: _svBalance - usdAmt }).eq('id', _svUserId);
+    _svBalance -= usdAmt;
+    setBalDisplays();
+
+    await db.from('notifications').insert({
+      user_id: _svUserId,
+      title:   'Withdrawal Submitted',
+      message: `Your withdrawal of ${amt} ${selCoin.sym} (≈ $${usdAmt.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}) is pending admin review.`,
+      type:    'info',
+    }).catch(()=>{});
+
+  } else {
+    /* Bank */
+    const amt     = parseFloat(document.getElementById('bank-amount').value) || 0;
+    const ccy     = document.getElementById('bank-currency').value;
+    const holder  = document.getElementById('bank-holder').value.trim();
+    const bkName  = document.getElementById('bank-name').value.trim();
+    const acct    = document.getElementById('bank-acct').value.trim();
+    const swift   = document.getElementById('bank-swift').value.trim();
+    const iban    = document.getElementById('bank-iban')?.value.trim() || '';
+    const country = document.getElementById('bank-country').value;
+    const ref     = document.getElementById('bank-ref')?.value.trim() || '';
+    if (amt <= 0) return;
+
+    const bankDetails = JSON.stringify({ holder, bankName:bkName, acct, swift, iban, country, ref, ccy });
+    const fee = BANK_FEES[ccy] || 15;
+
+    const [{ error: wrErr }, { error: txErr }] = await Promise.all([
+      db.from('withdrawal_requests').insert({
+        user_id:      _svUserId,
+        user_email:   _svEmail,
+        amount:       amt,
+        method:       'bank',
+        bank_details: bankDetails,
+        status:       'pending',
+      }),
+      db.from('transactions').insert({
+        user_id:    _svUserId,
+        user_email: _svEmail,
+        type:       'withdrawal',
+        amount:     -amt,
+        currency:   ccy,
+        note:       `Bank withdrawal — ${ccy} ${amt.toLocaleString()} to ${bkName}`,
+        status:     'pending',
+      }),
+    ]);
+    if (wrErr || txErr) {
+      showToastWd('Submission failed — please try again.', true);
+      return;
+    }
+
+    /* Deduct balance */
+    await db.from('profiles').update({ balance: _svBalance - amt }).eq('id', _svUserId);
+    _svBalance -= amt;
+    setBalDisplays();
+
+    await db.from('notifications').insert({
+      user_id: _svUserId,
+      title:   'Withdrawal Submitted',
+      message: `Your bank withdrawal of ${ccy} ${amt.toLocaleString()} is pending admin review (1–3 business days).`,
+      type:    'info',
+    }).catch(()=>{});
+  }
+
+  loadWdHistory();
+  showWdSuccessBanner();
+}
+
+function showToastWd(msg, isErr=false){
+  let t = document.getElementById('wd-toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'wd-toast';
+    t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);padding:12px 20px;border-radius:8px;font-size:13px;font-weight:600;color:#fff;z-index:9999;transition:opacity 0.3s;';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.background = isErr ? '#ef4444' : '#22c55e';
+  t.style.opacity = '1';
+  clearTimeout(t._to);
+  t._to = setTimeout(() => { t.style.opacity='0'; }, 3500);
+}
+
+function showWdSuccessBanner(){
+  const type = currentModalType;
+  /* Reset crypto form */
+  if (type === 'crypto') {
+    selCoin = null; selNet = null;
+    document.getElementById('amount-input').value = '';
+    document.getElementById('addr-input').value = '';
+    wdGoStep(1);
+  } else {
+    /* Reset bank form */
+    ['bank-amount','bank-holder','bank-name','bank-acct','bank-swift','bank-iban','bank-ref'].forEach(id => {
+      const el = document.getElementById(id); if (el) el.value = '';
+    });
+    const cs = document.getElementById('bank-country'); if (cs) cs.selectedIndex = 0;
+    switchMethod('bank');
+  }
+  showToastWd(type==='bank'
+    ? 'Bank withdrawal submitted — funds arrive in 1–3 business days.'
+    : 'Withdrawal submitted successfully.');
+}
+
+async function loadWdHistory(){
+  const db = window.SV_DB;
+  if (!db || !_svUserId) return;
+  const tbody = document.getElementById('wd-hist-tbody');
+  if (!tbody) return;
+  const { data } = await db.from('withdrawal_requests')
+    .select('*').eq('user_id', _svUserId).order('created_at', { ascending:false }).limit(10);
+  const rows = data || [];
+  if (!rows.length) {
+    tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17,8 12,3 7,8"/><line x1="12" y1="3" x2="12" y2="15"/></svg><p>No withdrawal history</p></div></td></tr>`;
+    return;
+  }
+  const fmtD = s => new Date(s).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+  const pill = s => s==='approved'?'#22c55e':s==='rejected'?'#ef4444':'#f59e0b';
+  tbody.innerHTML = rows.map(w => {
+    const dest = w.method==='crypto' ? (w.wallet||'').split(' | ')[0].slice(0,18)+'…'
+      : (() => { try { return JSON.parse(w.bank_details).bankName || 'Bank'; } catch(e){ return 'Bank'; } })();
+    return `<tr>
+      <td>${fmtD(w.created_at)}</td>
+      <td style="font-weight:700;">$${parseFloat(w.amount||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</td>
+      <td>${w.method==='crypto'?'Crypto':'Bank Transfer'}</td>
+      <td style="font-size:12px;color:var(--sub);">${dest}</td>
+      <td><span style="display:inline-block;padding:2px 10px;border-radius:99px;font-size:11.5px;font-weight:700;color:#fff;background:${pill(w.status)}">${(w.status||'pending').charAt(0).toUpperCase()+(w.status||'pending').slice(1)}</span></td>
+    </tr>`;
+  }).join('');
 }
 
 function openVerifyModal(type){
@@ -1311,6 +1474,7 @@ let _svUser    = null;
     updateBankSummary();
   };
   setBalDisplays();
+  loadWdHistory();
 
   /* Update min-wd display if crypto step3 is visible */
   if (_minWithdrawal > 0) {

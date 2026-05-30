@@ -2487,9 +2487,21 @@ async function approveWithdrawal(id) {
 }
 async function rejectWithdrawal(id) {
   const db = window.SV_DB; if (!db) return;
+  const { data: req } = await db.from('withdrawal_requests').select('user_id,amount').eq('id', id).maybeSingle();
   await db.from('withdrawal_requests').update({ status:'rejected' }).eq('id', id);
+  if (req?.user_id && req?.amount) {
+    const { data: prof } = await db.from('profiles').select('balance').eq('id', req.user_id).maybeSingle();
+    const refunded = parseFloat(prof?.balance || 0) + parseFloat(req.amount);
+    await db.from('profiles').update({ balance: refunded }).eq('id', req.user_id);
+    await db.from('notifications').insert({
+      user_id: req.user_id,
+      title:   'Withdrawal Rejected',
+      message: `Your withdrawal of $${parseFloat(req.amount).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})} was rejected. Funds have been returned to your balance.`,
+      type:    'warning',
+    }).catch(()=>{});
+  }
   await logAudit('reject_withdrawal', id, '');
-  showToast('Withdrawal rejected', 'error');
+  showToast('Withdrawal rejected — balance refunded', 'error');
   renderWithdrawalsLive(); loadDashStats();
 }
 
