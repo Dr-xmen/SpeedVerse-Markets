@@ -1608,9 +1608,9 @@ async function doSignOut() {
   window.location.href = 'ops-login.html';
 }
 
-async function logAudit(action, target, details) {
+function logAudit(action, target, details) {
   const db = window.SV_DB; if (!db || !_adminUser?.id) return;
-  await db.from('audit_log').insert({ admin_id: _adminUser.id, admin_email: _adminUser.email, action, target: String(target||'').slice(0,100), details: String(details||'').slice(0,255) });
+  db.from('audit_log').insert({ admin_id: _adminUser.id, admin_email: _adminUser.email, action, target: String(target||'').slice(0,100), details: String(details||'').slice(0,255) }).catch(()=>{});
 }
 
 /* ── Deposit Addresses ── */
@@ -1668,7 +1668,7 @@ window.saveDepositAddresses = async function() {
   if (!rows.length) { showToast('Enter at least one address', 'error'); return; }
   const { error } = await db.from('deposit_addresses').upsert(rows, { onConflict: 'coin,network' });
   if (error) { showToast('Error: ' + error.message, 'error'); return; }
-  await logAudit('save_deposit_addresses', 'system', `${rows.length} addresses saved`);
+  logAudit('save_deposit_addresses', 'system', `${rows.length} addresses saved`);
   showToast('Deposit addresses saved');
 };
 
@@ -1721,7 +1721,7 @@ window.saveGlobalMinDeposit = async function() {
   const val = parseFloat(document.getElementById('global-min-deposit').value) || 0;
   const { error } = await db.from('system_settings').upsert({ key:'min_deposit_amount', value: String(val), updated_at: new Date().toISOString() }, { onConflict:'key' });
   if (error) { showToast('Error: ' + error.message, 'error'); return; }
-  await logAudit('set_global_min_deposit', 'system', 'Global min deposit set to $' + val);
+  logAudit('set_global_min_deposit', 'system', 'Global min deposit set to $' + val);
   showToast('Global minimum deposit saved');
 };
 
@@ -1738,7 +1738,7 @@ window.saveUserMinDeposit = async function() {
   if (u) u.min_deposit = val;
   document.getElementById('user-min-deposit-select').value = '';
   document.getElementById('user-min-deposit-val').value = '';
-  await logAudit('set_user_min_deposit', userId, val == null ? 'Cleared override' : 'Min deposit set to $' + val);
+  logAudit('set_user_min_deposit', userId, val == null ? 'Cleared override' : 'Min deposit set to $' + val);
   showToast(val == null ? 'Override cleared' : 'User minimum deposit saved');
   renderUserMinList();
 };
@@ -1799,7 +1799,7 @@ window.saveGlobalMinWithdrawal = async function() {
   const val = parseFloat(document.getElementById('global-min-withdrawal').value) || 0;
   const { error } = await db.from('system_settings').upsert({ key:'min_withdrawal_amount', value: String(val), updated_at: new Date().toISOString() }, { onConflict:'key' });
   if (error) { showToast('Error: ' + error.message, 'error'); return; }
-  await logAudit('set_global_min_withdrawal', 'system', 'Global min withdrawal set to $' + val);
+  logAudit('set_global_min_withdrawal', 'system', 'Global min withdrawal set to $' + val);
   showToast('Global minimum withdrawal saved');
 };
 
@@ -1815,7 +1815,7 @@ window.saveUserMinWithdrawal = async function() {
   if (u) u.min_withdrawal = val;
   document.getElementById('user-min-withdrawal-select').value = '';
   document.getElementById('user-min-withdrawal-val').value = '';
-  await logAudit('set_user_min_withdrawal', userId, val == null ? 'Cleared override' : 'Min withdrawal set to $' + val);
+  logAudit('set_user_min_withdrawal', userId, val == null ? 'Cleared override' : 'Min withdrawal set to $' + val);
   showToast(val == null ? 'Override cleared' : 'User minimum withdrawal saved');
   renderUserMinWithdrawalList();
 };
@@ -2015,7 +2015,7 @@ window.updateUser = async function() {
   };
   const { error } = await db.from('profiles').update(updates).eq('id', id);
   if (error) { showToast('Error: ' + error.message, 'error'); return; }
-  await logAudit('update_user', id, JSON.stringify(updates));
+  logAudit('update_user', id, JSON.stringify(updates));
   showToast('User updated');
   closeModal('modal-edit-user');
   await renderUsersLive();
@@ -2025,7 +2025,7 @@ window.toggleUserStatus = async function(id, current) {
   const newStatus = current === 'suspended' ? 'active' : 'suspended';
   const { error } = await db.from('profiles').update({ status: newStatus }).eq('id', id);
   if (error) { showToast('Error: ' + error.message, 'error'); return; }
-  await logAudit('toggle_user_status', id, newStatus);
+  logAudit('toggle_user_status', id, newStatus);
   showToast(`User ${newStatus}`);
   await renderUsersLive();
 };
@@ -2045,7 +2045,7 @@ window.saveUser = async function() {
   };
   const { error } = await db.from('profiles').insert(newUser);
   if (error) { showToast('Error: ' + error.message, 'error'); return; }
-  await logAudit('create_user', email, `balance: ${balance}`);
+  logAudit('create_user', email, `balance: ${balance}`);
   showToast('User created');
   closeModal('modal-add-user');
   await renderUsersLive();
@@ -2173,7 +2173,7 @@ async function approveKYC(id, userId) {
   }
   await db.from('kyc_submissions').update({ status: 'approved' }).eq('id', id);
   if (userId) await db.from('profiles').update({ kyc_status: 'verified' }).eq('id', userId);
-  await logAudit('approve_kyc', id, '');
+  logAudit('approve_kyc', id, '');
   showToast('KYC approved ✓');
   renderKYCLive();
 }
@@ -2186,7 +2186,7 @@ async function rejectKYC(id, userId, reason) {
   }
   await db.from('kyc_submissions').update({ status: 'rejected', rejection_reason: reason || '' }).eq('id', id);
   if (userId) await db.from('profiles').update({ kyc_status: 'rejected' }).eq('id', userId);
-  await logAudit('reject_kyc', id, reason || '');
+  logAudit('reject_kyc', id, reason || '');
   showToast('KYC rejected', 'error');
   renderKYCLive();
 }
@@ -2234,7 +2234,7 @@ window.applyAdjustment = async function() {
   const { error } = await db.from('trading_accounts').update({ balance: newBal }).eq('id', id);
   if (error) { showToast('Error: ' + error.message, 'error'); return; }
   await db.from('transactions').insert({ account_id: id, type, amount, note, status: 'completed' });
-  await logAudit('adjust_balance', id, `${type} ${fmtMoney(amount)} — ${note}`);
+  logAudit('adjust_balance', id, `${type} ${fmtMoney(amount)} — ${note}`);
   showToast(`Balance adjusted: ${type} ${fmtMoney(amount)}`);
   closeModal('modal-adjust-balance');
   renderAccountsLive();
@@ -2293,7 +2293,7 @@ async function forceClosePosition(id) {
   const db = window.SV_DB; if (!db) return;
   if (!confirm('Force close this position?')) return;
   await db.from('positions').update({ status:'closed', closed_at: new Date().toISOString() }).eq('id', id);
-  await logAudit('force_close_position', id, 'admin force close');
+  logAudit('force_close_position', id, 'admin force close');
   showToast('Position closed');
   renderPositionsLive();
 }
@@ -2370,14 +2370,14 @@ async function approveDeposit(id) {
     });
   }
 
-  await logAudit('approve_deposit', id, `$${amount} for ${req.user_email}`);
+  logAudit('approve_deposit', id, `$${amount} for ${req.user_email}`);
   showToast('Deposit approved — balance credited');
   renderDepositsLive(); loadDashStats();
 }
 async function rejectDeposit(id) {
   const db = window.SV_DB; if (!db) return;
   await db.from('deposit_requests').update({ status:'rejected' }).eq('id', id);
-  await logAudit('reject_deposit', id, '');
+  logAudit('reject_deposit', id, '');
   showToast('Deposit rejected', 'error');
   renderDepositsLive(); loadDashStats();
 }
@@ -2447,7 +2447,7 @@ window.opsManualDeposit = async function() {
     created_at: new Date().toISOString(),
   });
 
-  await logAudit('manual_deposit', userId, `${fmtMoney(amount)} via ${method} for ${userEmail}`);
+  logAudit('manual_deposit', userId, `${fmtMoney(amount)} via ${method} for ${userEmail}`);
   showToast(`Manual deposit of ${fmtMoney(amount)} credited to ${userEmail}`);
   closeModal('modal-manual-deposit');
   renderDepositsLive(); loadDashStats();
@@ -2493,8 +2493,8 @@ async function approveWithdrawal(id) {
       type:    'success',
     }).catch(()=>{});
   }
-  await logAudit('approve_withdrawal', id, '');
   showToast('Withdrawal approved');
+  logAudit('approve_withdrawal', id, '');
   renderWithdrawalsLive(); loadDashStats();
 }
 async function rejectWithdrawal(id) {
@@ -2515,8 +2515,8 @@ async function rejectWithdrawal(id) {
       type:    'warning',
     }).catch(()=>{});
   }
-  await logAudit('reject_withdrawal', id, '');
   showToast('Withdrawal rejected — balance refunded', 'error');
+  logAudit('reject_withdrawal', id, '');
   renderWithdrawalsLive(); loadDashStats();
 }
 
@@ -2553,7 +2553,7 @@ window.saveUpgradePlan = async function() {
       enabled: true,
     },
   ]);
-  await logAudit('upgrade_plan', userId, `Plan set to ${plan}`);
+  logAudit('upgrade_plan', userId, `Plan set to ${plan}`);
   showToast(`Plan upgraded to ${plan}`);
   closeModal('modal-upgrade-plan');
   await renderUsersLive();
@@ -2625,7 +2625,7 @@ window.saveCreditDebit = async function() {
     user_id: userId, title: notifTitle, message: notifMsg, type: 'account', enabled: true,
   });
 
-  await logAudit(txType, userId, `${type === 'set_pnl' ? 'P&L set to' : type === 'credit' ? 'Credited' : 'Debited'} $${amount}${note ? ' — '+note : ''}`);
+  logAudit(txType, userId, `${type === 'set_pnl' ? 'P&L set to' : type === 'credit' ? 'Credited' : 'Debited'} $${amount}${note ? ' — '+note : ''}`);
   showToast(`${type === 'credit' ? 'Credited' : type === 'debit' ? 'Debited' : 'P&L set'}: $${amount.toLocaleString()}`);
   closeModal('modal-credit-debit');
   await renderUsersLive();
@@ -2733,7 +2733,7 @@ window.opsToggleAnnouncement = async function(annId, enable) {
   const db = window.SV_DB; if (!db) return;
   await db.from('announcements').update({ is_active: enable }).eq('id', annId);
   await db.from('notifications').update({ enabled: enable }).eq('announcement_id', annId);
-  await logAudit(enable ? 'ENABLE_ANNOUNCEMENT' : 'DISABLE_ANNOUNCEMENT', annId, `Popup ${enable ? 'enabled' : 'disabled'}`);
+  logAudit(enable ? 'ENABLE_ANNOUNCEMENT' : 'DISABLE_ANNOUNCEMENT', annId, `Popup ${enable ? 'enabled' : 'disabled'}`);
   showToast(`Popup ${enable ? 'enabled — users will see it' : 'disabled — users will no longer see it'}`, enable ? 'success' : 'error');
   renderAnnouncementsLive();
 };
@@ -2743,7 +2743,7 @@ window.opsDeleteAnnouncement = async function(id) {
   const db = window.SV_DB; if (!db) return;
   await db.from('notifications').delete().eq('announcement_id', id);
   await db.from('announcements').delete().eq('id', id);
-  await logAudit('DELETE_ANNOUNCEMENT', id, 'Deleted by admin');
+  logAudit('DELETE_ANNOUNCEMENT', id, 'Deleted by admin');
   showToast('Announcement deleted', 'error');
   renderAnnouncementsLive();
 };
@@ -2804,7 +2804,7 @@ window.publishAnnouncement = async function() {
       await db.from('notifications').delete().eq('announcement_id', _editingAnnId);
       const rows = recipientIds.map(uid => ({ user_id: uid, type: 'announcement', title, message: body, enabled: true, read: false, announcement_id: _editingAnnId }));
       for (let i = 0; i < rows.length; i += 100) await db.from('notifications').insert(rows.slice(i, i + 100));
-      await logAudit('EDIT_ANNOUNCEMENT', title, `Updated | Recipients: ${recipientIds.length}`);
+      logAudit('EDIT_ANNOUNCEMENT', title, `Updated | Recipients: ${recipientIds.length}`);
       showToast('Announcement updated', 'success');
     } else {
       const { data: annRow, error } = await db.from('announcements').insert({
@@ -2818,7 +2818,7 @@ window.publishAnnouncement = async function() {
       const annId = annRow.id;
       const rows = recipientIds.map(uid => ({ user_id: uid, type: 'announcement', title, message: body, enabled: true, read: false, announcement_id: annId }));
       for (let i = 0; i < rows.length; i += 100) await db.from('notifications').insert(rows.slice(i, i + 100));
-      await logAudit('PUBLISH_ANNOUNCEMENT', title, `Type: ${type} | Audience: ${audience} | Recipients: ${recipientIds.length}`);
+      logAudit('PUBLISH_ANNOUNCEMENT', title, `Type: ${type} | Audience: ${audience} | Recipients: ${recipientIds.length}`);
       showToast(`Sent to ${recipientIds.length} user${recipientIds.length !== 1 ? 's' : ''}`, 'success');
     }
     resetAnnForm();
@@ -2839,7 +2839,7 @@ window.sendEmail = async function() {
   if (!subject || !body) { showToast('Subject and body required', 'error'); return; }
   const { error } = await db.from('email_queue').insert({ recipient_group: to, subject, body, sent_by: _adminUser?.email, created_at: new Date().toISOString() });
   if (error) { showToast('Error: ' + error.message, 'error'); return; }
-  await logAudit('send_email', to, subject);
+  logAudit('send_email', to, subject);
   showToast(`Email queued for ${to} users`);
 };
 
@@ -2949,7 +2949,7 @@ window.dtiSubmit = async function() {
   await _syncTradeToBalance(db, userId, pnl, `${pair} ${dir} #${ticket}`);
   dtiLoadAccount();
 
-  await logAudit('direct_trade_input', userId, `${pair} ${dir} P&L:${pnl}`);
+  logAudit('direct_trade_input', userId, `${pair} ${dir} P&L:${pnl}`);
   showToast('Trade submitted successfully');
   dtiReset();
   loadUserTradeHistory();
@@ -2998,7 +2998,7 @@ window.deleteTradeEntry = async function(id) {
     const newPnl = (remaining || []).reduce((s, r) => s + (parseFloat(r.pnl) || 0), 0);
     await db.from('profiles').update({ pnl: newPnl }).eq('id', pos.user_id);
   }
-  await logAudit('delete_trade', id, 'admin delete');
+  logAudit('delete_trade', id, 'admin delete');
   showToast('Trade deleted');
   loadUserTradeHistory();
 };
@@ -3125,7 +3125,7 @@ window.saveAddPosition = async function() {
   /* Update profiles.pnl and profit_target_trades */
   await _syncTradeToBalance(db, userId, pnl, `${symbol} ${side} #${ticket}`);
 
-  await logAudit('add_position', userId, `${symbol} ${side} #${ticket}`);
+  logAudit('add_position', userId, `${symbol} ${side} #${ticket}`);
   showToast('Trade added');
   closeModal('modal-add-position');
   renderPositionsLive();
@@ -3230,7 +3230,7 @@ window.saveSetProfitTarget = async function() {
       created_at: new Date().toISOString()
     });
   }
-  await logAudit('set_profit_target', userId, `${label} $${targetAmt}`);
+  logAudit('set_profit_target', userId, `${label} $${targetAmt}`);
   showToast('Profit target saved');
   closeModal('modal-set-profit-target');
   renderProfitTargetsLive();
@@ -3248,7 +3248,7 @@ window.deactivateProfitTarget = async function(targetId, userId) {
     message: 'Your profit target has been deactivated by the administrator.',
     read: false, enabled: true, created_at: new Date().toISOString()
   });
-  await logAudit('deactivate_profit_target', targetId, userId);
+  logAudit('deactivate_profit_target', targetId, userId);
   showToast('Profit target deactivated');
   renderProfitTargetsLive();
 };
@@ -3297,7 +3297,7 @@ window.saveAddPTTrade = async function() {
     created_at: new Date().toISOString()
   });
   if (error) { showToast('Error: ' + error.message, 'error'); return; }
-  await logAudit('add_pt_trade', userId, `$${amount} (${pctDelta.toFixed(2)}%)`);
+  logAudit('add_pt_trade', userId, `$${amount} (${pctDelta.toFixed(2)}%)`);
 
   /* Check if target is now reached (>= 100%) and send one-time popup notification */
   if (targetAmt > 0) {
