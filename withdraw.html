@@ -1071,7 +1071,7 @@ function updateBankSummary(){
   document.getElementById('bank-fee-val').textContent      = fee.toLocaleString() + ' ' + ccy;
   document.getElementById('bank-rate-val').textContent     = `1 ${ccy} = 1.00 ${ccy}`;
   document.getElementById('bank-receive-val').textContent  = rcv > 0 ? `${rcv.toLocaleString()} ${ccy}` : '—';
-  document.getElementById('bank-next-btn').disabled        = !(amt >= min && amt <= avail);
+  document.getElementById('bank-next-btn').disabled        = !(amt >= min);
 }
 
 function checkBankStep2(){
