@@ -782,12 +782,14 @@ function openTxDetail(idx) {
         if (wr.bank_details) {
           try {
             const bd = typeof wr.bank_details === 'string' ? JSON.parse(wr.bank_details) : wr.bank_details;
-            if (bd.bank_name)      rows.push(['Bank Name',      bd.bank_name]);
-            if (bd.account_name)   rows.push(['Account Name',   bd.account_name]);
-            if (bd.account_number) rows.push(['Account Number', bd.account_number]);
-            if (bd.routing_number) rows.push(['Routing Number', bd.routing_number]);
-            if (bd.swift)          rows.push(['SWIFT / BIC',    bd.swift]);
-            if (bd.iban)           rows.push(['IBAN',           bd.iban]);
+            if (bd.holder)   rows.push(['Account Holder', bd.holder]);
+            if (bd.bankName) rows.push(['Bank Name',      bd.bankName]);
+            if (bd.acct)     rows.push(['Account Number', bd.acct]);
+            if (bd.swift)    rows.push(['SWIFT / BIC',    bd.swift]);
+            if (bd.iban)     rows.push(['IBAN',           bd.iban]);
+            if (bd.country)  rows.push(['Country',        bd.country]);
+            if (bd.ccy)      rows.push(['Currency',       bd.ccy]);
+            if (bd.ref)      rows.push(['Reference',      bd.ref]);
           } catch(e) {}
         }
       }
