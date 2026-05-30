@@ -778,13 +778,24 @@ async function submitKYC() {
     const selfieP    = `${uid}/avatar.${selfieExt}`;
     await _db.storage.from('avatars').upload(selfieP, selfieFile, { upsert: true });
 
-    // Save contact info if needed
-    const profileUpdate = { kyc_status: 'pending' };
+    // Upsert profile — ensures row exists for Google OAuth users who bypassed registration
+    const profileData = {
+      id:         uid,
+      email:      _user.email,
+      kyc_status: 'pending',
+    };
     if (_needsContactInfo) {
-      profileUpdate.phone   = (_selectedResidence?.dial || '') + phoneNum;
-      profileUpdate.country = residence;
+      profileData.phone   = (_selectedResidence?.dial || '') + phoneNum;
+      profileData.country = residence;
+      const googleName = _user.user_metadata?.full_name || _user.user_metadata?.name || '';
+      if (googleName) {
+        const parts = googleName.trim().split(' ');
+        profileData.first_name = parts[0] || '';
+        profileData.last_name  = parts.slice(1).join(' ') || '';
+      }
     }
-    await _db.from('profiles').update(profileUpdate).eq('id', uid);
+    const { error: profErr } = await _db.from('profiles').upsert(profileData, { onConflict: 'id' });
+    if (profErr) throw new Error(profErr.message);
 
     // Upsert KYC submission
     const { error: subErr } = await _db.from('kyc_submissions').upsert({
