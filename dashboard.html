@@ -1093,21 +1093,31 @@ function renderStats() {
 /* ════════════════════════════════════════════════════════
    PORTFOLIO PERFORMANCE CHART
    ════════════════════════════════════════════════════════ */
-let perfKlines = {}; // period -> close array
-let perfPeriod = '1D';
+let _perfTxns   = []; // all completed txns, newest first
+let _perfBalance = 0; // current balance anchor
+let perfPeriod  = '1D';
 
-async function fetchPerfKlines() {
-  const parse = arr => arr.map(k=>parseFloat(k[4])).reverse();
-  const [h1, d1] = await Promise.all([
-    fetch(`${OKX}/market/candles?instId=BTC-USDT&bar=1H&limit=168`).then(r=>r.json()).then(j=>j.data||[]).catch(()=>[]),
-    fetch(`${OKX}/market/candles?instId=BTC-USDT&bar=1D&limit=90`).then(r=>r.json()).then(j=>j.data||[]).catch(()=>[])
-  ]);
-  const h = parse(h1), d = parse(d1);
-  perfKlines['1D']  = h.slice(-24);
-  perfKlines['1W']  = h;
-  perfKlines['1M']  = d.slice(-30);
-  perfKlines['3M']  = d;
-  perfKlines['ALL'] = d;
+const PERF_PERIOD_MS = {
+  '1D':  86400000,
+  '1W':  604800000,
+  '1M':  2592000000,
+  '3M':  7776000000,
+  'ALL': null,
+};
+
+async function loadPerfChart(userId) {
+  const db = window.SV_DB;
+  if (!db || !userId) return;
+  try {
+    const { data: txns } = await db.from('transactions')
+      .select('type,amount,created_at')
+      .eq('user_id', userId)
+      .eq('status', 'completed')
+      .order('created_at', { ascending: false });
+    _perfTxns   = txns || [];
+    _perfBalance = portfolioValue().total;
+    drawPerfChart();
+  } catch(e) { console.error('loadPerfChart', e); }
 }
 
 function setPerfPeriod(btn, period) {
@@ -1119,43 +1129,65 @@ function setPerfPeriod(btn, period) {
 
 function drawPerfChart() {
   const svg = document.getElementById('perf-svg');
-  if(!svg) return;
-  const raw = perfKlines[perfPeriod];
-  if(!raw?.length) return;
+  if (!svg) return;
 
-  const { total } = portfolioValue();
-  const base = raw[0], last = raw[raw.length-1];
-  const pctChg = base ? (last - base) / base * 100 : 0;
-  const up = pctChg >= 0;
-  const data = raw.map(c => total * (c / last));
+  const balance = _perfBalance || portfolioValue().total;
+  const now     = Date.now();
+  const cutoff  = PERF_PERIOD_MS[perfPeriod];
 
-  document.getElementById('perf-total').textContent = `$${fmtUSD(total)}`;
+  // Filter to period window
+  const filtered = cutoff
+    ? _perfTxns.filter(t => (now - new Date(t.created_at).getTime()) <= cutoff)
+    : _perfTxns;
+
+  // Sort oldest → newest for reconstruction
+  const sorted = [...filtered].sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+
+  // Walk backwards from current balance, undoing each txn, to get history
+  let running = balance;
+  const points = [];
+  for (let i = sorted.length - 1; i >= 0; i--) {
+    const amt = parseFloat(sorted[i].amount || 0);
+    const tp  = sorted[i].type;
+    if (['deposit','credit','bonus','adjustment'].includes(tp)) running -= amt;
+    else if (['withdrawal','debit'].includes(tp)) running += amt;
+    points.unshift(Math.max(0, running));
+  }
+  points.push(balance);
+  if (points.length < 2) points.unshift(balance); // flat line when no txns in range
+
+  // Summary
+  const startBal = points[0];
+  const delta    = balance - startBal;
+  const pct      = startBal > 0 ? (delta / startBal) * 100 : 0;
+  const up       = delta >= 0;
+
+  document.getElementById('perf-total').textContent = `$${fmtUSD(balance)}`;
   const chgEl = document.getElementById('perf-change');
   chgEl.style.color = up ? 'var(--green)' : 'var(--red)';
-  chgEl.textContent = `${up?'+':''}${pctChg.toFixed(2)}% (${up?'+':'−'}$${fmtUSD(Math.abs(total*pctChg/100))})`;
+  chgEl.textContent = `${up ? '+' : '−'}$${fmtUSD(Math.abs(delta))} (${up ? '+' : ''}${pct.toFixed(2)}%)`;
 
-  const W = svg.parentElement.offsetWidth || 260, H = 110;
+  // Draw SVG
+  const W = svg.parentElement?.offsetWidth || 260, H = 110;
   svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
 
-  const min = Math.min(...data), max = Math.max(...data);
+  const min   = Math.min(...points), max = Math.max(...points);
   const range = max - min || 1;
-  const pad = 6;
-  const toX = i => pad + i * (W - pad*2) / (data.length-1);
-  const toY = v => H - pad - ((v-min)/range) * (H - pad*2);
+  const pad   = 6;
+  const toX   = i => pad + i * (W - pad * 2) / (points.length - 1);
+  const toY   = v => H - pad - ((v - min) / range) * (H - pad * 2);
 
   const color = up ? '#0ecb81' : '#f6465d';
-  const fillColor = up ? 'rgba(14,203,129,.18)' : 'rgba(246,70,93,.18)';
-  const uid = 'pg' + Date.now();
+  const uid   = 'pg' + Date.now();
 
-  // Build smooth bezier path
-  let linePath = `M${toX(0)},${toY(data[0])}`;
-  for(let i=1;i<data.length;i++){
-    const mx=(toX(i)+toX(i-1))/2;
-    linePath += ` C${mx},${toY(data[i-1])} ${mx},${toY(data[i])} ${toX(i)},${toY(data[i])}`;
+  // Smooth bezier path
+  let linePath = `M${toX(0)},${toY(points[0])}`;
+  for (let i = 1; i < points.length; i++) {
+    const mx = (toX(i) + toX(i - 1)) / 2;
+    linePath += ` C${mx},${toY(points[i-1])} ${mx},${toY(points[i])} ${toX(i)},${toY(points[i])}`;
   }
-  const fillPath = `${linePath} L${toX(data.length-1)},${H} L${toX(0)},${H} Z`;
-
-  const ex = toX(data.length-1), ey = toY(data[data.length-1]);
+  const fillPath = `${linePath} L${toX(points.length-1)},${H} L${toX(0)},${H} Z`;
+  const ex = toX(points.length - 1), ey = toY(points[points.length - 1]);
 
   svg.innerHTML = `
     <defs>
@@ -1164,26 +1196,30 @@ function drawPerfChart() {
         <stop offset="100%" stop-color="${color}" stop-opacity="0"/>
       </linearGradient>
     </defs>
-    <path d="${fillPath}" fill="url(#${uid})"/>
+    <path d="${fillPath}" fill="url(#${uid})" stroke="none"/>
     <path d="${linePath}" fill="none" stroke="${color}" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
     <circle cx="${ex}" cy="${ey}" r="3.5" fill="${color}"/>
     <circle cx="${ex}" cy="${ey}" r="6" fill="${color}" fill-opacity="0.2"/>
   `;
 
-  const now = new Date();
-  const fmt = (d) => d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
-  const fmtH = (d) => d.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
-  const total_pts = data.length;
-  const label = (offset) => {
-    const d = new Date(now);
-    if(perfPeriod==='1D'||perfPeriod==='1W') {
-      d.setHours(d.getHours()-offset); return perfPeriod==='1D'?fmtH(d):fmt(d);
-    }
-    d.setDate(d.getDate()-offset); return fmt(d);
-  };
-  const hoursPerPt = perfPeriod==='1D'?1:perfPeriod==='1W'?1:24;
-  document.getElementById('perf-x-l').textContent = label((total_pts-1)*hoursPerPt);
-  document.getElementById('perf-x-m').textContent = label(Math.floor((total_pts/2)*hoursPerPt));
+  // X-axis labels
+  const fmtD = d => d.toLocaleDateString('en-US', { month:'short', day:'numeric' });
+  const fmtH = d => d.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' });
+  let lLabel = '—', mLabel = '—';
+
+  if (perfPeriod === 'ALL' && filtered.length) {
+    const oldest = new Date(filtered[filtered.length - 1].created_at);
+    lLabel = fmtD(oldest);
+    mLabel = fmtD(new Date((oldest.getTime() + now) / 2));
+  } else if (cutoff) {
+    const start = new Date(now - cutoff);
+    const mid   = new Date(now - cutoff / 2);
+    lLabel = perfPeriod === '1D' ? fmtH(start) : fmtD(start);
+    mLabel = perfPeriod === '1D' ? fmtH(mid)   : fmtD(mid);
+  }
+
+  document.getElementById('perf-x-l').textContent = lLabel;
+  document.getElementById('perf-x-m').textContent = mLabel;
   document.getElementById('perf-x-r').textContent = 'Now';
 }
 
@@ -1505,20 +1541,8 @@ async function init() {
   setInterval(fetchTopMovers, 60000);
 
   await tick();
-  // Load performance chart klines
-  try {
-    await fetchPerfKlines();
-    drawPerfChart();
-  } catch(e) {}
   // Poll prices every 5 seconds
   setInterval(tick, 5000);
-  // Refresh klines every 5 minutes
-  setInterval(async () => {
-    try {
-      await fetchPerfKlines();
-      drawPerfChart();
-    } catch(e) {}
-  }, 300000);
 }
 
 /* ════════════════════════════════════════════════════════
@@ -1748,10 +1772,11 @@ document.addEventListener('DOMContentLoaded', init);
   }
   applyBalance(profile?.balance, profile?.pnl);
 
-  /* Load profit target and positions from DB */
+  /* Load profit target, positions, and performance chart from DB */
   loadProfitTarget(user.id);
   renderPositions();
   renderMarketPerf();
+  loadPerfChart(user.id);
 
   /* Check for one-time upgrade congrats popup */
   try {
