@@ -951,8 +951,8 @@ document.getElementById('signout-btn').onclick = async () => {
 
   // Fetch profile + submission
   const [{ data: prof }, { data: sub }] = await Promise.all([
-    _db.from('profiles').select('first_name,last_name,email,kyc_status,country,phone').eq('id', _userId).single(),
-    _db.from('kyc_submissions').select('id,status').eq('user_id', _userId).limit(1)
+    _db.from('profiles').select('first_name,last_name,email,kyc_status,country,phone').eq('id', _userId).maybeSingle(),
+    _db.from('kyc_submissions').select('id,status').eq('user_id', _userId).order('created_at', { ascending: false }).limit(1)
   ]);
 
   // User strip — fall back to Google metadata for OAuth users
@@ -973,17 +973,23 @@ document.getElementById('signout-btn').onclick = async () => {
 
   _needsContactInfo = !prof?.phone;
 
-  const kycStatus  = prof?.kyc_status || null;
+  const kycStatus    = prof?.kyc_status || null;
+  const subStatus    = sub?.[0]?.status || null;
   const hasSubmission = !!(sub && sub.length > 0);
+
+  // kyc_submissions.status is the ground truth for rejection —
+  // guards against profiles.kyc_status not being updated (e.g. admin RLS failure)
+  const isRejected = subStatus === 'rejected' || kycStatus === 'rejected';
+  const isVerified = kycStatus === 'verified' && !isRejected;
 
   document.getElementById('sv-loading').style.display   = 'none';
   document.getElementById('sv-verify-page').style.display = 'block';
 
-  if (kycStatus === 'verified') {
+  if (isVerified) {
     showApproved();
   } else if (!hasSubmission) {
     applyNoSubmission(_needsContactInfo);
-  } else if (kycStatus === 'rejected') {
+  } else if (isRejected) {
     applyStatus('rejected');
   } else {
     applyStatus('pending');
