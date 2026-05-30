@@ -145,29 +145,56 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'In
 
 /* Country searchable dropdown */
 .country-wrap{position:relative;}
-.country-search-input{
+.country-inp{
   width:100%;height:44px;
   background:var(--s2);border:1.5px solid var(--b2);
-  border-radius:8px;padding:0 14px;
+  border-radius:8px;padding:0 36px 0 12px;
   font-size:13px;color:var(--text);outline:none;
   font-family:'Inter',sans-serif;cursor:pointer;
   transition:border-color .18s;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
-.country-search-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(240,90,26,.1);}
-.country-search-input::placeholder{color:var(--sub);}
-.country-dropdown{
+.country-inp:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(240,90,26,.1);}
+.country-inp::placeholder{color:var(--sub);}
+.country-inp-arrow{
+  position:absolute;right:12px;top:50%;transform:translateY(-50%);
+  pointer-events:none;transition:transform .2s;
+}
+.country-wrap.open .country-inp-arrow{transform:translateY(-50%) rotate(180deg);}
+.country-dd{
   position:absolute;top:calc(100% + 4px);left:0;right:0;
-  background:var(--s2);border:1px solid var(--b2);
-  border-radius:10px;overflow:hidden;
-  max-height:200px;overflow-y:auto;
-  z-index:100;display:none;
-  box-shadow:0 8px 24px rgba(0,0,0,.5);
+  background:var(--s2);border:1.5px solid var(--b2);
+  border-radius:10px;box-shadow:0 8px 28px rgba(0,0,0,.5);
+  z-index:300;display:none;overflow:hidden;
 }
-.country-dropdown.open{display:block;}
-.country-opt{padding:9px 14px;font-size:13px;color:var(--text);cursor:pointer;transition:background .1s;}
-.country-opt:hover{background:var(--s3);}
-.country-opt.no-match{color:var(--sub);cursor:default;}
-.country-opt.no-match:hover{background:none;}
+.country-wrap.open .country-dd{display:block;}
+.country-dd-search{
+  padding:10px 12px;border-bottom:1px solid var(--b);
+  position:sticky;top:0;background:var(--s2);
+}
+.country-dd-search input{
+  width:100%;height:34px;border:1.5px solid var(--b2);
+  border-radius:7px;padding:0 10px;font-size:13px;
+  outline:none;color:var(--text);background:var(--s3);
+  font-family:'Inter',sans-serif;
+  transition:border-color .15s;
+}
+.country-dd-search input:focus{border-color:var(--accent);}
+.country-dd-search input::placeholder{color:var(--sub);}
+.country-list{max-height:200px;overflow-y:auto;}
+.country-list::-webkit-scrollbar{width:4px;}
+.country-list::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px;}
+.c-opt{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 14px;cursor:pointer;
+  font-size:13px;color:var(--text);
+  transition:background .1s;
+}
+.c-opt:hover{background:var(--s3);}
+.c-opt-flag{font-size:17px;line-height:1;flex-shrink:0;}
+.c-opt-name{flex:1;}
+.c-opt-dial{font-size:12px;color:var(--sub);flex-shrink:0;}
+.c-no-result{padding:14px;font-size:13px;color:var(--sub);text-align:center;}
 
 /* Text / tel input */
 .field-input{
@@ -178,19 +205,30 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'In
 }
 .field-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(240,90,26,.1);}
 .field-input::placeholder{color:var(--sub);}
+.field-input:disabled{color:var(--sub);cursor:not-allowed;}
 
-/* Phone row */
-.phone-row{display:flex;gap:8px;}
-.dial-select{
-  width:96px;flex-shrink:0;height:44px;
-  background:var(--s2);border:1.5px solid var(--b2);
-  border-radius:8px;padding:0 10px;
-  font-size:13px;color:var(--text);outline:none;
-  font-family:'Inter',sans-serif;
-  appearance:none;cursor:pointer;
+/* Phone wrap */
+.phone-wrap{
+  display:flex;border:1.5px solid var(--b2);border-radius:8px;
+  overflow:hidden;background:var(--s2);
   transition:border-color .18s;
 }
-.dial-select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(240,90,26,.1);}
+.phone-wrap:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px rgba(240,90,26,.1);}
+.phone-prefix{
+  display:none;align-items:center;gap:5px;
+  padding:0 10px 0 12px;
+  background:var(--s3);border-right:1.5px solid var(--b2);
+  font-size:13px;font-weight:600;color:var(--text);
+  flex-shrink:0;white-space:nowrap;
+}
+.phone-num{
+  flex:1;height:44px;border:none;
+  padding:0 12px;font-size:13px;color:var(--text);
+  background:transparent;outline:none;
+  font-family:'Inter',sans-serif;
+}
+.phone-num:disabled{color:var(--sub);cursor:not-allowed;}
+.phone-num::placeholder{color:var(--sub);}
 
 /* Select field */
 .field-select{
@@ -388,19 +426,30 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'In
 
         <div class="field">
           <label>Country of Residence</label>
-          <div class="country-wrap">
-            <input type="text" class="country-search-input" id="country-residence-search"
-              placeholder="Search country…" autocomplete="off" readonly/>
-            <div class="country-dropdown" id="country-residence-dropdown"></div>
+          <div class="country-wrap" id="res-country-wrap">
+            <input type="text" class="country-inp" id="res-country-inp"
+              placeholder="Select your country…" autocomplete="off" readonly/>
+            <svg class="country-inp-arrow" width="12" height="8" viewBox="0 0 12 8" fill="none">
+              <path d="M1 1l5 5 5-5" stroke="#848e9c" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <div class="country-dd" id="res-country-dd">
+              <div class="country-dd-search">
+                <input type="text" id="res-country-search" placeholder="Search country or dial code…"/>
+              </div>
+              <div class="country-list" id="res-country-list"></div>
+            </div>
           </div>
         </div>
 
         <div class="field">
           <label>Phone Number</label>
-          <div class="phone-row">
-            <select class="dial-select" id="dial-code-select"></select>
-            <input type="tel" class="field-input" id="phone-number-input"
-              placeholder="Enter your number" autocomplete="tel" style="flex:1;"/>
+          <div class="phone-wrap">
+            <div class="phone-prefix" id="res-phone-prefix">
+              <span id="res-pf-flag"></span>
+              <span id="res-pf-dial"></span>
+            </div>
+            <input class="phone-num" id="res-phone-num" type="tel"
+              placeholder="Select a country first" disabled/>
           </div>
         </div>
 
@@ -416,10 +465,18 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'In
 
         <div class="field">
           <label>Country of Issue</label>
-          <div class="country-wrap">
-            <input type="text" class="country-search-input" id="country-issue-search"
-              placeholder="Search country…" autocomplete="off" readonly/>
-            <div class="country-dropdown" id="country-issue-dropdown"></div>
+          <div class="country-wrap" id="issue-country-wrap">
+            <input type="text" class="country-inp" id="issue-country-inp"
+              placeholder="Select your country…" autocomplete="off" readonly/>
+            <svg class="country-inp-arrow" width="12" height="8" viewBox="0 0 12 8" fill="none">
+              <path d="M1 1l5 5 5-5" stroke="#848e9c" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <div class="country-dd" id="issue-country-dd">
+              <div class="country-dd-search">
+                <input type="text" id="issue-country-search" placeholder="Search country…"/>
+              </div>
+              <div class="country-list" id="issue-country-list"></div>
+            </div>
           </div>
         </div>
 
@@ -485,109 +542,186 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'In
 const SS_KEY = 'sv_pin_ok';
 let _db = null, _user = null, _userId = null, _pollTimer = null;
 let _needsContactInfo = false;
+let _selectedResidence = null;
+let _selectedIssue = null;
 
-/* ── Countries ── */
-const COUNTRIES = [
-  'Afghanistan','Albania','Algeria','Andorra','Angola','Antigua and Barbuda',
-  'Argentina','Armenia','Australia','Austria','Azerbaijan','Bahamas','Bahrain',
-  'Bangladesh','Barbados','Belarus','Belgium','Belize','Benin','Bhutan','Bolivia',
-  'Bosnia and Herzegovina','Botswana','Brazil','Brunei','Bulgaria','Burkina Faso',
-  'Burundi','Cabo Verde','Cambodia','Cameroon','Canada','Central African Republic',
-  'Chad','Chile','China','Colombia','Comoros','Congo (DRC)','Congo (Republic)',
-  'Costa Rica','Croatia','Cuba','Cyprus','Czech Republic','Denmark','Djibouti',
-  'Dominica','Dominican Republic','Ecuador','Egypt','El Salvador','Equatorial Guinea',
-  'Eritrea','Estonia','Eswatini','Ethiopia','Fiji','Finland','France','Gabon',
-  'Gambia','Georgia','Germany','Ghana','Greece','Grenada','Guatemala','Guinea',
-  'Guinea-Bissau','Guyana','Haiti','Honduras','Hungary','Iceland','India',
-  'Indonesia','Iran','Iraq','Ireland','Israel','Italy','Jamaica','Japan','Jordan',
-  'Kazakhstan','Kenya','Kiribati','Kosovo','Kuwait','Kyrgyzstan','Laos','Latvia',
-  'Lebanon','Lesotho','Liberia','Libya','Liechtenstein','Lithuania','Luxembourg',
-  'Madagascar','Malawi','Malaysia','Maldives','Mali','Malta','Marshall Islands',
-  'Mauritania','Mauritius','Mexico','Micronesia','Moldova','Monaco','Mongolia',
-  'Montenegro','Morocco','Mozambique','Myanmar','Namibia','Nauru','Nepal',
-  'Netherlands','New Zealand','Nicaragua','Niger','Nigeria','North Korea',
-  'North Macedonia','Norway','Oman','Pakistan','Palau','Palestine','Panama',
-  'Papua New Guinea','Paraguay','Peru','Philippines','Poland','Portugal','Qatar',
-  'Romania','Russia','Rwanda','Saint Kitts and Nevis','Saint Lucia',
-  'Saint Vincent and the Grenadines','Samoa','San Marino','São Tomé and Príncipe',
-  'Saudi Arabia','Senegal','Serbia','Seychelles','Sierra Leone','Singapore',
-  'Slovakia','Slovenia','Solomon Islands','Somalia','South Africa','South Korea',
-  'South Sudan','Spain','Sri Lanka','Sudan','Suriname','Sweden','Switzerland',
-  'Syria','Taiwan','Tajikistan','Tanzania','Thailand','Timor-Leste','Togo',
-  'Tonga','Trinidad and Tobago','Tunisia','Turkey','Turkmenistan','Tuvalu',
-  'Uganda','Ukraine','United Arab Emirates','United Kingdom','United States',
-  'Uruguay','Uzbekistan','Vanuatu','Vatican City','Venezuela','Vietnam',
-  'Yemen','Zambia','Zimbabwe'
+/* ── Country + dial data (shared with register.html) ── */
+const COUNTRIES_DATA = [
+  {name:'Afghanistan',flag:'🇦🇫',dial:'+93'},{name:'Albania',flag:'🇦🇱',dial:'+355'},
+  {name:'Algeria',flag:'🇩🇿',dial:'+213'},{name:'Angola',flag:'🇦🇴',dial:'+244'},
+  {name:'Argentina',flag:'🇦🇷',dial:'+54'},{name:'Armenia',flag:'🇦🇲',dial:'+374'},
+  {name:'Australia',flag:'🇦🇺',dial:'+61'},{name:'Austria',flag:'🇦🇹',dial:'+43'},
+  {name:'Azerbaijan',flag:'🇦🇿',dial:'+994'},{name:'Bahrain',flag:'🇧🇭',dial:'+973'},
+  {name:'Bangladesh',flag:'🇧🇩',dial:'+880'},{name:'Belarus',flag:'🇧🇾',dial:'+375'},
+  {name:'Belgium',flag:'🇧🇪',dial:'+32'},{name:'Benin',flag:'🇧🇯',dial:'+229'},
+  {name:'Bolivia',flag:'🇧🇴',dial:'+591'},{name:'Bosnia and Herzegovina',flag:'🇧🇦',dial:'+387'},
+  {name:'Botswana',flag:'🇧🇼',dial:'+267'},{name:'Brazil',flag:'🇧🇷',dial:'+55'},
+  {name:'Brunei',flag:'🇧🇳',dial:'+673'},{name:'Bulgaria',flag:'🇧🇬',dial:'+359'},
+  {name:'Burkina Faso',flag:'🇧🇫',dial:'+226'},{name:'Burundi',flag:'🇧🇮',dial:'+257'},
+  {name:'Cambodia',flag:'🇰🇭',dial:'+855'},{name:'Cameroon',flag:'🇨🇲',dial:'+237'},
+  {name:'Canada',flag:'🇨🇦',dial:'+1'},{name:'Chad',flag:'🇹🇩',dial:'+235'},
+  {name:'Chile',flag:'🇨🇱',dial:'+56'},{name:'China',flag:'🇨🇳',dial:'+86'},
+  {name:'Colombia',flag:'🇨🇴',dial:'+57'},{name:'Congo',flag:'🇨🇬',dial:'+242'},
+  {name:'Costa Rica',flag:'🇨🇷',dial:'+506'},{name:"Côte d'Ivoire",flag:'🇨🇮',dial:'+225'},
+  {name:'Croatia',flag:'🇭🇷',dial:'+385'},{name:'Cuba',flag:'🇨🇺',dial:'+53'},
+  {name:'Cyprus',flag:'🇨🇾',dial:'+357'},{name:'Czech Republic',flag:'🇨🇿',dial:'+420'},
+  {name:'DR Congo',flag:'🇨🇩',dial:'+243'},{name:'Denmark',flag:'🇩🇰',dial:'+45'},
+  {name:'Dominican Republic',flag:'🇩🇴',dial:'+1'},{name:'Ecuador',flag:'🇪🇨',dial:'+593'},
+  {name:'Egypt',flag:'🇪🇬',dial:'+20'},{name:'El Salvador',flag:'🇸🇻',dial:'+503'},
+  {name:'Eritrea',flag:'🇪🇷',dial:'+291'},{name:'Eswatini',flag:'🇸🇿',dial:'+268'},
+  {name:'Ethiopia',flag:'🇪🇹',dial:'+251'},{name:'Finland',flag:'🇫🇮',dial:'+358'},
+  {name:'France',flag:'🇫🇷',dial:'+33'},{name:'Gabon',flag:'🇬🇦',dial:'+241'},
+  {name:'Gambia',flag:'🇬🇲',dial:'+220'},{name:'Georgia',flag:'🇬🇪',dial:'+995'},
+  {name:'Germany',flag:'🇩🇪',dial:'+49'},{name:'Ghana',flag:'🇬🇭',dial:'+233'},
+  {name:'Greece',flag:'🇬🇷',dial:'+30'},{name:'Guatemala',flag:'🇬🇹',dial:'+502'},
+  {name:'Guinea',flag:'🇬🇳',dial:'+224'},{name:'Honduras',flag:'🇭🇳',dial:'+504'},
+  {name:'Hong Kong',flag:'🇭🇰',dial:'+852'},{name:'Hungary',flag:'🇭🇺',dial:'+36'},
+  {name:'Iceland',flag:'🇮🇸',dial:'+354'},{name:'India',flag:'🇮🇳',dial:'+91'},
+  {name:'Indonesia',flag:'🇮🇩',dial:'+62'},{name:'Iran',flag:'🇮🇷',dial:'+98'},
+  {name:'Iraq',flag:'🇮🇶',dial:'+964'},{name:'Ireland',flag:'🇮🇪',dial:'+353'},
+  {name:'Israel',flag:'🇮🇱',dial:'+972'},{name:'Italy',flag:'🇮🇹',dial:'+39'},
+  {name:'Jamaica',flag:'🇯🇲',dial:'+1'},{name:'Japan',flag:'🇯🇵',dial:'+81'},
+  {name:'Jordan',flag:'🇯🇴',dial:'+962'},{name:'Kazakhstan',flag:'🇰🇿',dial:'+7'},
+  {name:'Kenya',flag:'🇰🇪',dial:'+254'},{name:'Kuwait',flag:'🇰🇼',dial:'+965'},
+  {name:'Laos',flag:'🇱🇦',dial:'+856'},{name:'Latvia',flag:'🇱🇻',dial:'+371'},
+  {name:'Lebanon',flag:'🇱🇧',dial:'+961'},{name:'Lesotho',flag:'🇱🇸',dial:'+266'},
+  {name:'Liberia',flag:'🇱🇷',dial:'+231'},{name:'Libya',flag:'🇱🇾',dial:'+218'},
+  {name:'Lithuania',flag:'🇱🇹',dial:'+370'},{name:'Luxembourg',flag:'🇱🇺',dial:'+352'},
+  {name:'Madagascar',flag:'🇲🇬',dial:'+261'},{name:'Malawi',flag:'🇲🇼',dial:'+265'},
+  {name:'Malaysia',flag:'🇲🇾',dial:'+60'},{name:'Maldives',flag:'🇲🇻',dial:'+960'},
+  {name:'Mali',flag:'🇲🇱',dial:'+223'},{name:'Malta',flag:'🇲🇹',dial:'+356'},
+  {name:'Mauritania',flag:'🇲🇷',dial:'+222'},{name:'Mauritius',flag:'🇲🇺',dial:'+230'},
+  {name:'Mexico',flag:'🇲🇽',dial:'+52'},{name:'Moldova',flag:'🇲🇩',dial:'+373'},
+  {name:'Mongolia',flag:'🇲🇳',dial:'+976'},{name:'Montenegro',flag:'🇲🇪',dial:'+382'},
+  {name:'Morocco',flag:'🇲🇦',dial:'+212'},{name:'Mozambique',flag:'🇲🇿',dial:'+258'},
+  {name:'Myanmar',flag:'🇲🇲',dial:'+95'},{name:'Namibia',flag:'🇳🇦',dial:'+264'},
+  {name:'Nepal',flag:'🇳🇵',dial:'+977'},{name:'Netherlands',flag:'🇳🇱',dial:'+31'},
+  {name:'New Zealand',flag:'🇳🇿',dial:'+64'},{name:'Nicaragua',flag:'🇳🇮',dial:'+505'},
+  {name:'Niger',flag:'🇳🇪',dial:'+227'},{name:'Nigeria',flag:'🇳🇬',dial:'+234'},
+  {name:'North Macedonia',flag:'🇲🇰',dial:'+389'},{name:'Norway',flag:'🇳🇴',dial:'+47'},
+  {name:'Oman',flag:'🇴🇲',dial:'+968'},{name:'Pakistan',flag:'🇵🇰',dial:'+92'},
+  {name:'Panama',flag:'🇵🇦',dial:'+507'},{name:'Papua New Guinea',flag:'🇵🇬',dial:'+675'},
+  {name:'Paraguay',flag:'🇵🇾',dial:'+595'},{name:'Peru',flag:'🇵🇪',dial:'+51'},
+  {name:'Philippines',flag:'🇵🇭',dial:'+63'},{name:'Poland',flag:'🇵🇱',dial:'+48'},
+  {name:'Portugal',flag:'🇵🇹',dial:'+351'},{name:'Qatar',flag:'🇶🇦',dial:'+974'},
+  {name:'Romania',flag:'🇷🇴',dial:'+40'},{name:'Russia',flag:'🇷🇺',dial:'+7'},
+  {name:'Rwanda',flag:'🇷🇼',dial:'+250'},{name:'Saudi Arabia',flag:'🇸🇦',dial:'+966'},
+  {name:'Senegal',flag:'🇸🇳',dial:'+221'},{name:'Serbia',flag:'🇷🇸',dial:'+381'},
+  {name:'Sierra Leone',flag:'🇸🇱',dial:'+232'},{name:'Singapore',flag:'🇸🇬',dial:'+65'},
+  {name:'Slovakia',flag:'🇸🇰',dial:'+421'},{name:'Slovenia',flag:'🇸🇮',dial:'+386'},
+  {name:'Somalia',flag:'🇸🇴',dial:'+252'},{name:'South Africa',flag:'🇿🇦',dial:'+27'},
+  {name:'South Korea',flag:'🇰🇷',dial:'+82'},{name:'South Sudan',flag:'🇸🇸',dial:'+211'},
+  {name:'Spain',flag:'🇪🇸',dial:'+34'},{name:'Sri Lanka',flag:'🇱🇰',dial:'+94'},
+  {name:'Sudan',flag:'🇸🇩',dial:'+249'},{name:'Sweden',flag:'🇸🇪',dial:'+46'},
+  {name:'Switzerland',flag:'🇨🇭',dial:'+41'},{name:'Syria',flag:'🇸🇾',dial:'+963'},
+  {name:'Taiwan',flag:'🇹🇼',dial:'+886'},{name:'Tanzania',flag:'🇹🇿',dial:'+255'},
+  {name:'Thailand',flag:'🇹🇭',dial:'+66'},{name:'Togo',flag:'🇹🇬',dial:'+228'},
+  {name:'Tunisia',flag:'🇹🇳',dial:'+216'},{name:'Turkey',flag:'🇹🇷',dial:'+90'},
+  {name:'Uganda',flag:'🇺🇬',dial:'+256'},{name:'Ukraine',flag:'🇺🇦',dial:'+380'},
+  {name:'United Arab Emirates',flag:'🇦🇪',dial:'+971'},{name:'United Kingdom',flag:'🇬🇧',dial:'+44'},
+  {name:'United States',flag:'🇺🇸',dial:'+1'},{name:'Uruguay',flag:'🇺🇾',dial:'+598'},
+  {name:'Uzbekistan',flag:'🇺🇿',dial:'+998'},{name:'Venezuela',flag:'🇻🇪',dial:'+58'},
+  {name:'Vietnam',flag:'🇻🇳',dial:'+84'},{name:'Yemen',flag:'🇾🇪',dial:'+967'},
+  {name:'Zambia',flag:'🇿🇲',dial:'+260'},{name:'Zimbabwe',flag:'🇿🇼',dial:'+263'}
 ];
 
-/* ── Dial codes ── */
-const DIAL_CODES = [
-  {c:'AF',d:'+93'},{c:'AL',d:'+355'},{c:'DZ',d:'+213'},{c:'AO',d:'+244'},
-  {c:'AR',d:'+54'},{c:'AM',d:'+374'},{c:'AU',d:'+61'},{c:'AT',d:'+43'},
-  {c:'AZ',d:'+994'},{c:'BH',d:'+973'},{c:'BD',d:'+880'},{c:'BY',d:'+375'},
-  {c:'BE',d:'+32'},{c:'BO',d:'+591'},{c:'BA',d:'+387'},{c:'BW',d:'+267'},
-  {c:'BR',d:'+55'},{c:'BN',d:'+673'},{c:'BG',d:'+359'},{c:'KH',d:'+855'},
-  {c:'CM',d:'+237'},{c:'CA',d:'+1'},{c:'CL',d:'+56'},{c:'CN',d:'+86'},
-  {c:'CO',d:'+57'},{c:'CD',d:'+243'},{c:'CR',d:'+506'},{c:'HR',d:'+385'},
-  {c:'CU',d:'+53'},{c:'CY',d:'+357'},{c:'CZ',d:'+420'},{c:'DK',d:'+45'},
-  {c:'DO',d:'+1809'},{c:'EC',d:'+593'},{c:'EG',d:'+20'},{c:'SV',d:'+503'},
-  {c:'ET',d:'+251'},{c:'FI',d:'+358'},{c:'FR',d:'+33'},{c:'GE',d:'+995'},
-  {c:'DE',d:'+49'},{c:'GH',d:'+233'},{c:'GR',d:'+30'},{c:'GT',d:'+502'},
-  {c:'HN',d:'+504'},{c:'HK',d:'+852'},{c:'HU',d:'+36'},{c:'IN',d:'+91'},
-  {c:'ID',d:'+62'},{c:'IR',d:'+98'},{c:'IQ',d:'+964'},{c:'IE',d:'+353'},
-  {c:'IL',d:'+972'},{c:'IT',d:'+39'},{c:'JM',d:'+1876'},{c:'JP',d:'+81'},
-  {c:'JO',d:'+962'},{c:'KZ',d:'+7'},{c:'KE',d:'+254'},{c:'KW',d:'+965'},
-  {c:'LV',d:'+371'},{c:'LB',d:'+961'},{c:'LY',d:'+218'},{c:'LT',d:'+370'},
-  {c:'LU',d:'+352'},{c:'MY',d:'+60'},{c:'MV',d:'+960'},{c:'MT',d:'+356'},
-  {c:'MX',d:'+52'},{c:'MD',d:'+373'},{c:'MN',d:'+976'},{c:'ME',d:'+382'},
-  {c:'MA',d:'+212'},{c:'MZ',d:'+258'},{c:'MM',d:'+95'},{c:'NA',d:'+264'},
-  {c:'NP',d:'+977'},{c:'NL',d:'+31'},{c:'NZ',d:'+64'},{c:'NI',d:'+505'},
-  {c:'NG',d:'+234'},{c:'NO',d:'+47'},{c:'OM',d:'+968'},{c:'PK',d:'+92'},
-  {c:'PA',d:'+507'},{c:'PY',d:'+595'},{c:'PE',d:'+51'},{c:'PH',d:'+63'},
-  {c:'PL',d:'+48'},{c:'PT',d:'+351'},{c:'QA',d:'+974'},{c:'RO',d:'+40'},
-  {c:'RU',d:'+7'},{c:'RW',d:'+250'},{c:'SA',d:'+966'},{c:'SN',d:'+221'},
-  {c:'RS',d:'+381'},{c:'SG',d:'+65'},{c:'SK',d:'+421'},{c:'SI',d:'+386'},
-  {c:'SO',d:'+252'},{c:'ZA',d:'+27'},{c:'KR',d:'+82'},{c:'ES',d:'+34'},
-  {c:'LK',d:'+94'},{c:'SD',d:'+249'},{c:'SE',d:'+46'},{c:'CH',d:'+41'},
-  {c:'SY',d:'+963'},{c:'TW',d:'+886'},{c:'TZ',d:'+255'},{c:'TH',d:'+66'},
-  {c:'TN',d:'+216'},{c:'TR',d:'+90'},{c:'UG',d:'+256'},{c:'UA',d:'+380'},
-  {c:'AE',d:'+971'},{c:'GB',d:'+44'},{c:'US',d:'+1'},{c:'UY',d:'+598'},
-  {c:'UZ',d:'+998'},{c:'VE',d:'+58'},{c:'VN',d:'+84'},{c:'YE',d:'+967'},
-  {c:'ZM',d:'+260'},{c:'ZW',d:'+263'}
-];
-
-/* ── Country searchable dropdown ── */
-function initCountryDropdown(inputId, dropdownId) {
-  const inp = document.getElementById(inputId);
-  const dd  = document.getElementById(dropdownId);
-  let selected = '';
-
-  function render(q) {
-    const query = (q || '').trim().toLowerCase();
-    const list  = query ? COUNTRIES.filter(c => c.toLowerCase().includes(query)) : COUNTRIES;
-    dd.innerHTML = list.length
-      ? list.map(c => `<div class="country-opt" data-val="${c}">${c}</div>`).join('')
-      : '<div class="country-opt no-match">No results</div>';
-  }
-
-  function openDrop() { inp.readOnly=false; inp.value=''; render(''); dd.classList.add('open'); inp.focus(); }
-  function closeDrop(){ dd.classList.remove('open'); inp.readOnly=true; inp.value=selected; }
-
-  dd.addEventListener('mousedown', e => {
-    const opt = e.target.closest('.country-opt[data-val]');
-    if (!opt) return;
-    e.preventDefault();
-    selected = opt.dataset.val;
-    closeDrop();
+/* ── Residence country dropdown (with phone unlock) ── */
+function renderResCountryList(q) {
+  const query = (q || '').trim().toLowerCase();
+  const filtered = query
+    ? COUNTRIES_DATA.filter(c => c.name.toLowerCase().includes(query) || c.dial.includes(query))
+    : COUNTRIES_DATA;
+  const list = document.getElementById('res-country-list');
+  list.innerHTML = filtered.length
+    ? filtered.map(c =>
+        `<div class="c-opt" data-name="${c.name}" data-flag="${c.flag}" data-dial="${c.dial}">
+          <span class="c-opt-flag">${c.flag}</span>
+          <span class="c-opt-name">${c.name}</span>
+          <span class="c-opt-dial">${c.dial}</span>
+        </div>`).join('')
+    : '<div class="c-no-result">No countries found</div>';
+  list.querySelectorAll('.c-opt').forEach(el => {
+    el.addEventListener('click', () => selectResCountry(el.dataset));
   });
-  inp.addEventListener('click', () => dd.classList.contains('open') ? closeDrop() : openDrop());
-  inp.addEventListener('input', () => render(inp.value));
-  inp.addEventListener('blur',  () => setTimeout(closeDrop, 200));
-
-  inp._getSelected = () => selected;
-  inp._setValue    = v => { selected = v; inp.value = v; };
-  render('');
 }
+
+function selectResCountry({ name, flag, dial }) {
+  _selectedResidence = { name, flag, dial };
+  document.getElementById('res-country-inp').value = `${flag}  ${name}`;
+  document.getElementById('res-pf-flag').textContent = flag;
+  document.getElementById('res-pf-dial').textContent = dial;
+  document.getElementById('res-phone-prefix').style.display = 'flex';
+  const ph = document.getElementById('res-phone-num');
+  ph.disabled = false; ph.placeholder = 'Enter number'; ph.focus();
+  closeResCountryDropdown();
+}
+
+function openResCountryDropdown() {
+  document.getElementById('res-country-wrap').classList.add('open');
+  document.getElementById('res-country-search').value = '';
+  renderResCountryList('');
+  document.getElementById('res-country-search').focus();
+}
+function closeResCountryDropdown() {
+  document.getElementById('res-country-wrap').classList.remove('open');
+}
+
+document.addEventListener('click', e => {
+  if (!document.getElementById('res-country-wrap').contains(e.target)) closeResCountryDropdown();
+  if (!document.getElementById('issue-country-wrap').contains(e.target)) closeIssueCountryDropdown();
+});
+document.getElementById('res-country-inp').addEventListener('click', e => {
+  e.stopPropagation();
+  document.getElementById('res-country-wrap').classList.contains('open') ? closeResCountryDropdown() : openResCountryDropdown();
+});
+document.getElementById('res-country-search').addEventListener('input', function(){ renderResCountryList(this.value); });
+document.getElementById('res-country-dd').addEventListener('click', e => e.stopPropagation());
+
+/* ── Issue country dropdown (no phone) ── */
+function renderIssueCountryList(q) {
+  const query = (q || '').trim().toLowerCase();
+  const filtered = query
+    ? COUNTRIES_DATA.filter(c => c.name.toLowerCase().includes(query))
+    : COUNTRIES_DATA;
+  const list = document.getElementById('issue-country-list');
+  list.innerHTML = filtered.length
+    ? filtered.map(c =>
+        `<div class="c-opt" data-name="${c.name}" data-flag="${c.flag}">
+          <span class="c-opt-flag">${c.flag}</span>
+          <span class="c-opt-name">${c.name}</span>
+        </div>`).join('')
+    : '<div class="c-no-result">No countries found</div>';
+  list.querySelectorAll('.c-opt').forEach(el => {
+    el.addEventListener('click', () => selectIssueCountry(el.dataset));
+  });
+}
+
+function selectIssueCountry({ name, flag }) {
+  _selectedIssue = { name, flag };
+  document.getElementById('issue-country-inp').value = `${flag}  ${name}`;
+  closeIssueCountryDropdown();
+}
+
+function openIssueCountryDropdown() {
+  document.getElementById('issue-country-wrap').classList.add('open');
+  document.getElementById('issue-country-search').value = '';
+  renderIssueCountryList('');
+  document.getElementById('issue-country-search').focus();
+}
+function closeIssueCountryDropdown() {
+  document.getElementById('issue-country-wrap').classList.remove('open');
+}
+
+document.getElementById('issue-country-inp').addEventListener('click', e => {
+  e.stopPropagation();
+  document.getElementById('issue-country-wrap').classList.contains('open') ? closeIssueCountryDropdown() : openIssueCountryDropdown();
+});
+document.getElementById('issue-country-search').addEventListener('input', function(){ renderIssueCountryList(this.value); });
+document.getElementById('issue-country-dd').addEventListener('click', e => e.stopPropagation());
+
+/* Initial render */
+renderResCountryList('');
+renderIssueCountryList('');
 
 /* ── File mark ── */
 function markFile(input, lblId, boxId, chkId) {
@@ -615,13 +749,10 @@ async function submitKYC() {
   errEl.style.display = 'none';
   msg.textContent = '';
 
-  const residenceInp = document.getElementById('country-residence-search');
-  const residence    = residenceInp._getSelected ? residenceInp._getSelected() : '';
-  const dialCode     = document.getElementById('dial-code-select').value;
-  const phoneNum     = document.getElementById('phone-number-input').value.trim();
+  const residence    = _selectedResidence?.name || '';
+  const phoneNum     = document.getElementById('res-phone-num').value.trim();
   const docType      = document.getElementById('doc-type').value;
-  const issueInp     = document.getElementById('country-issue-search');
-  const countryIssue = issueInp._getSelected ? issueInp._getSelected() : '';
+  const countryIssue = _selectedIssue?.name || '';
   const frontFile    = document.getElementById('file-front').files[0];
   const backFile     = document.getElementById('file-back').files[0];
   const selfieFile   = document.getElementById('file-selfie').files[0];
@@ -650,7 +781,7 @@ async function submitKYC() {
     // Save contact info if needed
     const profileUpdate = { kyc_status: 'pending' };
     if (_needsContactInfo) {
-      profileUpdate.phone   = dialCode + phoneNum;
+      profileUpdate.phone   = (_selectedResidence?.dial || '') + phoneNum;
       profileUpdate.country = residence;
     }
     await _db.from('profiles').update(profileUpdate).eq('id', uid);
@@ -809,37 +940,27 @@ document.getElementById('signout-btn').onclick = async () => {
   _user   = session.user;
   _userId = session.user.id;
 
-  // Init country dropdowns
-  initCountryDropdown('country-residence-search', 'country-residence-dropdown');
-  initCountryDropdown('country-issue-search',     'country-issue-dropdown');
-
-  // Populate dial codes
-  const dialSel = document.getElementById('dial-code-select');
-  DIAL_CODES.forEach(({ c, d }) => {
-    const opt = document.createElement('option');
-    opt.value = d; opt.textContent = `${c} ${d}`;
-    dialSel.appendChild(opt);
-  });
-  dialSel.value = '+1';
-
   // Fetch profile + submission
   const [{ data: prof }, { data: sub }] = await Promise.all([
     _db.from('profiles').select('first_name,last_name,email,kyc_status,country,phone').eq('id', _userId).single(),
     _db.from('kyc_submissions').select('id,status').eq('user_id', _userId).limit(1)
   ]);
 
-  // User strip
+  // User strip — fall back to Google metadata for OAuth users
   const fn   = prof?.first_name || '';
   const ln   = prof?.last_name  || '';
-  const name = [fn, ln].filter(Boolean).join(' ') || _user.email;
-  const initials = ((fn[0]||'') + (ln[0]||'')).toUpperCase() || (_user.email[0]||'?').toUpperCase();
+  const googleName = _user.user_metadata?.full_name || _user.user_metadata?.name || '';
+  const name = [fn, ln].filter(Boolean).join(' ') || googleName || _user.email;
+  const nameParts = name.split(' ').filter(Boolean);
+  const initials = nameParts.length >= 2
+    ? (nameParts[0][0] + nameParts[nameParts.length - 1][0]).toUpperCase()
+    : (name[0] || '?').toUpperCase();
   document.getElementById('user-avatar').textContent = initials;
   document.getElementById('user-name').textContent   = name;
   document.getElementById('user-email').textContent  = prof?.email || _user.email || '';
 
-  // Pre-fill country/phone if on profile
-  if (prof?.country) document.getElementById('country-residence-search')._setValue(prof.country);
-  if (prof?.phone)   document.getElementById('phone-number-input').value = prof.phone;
+  // Pre-fill phone if already on profile
+  if (prof?.phone) document.getElementById('res-phone-num').value = prof.phone;
 
   _needsContactInfo = !prof?.phone;
 
