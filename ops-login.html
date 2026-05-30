@@ -147,6 +147,7 @@
     if (adminErr) { showErr('Admin lookup failed: ' + adminErr.message); btn.disabled = false; btn.textContent = 'Sign In to OPS'; return; }
     if (!adminRow) { await db.auth.signOut(); showErr('Access denied — account is not authorised for OPS.'); btn.disabled = false; btn.textContent = 'Sign In to OPS'; return; }
 
+    sessionStorage.setItem('sv_ops_login_at', Date.now().toString());
     window.location.href = 'ops.html';
   }
 

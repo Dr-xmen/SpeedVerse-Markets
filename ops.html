@@ -1561,6 +1561,24 @@
   const { data: adminRow } = await db.from('admin_users').select('id,email,role').eq('id', session.user.id).maybeSingle();
   if (!adminRow) { await db.auth.signOut(); window.location.href = 'ops-login.html'; return; }
 
+  /* ── 1-hour session expiry ── */
+  const OPS_SESSION_MS = 60 * 60 * 1000; // 1 hour
+  const _opsLoginAt = parseInt(sessionStorage.getItem('sv_ops_login_at') || '0');
+  if (!_opsLoginAt || Date.now() - _opsLoginAt > OPS_SESSION_MS) {
+    await db.auth.signOut();
+    sessionStorage.removeItem('sv_ops_login_at');
+    window.location.href = 'ops-login.html';
+    return;
+  }
+  setInterval(async () => {
+    const t = parseInt(sessionStorage.getItem('sv_ops_login_at') || '0');
+    if (!t || Date.now() - t > OPS_SESSION_MS) {
+      await window.SV_DB.auth.signOut();
+      sessionStorage.removeItem('sv_ops_login_at');
+      window.location.href = 'ops-login.html';
+    }
+  }, 30_000);
+
   _adminUser = { id: session.user.id, email: session.user.email, role: adminRow.role || 'admin' };
   const ini = session.user.email.slice(0,2).toUpperCase();
   document.getElementById('sidebar-avatar').textContent = ini;
@@ -1585,6 +1603,7 @@
 
 async function doSignOut() {
   const db = window.SV_DB;
+  sessionStorage.removeItem('sv_ops_login_at');
   if (db) await db.auth.signOut();
   window.location.href = 'ops-login.html';
 }
