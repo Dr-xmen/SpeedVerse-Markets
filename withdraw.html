@@ -989,6 +989,15 @@ function pickNet(id){
   wdGoStep(3);
 }
 
+/* Returns effective minimum in coin units — max of network min and admin USD min */
+function cryptoEffectiveMin() {
+  if (!selCoin || !selNet) return 0;
+  const netMin = selNet.min || 0;
+  const adminUsd = (typeof _minWithdrawal !== 'undefined' && _minWithdrawal > 0) ? _minWithdrawal : 0;
+  const adminCoin = (adminUsd > 0 && selCoin.price > 0) ? adminUsd / selCoin.price : 0;
+  return Math.max(netMin, adminCoin);
+}
+
 function buildDetailsPanel(){
   if(!selCoin || !selNet) return;
   const cd = document.getElementById('wd-step3-coin-display');
@@ -999,7 +1008,13 @@ function buildDetailsPanel(){
   document.getElementById('avail-bal').textContent = bal.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
   document.getElementById('avail-sym').textContent = selCoin.sym;
   document.getElementById('amount-sym').textContent = selCoin.sym;
-  document.getElementById('min-wd').textContent = selNet.min + ' ' + selCoin.sym;
+  /* Show admin USD min if it overrides the network min, otherwise show coin min */
+  const effMin = cryptoEffectiveMin();
+  const adminUsd = (typeof _minWithdrawal !== 'undefined' && _minWithdrawal > 0) ? _minWithdrawal : 0;
+  const adminOverrides = adminUsd > 0 && (adminUsd / selCoin.price) > selNet.min;
+  document.getElementById('min-wd').textContent = adminOverrides
+    ? '$' + adminUsd.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}) + ' USD'
+    : selNet.min + ' ' + selCoin.sym;
   document.getElementById('fee-val').textContent = selNet.fee + ' ' + selCoin.sym;
   document.getElementById('eta-val').textContent = selNet.eta;
   document.getElementById('memo-field').style.display = selNet.memo ? '' : 'none';
@@ -1049,7 +1064,7 @@ function updateCryptoSummary(){
   document.getElementById('modal-fee').textContent = selNet ? `${fee} ${selCoin.sym}` : '—';
   document.getElementById('modal-receive').textContent = rcv > 0 ? `${rcv.toFixed(6)} ${selCoin.sym}` : '—';
 
-  const ok = selCoin && selNet && addr.length > 5 && amt > 0 && amt >= (selNet?.min || 0);
+  const ok = selCoin && selNet && addr.length > 5 && amt > 0 && amt >= cryptoEffectiveMin();
   document.getElementById('crypto-submit-btn').disabled = !ok;
 }
 
