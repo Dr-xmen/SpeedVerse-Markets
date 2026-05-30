@@ -37,6 +37,11 @@ input,select{font-family:inherit;border:none;outline:none;background:none;color:
 .hdr-nav{display:flex;align-items:center;gap:2px;margin-left:16px;flex:1;}
 .hdr-nav-item{padding:6px 12px;font-size:13px;font-weight:500;color:var(--sub);cursor:pointer;border-radius:6px;transition:all .15s;white-space:nowrap;}
 .hdr-nav-item:hover{color:var(--text);background:var(--s3);}
+.hdr-drop{position:relative;}
+.hdr-drop-menu{position:absolute;top:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--s2);border:1px solid var(--b);border-radius:10px;padding:6px;min-width:164px;box-shadow:0 8px 32px rgba(0,0,0,.4);z-index:500;display:none;flex-direction:column;gap:2px;}
+.hdr-drop.open .hdr-drop-menu{display:flex;}
+.hdr-drop-item{padding:8px 12px;border-radius:6px;font-size:13px;color:var(--text);cursor:pointer;white-space:nowrap;text-decoration:none;display:block;transition:background .15s;}
+.hdr-drop-item:hover{background:var(--s3);}
 .hdr-right{display:flex;align-items:center;gap:4px;flex-shrink:0;}
 .hicon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--sub);cursor:pointer;transition:all .15s;position:relative;}
 .hicon:hover{background:var(--s3);color:var(--text);}
@@ -311,9 +316,9 @@ html.mob .main{width:100% !important;padding:20px 16px;}</style>
     <a class="hdr-nav-item" href="dashboard.html">Dashboard</a>
     <div class="hdr-nav-item">Buy Crypto</div>
     <a class="hdr-nav-item" href="markets.html">Markets</a>
-    <div class="hdr-nav-item">Trade ▾</div>
-    <div class="hdr-nav-item">Derivatives ▾</div>
-    <div class="hdr-nav-item">Earn ▾</div>
+    <div class="hdr-nav-item hdr-drop" id="drop-trade" onclick="toggleDrop('drop-trade')">Trade ▾<div class="hdr-drop-menu"><a class="hdr-drop-item" href="spot.html">Spot Trading</a><a class="hdr-drop-item" href="convert.html">Convert</a></div></div>
+    <div class="hdr-nav-item hdr-drop" id="drop-deriv" onclick="toggleDrop('drop-deriv')">Derivatives ▾<div class="hdr-drop-menu"><a class="hdr-drop-item" href="usdt-perpetual.html">USDT Perpetual</a><a class="hdr-drop-item" href="inverse-perpetual.html">Inverse Perpetual</a><a class="hdr-drop-item" href="futures.html">Futures</a></div></div>
+    <div class="hdr-nav-item hdr-drop" id="drop-earn" onclick="toggleDrop('drop-earn')">Earn ▾<div class="hdr-drop-menu"><a class="hdr-drop-item" href="#">Flexible Savings</a><a class="hdr-drop-item" href="#">Fixed Term</a><a class="hdr-drop-item" href="#">Staking</a></div></div>
   </div>
   <div class="hdr-right">
     <div class="theme-btn" id="theme-btn" onclick="toggleTheme()" title="Toggle light/dark">
@@ -1165,6 +1170,8 @@ updateBankSummary();
 const p = new URLSearchParams(location.search);
 if(p.get('method')==='bank') switchMethod('bank');
 if(p.get('coin') && COINS.find(c => c.sym === p.get('coin').toUpperCase())) pickCoin(p.get('coin').toUpperCase());
+function toggleDrop(id){var el=document.getElementById(id);var was=el.classList.contains('open');document.querySelectorAll('.hdr-drop.open').forEach(function(d){d.classList.remove('open');});if(!was)el.classList.add('open');}
+document.addEventListener('click',function(e){if(!e.target.closest('.hdr-drop'))document.querySelectorAll('.hdr-drop.open').forEach(function(d){d.classList.remove('open');});});
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
