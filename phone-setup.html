@@ -239,7 +239,7 @@ async function submitPhone() {
 
   btn.disabled = true; btn.textContent = 'Saving…';
 
-  const { data: { session } } = await db.auth.getSession();
+  const session = window._ps_session || (await db.auth.getSession()).data.session;
   if (!session) { window.location.href = 'login.html'; return; }
 
   const { error } = await db.from('profiles').upsert({
@@ -258,32 +258,41 @@ async function submitPhone() {
   window.location.href = 'session.html';
 }
 
-/* ── Init: check session and whether phone already set ── */
+/* ── Init: wait for Supabase PKCE code exchange, then route user ── */
 (async () => {
   const db = window.SV_DB;
 
-  /* Give Supabase a moment to process the OAuth tokens from URL hash */
-  await new Promise(r => setTimeout(r, 800));
+  /* onAuthStateChange fires immediately if a session already exists,
+     or after the OAuth PKCE code exchange completes — whichever comes first.
+     Fixed delays (setTimeout) are unreliable for PKCE flows. */
+  const session = await new Promise(resolve => {
+    let done = false;
+    const { data: { subscription } } = db.auth.onAuthStateChange((_event, sess) => {
+      if (done) return;
+      done = true;
+      subscription.unsubscribe();
+      resolve(sess);
+    });
+    /* 6s hard fallback in case the callback never fires */
+    setTimeout(() => { if (!done) { done = true; subscription.unsubscribe(); resolve(null); } }, 6000);
+  });
 
-  const { data: { session } } = await db.auth.getSession();
+  if (!session) { window.location.href = 'login.html'; return; }
 
-  if (!session) {
-    window.location.href = 'login.html';
-    return;
-  }
+  /* Store for submitPhone to reuse without a second getSession call */
+  window._ps_session = session;
 
-  /* Check if user already has a phone number (returning Google user) */
+  /* Returning Google user — already has a phone, skip setup */
   const { data: profile } = await db.from('profiles')
     .select('phone').eq('id', session.user.id).maybeSingle();
 
   if (profile?.phone) {
-    /* Returning user — skip phone setup */
     sessionStorage.removeItem('sv_pin_ok');
     window.location.href = 'session.html';
     return;
   }
 
-  /* New user — show phone form */
+  /* New user — show the phone form */
   document.getElementById('state-loading').style.display = 'none';
   document.getElementById('state-form').style.display = 'block';
 })();
