@@ -4,311 +4,390 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Verify Identity — SpeedVerse Markets</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<link rel="icon" type="image/png" href="/assets/logo.png"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
 <style>
 :root{
   --bg:#0a0b0f; --s1:#111318; --s2:#16191f; --s3:#1e2229;
   --b:rgba(255,255,255,.07); --b2:rgba(255,255,255,.12);
-  --accent:#f05a1a; --green:#0ecb81; --red:#f6465d; --gold:#f0b90b;
-  --text:#eaecef; --sub:#848e9c; --muted:#2b3141;
+  --accent:#f05a1a; --green:#0ecb81; --red:#f6465d; --gold:#f0b90b; --blue:#3b82f6;
+  --text:#eaecef; --sub:#848e9c; --muted:#3a4156;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;}
+html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;font-size:14px;line-height:1.6;}
 
-/* Loading */
-#sv-loading{
-  position:fixed;inset:0;background:var(--bg);
-  display:flex;align-items:center;justify-content:center;z-index:999;
-}
-.spinner{
-  width:36px;height:36px;
-  border:3px solid rgba(240,90,26,.2);
-  border-top-color:var(--accent);
-  border-radius:50%;animation:spin .8s linear infinite;
-}
+/* ── Loading ── */
+#sv-loading{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:999;}
+.spinner{width:34px;height:34px;border:3px solid rgba(240,90,26,.2);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
 
-/* Page shell */
-#sv-verify-page{
-  display:none;
-  min-height:100vh;
-  padding:32px 20px 48px;
-  background:
-    radial-gradient(ellipse at 20% 10%, rgba(240,90,26,.06) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 90%, rgba(123,97,255,.05) 0%, transparent 50%);
-}
+/* ── Page shell ── */
+#sv-verify-page{display:none;min-height:100vh;padding:40px 16px 60px;}
 
-/* Top bar */
-.vfy-topbar{
-  display:flex;align-items:center;justify-content:space-between;
-  max-width:560px;margin:0 auto 32px;
+/* ── Topbar ── */
+.topbar{width:100%;max-width:640px;margin:0 auto 40px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-logo{height:34px;width:auto;}
+.topbar-signout{
+  display:flex;align-items:center;gap:6px;
+  font-size:13px;font-family:'Inter',sans-serif;
+  color:var(--sub);background:none;
+  border:1.5px solid var(--b2);border-radius:20px;
+  padding:6px 14px;cursor:pointer;
+  transition:border-color .15s,color .15s;
 }
-.vfy-logo{height:34px;width:auto;}
-.vfy-signout{
-  background:none;border:none;color:var(--sub);font-size:12.5px;
-  cursor:pointer;font-family:'Inter',sans-serif;
-  transition:color .15s;
-}
-.vfy-signout:hover{color:var(--text);}
+.topbar-signout:hover{border-color:var(--accent);color:var(--accent);}
+.topbar-signout svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;}
 
-/* Card */
-.vfy-card{
+/* ── Card ── */
+.card{
+  width:100%;max-width:560px;margin:0 auto;
   background:var(--s1);border:1px solid var(--b);
-  border-radius:20px;padding:36px 32px;
-  max-width:560px;margin:0 auto;
-  box-shadow:0 20px 60px rgba(0,0,0,.45);
+  border-radius:16px;overflow:hidden;
+  box-shadow:0 4px 32px rgba(0,0,0,.45);
 }
 
-/* State panels */
-.vfy-state{display:none;}
+/* ── Status header ── */
+.status-header{
+  padding:36px 36px 28px;text-align:center;
+  border-bottom:1px solid var(--b);
+}
+.status-icon{
+  width:72px;height:72px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 20px;
+}
+.status-icon--pending  {background:rgba(240,176,11,.1);}
+.status-icon--rejected {background:rgba(246,70,93,.1);}
+.status-icon--verified {background:rgba(14,203,129,.1);}
+.status-icon--action   {background:rgba(240,90,26,.1);}
+.status-icon svg{width:34px;height:34px;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.status-icon--pending  svg{stroke:var(--gold);}
+.status-icon--rejected svg{stroke:var(--red);}
+.status-icon--verified svg{stroke:var(--green);}
+.status-icon--action   svg{stroke:var(--accent);}
+.status-title{font-size:21px;font-weight:700;margin-bottom:8px;}
+.status-sub{font-size:13.5px;color:var(--sub);max-width:360px;margin:0 auto;line-height:1.7;}
 
-/* Big icon */
-.vfy-icon{font-size:56px;text-align:center;margin-bottom:16px;line-height:1;}
-.vfy-h2{font-size:21px;font-weight:700;text-align:center;margin-bottom:8px;}
-.vfy-p{font-size:13.5px;color:var(--sub);text-align:center;line-height:1.7;margin-bottom:24px;}
-
-/* ── FORM ── */
-.form-row{margin-bottom:18px;}
-.form-label{display:block;font-size:12px;font-weight:600;color:var(--sub);letter-spacing:.3px;margin-bottom:7px;text-transform:uppercase;}
-.form-select,.form-input-field{
-  width:100%;height:46px;
+/* ── User strip ── */
+.user-strip{
+  display:flex;align-items:center;gap:14px;
+  padding:18px 28px;border-bottom:1px solid var(--b);
   background:var(--s2);
-  border:1px solid var(--b);
-  border-radius:10px;
-  padding:0 14px;font-size:14px;
-  color:var(--text);outline:none;
-  font-family:'Inter',sans-serif;
-  transition:border-color .18s;
-  appearance:none;
 }
-.form-select:focus,.form-input-field:focus{border-color:var(--accent);}
-.form-select option{background:var(--s2);}
-.select-wrap{position:relative;}
-.select-wrap::after{
-  content:'';position:absolute;right:14px;top:50%;
-  width:0;height:0;
-  border-left:5px solid transparent;
-  border-right:5px solid transparent;
-  border-top:5px solid var(--sub);
-  transform:translateY(-50%);
-  pointer-events:none;
+.user-avatar{
+  width:42px;height:42px;border-radius:50%;
+  background:var(--accent);display:flex;align-items:center;
+  justify-content:center;font-size:15px;font-weight:700;
+  color:#fff;flex-shrink:0;
 }
+.user-name {font-size:14px;font-weight:600;}
+.user-email{font-size:12px;color:var(--sub);}
+.kyc-badge{
+  margin-left:auto;padding:4px 12px;border-radius:20px;
+  font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;
+}
+.kyc-badge--pending {background:rgba(240,176,11,.12);color:#d4a017;}
+.kyc-badge--rejected{background:rgba(246,70,93,.12);color:var(--red);}
+.kyc-badge--verified{background:rgba(14,203,129,.12);color:var(--green);}
+.kyc-badge--action  {background:rgba(240,90,26,.12);color:var(--accent);}
 
-/* Country search */
+/* ── Card body ── */
+.card-body{padding:28px;}
+
+/* ── Steps ── */
+.step-list{display:flex;flex-direction:column;gap:10px;margin-bottom:22px;}
+.step-item{
+  display:flex;align-items:flex-start;gap:14px;
+  padding:13px 16px;border-radius:10px;
+  border:1px solid var(--b);background:var(--s2);
+}
+.step-dot{
+  width:30px;height:30px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;
+}
+.step-dot--done   {background:rgba(14,203,129,.15);color:var(--green);}
+.step-dot--active {background:rgba(240,176,11,.15);color:var(--gold);}
+.step-dot--waiting{background:rgba(255,255,255,.05);color:var(--sub);}
+.step-dot svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2.5;stroke-linecap:round;}
+.step-label{font-size:13px;font-weight:600;margin-bottom:2px;}
+.step-sub  {font-size:12px;color:var(--sub);}
+
+/* ── Info box ── */
+.info-box{
+  background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.18);
+  border-radius:10px;padding:14px 16px;
+  font-size:13px;color:rgba(147,197,253,1);line-height:1.65;
+  margin-bottom:22px;
+}
+.info-box--red{
+  background:rgba(246,70,93,.06);border-color:rgba(246,70,93,.18);
+  color:rgba(252,165,165,1);
+}
+.info-box--orange{
+  background:rgba(240,90,26,.06);border-color:rgba(240,90,26,.18);
+  color:rgba(253,186,116,1);
+}
+.info-box strong{font-weight:600;color:var(--text);}
+
+/* ── Poll row ── */
+.poll-row{display:flex;align-items:center;justify-content:center;gap:8px;font-size:12px;color:var(--sub);margin-bottom:4px;}
+.poll-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(.8);}}
+
+/* ── Form section ── */
+.form-section{display:none;}
+.form-section.visible{display:block;}
+.form-section-title{font-size:14px;font-weight:600;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--b);}
+
+.field{display:flex;flex-direction:column;gap:5px;margin-bottom:14px;}
+.field label{font-size:12px;font-weight:600;color:var(--sub);text-transform:uppercase;letter-spacing:.3px;}
+
+/* Country searchable dropdown */
 .country-wrap{position:relative;}
 .country-search-input{
-  width:100%;height:46px;
-  background:var(--s2);border:1px solid var(--b);
-  border-radius:10px;padding:0 14px;
-  font-size:14px;color:var(--text);
-  outline:none;font-family:'Inter',sans-serif;
-  transition:border-color .18s;cursor:pointer;
+  width:100%;height:44px;
+  background:var(--s2);border:1.5px solid var(--b2);
+  border-radius:8px;padding:0 14px;
+  font-size:13px;color:var(--text);outline:none;
+  font-family:'Inter',sans-serif;cursor:pointer;
+  transition:border-color .18s;
 }
-.country-search-input:focus{border-color:var(--accent);}
+.country-search-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(240,90,26,.1);}
 .country-search-input::placeholder{color:var(--sub);}
 .country-dropdown{
-  position:absolute;top:calc(100% + 6px);left:0;right:0;
+  position:absolute;top:calc(100% + 4px);left:0;right:0;
   background:var(--s2);border:1px solid var(--b2);
   border-radius:10px;overflow:hidden;
   max-height:200px;overflow-y:auto;
   z-index:100;display:none;
-  box-shadow:0 8px 24px rgba(0,0,0,.4);
+  box-shadow:0 8px 24px rgba(0,0,0,.5);
 }
 .country-dropdown.open{display:block;}
-.country-opt{
-  padding:10px 14px;font-size:13.5px;color:var(--text);
-  cursor:pointer;transition:background .12s;
-}
+.country-opt{padding:9px 14px;font-size:13px;color:var(--text);cursor:pointer;transition:background .1s;}
 .country-opt:hover{background:var(--s3);}
 .country-opt.no-match{color:var(--sub);cursor:default;}
 .country-opt.no-match:hover{background:none;}
 
-/* Upload boxes */
-.upload-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:4px;}
-.upload-full{grid-column:1/-1;}
-.upload-box{
-  border:1.5px dashed rgba(255,255,255,.14);
-  border-radius:12px;
-  background:var(--s2);
-  cursor:pointer;overflow:hidden;
-  transition:border-color .18s,background .18s;
-  position:relative;min-height:100px;
-  display:flex;align-items:center;justify-content:center;
+/* Text / tel input */
+.field-input{
+  height:44px;border:1.5px solid var(--b2);border-radius:8px;
+  padding:0 14px;font-size:13px;font-family:'Inter',sans-serif;
+  color:var(--text);width:100%;outline:none;background:var(--s2);
+  transition:border-color .18s;
 }
-.upload-box:hover{border-color:rgba(240,90,26,.45);background:rgba(240,90,26,.04);}
-.upload-box.has-file{border-color:rgba(14,203,129,.4);border-style:solid;}
-.upload-ph{
-  display:flex;flex-direction:column;
-  align-items:center;gap:8px;
-  padding:18px 14px;pointer-events:none;
-}
-.upload-ph svg{color:var(--sub);}
-.upload-ph-label{font-size:12px;font-weight:600;color:var(--sub);text-align:center;}
-.upload-ph-sub{font-size:10.5px;color:var(--muted);text-align:center;}
-.upload-preview-img{
-  width:100%;height:100%;object-fit:cover;
-  min-height:100px;display:none;
-}
-.upload-check{
-  position:absolute;top:8px;right:8px;
-  width:22px;height:22px;border-radius:50%;
-  background:var(--green);
-  display:none;align-items:center;justify-content:center;
-}
+.field-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(240,90,26,.1);}
+.field-input::placeholder{color:var(--sub);}
 
-/* Error / info banners */
-.form-error{
-  background:rgba(246,70,93,.1);border:1px solid rgba(246,70,93,.22);
-  border-radius:9px;padding:10px 14px;
-  font-size:12.5px;color:var(--red);
-  margin-bottom:14px;display:none;
-}
-.rejection-box{
-  background:rgba(246,70,93,.08);border:1px solid rgba(246,70,93,.2);
-  border-radius:12px;padding:14px 16px;
-  font-size:13px;color:var(--text);
-  margin-bottom:24px;line-height:1.6;
-}
-.rejection-box strong{color:var(--red);display:block;margin-bottom:4px;font-size:12px;text-transform:uppercase;letter-spacing:.4px;}
-
-/* Submit btn */
-.submit-btn{
-  width:100%;height:50px;
-  background:var(--accent);border-radius:12px;border:none;
-  color:#fff;font-size:15px;font-weight:700;
-  cursor:pointer;letter-spacing:.2px;
-  transition:opacity .15s,transform .1s;
-  font-family:'Inter',sans-serif;
-  margin-top:6px;
-}
-.submit-btn:hover{opacity:.88;}
-.submit-btn:active{transform:scale(.98);}
-.submit-btn:disabled{opacity:.45;cursor:not-allowed;transform:none;}
-
-/* ── STEPS (pending / verified) ── */
-.kyc-steps{margin:28px 0;}
-.step{
-  display:flex;align-items:center;gap:14px;
-  padding:13px 16px;border-radius:12px;
-  margin-bottom:8px;
-  background:var(--s2);border:1px solid var(--b);
-}
-.step.done{border-color:rgba(14,203,129,.2);background:rgba(14,203,129,.05);}
-.step.active{border-color:rgba(240,90,26,.25);background:rgba(240,90,26,.06);}
-.step-num{
-  width:30px;height:30px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  font-size:13px;font-weight:700;flex-shrink:0;
-  background:var(--s3);color:var(--sub);
-}
-.step.done .step-num{background:rgba(14,203,129,.18);color:var(--green);}
-.step.active .step-num{background:rgba(240,90,26,.18);color:var(--accent);}
-.step-text{}
-.step-title{font-size:13.5px;font-weight:600;color:var(--text);}
-.step.done .step-title{color:var(--green);}
-.step.active .step-title{color:var(--accent);}
-.step-sub{font-size:12px;color:var(--sub);margin-top:2px;}
-
-/* Poll badge */
-.poll-badge{
-  display:flex;align-items:center;gap:8px;justify-content:center;
-  margin-top:20px;font-size:12px;color:var(--sub);
-}
-.poll-dot{
-  width:7px;height:7px;border-radius:50%;background:var(--gold);
-  animation:blink 2s ease infinite;
-}
-@keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
-
-/* Verified state */
-.verified-icon{
-  width:80px;height:80px;border-radius:50%;
-  background:rgba(14,203,129,.12);border:2px solid rgba(14,203,129,.3);
-  display:flex;align-items:center;justify-content:center;
-  font-size:36px;margin:0 auto 20px;
-}
-.verified-h2{font-size:22px;font-weight:800;color:var(--green);text-align:center;margin-bottom:10px;}
-.verified-p{font-size:14px;color:var(--sub);text-align:center;line-height:1.7;}
-.redirect-btn{
-  display:block;margin:24px auto 0;
-  height:48px;padding:0 32px;
-  background:var(--green);border-radius:12px;border:none;
-  color:#fff;font-size:14px;font-weight:700;
-  cursor:pointer;font-family:'Inter',sans-serif;
-  transition:opacity .15s;
-}
-.redirect-btn:hover{opacity:.85;}
-
-/* Contact info section */
-.contact-info-notice{
-  background:rgba(240,90,26,.07);
-  border:1px solid rgba(240,90,26,.2);
-  border-radius:10px;padding:12px 14px;
-  font-size:12.5px;color:var(--sub);
-  margin-bottom:20px;line-height:1.65;
-}
-.contact-info-notice strong{color:var(--accent);display:block;margin-bottom:3px;}
-
-/* Phone field */
+/* Phone row */
 .phone-row{display:flex;gap:8px;}
 .dial-select{
-  width:100px;flex-shrink:0;height:46px;
-  background:var(--s2);border:1px solid var(--b);
-  border-radius:10px;padding:0 10px;
+  width:96px;flex-shrink:0;height:44px;
+  background:var(--s2);border:1.5px solid var(--b2);
+  border-radius:8px;padding:0 10px;
   font-size:13px;color:var(--text);outline:none;
   font-family:'Inter',sans-serif;
   appearance:none;cursor:pointer;
   transition:border-color .18s;
 }
-.dial-select:focus{border-color:var(--accent);}
-.phone-num-input{
-  flex:1;height:46px;
-  background:var(--s2);border:1px solid var(--b);
-  border-radius:10px;padding:0 14px;
-  font-size:14px;color:var(--text);outline:none;
-  font-family:'Inter',sans-serif;
+.dial-select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(240,90,26,.1);}
+
+/* Select field */
+.field-select{
+  height:44px;border:1.5px solid var(--b2);border-radius:8px;
+  padding:0 12px;font-size:13px;font-family:'Inter',sans-serif;
+  color:var(--text);background:var(--s2);outline:none;appearance:none;
+  width:100%;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23848e9c' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center;
+  padding-right:32px;
   transition:border-color .18s;
 }
-.phone-num-input:focus{border-color:var(--accent);}
-.phone-num-input::placeholder{color:var(--sub);}
+.field-select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(240,90,26,.1);}
+.field-select option{background:var(--s2);}
 
-/* Scrollbar */
+/* Upload grid */
+.upload-hint{font-size:11px;color:var(--sub);margin-bottom:8px;line-height:1.6;}
+.upload-hint strong{color:var(--text);}
+.upload-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px;}
+.upload-box{
+  border:2px dashed rgba(255,255,255,.1);border-radius:10px;
+  padding:18px 10px;text-align:center;cursor:pointer;
+  background:var(--s2);
+  transition:border-color .18s,background .18s;
+  position:relative;
+}
+.upload-box:hover{border-color:rgba(240,90,26,.45);background:rgba(240,90,26,.04);}
+.upload-box.has-file{border-color:rgba(14,203,129,.4);border-style:solid;}
+.upload-box svg{width:24px;height:24px;fill:none;stroke:var(--sub);stroke-width:1.5;display:block;margin:0 auto 6px;}
+.upload-box-label{font-size:11px;font-weight:600;color:var(--sub);margin-bottom:2px;}
+.upload-box-sub  {font-size:10px;color:var(--muted);}
+.upload-box-chosen{font-size:10px;color:var(--green);margin-top:5px;word-break:break-all;}
+.upload-check-dot{
+  position:absolute;top:7px;right:7px;
+  width:18px;height:18px;border-radius:50%;
+  background:var(--green);display:none;
+  align-items:center;justify-content:center;
+}
+.upload-check-dot svg{width:10px;height:10px;fill:none;stroke:#fff;stroke-width:3;}
+
+/* Error banner */
+.form-error{
+  background:rgba(246,70,93,.08);border:1px solid rgba(246,70,93,.2);
+  border-radius:8px;padding:10px 14px;font-size:12.5px;color:var(--red);
+  margin-bottom:14px;display:none;
+}
+
+/* Submit btn */
+.btn-primary{
+  width:100%;height:48px;
+  background:var(--accent);color:#fff;
+  border:none;border-radius:28px;
+  font-size:15px;font-weight:600;letter-spacing:.2px;
+  cursor:pointer;font-family:'Inter',sans-serif;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:opacity .15s,transform .1s;
+}
+.btn-primary:hover{opacity:.88;}
+.btn-primary:active{transform:scale(.98);}
+.btn-primary:disabled{opacity:.45;cursor:not-allowed;transform:none;}
+.btn-primary svg{width:16px;height:16px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;}
+
+/* ── Card footer ── */
+.card-footer{
+  padding:18px 28px;border-top:1px solid var(--b);
+  display:flex;align-items:center;justify-content:center;gap:20px;
+  font-size:12px;color:var(--sub);
+}
+.card-footer a{color:var(--accent);}
+.card-footer a:hover{text-decoration:underline;}
+
+/* ── Redirect overlay ── */
+.redirect-overlay{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,.85);backdrop-filter:blur(4px);
+  z-index:999;flex-direction:column;align-items:center;justify-content:center;
+  gap:16px;color:var(--text);text-align:center;
+}
+.redirect-overlay.visible{display:flex;}
+.redirect-overlay-icon{
+  width:64px;height:64px;background:rgba(14,203,129,.15);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+}
+.redirect-overlay-icon svg{width:30px;height:30px;fill:none;stroke:var(--green);stroke-width:2.5;stroke-linecap:round;}
+.redirect-overlay-title{font-size:20px;font-weight:700;}
+.redirect-overlay-sub{font-size:14px;color:var(--sub);}
+
+/* ── Mobile ── */
+@media(max-width:480px){
+  #sv-verify-page{padding:24px 12px 48px;}
+  .status-header{padding:28px 20px 22px;}
+  .card-body{padding:20px;}
+  .upload-grid{grid-template-columns:1fr 1fr;}
+  .user-strip{padding:16px 20px;}
+}
+
 ::-webkit-scrollbar{width:4px;height:4px;}
 ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px;}
 </style>
 </head>
 <body>
 
-<div id="sv-loading">
-  <div class="spinner"></div>
-</div>
+<div id="sv-loading"><div class="spinner"></div></div>
 
 <div id="sv-verify-page">
 
-  <div class="vfy-topbar">
-    <img class="vfy-logo" src="assets/logo.png" alt="SpeedVerse Markets"/>
-    <button class="vfy-signout" id="btn-signout">Sign out</button>
+  <!-- Topbar -->
+  <div class="topbar">
+    <img class="topbar-logo" src="assets/logo.png" alt="SpeedVerse Markets"/>
+    <button class="topbar-signout" id="signout-btn">
+      <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Sign out
+    </button>
   </div>
 
-  <div class="vfy-card">
+  <!-- Card -->
+  <div class="card">
 
-    <!-- ── UPLOAD STATE ── -->
-    <div class="vfy-state" id="state-upload">
-      <div class="vfy-icon">🪪</div>
-      <div class="vfy-h2">Verify Your Identity</div>
-      <div class="vfy-p">Submit a government-issued ID and a profile photo to unlock your account.</div>
+    <!-- Status header -->
+    <div class="status-header">
+      <div class="status-icon status-icon--pending" id="status-icon">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </div>
+      <div class="status-title" id="status-title">Verification in Progress</div>
+      <div class="status-sub" id="status-sub">Your identity documents are being reviewed by our compliance team. This usually takes 1–2 business days.</div>
+    </div>
 
-      <div class="form-error" id="upload-error"></div>
+    <!-- User strip -->
+    <div class="user-strip">
+      <div class="user-avatar" id="user-avatar">—</div>
+      <div>
+        <div class="user-name"  id="user-name">Loading…</div>
+        <div class="user-email" id="user-email"></div>
+      </div>
+      <span class="kyc-badge kyc-badge--pending" id="kyc-badge">Pending</span>
+    </div>
 
-      <!-- Contact info — shown only for Google users without phone on profile -->
-      <div id="contact-info-section" style="display:none;">
-        <div class="contact-info-notice">
-          <strong>Contact Details Required</strong>
-          Since you signed in with Google, please provide your country of residence and phone number to complete your profile.
+    <!-- Card body -->
+    <div class="card-body">
+
+      <!-- Progress steps -->
+      <div class="step-list">
+        <div class="step-item">
+          <div class="step-dot step-dot--done">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div>
+            <div class="step-label">Account Created</div>
+            <div class="step-sub">Your SpeedVerse account has been set up</div>
+          </div>
         </div>
+        <div class="step-item">
+          <div class="step-dot step-dot--done" id="step-docs-dot">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div>
+            <div class="step-label" id="step-docs-label">Documents Submitted</div>
+            <div class="step-sub"   id="step-docs-sub">Your identity documents have been uploaded</div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-dot step-dot--active" id="step-review-dot">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div>
+            <div class="step-label" id="step-review-label">Compliance Review</div>
+            <div class="step-sub"   id="step-review-sub">Our team is verifying your identity</div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-dot step-dot--waiting">4</div>
+          <div>
+            <div class="step-label">Full Dashboard Access</div>
+            <div class="step-sub">Deposit, trade, and access all features</div>
+          </div>
+        </div>
+      </div>
 
-        <div class="form-row">
-          <label class="form-label">Country of Residence</label>
+      <!-- Info box -->
+      <div class="info-box" id="info-box">
+        <strong>What happens next?</strong><br>
+        Our compliance team reviews documents Monday–Friday, 9am–6pm GMT. You will receive an email once your account is approved. You can close this page and come back later — your progress is saved.
+      </div>
+
+      <!-- Poll indicator -->
+      <div class="poll-row" id="poll-row">
+        <div class="poll-dot"></div>
+        <span id="poll-label">Checking status automatically…</span>
+      </div>
+
+      <!-- Form section (shown for OAuth users or rejected) -->
+      <div class="form-section" id="form-section">
+        <div class="form-section-title" id="form-section-title">Submit Your Documents</div>
+        <div class="form-error" id="form-error"></div>
+
+        <div class="field">
+          <label>Country of Residence</label>
           <div class="country-wrap">
             <input type="text" class="country-search-input" id="country-residence-search"
               placeholder="Search country…" autocomplete="off" readonly/>
@@ -316,223 +395,130 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'In
           </div>
         </div>
 
-        <div class="form-row">
-          <label class="form-label">Phone Number</label>
+        <div class="field">
+          <label>Phone Number</label>
           <div class="phone-row">
             <select class="dial-select" id="dial-code-select"></select>
-            <input type="tel" class="phone-num-input" id="phone-number-input"
-              placeholder="Enter your number" autocomplete="tel"/>
+            <input type="tel" class="field-input" id="phone-number-input"
+              placeholder="Enter your number" autocomplete="tel" style="flex:1;"/>
           </div>
         </div>
-      </div>
 
-      <div class="form-row">
-        <label class="form-label">Document Type</label>
-        <div class="select-wrap">
-          <select class="form-select" id="doc-type">
-            <option value="">— Select document type —</option>
+        <div class="field">
+          <label>Identity Document Type</label>
+          <select class="field-select" id="doc-type">
+            <option value="" disabled selected>Select document type…</option>
             <option value="national_id">National ID Card</option>
             <option value="passport">Passport</option>
-            <option value="drivers_license">Driver's License</option>
+            <option value="drivers_license">Driver's Licence</option>
           </select>
         </div>
-      </div>
 
-      <div class="form-row">
-        <label class="form-label">Country of Issue</label>
-        <div class="country-wrap">
-          <input type="text" class="country-search-input" id="country-search"
-            placeholder="Search country…" autocomplete="off" readonly/>
-          <div class="country-dropdown" id="country-dropdown"></div>
+        <div class="field">
+          <label>Country of Issue</label>
+          <div class="country-wrap">
+            <input type="text" class="country-search-input" id="country-issue-search"
+              placeholder="Search country…" autocomplete="off" readonly/>
+            <div class="country-dropdown" id="country-issue-dropdown"></div>
+          </div>
         </div>
-      </div>
 
-      <div class="form-row">
-        <label class="form-label">Upload Documents</label>
+        <p class="upload-hint">
+          <strong>No back side?</strong> If your document (e.g. passport) only has one side, upload the front image again in the ID Back slot.
+        </p>
         <div class="upload-grid">
           <div class="upload-box" id="box-front" onclick="document.getElementById('file-front').click()">
-            <img class="upload-preview-img" id="prev-front" alt=""/>
-            <div class="upload-ph" id="ph-front">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h.01M3 15l5-5 4 4 3-3 3 3"/></svg>
-              <div class="upload-ph-label">Front of Document</div>
-              <div class="upload-ph-sub">JPG, PNG — max 10MB</div>
-            </div>
-            <div class="upload-check" id="chk-front">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-            </div>
-            <input type="file" id="file-front" accept="image/*" style="display:none" onchange="previewFile('front',this)"/>
+            <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            <div class="upload-box-label">ID Front</div>
+            <div class="upload-box-sub">Passport / ID card</div>
+            <div class="upload-box-chosen" id="lbl-front"></div>
+            <div class="upload-check-dot" id="chk-front"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <input type="file" id="file-front" accept="image/*,.pdf" style="display:none" onchange="markFile(this,'lbl-front','box-front','chk-front')"/>
           </div>
           <div class="upload-box" id="box-back" onclick="document.getElementById('file-back').click()">
-            <img class="upload-preview-img" id="prev-back" alt=""/>
-            <div class="upload-ph" id="ph-back">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h.01M3 15l5-5 4 4 3-3 3 3"/></svg>
-              <div class="upload-ph-label">Back of Document</div>
-              <div class="upload-ph-sub">JPG, PNG — max 10MB</div>
-            </div>
-            <div class="upload-check" id="chk-back">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-            </div>
-            <input type="file" id="file-back" accept="image/*" style="display:none" onchange="previewFile('back',this)"/>
+            <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+            <div class="upload-box-label">ID Back</div>
+            <div class="upload-box-sub">Reverse side</div>
+            <div class="upload-box-chosen" id="lbl-back"></div>
+            <div class="upload-check-dot" id="chk-back"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <input type="file" id="file-back" accept="image/*,.pdf" style="display:none" onchange="markFile(this,'lbl-back','box-back','chk-back')"/>
           </div>
-          <div class="upload-box upload-full" id="box-selfie" onclick="document.getElementById('file-selfie').click()">
-            <img class="upload-preview-img" id="prev-selfie" alt="" style="max-height:180px;"/>
-            <div class="upload-ph" id="ph-selfie">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-              <div class="upload-ph-label">Profile Photo (Selfie)</div>
-              <div class="upload-ph-sub">Clear face photo — JPG, PNG — max 10MB</div>
-            </div>
-            <div class="upload-check" id="chk-selfie">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-            </div>
-            <input type="file" id="file-selfie" accept="image/*" style="display:none" onchange="previewFile('selfie',this)"/>
+          <div class="upload-box" id="box-selfie" onclick="document.getElementById('file-selfie').click()">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+            <div class="upload-box-label">Selfie</div>
+            <div class="upload-box-sub">Face clearly visible</div>
+            <div class="upload-box-chosen" id="lbl-selfie"></div>
+            <div class="upload-check-dot" id="chk-selfie"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <input type="file" id="file-selfie" accept="image/*" style="display:none" onchange="markFile(this,'lbl-selfie','box-selfie','chk-selfie')"/>
           </div>
         </div>
+
+        <button class="btn-primary" id="submit-btn" onclick="submitKYC()">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Submit Documents
+        </button>
+        <div id="submit-msg" style="text-align:center;font-size:13px;margin-top:12px;color:var(--sub);"></div>
       </div>
 
-      <button class="submit-btn" id="submit-btn" onclick="submitKYC()">Submit for Verification</button>
+    </div><!-- /card-body -->
+
+    <div class="card-footer">
+      <span>Need help? <a href="mailto:support@speedversemarkets.com">Contact support</a></span>
     </div>
 
-    <!-- ── PENDING STATE ── -->
-    <div class="vfy-state" id="state-pending">
-      <div class="vfy-icon">⏳</div>
-      <div class="vfy-h2">Verification In Progress</div>
-      <div class="vfy-p">Your documents have been received and are being reviewed by our compliance team.</div>
-      <div class="kyc-steps">
-        <div class="step done">
-          <div class="step-num">✓</div>
-          <div class="step-text">
-            <div class="step-title">Documents Submitted</div>
-            <div class="step-sub">All required documents received</div>
-          </div>
-        </div>
-        <div class="step active">
-          <div class="step-num">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
-          </div>
-          <div class="step-text">
-            <div class="step-title">Document Review</div>
-            <div class="step-sub">Our team is verifying your documents</div>
-          </div>
-        </div>
-        <div class="step">
-          <div class="step-num">3</div>
-          <div class="step-text">
-            <div class="step-title">Identity Confirmed</div>
-            <div class="step-sub">Identity match and liveness check</div>
-          </div>
-        </div>
-        <div class="step">
-          <div class="step-num">4</div>
-          <div class="step-text">
-            <div class="step-title">Account Approved</div>
-            <div class="step-sub">Full trading access unlocked</div>
-          </div>
-        </div>
-      </div>
-      <div class="poll-badge">
-        <div class="poll-dot"></div>
-        Checking for updates every 30 seconds — typically 1–3 business days
-      </div>
-    </div>
+  </div><!-- /card -->
 
-    <!-- ── REJECTED STATE ── -->
-    <div class="vfy-state" id="state-rejected">
-      <div class="vfy-icon">❌</div>
-      <div class="vfy-h2">Verification Failed</div>
-      <div class="vfy-p">Your application was not approved. Please review the reason below and resubmit with correct documents.</div>
+</div><!-- /sv-verify-page -->
 
-      <div class="rejection-box" id="rejection-reason-box">
-        <strong>Reason for Rejection</strong>
-        <span id="rejection-reason-text">Your documents could not be verified. Please resubmit clear, legible images.</span>
-      </div>
-
-      <div class="form-error" id="resubmit-error"></div>
-
-      <div class="form-row">
-        <label class="form-label">Document Type</label>
-        <div class="select-wrap">
-          <select class="form-select" id="doc-type-r">
-            <option value="">— Select document type —</option>
-            <option value="national_id">National ID Card</option>
-            <option value="passport">Passport</option>
-            <option value="drivers_license">Driver's License</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="form-row">
-        <label class="form-label">Country of Issue</label>
-        <div class="country-wrap">
-          <input type="text" class="country-search-input" id="country-search-r"
-            placeholder="Search country…" autocomplete="off" readonly/>
-          <div class="country-dropdown" id="country-dropdown-r"></div>
-        </div>
-      </div>
-
-      <div class="form-row">
-        <label class="form-label">Upload Documents</label>
-        <div class="upload-grid">
-          <div class="upload-box" id="box-front-r" onclick="document.getElementById('file-front-r').click()">
-            <img class="upload-preview-img" id="prev-front-r" alt=""/>
-            <div class="upload-ph" id="ph-front-r">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h.01M3 15l5-5 4 4 3-3 3 3"/></svg>
-              <div class="upload-ph-label">Front of Document</div>
-              <div class="upload-ph-sub">JPG, PNG — max 10MB</div>
-            </div>
-            <div class="upload-check" id="chk-front-r">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-            </div>
-            <input type="file" id="file-front-r" accept="image/*" style="display:none" onchange="previewFile('front-r',this)"/>
-          </div>
-          <div class="upload-box" id="box-back-r" onclick="document.getElementById('file-back-r').click()">
-            <img class="upload-preview-img" id="prev-back-r" alt=""/>
-            <div class="upload-ph" id="ph-back-r">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h.01M3 15l5-5 4 4 3-3 3 3"/></svg>
-              <div class="upload-ph-label">Back of Document</div>
-              <div class="upload-ph-sub">JPG, PNG — max 10MB</div>
-            </div>
-            <div class="upload-check" id="chk-back-r">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-            </div>
-            <input type="file" id="file-back-r" accept="image/*" style="display:none" onchange="previewFile('back-r',this)"/>
-          </div>
-          <div class="upload-box upload-full" id="box-selfie-r" onclick="document.getElementById('file-selfie-r').click()">
-            <img class="upload-preview-img" id="prev-selfie-r" alt="" style="max-height:180px;"/>
-            <div class="upload-ph" id="ph-selfie-r">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-              <div class="upload-ph-label">Profile Photo (Selfie)</div>
-              <div class="upload-ph-sub">Clear face photo — JPG, PNG — max 10MB</div>
-            </div>
-            <div class="upload-check" id="chk-selfie-r">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-            </div>
-            <input type="file" id="file-selfie-r" accept="image/*" style="display:none" onchange="previewFile('selfie-r',this)"/>
-          </div>
-        </div>
-      </div>
-
-      <button class="submit-btn" id="resubmit-btn" onclick="submitKYC(true)">Resubmit for Verification</button>
-    </div>
-
-    <!-- ── VERIFIED STATE ── -->
-    <div class="vfy-state" id="state-verified">
-      <div class="verified-icon">✅</div>
-      <div class="verified-h2">Identity Verified!</div>
-      <div class="verified-p">Your account has been fully verified. Redirecting you to your dashboard…</div>
-      <button class="redirect-btn" onclick="window.location.href='dashboard.html'">Go to Dashboard</button>
-    </div>
-
+<!-- Redirect overlay -->
+<div class="redirect-overlay" id="redirect-overlay">
+  <div class="redirect-overlay-icon">
+    <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
   </div>
+  <div class="redirect-overlay-title">Verification Approved!</div>
+  <div class="redirect-overlay-sub">Taking you to your dashboard…</div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="./supabase.js"></script>
 <script>
 const SS_KEY = 'sv_pin_ok';
-let _db   = null;
-let _user = null;
-let _pollTimer = null;
+let _db = null, _user = null, _userId = null, _pollTimer = null;
 let _needsContactInfo = false;
+
+/* ── Countries ── */
+const COUNTRIES = [
+  'Afghanistan','Albania','Algeria','Andorra','Angola','Antigua and Barbuda',
+  'Argentina','Armenia','Australia','Austria','Azerbaijan','Bahamas','Bahrain',
+  'Bangladesh','Barbados','Belarus','Belgium','Belize','Benin','Bhutan','Bolivia',
+  'Bosnia and Herzegovina','Botswana','Brazil','Brunei','Bulgaria','Burkina Faso',
+  'Burundi','Cabo Verde','Cambodia','Cameroon','Canada','Central African Republic',
+  'Chad','Chile','China','Colombia','Comoros','Congo (DRC)','Congo (Republic)',
+  'Costa Rica','Croatia','Cuba','Cyprus','Czech Republic','Denmark','Djibouti',
+  'Dominica','Dominican Republic','Ecuador','Egypt','El Salvador','Equatorial Guinea',
+  'Eritrea','Estonia','Eswatini','Ethiopia','Fiji','Finland','France','Gabon',
+  'Gambia','Georgia','Germany','Ghana','Greece','Grenada','Guatemala','Guinea',
+  'Guinea-Bissau','Guyana','Haiti','Honduras','Hungary','Iceland','India',
+  'Indonesia','Iran','Iraq','Ireland','Israel','Italy','Jamaica','Japan','Jordan',
+  'Kazakhstan','Kenya','Kiribati','Kosovo','Kuwait','Kyrgyzstan','Laos','Latvia',
+  'Lebanon','Lesotho','Liberia','Libya','Liechtenstein','Lithuania','Luxembourg',
+  'Madagascar','Malawi','Malaysia','Maldives','Mali','Malta','Marshall Islands',
+  'Mauritania','Mauritius','Mexico','Micronesia','Moldova','Monaco','Mongolia',
+  'Montenegro','Morocco','Mozambique','Myanmar','Namibia','Nauru','Nepal',
+  'Netherlands','New Zealand','Nicaragua','Niger','Nigeria','North Korea',
+  'North Macedonia','Norway','Oman','Pakistan','Palau','Palestine','Panama',
+  'Papua New Guinea','Paraguay','Peru','Philippines','Poland','Portugal','Qatar',
+  'Romania','Russia','Rwanda','Saint Kitts and Nevis','Saint Lucia',
+  'Saint Vincent and the Grenadines','Samoa','San Marino','São Tomé and Príncipe',
+  'Saudi Arabia','Senegal','Serbia','Seychelles','Sierra Leone','Singapore',
+  'Slovakia','Slovenia','Solomon Islands','Somalia','South Africa','South Korea',
+  'South Sudan','Spain','Sri Lanka','Sudan','Suriname','Sweden','Switzerland',
+  'Syria','Taiwan','Tajikistan','Tanzania','Thailand','Timor-Leste','Togo',
+  'Tonga','Trinidad and Tobago','Tunisia','Turkey','Turkmenistan','Tuvalu',
+  'Uganda','Ukraine','United Arab Emirates','United Kingdom','United States',
+  'Uruguay','Uzbekistan','Vanuatu','Vatican City','Venezuela','Vietnam',
+  'Yemen','Zambia','Zimbabwe'
+];
 
 /* ── Dial codes ── */
 const DIAL_CODES = [
@@ -570,59 +556,23 @@ const DIAL_CODES = [
   {c:'ZM',d:'+260'},{c:'ZW',d:'+263'}
 ];
 
-/* ── Country list ── */
-const COUNTRIES = [
-  'Afghanistan','Albania','Algeria','Angola','Argentina','Armenia','Australia','Austria',
-  'Azerbaijan','Bahrain','Bangladesh','Belarus','Belgium','Bolivia','Bosnia and Herzegovina',
-  'Botswana','Brazil','Brunei','Bulgaria','Cambodia','Cameroon','Canada','Chile','China',
-  'Colombia','Congo','Costa Rica','Croatia','Cuba','Cyprus','Czech Republic','Denmark',
-  'Dominican Republic','Ecuador','Egypt','El Salvador','Estonia','Ethiopia','Finland',
-  'France','Georgia','Germany','Ghana','Greece','Guatemala','Honduras','Hong Kong',
-  'Hungary','India','Indonesia','Iran','Iraq','Ireland','Israel','Italy','Jamaica',
-  'Japan','Jordan','Kazakhstan','Kenya','Kuwait','Latvia','Lebanon','Libya','Lithuania',
-  'Luxembourg','Malaysia','Maldives','Malta','Mexico','Moldova','Mongolia','Montenegro',
-  'Morocco','Mozambique','Myanmar','Namibia','Nepal','Netherlands','New Zealand',
-  'Nicaragua','Nigeria','Norway','Oman','Pakistan','Panama','Paraguay','Peru',
-  'Philippines','Poland','Portugal','Qatar','Romania','Russia','Rwanda','Saudi Arabia',
-  'Senegal','Serbia','Singapore','Slovakia','Slovenia','Somalia','South Africa',
-  'South Korea','Spain','Sri Lanka','Sudan','Sweden','Switzerland','Syria','Taiwan',
-  'Tanzania','Thailand','Tunisia','Turkey','Uganda','Ukraine','United Arab Emirates',
-  'United Kingdom','United States','Uruguay','Uzbekistan','Venezuela','Vietnam',
-  'Yemen','Zambia','Zimbabwe'
-];
-
-/* ── Country dropdown ── */
+/* ── Country searchable dropdown ── */
 function initCountryDropdown(inputId, dropdownId) {
   const inp = document.getElementById(inputId);
   const dd  = document.getElementById(dropdownId);
   let selected = '';
 
-  function render(query) {
-    const q = (query || '').trim().toLowerCase();
-    const list = q
-      ? COUNTRIES.filter(c => c.toLowerCase().includes(q))
-      : COUNTRIES;
+  function render(q) {
+    const query = (q || '').trim().toLowerCase();
+    const list  = query ? COUNTRIES.filter(c => c.toLowerCase().includes(query)) : COUNTRIES;
     dd.innerHTML = list.length
       ? list.map(c => `<div class="country-opt" data-val="${c}">${c}</div>`).join('')
       : '<div class="country-opt no-match">No results</div>';
   }
 
-  function openDrop() {
-    inp.readOnly = false;
-    inp.value = '';
-    render('');
-    dd.classList.add('open');
-    inp.focus();
-  }
+  function openDrop() { inp.readOnly=false; inp.value=''; render(''); dd.classList.add('open'); inp.focus(); }
+  function closeDrop(){ dd.classList.remove('open'); inp.readOnly=true; inp.value=selected; }
 
-  function closeDrop() {
-    dd.classList.remove('open');
-    inp.readOnly = true;
-    inp.value = selected;
-  }
-
-  /* mousedown fires before blur — e.preventDefault() keeps input focused
-     so blur never fires when the user picks an option */
   dd.addEventListener('mousedown', e => {
     const opt = e.target.closest('.country-opt[data-val]');
     if (!opt) return;
@@ -630,249 +580,284 @@ function initCountryDropdown(inputId, dropdownId) {
     selected = opt.dataset.val;
     closeDrop();
   });
-
-  inp.addEventListener('click', () => {
-    dd.classList.contains('open') ? closeDrop() : openDrop();
-  });
-
+  inp.addEventListener('click', () => dd.classList.contains('open') ? closeDrop() : openDrop());
   inp.addEventListener('input', () => render(inp.value));
-
-  /* blur only fires when user clicks somewhere that is NOT the dropdown */
-  inp.addEventListener('blur', () => setTimeout(closeDrop, 200));
+  inp.addEventListener('blur',  () => setTimeout(closeDrop, 200));
 
   inp._getSelected = () => selected;
   inp._setValue    = v => { selected = v; inp.value = v; };
   render('');
 }
 
-/* ── File preview ── */
-function previewFile(slot, input) {
+/* ── File mark ── */
+function markFile(input, lblId, boxId, chkId) {
   const file = input.files[0];
   if (!file) return;
-  if (file.size > 10 * 1024 * 1024) {
-    alert('File too large — maximum size is 10MB.');
-    input.value = '';
-    return;
-  }
-  const reader = new FileReader();
-  reader.onload = e => {
-    const img  = document.getElementById(`prev-${slot}`);
-    const ph   = document.getElementById(`ph-${slot}`);
-    const box  = document.getElementById(`box-${slot}`);
-    const chk  = document.getElementById(`chk-${slot}`);
-    img.src = e.target.result;
-    img.style.display = 'block';
-    ph.style.display  = 'none';
-    box.classList.add('has-file');
-    chk.style.display = 'flex';
-  };
-  reader.readAsDataURL(file);
+  if (file.size > 10 * 1024 * 1024) { alert('File too large — max 10MB.'); input.value = ''; return; }
+  document.getElementById(lblId).textContent = '✓ ' + file.name;
+  document.getElementById(boxId).classList.add('has-file');
+  const chk = document.getElementById(chkId);
+  chk.style.display = 'flex';
 }
 
-/* ── Upload file to storage ── */
+/* ── Upload to storage ── */
 async function uploadFile(bucket, path, file) {
-  const { data, error } = await _db.storage.from(bucket).upload(path, file, {
-    upsert: true,
-    contentType: file.type
-  });
-  if (error) throw new Error(`Upload failed: ${error.message}`);
+  const { data, error } = await _db.storage.from(bucket).upload(path, file, { upsert: true, contentType: file.type });
+  if (error) throw new Error('Upload failed: ' + error.message);
   return data.path;
 }
 
-/* ── Submit KYC ── */
-async function submitKYC(isResubmit = false) {
-  const suffix  = isResubmit ? '-r' : '';
-  const errEl   = document.getElementById(isResubmit ? 'resubmit-error' : 'upload-error');
-  const btn     = document.getElementById(isResubmit ? 'resubmit-btn' : 'submit-btn');
-  const csInp   = document.getElementById(`country-search${suffix}`);
-
+/* ── Submit ── */
+async function submitKYC() {
+  const btn = document.getElementById('submit-btn');
+  const msg = document.getElementById('submit-msg');
+  const errEl = document.getElementById('form-error');
   errEl.style.display = 'none';
+  msg.textContent = '';
 
-  // Collect contact info (only for initial upload, not resubmit)
-  let residenceCountry = '';
-  let fullPhone = '';
-  if (!isResubmit && _needsContactInfo) {
-    const residenceInp = document.getElementById('country-residence-search');
-    residenceCountry   = residenceInp._getSelected ? residenceInp._getSelected() : '';
-    const dialCode     = document.getElementById('dial-code-select').value;
-    const phoneNum     = document.getElementById('phone-number-input').value.trim();
+  const residenceInp = document.getElementById('country-residence-search');
+  const residence    = residenceInp._getSelected ? residenceInp._getSelected() : '';
+  const dialCode     = document.getElementById('dial-code-select').value;
+  const phoneNum     = document.getElementById('phone-number-input').value.trim();
+  const docType      = document.getElementById('doc-type').value;
+  const issueInp     = document.getElementById('country-issue-search');
+  const countryIssue = issueInp._getSelected ? issueInp._getSelected() : '';
+  const frontFile    = document.getElementById('file-front').files[0];
+  const backFile     = document.getElementById('file-back').files[0];
+  const selfieFile   = document.getElementById('file-selfie').files[0];
 
-    if (!residenceCountry) return showErr(errEl, 'Please select your country of residence.');
-    if (!phoneNum)         return showErr(errEl, 'Please enter your phone number.');
-    fullPhone = dialCode + phoneNum;
-  }
-
-  const docType = document.getElementById(`doc-type${suffix}`).value;
-  const country = csInp._getSelected ? csInp._getSelected() : '';
-  const fileFront  = document.getElementById(`file-front${suffix}`).files[0];
-  const fileBack   = document.getElementById(`file-back${suffix}`).files[0];
-  const fileSelfie = document.getElementById(`file-selfie${suffix}`).files[0];
-
-  if (!docType)   return showErr(errEl, 'Please select a document type.');
-  if (!country)   return showErr(errEl, 'Please select your country of issue.');
-  if (!fileFront) return showErr(errEl, 'Please upload the front of your document.');
-  if (!fileBack)  return showErr(errEl, 'Please upload the back of your document.');
-  if (!fileSelfie)return showErr(errEl, 'Please upload your selfie.');
+  if (_needsContactInfo && !residence)   return showErr('Please select your country of residence.');
+  if (_needsContactInfo && !phoneNum)    return showErr('Please enter your phone number.');
+  if (!docType)       return showErr('Please select a document type.');
+  if (!countryIssue)  return showErr('Please select your country of issue.');
+  if (!frontFile)     return showErr('Please upload the front of your document.');
+  if (!backFile)      return showErr('Please upload the back of your document.');
+  if (!selfieFile)    return showErr('Please upload your selfie.');
 
   btn.disabled = true;
-  btn.textContent = 'Uploading documents…';
+  btn.innerHTML = '<span>Uploading…</span>';
 
   try {
-    const uid = _user.id;
+    const uid = _userId;
     const ext = f => f.name.split('.').pop().toLowerCase();
 
-    const frontPath  = await uploadFile('kyc-docs', `${uid}/front.${ext(fileFront)}`,   fileFront);
-    btn.textContent = 'Uploading back…';
-    const backPath   = await uploadFile('kyc-docs', `${uid}/back.${ext(fileBack)}`,     fileBack);
-    btn.textContent = 'Uploading selfie…';
-    const selfiePath = await uploadFile('kyc-docs', `${uid}/selfie.${ext(fileSelfie)}`, fileSelfie);
+    const frontPath  = await uploadFile('kyc-docs', `${uid}/id-front.${ext(frontFile)}`,  frontFile);
+    const backPath   = await uploadFile('kyc-docs', `${uid}/id-back.${ext(backFile)}`,    backFile);
+    const selfieExt  = selfieFile.name.split('.').pop().toLowerCase();
+    const selfieP    = `${uid}/avatar.${selfieExt}`;
+    await _db.storage.from('avatars').upload(selfieP, selfieFile, { upsert: true });
 
-    btn.textContent = 'Saving…';
-
-    // Save contact info to profile if collected
-    if (!isResubmit && _needsContactInfo) {
-      const { error: profileErr } = await _db.from('profiles')
-        .update({ phone: fullPhone, country: residenceCountry })
-        .eq('id', uid);
-      if (profileErr) throw new Error(profileErr.message);
+    // Save contact info if needed
+    const profileUpdate = { kyc_status: 'pending' };
+    if (_needsContactInfo) {
+      profileUpdate.phone   = dialCode + phoneNum;
+      profileUpdate.country = residence;
     }
+    await _db.from('profiles').update(profileUpdate).eq('id', uid);
 
-    // Upsert kyc_submission
+    // Upsert KYC submission
     const { error: subErr } = await _db.from('kyc_submissions').upsert({
       user_id:    uid,
       user_email: _user.email,
       doc_type:   docType,
-      country:    country,
+      country:    countryIssue,
       status:     'pending',
       front_url:  frontPath,
       back_url:   backPath,
-      selfie_url: selfiePath,
+      selfie_url: selfieP,
       rejection_reason: null
     }, { onConflict: 'user_id' });
-
     if (subErr) throw new Error(subErr.message);
 
-    // Update profile kyc_status
-    await _db.from('profiles').update({ kyc_status: 'pending' }).eq('id', uid);
-
-    // Show pending state
-    showState('state-pending');
+    applyStatus('pending');
     startPolling();
-
   } catch (e) {
     btn.disabled = false;
-    btn.textContent = isResubmit ? 'Resubmit for Verification' : 'Submit for Verification';
-    showErr(errEl, e.message || 'Upload failed. Please check your connection and try again.');
+    btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Submit Documents';
+    showErr(e.message || 'Upload failed. Please check your connection and try again.');
+  }
+
+  function showErr(m) {
+    errEl.textContent = m; errEl.style.display = 'block';
   }
 }
 
-function showErr(el, msg) {
-  el.textContent   = msg;
-  el.style.display = 'block';
+/* ── Status helpers ── */
+function applyStatus(status) {
+  const icon        = document.getElementById('status-icon');
+  const title       = document.getElementById('status-title');
+  const sub         = document.getElementById('status-sub');
+  const badge       = document.getElementById('kyc-badge');
+  const infoBox     = document.getElementById('info-box');
+  const reviewDot   = document.getElementById('step-review-dot');
+  const reviewLabel = document.getElementById('step-review-label');
+  const reviewSub   = document.getElementById('step-review-sub');
+  const formSection = document.getElementById('form-section');
+  const pollRow     = document.getElementById('poll-row');
+
+  if (status === 'rejected') {
+    icon.className = 'status-icon status-icon--rejected';
+    icon.innerHTML = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>';
+    title.textContent = 'Documents Not Accepted';
+    sub.textContent   = 'We could not verify your identity with the documents provided. Please re-submit clearer copies below.';
+    badge.className   = 'kyc-badge kyc-badge--rejected'; badge.textContent = 'Rejected';
+    infoBox.className = 'info-box info-box--red';
+    infoBox.innerHTML = '<strong>Why was my KYC rejected?</strong><br>Common reasons include blurry images, expired documents, or photos that don\'t clearly show your full name and date of birth. Ensure images are well-lit and all text is legible.';
+    reviewDot.className = 'step-dot step-dot--waiting';
+    reviewDot.innerHTML = '✕';
+    reviewLabel.textContent = 'Documents Rejected';
+    reviewSub.textContent   = 'Please re-submit your documents using the form below';
+    document.getElementById('form-section-title').textContent = 'Re-submit Your Documents';
+    document.getElementById('submit-btn').innerHTML = '<svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Re-submit Documents';
+    formSection.classList.add('visible');
+    pollRow.style.display = 'none';
+  } else {
+    icon.className = 'status-icon status-icon--pending';
+    icon.innerHTML = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>';
+    title.textContent = 'Verification in Progress';
+    sub.textContent   = 'Your identity documents are being reviewed by our compliance team. This usually takes 1–2 business days.';
+    badge.className   = 'kyc-badge kyc-badge--pending'; badge.textContent = 'Pending';
+    infoBox.className = 'info-box';
+    infoBox.innerHTML = '<strong>What happens next?</strong><br>Our compliance team reviews documents Monday–Friday, 9am–6pm GMT. You will receive an email once your account is approved. You can close this page and come back later — your progress is saved.';
+    reviewDot.className = 'step-dot step-dot--active';
+    reviewDot.innerHTML = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>';
+    reviewLabel.textContent = 'Compliance Review';
+    reviewSub.textContent   = 'Our team is verifying your identity';
+    formSection.classList.remove('visible');
+    pollRow.style.display = '';
+  }
 }
 
-/* ── State rendering ── */
-function showState(id) {
-  document.querySelectorAll('.vfy-state').forEach(s => s.style.display = 'none');
-  document.getElementById(id).style.display = 'block';
+function applyNoSubmission(needsContactInfo) {
+  const icon          = document.getElementById('status-icon');
+  const title         = document.getElementById('status-title');
+  const sub           = document.getElementById('status-sub');
+  const badge         = document.getElementById('kyc-badge');
+  const infoBox       = document.getElementById('info-box');
+  const stepDocsDot   = document.getElementById('step-docs-dot');
+  const stepDocsLabel = document.getElementById('step-docs-label');
+  const stepDocsSub   = document.getElementById('step-docs-sub');
+  const reviewDot     = document.getElementById('step-review-dot');
+  const reviewLabel   = document.getElementById('step-review-label');
+  const reviewSub     = document.getElementById('step-review-sub');
+  const formSection   = document.getElementById('form-section');
+  const pollRow       = document.getElementById('poll-row');
+
+  icon.className = 'status-icon status-icon--action';
+  icon.innerHTML = '<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>';
+  title.textContent = 'Complete Your Verification';
+  sub.textContent   = 'Upload your identity documents to unlock full access to your SpeedVerse account.';
+  badge.className   = 'kyc-badge kyc-badge--action'; badge.textContent = 'Action Required';
+  infoBox.className = 'info-box info-box--orange';
+  infoBox.innerHTML = '<strong>Why do we need this?</strong><br>KYC verification is required by financial regulations. It keeps your account safe and ensures compliance with international trading standards.';
+
+  stepDocsDot.className = 'step-dot step-dot--active';
+  stepDocsDot.innerHTML = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
+  stepDocsLabel.textContent = 'Submit Documents';
+  stepDocsSub.textContent   = 'Upload your ID and selfie below';
+
+  reviewDot.className   = 'step-dot step-dot--waiting'; reviewDot.textContent = '3';
+  reviewLabel.textContent = 'Compliance Review';
+  reviewSub.textContent   = 'Our team will review once documents are submitted';
+
+  // Hide country/phone fields if user already has them
+  if (!needsContactInfo) {
+    const resField = document.querySelector('#form-section .field:nth-child(2)');
+    const phField  = document.querySelector('#form-section .field:nth-child(3)');
+    if (resField) resField.style.display = 'none';
+    if (phField)  phField.style.display  = 'none';
+  }
+
+  formSection.classList.add('visible');
+  pollRow.style.display = 'none';
 }
 
-/* ── Polling for status changes ── */
+/* ── Polling ── */
 function startPolling() {
   clearInterval(_pollTimer);
-  _pollTimer = setInterval(pollStatus, 30000);
+  _pollTimer = setInterval(async () => {
+    try {
+      const { data } = await _db.from('profiles').select('kyc_status').eq('id', _userId).maybeSingle();
+      if (data?.kyc_status === 'verified') { clearInterval(_pollTimer); showApproved(); }
+      else if (data?.kyc_status === 'rejected') { clearInterval(_pollTimer); applyStatus('rejected'); }
+    } catch(_) {}
+    const lbl = document.getElementById('poll-label');
+    if (lbl) lbl.textContent = `Checking status… (last checked ${new Date().toLocaleTimeString('en-US',{timeStyle:'short'})})`;
+  }, 30000);
 }
 
-async function pollStatus() {
-  try {
-    const { data: profile } = await _db.from('profiles')
-      .select('kyc_status').eq('id', _user.id).single();
-    const status = profile?.kyc_status;
-    if (status === 'verified') {
-      clearInterval(_pollTimer);
-      showState('state-verified');
-      setTimeout(() => window.location.href = 'dashboard.html', 3000);
-    } else if (status === 'rejected') {
-      clearInterval(_pollTimer);
-      // Fetch rejection reason
-      const { data: sub } = await _db.from('kyc_submissions')
-        .select('rejection_reason').eq('user_id', _user.id).single();
-      if (sub?.rejection_reason) {
-        document.getElementById('rejection-reason-text').textContent = sub.rejection_reason;
-      }
-      showState('state-rejected');
-    }
-  } catch (_) {}
+function showApproved() {
+  document.getElementById('redirect-overlay').classList.add('visible');
+  setTimeout(() => window.location.href = 'dashboard.html', 2500);
 }
 
 /* ── Sign out ── */
-document.getElementById('btn-signout').addEventListener('click', async () => {
+document.getElementById('signout-btn').onclick = async () => {
   clearInterval(_pollTimer);
   sessionStorage.removeItem(SS_KEY);
   await window.SV_DB.auth.signOut();
   window.location.href = 'login.html';
-});
+};
 
 /* ── Init ── */
 (async () => {
-  // PIN guard
-  if (!sessionStorage.getItem(SS_KEY)) {
-    window.location.href = 'session.html';
-    return;
-  }
+  if (!sessionStorage.getItem(SS_KEY)) { window.location.href = 'session.html'; return; }
 
   _db = window.SV_DB;
   const { data: { session } } = await _db.auth.getSession();
   if (!session) { window.location.href = 'login.html'; return; }
-  _user = session.user;
+  _user   = session.user;
+  _userId = session.user.id;
 
   // Init country dropdowns
-  initCountryDropdown('country-search',   'country-dropdown');
-  initCountryDropdown('country-search-r', 'country-dropdown-r');
+  initCountryDropdown('country-residence-search', 'country-residence-dropdown');
+  initCountryDropdown('country-issue-search',     'country-issue-dropdown');
 
-  // Fetch profile + latest submission
-  const [{ data: profile }, { data: sub }] = await Promise.all([
-    _db.from('profiles').select('kyc_status,phone').eq('id', _user.id).single(),
-    _db.from('kyc_submissions').select('status,rejection_reason').eq('user_id', _user.id).single()
+  // Populate dial codes
+  const dialSel = document.getElementById('dial-code-select');
+  DIAL_CODES.forEach(({ c, d }) => {
+    const opt = document.createElement('option');
+    opt.value = d; opt.textContent = `${c} ${d}`;
+    dialSel.appendChild(opt);
+  });
+  dialSel.value = '+1';
+
+  // Fetch profile + submission
+  const [{ data: prof }, { data: sub }] = await Promise.all([
+    _db.from('profiles').select('first_name,last_name,email,kyc_status,country,phone').eq('id', _userId).single(),
+    _db.from('kyc_submissions').select('id,status').eq('user_id', _userId).limit(1)
   ]);
 
-  // Show contact-info section for Google users without phone
-  if (!profile?.phone) {
-    _needsContactInfo = true;
-    initCountryDropdown('country-residence-search', 'country-residence-dropdown');
+  // User strip
+  const fn   = prof?.first_name || '';
+  const ln   = prof?.last_name  || '';
+  const name = [fn, ln].filter(Boolean).join(' ') || _user.email;
+  const initials = ((fn[0]||'') + (ln[0]||'')).toUpperCase() || (_user.email[0]||'?').toUpperCase();
+  document.getElementById('user-avatar').textContent = initials;
+  document.getElementById('user-name').textContent   = name;
+  document.getElementById('user-email').textContent  = prof?.email || _user.email || '';
 
-    // Populate dial codes
-    const dialSel = document.getElementById('dial-code-select');
-    DIAL_CODES.forEach(({ c, d }) => {
-      const opt = document.createElement('option');
-      opt.value = d;
-      opt.textContent = `${c} ${d}`;
-      dialSel.appendChild(opt);
-    });
-    // Default to +1 (US)
-    dialSel.value = '+1';
+  // Pre-fill country/phone if on profile
+  if (prof?.country) document.getElementById('country-residence-search')._setValue(prof.country);
+  if (prof?.phone)   document.getElementById('phone-number-input').value = prof.phone;
 
-    document.getElementById('contact-info-section').style.display = 'block';
-  }
+  _needsContactInfo = !prof?.phone;
 
-  const status = profile?.kyc_status || sub?.status || null;
+  const kycStatus  = prof?.kyc_status || null;
+  const hasSubmission = !!(sub && sub.length > 0);
 
-  document.getElementById('sv-loading').style.display  = 'none';
+  document.getElementById('sv-loading').style.display   = 'none';
   document.getElementById('sv-verify-page').style.display = 'block';
 
-  if (status === 'verified') {
-    showState('state-verified');
-    setTimeout(() => window.location.href = 'dashboard.html', 3000);
-  } else if (status === 'pending') {
-    showState('state-pending');
-    startPolling();
-  } else if (status === 'rejected') {
-    if (sub?.rejection_reason) {
-      document.getElementById('rejection-reason-text').textContent = sub.rejection_reason;
-    }
-    showState('state-rejected');
+  if (kycStatus === 'verified') {
+    showApproved();
+  } else if (!hasSubmission) {
+    applyNoSubmission(_needsContactInfo);
+  } else if (kycStatus === 'rejected') {
+    applyStatus('rejected');
   } else {
-    showState('state-upload');
+    applyStatus('pending');
+    startPolling();
   }
 })();
 </script>
