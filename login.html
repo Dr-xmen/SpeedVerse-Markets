@@ -255,11 +255,13 @@ function showErr(msg) {
 }
 
 async function loginWithGoogle() {
-  const { error } = await window.SV_DB.auth.signInWithOAuth({
-    provider: 'google',
-    options: { redirectTo: window.location.origin + '/phone-setup.html' }
-  });
-  if (error) showErr(error.message);
+  try {
+    const { error } = await window.SV_DB.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: window.location.origin + '/phone-setup.html' }
+    });
+    if (error) showErr(error.message);
+  } catch(e) { showErr(e.message || 'Google sign-in failed.'); }
 }
 </script>
 </body>

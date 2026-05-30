@@ -706,11 +706,13 @@ async function doRegister() {
 }
 
 async function loginWithGoogle() {
-  const { error } = await window.SV_DB.auth.signInWithOAuth({
-    provider: 'google',
-    options: { redirectTo: window.location.origin + '/phone-setup.html' }
-  });
-  if (error) { const e = document.getElementById('r-error'); if(e){e.textContent=error.message;e.style.display='block';} }
+  try {
+    const { error } = await window.SV_DB.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: window.location.origin + '/phone-setup.html' }
+    });
+    if (error) showErr(error.message);
+  } catch(e) { showErr(e.message || 'Google sign-in failed.'); }
 }
 </script>
 </body>
