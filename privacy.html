@@ -63,6 +63,16 @@ nav{position:sticky;top:0;z-index:9999;background:#fff;border-bottom:1px solid #
 /* HERO */
 .pp-hero{background:linear-gradient(135deg,#060e18 0%,#1c0900 60%,#E8530A 140%);padding:80px 0 72px;position:relative;overflow:hidden;}
 .pp-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 120% at 90% 50%,rgba(232,83,10,.18) 0%,transparent 65%);pointer-events:none;}
+#hero-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;}
+.hero-deco{position:absolute;right:6%;top:50%;transform:translateY(-50%);z-index:0;pointer-events:none;}
+@keyframes heroDeco{0%,100%{transform:translateY(-50%);opacity:.055;}50%{transform:translateY(calc(-50% - 22px));opacity:.09;}}
+.hero-deco{animation:heroDeco 8s ease-in-out infinite;}
+@keyframes heroUp{from{opacity:0;transform:translateY(32px);}to{opacity:1;transform:translateY(0);}}
+@keyframes tagGlow{0%,100%{box-shadow:0 0 0 0 rgba(232,83,10,.5);}60%{box-shadow:0 0 0 12px rgba(232,83,10,0);}}
+.pp-hero-tag{animation:heroUp .55s ease .1s both,tagGlow 3.5s ease 1s infinite;}
+.pp-hero-h1{animation:heroUp .65s ease .28s both;}
+.pp-hero-sub{animation:heroUp .65s ease .44s both;}
+.pp-hero-meta{animation:heroUp .65s ease .6s both;}
 .pp-hero-inner{max-width:1280px;margin:0 auto;padding:0 48px;}
 .pp-hero-tag{display:inline-block;background:rgba(232,83,10,.2);border:1px solid rgba(232,83,10,.4);color:#E8530A;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:5px 14px;border-radius:20px;margin-bottom:20px;}
 .pp-hero-h1{font-size:52px;font-weight:900;color:#fff;line-height:1.1;letter-spacing:-1px;margin-bottom:16px;}
@@ -216,6 +226,12 @@ footer{background:#111;padding:60px 0 28px;}
 
 <!-- HERO -->
 <section class="pp-hero">
+  <canvas id="hero-canvas"></canvas>
+  <!-- Shield watermark -->
+  <svg class="hero-deco" width="420" height="420" viewBox="0 0 24 24" fill="none" stroke="#E8530A" stroke-width=".35" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.25C17.25 22.15 21 17.25 21 12V7z"/>
+    <path d="M9 12l2 2 4-4" stroke-width=".5"/>
+  </svg>
   <div class="pp-hero-inner">
     <div class="pp-hero-tag">Legal</div>
     <h1 class="pp-hero-h1">Privacy Policy</h1>
@@ -456,6 +472,48 @@ footer{background:#111;padding:60px 0 28px;}
 const ham = document.getElementById('nav-hamburger');
 const mNav = document.getElementById('mobile-nav');
 ham.addEventListener('click', () => { ham.classList.toggle('open'); mNav.classList.toggle('open'); });
+
+// Hero particle canvas
+(function(){
+  const canvas = document.getElementById('hero-canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, pts;
+  const N = 55, MAX_DIST = 130;
+
+  function resize(){
+    W = canvas.width = canvas.offsetWidth;
+    H = canvas.height = canvas.offsetHeight;
+  }
+
+  function mkPt(){
+    return { x:Math.random()*W, y:Math.random()*H, vx:(Math.random()-.5)*.45, vy:(Math.random()-.5)*.45, r:Math.random()*1.8+.8, a:Math.random()*.55+.2 };
+  }
+
+  function init(){ resize(); pts = Array.from({length:N}, mkPt); }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    for(let i=0;i<pts.length;i++){
+      const p=pts[i];
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.x<0||p.x>W) p.vx*=-1;
+      if(p.y<0||p.y>H) p.vy*=-1;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(232,83,10,${p.a})`; ctx.fill();
+      for(let j=i+1;j<pts.length;j++){
+        const q=pts[j], dx=p.x-q.x, dy=p.y-q.y, d=Math.sqrt(dx*dx+dy*dy);
+        if(d<MAX_DIST){
+          ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(q.x,q.y);
+          ctx.strokeStyle=`rgba(232,83,10,${(1-d/MAX_DIST)*.18})`; ctx.lineWidth=.7; ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+
+  window.addEventListener('resize', init);
+  init(); draw();
+})();
 
 // Highlight active TOC link on scroll
 const sections = document.querySelectorAll('.pp-section');
