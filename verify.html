@@ -239,6 +239,39 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'In
 }
 .redirect-btn:hover{opacity:.85;}
 
+/* Contact info section */
+.contact-info-notice{
+  background:rgba(240,90,26,.07);
+  border:1px solid rgba(240,90,26,.2);
+  border-radius:10px;padding:12px 14px;
+  font-size:12.5px;color:var(--sub);
+  margin-bottom:20px;line-height:1.65;
+}
+.contact-info-notice strong{color:var(--accent);display:block;margin-bottom:3px;}
+
+/* Phone field */
+.phone-row{display:flex;gap:8px;}
+.dial-select{
+  width:100px;flex-shrink:0;height:46px;
+  background:var(--s2);border:1px solid var(--b);
+  border-radius:10px;padding:0 10px;
+  font-size:13px;color:var(--text);outline:none;
+  font-family:'Inter',sans-serif;
+  appearance:none;cursor:pointer;
+  transition:border-color .18s;
+}
+.dial-select:focus{border-color:var(--accent);}
+.phone-num-input{
+  flex:1;height:46px;
+  background:var(--s2);border:1px solid var(--b);
+  border-radius:10px;padding:0 14px;
+  font-size:14px;color:var(--text);outline:none;
+  font-family:'Inter',sans-serif;
+  transition:border-color .18s;
+}
+.phone-num-input:focus{border-color:var(--accent);}
+.phone-num-input::placeholder{color:var(--sub);}
+
 /* Scrollbar */
 ::-webkit-scrollbar{width:4px;height:4px;}
 ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px;}
@@ -266,6 +299,32 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'In
       <div class="vfy-p">Submit a government-issued ID and a profile photo to unlock your account.</div>
 
       <div class="form-error" id="upload-error"></div>
+
+      <!-- Contact info — shown only for Google users without phone on profile -->
+      <div id="contact-info-section" style="display:none;">
+        <div class="contact-info-notice">
+          <strong>Contact Details Required</strong>
+          Since you signed in with Google, please provide your country of residence and phone number to complete your profile.
+        </div>
+
+        <div class="form-row">
+          <label class="form-label">Country of Residence</label>
+          <div class="country-wrap">
+            <input type="text" class="country-search-input" id="country-residence-search"
+              placeholder="Search country…" autocomplete="off" readonly/>
+            <div class="country-dropdown" id="country-residence-dropdown"></div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <label class="form-label">Phone Number</label>
+          <div class="phone-row">
+            <select class="dial-select" id="dial-code-select"></select>
+            <input type="tel" class="phone-num-input" id="phone-number-input"
+              placeholder="Enter your number" autocomplete="tel"/>
+          </div>
+        </div>
+      </div>
 
       <div class="form-row">
         <label class="form-label">Document Type</label>
@@ -473,6 +532,43 @@ const SS_KEY = 'sv_pin_ok';
 let _db   = null;
 let _user = null;
 let _pollTimer = null;
+let _needsContactInfo = false;
+
+/* ── Dial codes ── */
+const DIAL_CODES = [
+  {c:'AF',d:'+93'},{c:'AL',d:'+355'},{c:'DZ',d:'+213'},{c:'AO',d:'+244'},
+  {c:'AR',d:'+54'},{c:'AM',d:'+374'},{c:'AU',d:'+61'},{c:'AT',d:'+43'},
+  {c:'AZ',d:'+994'},{c:'BH',d:'+973'},{c:'BD',d:'+880'},{c:'BY',d:'+375'},
+  {c:'BE',d:'+32'},{c:'BO',d:'+591'},{c:'BA',d:'+387'},{c:'BW',d:'+267'},
+  {c:'BR',d:'+55'},{c:'BN',d:'+673'},{c:'BG',d:'+359'},{c:'KH',d:'+855'},
+  {c:'CM',d:'+237'},{c:'CA',d:'+1'},{c:'CL',d:'+56'},{c:'CN',d:'+86'},
+  {c:'CO',d:'+57'},{c:'CD',d:'+243'},{c:'CR',d:'+506'},{c:'HR',d:'+385'},
+  {c:'CU',d:'+53'},{c:'CY',d:'+357'},{c:'CZ',d:'+420'},{c:'DK',d:'+45'},
+  {c:'DO',d:'+1809'},{c:'EC',d:'+593'},{c:'EG',d:'+20'},{c:'SV',d:'+503'},
+  {c:'ET',d:'+251'},{c:'FI',d:'+358'},{c:'FR',d:'+33'},{c:'GE',d:'+995'},
+  {c:'DE',d:'+49'},{c:'GH',d:'+233'},{c:'GR',d:'+30'},{c:'GT',d:'+502'},
+  {c:'HN',d:'+504'},{c:'HK',d:'+852'},{c:'HU',d:'+36'},{c:'IN',d:'+91'},
+  {c:'ID',d:'+62'},{c:'IR',d:'+98'},{c:'IQ',d:'+964'},{c:'IE',d:'+353'},
+  {c:'IL',d:'+972'},{c:'IT',d:'+39'},{c:'JM',d:'+1876'},{c:'JP',d:'+81'},
+  {c:'JO',d:'+962'},{c:'KZ',d:'+7'},{c:'KE',d:'+254'},{c:'KW',d:'+965'},
+  {c:'LV',d:'+371'},{c:'LB',d:'+961'},{c:'LY',d:'+218'},{c:'LT',d:'+370'},
+  {c:'LU',d:'+352'},{c:'MY',d:'+60'},{c:'MV',d:'+960'},{c:'MT',d:'+356'},
+  {c:'MX',d:'+52'},{c:'MD',d:'+373'},{c:'MN',d:'+976'},{c:'ME',d:'+382'},
+  {c:'MA',d:'+212'},{c:'MZ',d:'+258'},{c:'MM',d:'+95'},{c:'NA',d:'+264'},
+  {c:'NP',d:'+977'},{c:'NL',d:'+31'},{c:'NZ',d:'+64'},{c:'NI',d:'+505'},
+  {c:'NG',d:'+234'},{c:'NO',d:'+47'},{c:'OM',d:'+968'},{c:'PK',d:'+92'},
+  {c:'PA',d:'+507'},{c:'PY',d:'+595'},{c:'PE',d:'+51'},{c:'PH',d:'+63'},
+  {c:'PL',d:'+48'},{c:'PT',d:'+351'},{c:'QA',d:'+974'},{c:'RO',d:'+40'},
+  {c:'RU',d:'+7'},{c:'RW',d:'+250'},{c:'SA',d:'+966'},{c:'SN',d:'+221'},
+  {c:'RS',d:'+381'},{c:'SG',d:'+65'},{c:'SK',d:'+421'},{c:'SI',d:'+386'},
+  {c:'SO',d:'+252'},{c:'ZA',d:'+27'},{c:'KR',d:'+82'},{c:'ES',d:'+34'},
+  {c:'LK',d:'+94'},{c:'SD',d:'+249'},{c:'SE',d:'+46'},{c:'CH',d:'+41'},
+  {c:'SY',d:'+963'},{c:'TW',d:'+886'},{c:'TZ',d:'+255'},{c:'TH',d:'+66'},
+  {c:'TN',d:'+216'},{c:'TR',d:'+90'},{c:'UG',d:'+256'},{c:'UA',d:'+380'},
+  {c:'AE',d:'+971'},{c:'GB',d:'+44'},{c:'US',d:'+1'},{c:'UY',d:'+598'},
+  {c:'UZ',d:'+998'},{c:'VE',d:'+58'},{c:'VN',d:'+84'},{c:'YE',d:'+967'},
+  {c:'ZM',d:'+260'},{c:'ZW',d:'+263'}
+];
 
 /* ── Country list ── */
 const COUNTRIES = [
@@ -545,6 +641,7 @@ function initCountryDropdown(inputId, dropdownId) {
   inp.addEventListener('blur', () => setTimeout(closeDrop, 200));
 
   inp._getSelected = () => selected;
+  inp._setValue    = v => { selected = v; inp.value = v; };
   render('');
 }
 
@@ -591,6 +688,20 @@ async function submitKYC(isResubmit = false) {
 
   errEl.style.display = 'none';
 
+  // Collect contact info (only for initial upload, not resubmit)
+  let residenceCountry = '';
+  let fullPhone = '';
+  if (!isResubmit && _needsContactInfo) {
+    const residenceInp = document.getElementById('country-residence-search');
+    residenceCountry   = residenceInp._getSelected ? residenceInp._getSelected() : '';
+    const dialCode     = document.getElementById('dial-code-select').value;
+    const phoneNum     = document.getElementById('phone-number-input').value.trim();
+
+    if (!residenceCountry) return showErr(errEl, 'Please select your country of residence.');
+    if (!phoneNum)         return showErr(errEl, 'Please enter your phone number.');
+    fullPhone = dialCode + phoneNum;
+  }
+
   const docType = document.getElementById(`doc-type${suffix}`).value;
   const country = csInp._getSelected ? csInp._getSelected() : '';
   const fileFront  = document.getElementById(`file-front${suffix}`).files[0];
@@ -617,6 +728,14 @@ async function submitKYC(isResubmit = false) {
     const selfiePath = await uploadFile('kyc-docs', `${uid}/selfie.${ext(fileSelfie)}`, fileSelfie);
 
     btn.textContent = 'Saving…';
+
+    // Save contact info to profile if collected
+    if (!isResubmit && _needsContactInfo) {
+      const { error: profileErr } = await _db.from('profiles')
+        .update({ phone: fullPhone, country: residenceCountry })
+        .eq('id', uid);
+      if (profileErr) throw new Error(profileErr.message);
+    }
 
     // Upsert kyc_submission
     const { error: subErr } = await _db.from('kyc_submissions').upsert({
@@ -713,9 +832,28 @@ document.getElementById('btn-signout').addEventListener('click', async () => {
 
   // Fetch profile + latest submission
   const [{ data: profile }, { data: sub }] = await Promise.all([
-    _db.from('profiles').select('kyc_status').eq('id', _user.id).single(),
+    _db.from('profiles').select('kyc_status,phone').eq('id', _user.id).single(),
     _db.from('kyc_submissions').select('status,rejection_reason').eq('user_id', _user.id).single()
   ]);
+
+  // Show contact-info section for Google users without phone
+  if (!profile?.phone) {
+    _needsContactInfo = true;
+    initCountryDropdown('country-residence-search', 'country-residence-dropdown');
+
+    // Populate dial codes
+    const dialSel = document.getElementById('dial-code-select');
+    DIAL_CODES.forEach(({ c, d }) => {
+      const opt = document.createElement('option');
+      opt.value = d;
+      opt.textContent = `${c} ${d}`;
+      dialSel.appendChild(opt);
+    });
+    // Default to +1 (US)
+    dialSel.value = '+1';
+
+    document.getElementById('contact-info-section').style.display = 'block';
+  }
 
   const status = profile?.kyc_status || sub?.status || null;
 
