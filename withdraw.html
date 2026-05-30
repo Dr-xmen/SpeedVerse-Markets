@@ -280,6 +280,19 @@ body.light select option{background:#fff;color:#111;}
 .modal-confirm:hover{background:#d94e10;}
 
 
+/* ── Withdrawal PIN modal ── */
+.wd-pin-dots{display:flex;gap:16px;justify-content:center;margin:20px 0 6px;}
+.wd-pin-dot{width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,.2);background:transparent;transition:all .15s;}
+.wd-pin-dot.filled{background:var(--accent);border-color:var(--accent);box-shadow:0 0 8px rgba(240,90,26,.5);}
+.wd-pin-dot.success{background:var(--green);border-color:var(--green);box-shadow:0 0 8px rgba(14,203,129,.5);}
+.wd-pin-error{min-height:18px;font-size:12px;color:var(--red);text-align:center;margin-bottom:6px;}
+.wd-numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0 16px;}
+.wd-np-btn{height:52px;border-radius:10px;background:var(--s3);border:1px solid var(--b);font-size:18px;font-weight:600;color:var(--text);cursor:pointer;transition:background .12s,border-color .12s;font-family:'Inter',sans-serif;}
+.wd-np-btn:hover{background:var(--s4);border-color:var(--b2);}
+.wd-np-btn.action{font-size:16px;color:var(--sub);}
+@keyframes wd-shake{0%,100%{transform:translateX(0);}20%,60%{transform:translateX(-6px);}40%,80%{transform:translateX(6px);}}
+.wd-pin-shake{animation:wd-shake .35s ease;}
+
 @media(max-width:640px){.dep-card{padding:18px;}.network-grid{grid-template-columns:1fr 1fr;}.coin-grid{grid-template-columns:repeat(3,1fr);}.method-btn{font-size:12px;padding:11px 10px;}}
 
 /* ── MOBILE (html.mob set synchronously before render) ── */
@@ -840,16 +853,18 @@ html.mob .main{width:100% !important;padding:20px 16px;}</style>
 <!-- VERIFICATION MODAL -->
 <div class="modal-overlay" id="modal-overlay" onclick="closeModal()">
   <div class="modal" onclick="event.stopPropagation()">
-    <div class="modal-title">Security Verification</div>
-    <div class="modal-sub" id="modal-sub">Verify your identity to complete this withdrawal</div>
-    <div class="modal-field">
-      <div class="modal-label">Email Verification Code</div>
-      <div class="modal-hint">Sent to j***@gmail.com</div>
-      <div class="modal-input-wrap">
-        <input class="modal-input" id="email-code" type="text" maxlength="6" placeholder="6-digit code"/>
-        <button class="send-code-btn" id="send-code-btn" onclick="sendCode(this)">Send Code</button>
-      </div>
+    <div class="modal-title">Security PIN</div>
+    <div class="modal-sub" id="modal-sub">Enter your 4-digit PIN to confirm this withdrawal</div>
+
+    <div class="wd-pin-dots" id="wd-pin-dots">
+      <span class="wd-pin-dot"></span>
+      <span class="wd-pin-dot"></span>
+      <span class="wd-pin-dot"></span>
+      <span class="wd-pin-dot"></span>
     </div>
+    <div class="wd-pin-error" id="wd-pin-error"></div>
+    <div class="wd-numpad" id="wd-numpad"></div>
+
     <div class="modal-summary">
       <div style="font-size:10.5px;color:var(--sub);margin-bottom:8px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;">Withdrawal Summary</div>
       <div class="modal-sum-row"><span style="color:var(--sub);">Amount</span><span style="font-family:'Inter',sans-serif;font-weight:700;color:var(--text);" id="modal-amount">—</span></div>
@@ -858,7 +873,6 @@ html.mob .main{width:100% !important;padding:20px 16px;}</style>
     </div>
     <div class="modal-actions">
       <button class="modal-cancel" onclick="closeModal()">Cancel</button>
-      <button class="modal-confirm" onclick="confirmWithdraw()">Confirm</button>
     </div>
   </div>
 </div>
@@ -1137,47 +1151,97 @@ function populateReview(){
   document.getElementById('modal-receive').textContent = `${rcv.toLocaleString()} ${ccy}`;
 }
 
-/* ══════════════ MODAL ══════════════ */
+/* ══════════════ MODAL + PIN ══════════════ */
 let currentModalType = 'crypto';
+
+/* SHA-256 helper */
+async function sha256(str){
+  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+/* PIN state */
+let _wdPin='';
+
+function syncWdDots(){
+  document.querySelectorAll('#wd-pin-dots .wd-pin-dot').forEach((d,i)=>{
+    d.classList.toggle('filled',i<_wdPin.length);
+    d.classList.remove('success');
+  });
+}
+
+function buildWdNumpad(){
+  const keys=['1','2','3','4','5','6','7','8','9','⌫','0','✕'];
+  document.getElementById('wd-numpad').innerHTML=keys.map(k=>
+    `<button class="wd-np-btn${k==='⌫'||k==='✕'?' action':''}" onclick="handleWdPin('${k}')">${k}</button>`
+  ).join('');
+}
+
+function handleWdPin(key){
+  if(key==='⌫') _wdPin=_wdPin.slice(0,-1);
+  else if(key==='✕') _wdPin='';
+  else if(_wdPin.length<4) _wdPin+=key;
+  syncWdDots();
+  document.getElementById('wd-pin-error').textContent='';
+  if(_wdPin.length===4) setTimeout(checkWdPin,160);
+}
+
+async function checkWdPin(){
+  const stored=window._svUser?.user_metadata?.trading_pin;
+  if(!stored){
+    /* No PIN set — proceed directly */
+    document.querySelectorAll('#wd-pin-dots .wd-pin-dot').forEach(d=>d.classList.add('filled','success'));
+    setTimeout(()=>{ closeModal(); doWithdraw(); },420);
+    return;
+  }
+  const hash=await sha256(_wdPin);
+  if(hash===stored){
+    document.querySelectorAll('#wd-pin-dots .wd-pin-dot').forEach(d=>d.classList.add('filled','success'));
+    setTimeout(()=>{ closeModal(); doWithdraw(); },420);
+  } else {
+    _wdPin='';
+    syncWdDots();
+    const dotsEl=document.getElementById('wd-pin-dots');
+    dotsEl.classList.remove('wd-pin-shake');
+    void dotsEl.offsetWidth;
+    dotsEl.classList.add('wd-pin-shake');
+    document.getElementById('wd-pin-error').textContent='Incorrect PIN — try again';
+  }
+}
+
+function doWithdraw(){
+  const msg=currentModalType==='bank'
+    ?'Bank withdrawal submitted successfully.\n\nFunds will arrive in 1–3 business days.'
+    :'Withdrawal submitted successfully.';
+  alert(msg);
+}
+
 function openVerifyModal(type){
-  currentModalType = type;
-  document.getElementById('modal-sub').textContent = type==='bank'
-    ? 'Verify your identity to complete this bank withdrawal'
-    : 'Verify your identity to complete this crypto withdrawal';
-  const ov = document.getElementById('modal-overlay');
-  const m  = ov.querySelector('.modal');
+  currentModalType=type;
+  document.getElementById('modal-sub').textContent=type==='bank'
+    ?'Enter your 4-digit PIN to confirm this bank withdrawal'
+    :'Enter your 4-digit PIN to confirm this crypto withdrawal';
+  _wdPin='';
+  syncWdDots();
+  document.getElementById('wd-pin-error').textContent='';
+  buildWdNumpad();
+  const ov=document.getElementById('modal-overlay');
+  const m=ov.querySelector('.modal');
   m.classList.remove('genie-out');
   ov.classList.add('open');
   void m.offsetWidth;
   m.classList.add('genie-in');
-  m.addEventListener('animationend', () => m.classList.remove('genie-in'), { once: true });
+  m.addEventListener('animationend',()=>m.classList.remove('genie-in'),{once:true});
 }
 function closeModal(){
-  const ov = document.getElementById('modal-overlay');
-  const m  = ov.querySelector('.modal');
+  const ov=document.getElementById('modal-overlay');
+  const m=ov.querySelector('.modal');
   m.classList.remove('genie-in');
   m.classList.add('genie-out');
-  m.addEventListener('animationend', () => {
+  m.addEventListener('animationend',()=>{
     m.classList.remove('genie-out');
     ov.classList.remove('open');
-  }, { once: true });
-}
-
-let codeTimer;
-function sendCode(btn){
-  btn.textContent='60s'; btn.disabled=true;
-  let s=60;
-  codeTimer=setInterval(()=>{ s--; btn.textContent=s+'s'; if(s<=0){ clearInterval(codeTimer); btn.textContent='Resend'; btn.disabled=false; }},1000);
-}
-
-function confirmWithdraw(){
-  const ec = document.getElementById('email-code').value;
-  if(ec.length < 4){ alert('Please enter the email verification code.'); return; }
-  closeModal();
-  const msg = currentModalType==='bank'
-    ? 'Bank withdrawal submitted.\n\nFunds will arrive in 1–3 business days. You will receive a confirmation email shortly.'
-    : 'Withdrawal submitted successfully.\n\nYou will receive an email confirmation shortly.';
-  alert(msg);
+  },{once:true});
 }
 
 /* ── Init ── */
@@ -1199,6 +1263,7 @@ let _svBalance = 0;
 let _minWithdrawal = 0;
 let _svUserId  = null;
 let _svEmail   = '';
+let _svUser    = null;
 
 (async () => {
   const db = window.SV_DB;
@@ -1207,6 +1272,7 @@ let _svEmail   = '';
   if (!session) { window.location.href = 'login.html'; return; }
 
   const user = session.user;
+  _svUser    = user;
   _svUserId  = user.id;
   _svEmail   = user.email || '';
 
