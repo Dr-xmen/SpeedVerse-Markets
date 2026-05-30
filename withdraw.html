@@ -649,7 +649,7 @@ html.mob .main{width:100% !important;padding:20px 16px;}</style>
           <div class="form-field">
             <div class="form-label-row">
               <span class="form-label">Amount</span>
-              <span class="form-label-right">Available: <strong style="color:var(--text);">$0.00</strong> USD</span>
+              <span class="form-label-right">Available: <strong style="color:var(--text);" id="bank-avail-bal">$0.00</strong> USD</span>
             </div>
             <div class="form-input-wrap">
               <input class="form-input" id="bank-amount" type="number" min="0" placeholder="0.00" style="padding-right:70px;" oninput="updateBankSummary()"/>
@@ -1061,14 +1061,17 @@ function updateBankSummary(){
   const ccy = document.getElementById('bank-currency').value;
   const amt  = parseFloat(document.getElementById('bank-amount').value) || 0;
   const fee  = BANK_FEES[ccy] || 15;
-  const min  = BANK_MIN[ccy]  || 100;
+  const baseMin = BANK_MIN[ccy] || 100;
+  const adminMin = typeof _minWithdrawal !== 'undefined' && _minWithdrawal > 0 ? _minWithdrawal : 0;
+  const min  = Math.max(baseMin, adminMin);
+  const avail = typeof _svBalance !== 'undefined' ? _svBalance : 0;
   const rcv  = Math.max(0, amt - fee);
   document.getElementById('bank-ccy-tag').textContent      = ccy;
-  document.getElementById('bank-min').textContent          = min.toLocaleString() + ' ' + ccy;
+  document.getElementById('bank-min').textContent          = '$' + min.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}) + ' USD';
   document.getElementById('bank-fee-val').textContent      = fee.toLocaleString() + ' ' + ccy;
   document.getElementById('bank-rate-val').textContent     = `1 ${ccy} = 1.00 ${ccy}`;
   document.getElementById('bank-receive-val').textContent  = rcv > 0 ? `${rcv.toLocaleString()} ${ccy}` : '—';
-  document.getElementById('bank-next-btn').disabled        = !(amt >= min);
+  document.getElementById('bank-next-btn').disabled        = !(amt >= min && amt <= avail);
 }
 
 function checkBankStep2(){
@@ -1178,6 +1181,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.hdr-drop'))
 <script src="./supabase.js"></script>
 <script>
 let _svBalance = 0;
+let _minWithdrawal = 0;
 let _svUserId  = null;
 let _svEmail   = '';
 
@@ -1191,10 +1195,13 @@ let _svEmail   = '';
   _svUserId  = user.id;
   _svEmail   = user.email || '';
 
-  const { data: profile } = await db.from('profiles')
-    .select('first_name,last_name,balance,pnl')
-    .eq('id', user.id)
-    .maybeSingle();
+  const [{ data: profile }, { data: wdSetting }] = await Promise.all([
+    db.from('profiles').select('first_name,last_name,balance,pnl,min_withdrawal').eq('id', user.id).maybeSingle(),
+    db.from('system_settings').select('value').eq('key','min_withdrawal_amount').maybeSingle(),
+  ]);
+  const globalMinWd = parseFloat(wdSetting?.value) || 0;
+  const userMinWd   = profile?.min_withdrawal != null ? parseFloat(profile.min_withdrawal) : null;
+  _minWithdrawal = userMinWd != null ? userMinWd : globalMinWd;
 
   const firstName   = profile?.first_name || '';
   const displayName = firstName ? [firstName, profile.last_name].filter(Boolean).join(' ') : _svEmail.split('@')[0];
@@ -1214,9 +1221,21 @@ let _svEmail   = '';
 
   _svBalance = parseFloat(profile?.balance || 0) + parseFloat(profile?.pnl || 0);
 
-  /* Refresh available balance display if a coin is already selected */
-  const availEl = document.getElementById('avail-bal');
-  if (availEl) availEl.textContent = _svBalance.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+  const fmtBal = n => n.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+  const setBalDisplays = () => {
+    const cryptoEl = document.getElementById('avail-bal');
+    if (cryptoEl) cryptoEl.textContent = fmtBal(_svBalance);
+    const bankEl = document.getElementById('bank-avail-bal');
+    if (bankEl) bankEl.textContent = '$' + fmtBal(_svBalance);
+    updateBankSummary();
+  };
+  setBalDisplays();
+
+  /* Update min-wd display if crypto step3 is visible */
+  if (_minWithdrawal > 0) {
+    const minEl = document.getElementById('min-wd');
+    if (minEl && selNet) minEl.textContent = '$' + fmtBal(_minWithdrawal) + ' USD min';
+  }
 
   /* Real-time: update balance when admin credits/debits */
   db.channel('wd-balance-' + user.id)
@@ -1225,8 +1244,7 @@ let _svEmail   = '';
       filter: `id=eq.${user.id}`
     }, payload => {
       _svBalance = parseFloat(payload.new.balance || 0) + parseFloat(payload.new.pnl || 0);
-      const el = document.getElementById('avail-bal');
-      if (el) el.textContent = _svBalance.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+      setBalDisplays();
     })
     .subscribe();
 

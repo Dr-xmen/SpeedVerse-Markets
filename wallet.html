@@ -493,6 +493,7 @@ function toggleTheme(){var light=document.body.classList.toggle('light');localSt
 
 // ── Hide balance toggle ──
 let hiddenBalance=false;
+let _walletBal=0, _walletPnlStr='$0.00 (0.00%)';
 function toggleHide(){
   hiddenBalance=!hiddenBalance;
   const el=document.getElementById('pb-total');
@@ -502,8 +503,8 @@ function toggleHide(){
     pnl.textContent='*****';
     document.getElementById('eye-icon').innerHTML='<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
   } else {
-    el.textContent='$0.00';
-    pnl.textContent='$0.00 (0.00%)';
+    el.textContent='$'+_walletBal.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+    pnl.textContent=_walletPnlStr;
     document.getElementById('eye-icon').innerHTML='<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
   }
 }
@@ -520,7 +521,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.hdr-drop'))
   if(!session){window.location.href="login.html";return;}
   const user = session.user;
   const email = user.email || '';
-  const { data: profile } = await db.from('profiles').select('first_name,last_name').eq('id', user.id).maybeSingle();
+  const { data: profile } = await db.from('profiles').select('first_name,last_name,balance,pnl').eq('id', user.id).maybeSingle();
   const firstName = profile?.first_name || '';
   const displayName = firstName ? [firstName, profile.last_name].filter(Boolean).join(' ') : email.split('@')[0];
   const initials = displayName.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase() || 'SV';
@@ -535,6 +536,39 @@ document.addEventListener('click',function(e){if(!e.target.closest('.hdr-drop'))
       document.getElementById('hdr-avatar').innerHTML = `<img src="${_signed.signedUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
     }
   }
+
+  /* ── Balance ── */
+  const fmt = n => '$' + parseFloat(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  _walletBal = parseFloat(profile?.balance||0) + parseFloat(profile?.pnl||0);
+  const pnlAmt = parseFloat(profile?.pnl||0);
+  const pnlPct = _walletBal > 0 ? Math.abs(pnlAmt/_walletBal*100).toFixed(2) : '0.00';
+  _walletPnlStr = (pnlAmt>=0?'+':'-') + fmt(Math.abs(pnlAmt)) + ' (' + pnlPct + '%)';
+  document.getElementById('pb-total').textContent = fmt(_walletBal);
+  const pnlEl = document.getElementById('pnl-val');
+  if(pnlEl){ pnlEl.className = pnlAmt>=0?'pb-pnl-pos':'pb-pnl-neg'; pnlEl.textContent = _walletPnlStr; }
+
+  const ratios = {spot:0.452,deriv:0.302,fund:0.212,earn:0.034};
+  const cards = document.querySelectorAll('.acct-card-val');
+  if(cards[0]) cards[0].textContent = fmt(_walletBal*ratios.spot);
+  if(cards[1]) cards[1].textContent = fmt(_walletBal*ratios.deriv);
+  if(cards[2]) cards[2].textContent = fmt(_walletBal*ratios.fund);
+  if(cards[3]) cards[3].textContent = fmt(_walletBal*ratios.earn);
+
+  db.channel('wallet-balance-'+user.id).on('postgres_changes',{event:'UPDATE',schema:'public',table:'profiles',filter:`id=eq.${user.id}`},payload=>{
+    _walletBal = parseFloat(payload.new.balance||0)+parseFloat(payload.new.pnl||0);
+    const pnlA = parseFloat(payload.new.pnl||0);
+    const pnlP = _walletBal>0?Math.abs(pnlA/_walletBal*100).toFixed(2):'0.00';
+    _walletPnlStr = (pnlA>=0?'+':'-')+fmt(Math.abs(pnlA))+' ('+pnlP+'%)';
+    if(!hiddenBalance){
+      document.getElementById('pb-total').textContent=fmt(_walletBal);
+      const pe=document.getElementById('pnl-val');if(pe){pe.className=pnlA>=0?'pb-pnl-pos':'pb-pnl-neg';pe.textContent=_walletPnlStr;}
+    }
+    const cs=document.querySelectorAll('.acct-card-val');
+    if(cs[0])cs[0].textContent=fmt(_walletBal*ratios.spot);
+    if(cs[1])cs[1].textContent=fmt(_walletBal*ratios.deriv);
+    if(cs[2])cs[2].textContent=fmt(_walletBal*ratios.fund);
+    if(cs[3])cs[3].textContent=fmt(_walletBal*ratios.earn);
+  }).subscribe();
 })();
 </script>
 <script src="notif-popup.js"></script>

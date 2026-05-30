@@ -1001,6 +1001,40 @@
           </div>
         </div>
 
+        <!-- Minimum Withdrawal -->
+        <div class="card" style="margin-top:16px;">
+          <div class="card__head">
+            <div class="card__title">Minimum Withdrawal</div>
+            <div class="card__sub">Set the minimum withdrawal amount globally or per user</div>
+          </div>
+          <div class="card__body">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:flex-end;margin-bottom:20px;">
+              <div class="field">
+                <label>Global Minimum (USD)</label>
+                <input type="number" id="global-min-withdrawal" placeholder="0.00" min="0" step="0.01" style="width:100%;padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg2);color:var(--text);font-size:13px;"/>
+              </div>
+              <button class="btn btn--primary" onclick="saveGlobalMinWithdrawal()">Save Global Minimum</button>
+            </div>
+            <div style="border-top:1px solid var(--border);padding-top:16px;">
+              <div style="font-size:13px;font-weight:600;margin-bottom:12px;">Per-User Override</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:flex-end;">
+                <div class="field" style="margin:0;">
+                  <label>User</label>
+                  <select id="user-min-withdrawal-select" style="width:100%;padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg2);color:var(--text);font-size:13px;">
+                    <option value="">— Select user —</option>
+                  </select>
+                </div>
+                <div class="field" style="margin:0;">
+                  <label>Minimum Amount (USD)</label>
+                  <input type="number" id="user-min-withdrawal-val" placeholder="Leave blank to use global" min="0" step="0.01" style="width:100%;padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg2);color:var(--text);font-size:13px;"/>
+                </div>
+                <button class="btn btn--primary" onclick="saveUserMinWithdrawal()">Set</button>
+              </div>
+              <div id="user-min-withdrawal-list" style="margin-top:14px;"></div>
+            </div>
+          </div>
+        </div>
+
         <!-- Minimum Deposit -->
         <div class="card" style="margin-top:16px;">
           <div class="card__head">
@@ -1546,6 +1580,7 @@
   await renderAll();
   await loadDepositAddresses();
   await loadMinDepositSettings();
+  await loadMinWithdrawalSettings();
 })();
 
 async function doSignOut() {
@@ -1696,6 +1731,83 @@ window.clearUserMinDeposit = async function(userId) {
   const u = (_allUsers || []).find(x => x.id === userId);
   if (u) u.min_deposit = null;
   renderUserMinList();
+  showToast('Override cleared');
+};
+
+/* ── Minimum Withdrawal ── */
+window.loadMinWithdrawalSettings = async function() {
+  const db = window.SV_DB; if (!db) return;
+
+  const { data: setting } = await db.from('system_settings').select('value').eq('key','min_withdrawal_amount').maybeSingle();
+  if (setting) document.getElementById('global-min-withdrawal').value = parseFloat(setting.value) || '';
+
+  const sel = document.getElementById('user-min-withdrawal-select');
+  sel.innerHTML = '<option value="">— Select user —</option>';
+  (_allUsers || []).forEach(u => {
+    const name = [u.first_name, u.last_name].filter(Boolean).join(' ') || u.email;
+    const opt = document.createElement('option');
+    opt.value = u.id;
+    opt.textContent = name + ' (' + u.email + ')';
+    if (u.min_withdrawal != null) opt.dataset.current = u.min_withdrawal;
+    sel.appendChild(opt);
+  });
+
+  sel.onchange = function() {
+    const opt = sel.options[sel.selectedIndex];
+    document.getElementById('user-min-withdrawal-val').value = opt.dataset.current || '';
+  };
+
+  renderUserMinWithdrawalList();
+};
+
+function renderUserMinWithdrawalList() {
+  const container = document.getElementById('user-min-withdrawal-list');
+  if (!container) return;
+  const usersWithOverride = (_allUsers || []).filter(u => u.min_withdrawal != null);
+  if (!usersWithOverride.length) { container.innerHTML = '<div style="font-size:12px;color:var(--text-sub);padding:4px 0;">No user-specific overrides set.</div>'; return; }
+  container.innerHTML = '<table style="width:100%;border-collapse:collapse;font-size:12.5px;">'
+    + '<thead><tr><th style="text-align:left;padding:6px 8px;color:var(--text-sub);font-weight:600;border-bottom:1px solid var(--border);">User</th><th style="text-align:right;padding:6px 8px;color:var(--text-sub);font-weight:600;border-bottom:1px solid var(--border);">Min Withdrawal</th><th style="padding:6px 8px;border-bottom:1px solid var(--border);"></th></tr></thead>'
+    + '<tbody>' + usersWithOverride.map(u => {
+      const name = [u.first_name, u.last_name].filter(Boolean).join(' ') || u.email;
+      return '<tr><td style="padding:7px 8px;">' + name + '<div style="font-size:11px;color:var(--text-sub);">' + u.email + '</div></td>'
+        + '<td style="text-align:right;padding:7px 8px;font-weight:700;color:var(--green);">$' + parseFloat(u.min_withdrawal).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}) + '</td>'
+        + '<td style="padding:7px 8px;text-align:right;"><button class="btn btn--sm btn--outline" onclick="clearUserMinWithdrawal(\'' + u.id + '\')">Clear</button></td></tr>';
+    }).join('') + '</tbody></table>';
+}
+
+window.saveGlobalMinWithdrawal = async function() {
+  const db = window.SV_DB; if (!db) return;
+  const val = parseFloat(document.getElementById('global-min-withdrawal').value) || 0;
+  const { error } = await db.from('system_settings').upsert({ key:'min_withdrawal_amount', value: String(val), updated_at: new Date().toISOString() }, { onConflict:'key' });
+  if (error) { showToast('Error: ' + error.message, 'error'); return; }
+  await logAudit('set_global_min_withdrawal', 'system', 'Global min withdrawal set to $' + val);
+  showToast('Global minimum withdrawal saved');
+};
+
+window.saveUserMinWithdrawal = async function() {
+  const db = window.SV_DB; if (!db) return;
+  const userId = document.getElementById('user-min-withdrawal-select').value;
+  if (!userId) { showToast('Select a user first', 'error'); return; }
+  const rawVal = document.getElementById('user-min-withdrawal-val').value.trim();
+  const val = rawVal === '' ? null : parseFloat(rawVal);
+  const { error } = await db.from('profiles').update({ min_withdrawal: val }).eq('id', userId);
+  if (error) { showToast('Error: ' + error.message, 'error'); return; }
+  const u = (_allUsers || []).find(x => x.id === userId);
+  if (u) u.min_withdrawal = val;
+  document.getElementById('user-min-withdrawal-select').value = '';
+  document.getElementById('user-min-withdrawal-val').value = '';
+  await logAudit('set_user_min_withdrawal', userId, val == null ? 'Cleared override' : 'Min withdrawal set to $' + val);
+  showToast(val == null ? 'Override cleared' : 'User minimum withdrawal saved');
+  renderUserMinWithdrawalList();
+};
+
+window.clearUserMinWithdrawal = async function(userId) {
+  const db = window.SV_DB; if (!db) return;
+  const { error } = await db.from('profiles').update({ min_withdrawal: null }).eq('id', userId);
+  if (error) { showToast('Error: ' + error.message, 'error'); return; }
+  const u = (_allUsers || []).find(x => x.id === userId);
+  if (u) u.min_withdrawal = null;
+  renderUserMinWithdrawalList();
   showToast('Override cleared');
 };
 
