@@ -267,14 +267,14 @@ async function submitPhone() {
      Fixed delays (setTimeout) are unreliable for PKCE flows. */
   const session = await new Promise(resolve => {
     let done = false;
-    const { data: { subscription } } = db.auth.onAuthStateChange((_event, sess) => {
+    const { data: { subscription } } = db.auth.onAuthStateChange((event, sess) => {
       if (done) return;
+      if (event === 'INITIAL_SESSION' && !sess) return; // wait for PKCE exchange
       done = true;
       subscription.unsubscribe();
       resolve(sess);
     });
-    /* 6s hard fallback in case the callback never fires */
-    setTimeout(() => { if (!done) { done = true; subscription.unsubscribe(); resolve(null); } }, 6000);
+    setTimeout(() => { if (!done) { done = true; subscription.unsubscribe(); resolve(null); } }, 8000);
   });
 
   if (!session) { window.location.href = 'login.html'; return; }

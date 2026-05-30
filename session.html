@@ -505,16 +505,19 @@ document.getElementById('btn-signout').addEventListener('click', async () => {
     sessionStorage.removeItem(SS_KEY);
   }
 
-  /* Use onAuthStateChange so PKCE code exchange (Google OAuth) completes before we read the session */
+  /* Wait for session, handling both existing sessions and OAuth PKCE code exchange.
+     INITIAL_SESSION fires first — if null it means OAuth code exchange hasn't finished yet.
+     We skip it and wait for SIGNED_IN which fires once tokens are exchanged. */
   const session = await new Promise(resolve => {
     let done = false;
-    const { data: { subscription } } = db.auth.onAuthStateChange((_event, sess) => {
+    const { data: { subscription } } = db.auth.onAuthStateChange((event, sess) => {
       if (done) return;
+      if (event === 'INITIAL_SESSION' && !sess) return; // OAuth not done yet — wait
       done = true;
       subscription.unsubscribe();
       resolve(sess);
     });
-    setTimeout(() => { if (!done) { done = true; subscription.unsubscribe(); resolve(null); } }, 6000);
+    setTimeout(() => { if (!done) { done = true; subscription.unsubscribe(); resolve(null); } }, 8000);
   });
 
   if (!session) { window.location.href = 'login.html'; return; }
