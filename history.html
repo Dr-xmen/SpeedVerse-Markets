@@ -173,6 +173,10 @@ input,select{font-family:inherit;border:none;outline:none;background:none;color:
 .badge-cancelled::before{background:var(--sub);}
 .badge-failed{background:rgba(246,70,93,.12);color:var(--red);}
 .badge-failed::before{background:var(--red);}
+.badge-rejected{background:rgba(246,70,93,.12);color:var(--red);}
+.badge-rejected::before{background:var(--red);}
+.badge-approved{background:rgba(14,203,129,.12);color:var(--green);}
+.badge-approved::before{background:var(--green);}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
 
 /* TXID */
@@ -556,11 +560,13 @@ function typeConfig(tx) {
 function statusBadge(status) {
   const map = {
     completed: ['badge-completed','Completed'],
+    approved:  ['badge-approved', 'Approved'],
     pending:   ['badge-pending',  'Pending'],
+    rejected:  ['badge-rejected', 'Rejected'],
+    failed:    ['badge-failed',   'Failed'],
     filled:    ['badge-filled',   'Filled'],
     open:      ['badge-open',     'Open'],
     cancelled: ['badge-cancelled','Cancelled'],
-    failed:    ['badge-failed',   'Failed'],
   };
   const [cls, label] = map[status] || ['badge-cancelled', status];
   return `<span class="status-badge ${cls}">${label}</span>`;
