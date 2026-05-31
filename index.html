@@ -1450,19 +1450,29 @@ renderSpreads('forex');
       el.style.transitionDelay = (i*0.08)+'s';
       cardObs.observe(el);
     });
-    // Spotlight — randomly enlarge one card at a time
-    var current = -1, paused = false;
+    // Spotlight — only pick from cards currently in the viewport
+    var visibleCards = new Set();
+    var currentFeatured = null, paused = false;
+    var vpObs = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){ visibleCards.add(e.target); }
+        else { visibleCards.delete(e.target); if(e.target === currentFeatured){ e.target.classList.remove('featured'); currentFeatured = null; } }
+      });
+    }, { threshold: 0.5 });
     cards.forEach(function(c){
-      c.addEventListener('mouseenter', function(){ paused = true; c.classList.add('featured'); });
-      c.addEventListener('mouseleave', function(){ paused = false; c.classList.remove('featured'); if(current>=0) cards[current].classList.add('featured'); });
+      vpObs.observe(c);
+      c.addEventListener('mouseenter', function(){ paused = true; if(currentFeatured && currentFeatured !== c) currentFeatured.classList.remove('featured'); c.classList.add('featured'); });
+      c.addEventListener('mouseleave', function(){ paused = false; c.classList.remove('featured'); if(currentFeatured) currentFeatured.classList.add('featured'); });
     });
     function spotlight(){
       if(!paused){
-        if(current >= 0) cards[current].classList.remove('featured');
-        var next;
-        do { next = Math.floor(Math.random() * cards.length); } while(next === current && cards.length > 1);
-        current = next;
-        cards[current].classList.add('featured');
+        var pool = Array.from(visibleCards);
+        if(pool.length > 0){
+          if(currentFeatured) currentFeatured.classList.remove('featured');
+          var candidates = pool.length > 1 ? pool.filter(function(c){ return c !== currentFeatured; }) : pool;
+          currentFeatured = candidates[Math.floor(Math.random() * candidates.length)];
+          currentFeatured.classList.add('featured');
+        }
       }
       setTimeout(spotlight, 2200 + Math.random() * 1600);
     }
