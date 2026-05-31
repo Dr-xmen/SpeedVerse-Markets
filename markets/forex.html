@@ -157,6 +157,16 @@ footer{background:#111;padding:60px 0 28px;}
   .ft-bottom{flex-direction:column;align-items:flex-start;gap:8px;}
   footer{padding:40px 0 20px;}
 }
+/* HERO ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(32px);}to{opacity:1;transform:translateY(0);}}
+@keyframes heroTagGlow{0%,100%{box-shadow:0 0 0 0 rgba(232,83,10,.5);}60%{box-shadow:0 0 0 12px rgba(232,83,10,0);}}
+.page-hero-tag{animation:fadeUp .55s ease .1s both,heroTagGlow 3.5s ease 1s infinite;}
+.page-hero h1{animation:fadeUp .65s ease .25s both;}
+.page-hero p{animation:fadeUp .65s ease .4s both;}
+.page-hero-btns{animation:fadeUp .65s ease .55s both;}
+/* SCROLL REVEAL */
+.reveal{opacity:0;transform:translateY(36px);transition:opacity .65s ease,transform .65s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
 </style>
 </head>
 <body>
@@ -411,6 +421,38 @@ footer{background:#111;padding:60px 0 28px;}
   document.addEventListener('click',function(e){
     if(!e.target.closest('.nav-links'))navItems.forEach(function(x){x.classList.remove('dd-open');});
   });
+})();
+</script>
+<script>
+(function(){
+  var obs=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});
+  },{threshold:0.1});
+  document.querySelectorAll('.content-section,.cta-strip,.two-col,.step-row,.table-wrap,.stats-strip').forEach(function(el){
+    el.classList.add('reveal');obs.observe(el);
+  });
+})();
+(function(){
+  var obs=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(!e.isIntersecting)return;
+      obs.unobserve(e.target);
+      var el=e.target,raw=el.textContent.trim();
+      var m=raw.match(/^([^0-9]*)(\d+(?:\.\d+)?)(.*)$/);
+      if(!m)return;
+      var pre=m[1],target=parseFloat(m[2]),suf=m[3];
+      var dec=m[2].indexOf('.')>=0?m[2].split('.')[1].length:0;
+      var dur=1600,t0=null;
+      function step(ts){
+        if(!t0)t0=ts;
+        var p=Math.min((ts-t0)/dur,1),ease=1-Math.pow(1-p,3);
+        el.textContent=pre+(target*ease).toFixed(dec)+suf;
+        if(p<1)requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    });
+  },{threshold:0.5});
+  document.querySelectorAll('.stat-num').forEach(function(el){obs.observe(el);});
 })();
 </script>
 </body>
