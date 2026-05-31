@@ -1034,7 +1034,7 @@ html{overflow-x:hidden;max-width:100%;}
 </section>
 
 <!-- REVIEWS SECTION -->
-<section class="reviews-section reveal">
+<section class="reviews-section">
   <div class="si">
     <p class="reviews-eyebrow">Client Reviews</p>
     <h2 class="reviews-h2">Trusted by traders worldwide</h2>
@@ -1438,9 +1438,15 @@ renderSpreads('forex');
         '</div>' +
       '</div>';
     }).join('');
-    if (typeof observer !== 'undefined') {
-      document.querySelectorAll('.review-card').forEach(function(el){ observer.observe(el); });
-    }
+    var cardObs = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){e.target.classList.add('visible');cardObs.unobserve(e.target);}
+      });
+    },{threshold:0.1});
+    document.querySelectorAll('.review-card').forEach(function(el,i){
+      el.style.transitionDelay = (i*0.08)+'s';
+      cardObs.observe(el);
+    });
   });
 })();
 </script>
